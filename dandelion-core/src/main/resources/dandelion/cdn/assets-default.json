@@ -1,0 +1,22 @@
+{
+	// scope: "default" // si scope vide, c’est le scope "default"
+	"assets": [
+			{
+				"name" : "jquery",
+				"version" : "1.8.3",
+				"location" : "http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.8.3.min.js",
+				"type" : "js"
+			},
+			{
+				"name" : "datatables",
+				"version" : "1.9.4",
+				"location" : "http://ajax.aspnetcdn.com/ajax/jquery.dataTables/1.9.4/jquery.dataTables.js",
+				"type" : "js"
+			},
+			{
+				"name" : "datatables",
+				"version" : "1.9.4",
+				"location" : "http://ajax.aspnetcdn.com/ajax/jquery.dataTables/1.9.4/css/jquery.dataTables.css",
+				"type" : "css"
+			} ]
+}

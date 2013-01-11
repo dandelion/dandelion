@@ -1,0 +1,12 @@
+/.project
+/.settings
+/bin
+/.classpath
+/dandelion-core/.classpath
+/dandelion-core/.project
+/dandelion-core/.settings
+/dandelion-core/target
+/dandelion-api/.project
+/dandelion-api/.settings
+/dandelion-api/target
+/dandelion-api/.classpath

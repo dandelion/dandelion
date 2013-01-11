@@ -1,0 +1,36 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+   <modelVersion>4.0.0</modelVersion>
+
+   <parent>
+      <groupId>com.github.dandelion</groupId>
+      <artifactId>dandelion</artifactId>
+      <version>1.0.0-SNAPSHOT</version>
+   </parent>
+
+   <artifactId>dandelion-core</artifactId>
+   <packaging>jar</packaging>
+
+   <name>Dandelion :: Core</name>
+
+   <dependencies>
+      <dependency>
+         <groupId>com.github.dandelion</groupId>
+         <artifactId>dandelion-api</artifactId>
+         <version>1.0.0-SNAPSHOT</version>
+      </dependency>
+   
+      <!-- Json simple -->
+      <dependency>
+         <groupId>com.googlecode.json-simple</groupId>
+         <artifactId>json-simple</artifactId>
+         <version>1.1.1</version>
+      </dependency>
+
+      <dependency>
+         <groupId>org.codehaus.jackson</groupId>
+         <artifactId>jackson-mapper-asl</artifactId>
+         <version>1.9.11</version>
+      </dependency>
+   </dependencies>
+</project>
