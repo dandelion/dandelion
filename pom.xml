@@ -11,7 +11,6 @@
 
    <modules>
       <module>dandelion-core</module>
-      <module>dandelion-api</module>
    </modules>
 
    <licenses>

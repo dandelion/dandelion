@@ -1,9 +1,8 @@
-package com.github.dandelion.api;
+package com.github.dandelion.core.component;
 
 public class Scope {
 
 	String name;
-	String parent;
 	boolean loadedByDefault;
 	
 	public String getName() {
@@ -12,18 +11,10 @@ public class Scope {
 	public void setName(String name) {
 		this.name = name;
 	}
-	public String getParent() {
-		return parent;
-	}
-	public void setParent(String parent) {
-		this.parent = parent;
-	}
 	public boolean isLoadedByDefault() {
 		return loadedByDefault;
 	}
 	public void setLoadedByDefault(boolean loadedByDefault) {
 		this.loadedByDefault = loadedByDefault;
 	}
-	
-	
 }

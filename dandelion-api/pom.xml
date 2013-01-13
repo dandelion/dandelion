@@ -12,4 +12,13 @@
    <packaging>jar</packaging>
 
    <name>Dandelion :: Core :: Public API</name>
+
+   <dependencies>
+      <!-- SLF4J -->
+      <dependency>
+         <groupId>org.slf4j</groupId>
+         <artifactId>slf4j-api</artifactId>
+      </dependency>
+
+   </dependencies>
 </project>
