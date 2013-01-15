@@ -1,0 +1,12 @@
+{
+    "scope" : "plugin2",
+	"assets": [
+			{
+				"name" : "asset3",
+				"version" : "1",
+				"type" : "js",
+				"remote" : "remoteURL",
+				"local" : "localPath"
+			}
+    ]
+}
