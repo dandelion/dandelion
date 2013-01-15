@@ -13,6 +13,7 @@ public class AssetJsonLoaderTest {
 
     @BeforeClass
     public static void set_up() {
+        AssetStorage.clearAll();
         loader = new AssetJsonLoader();
         loader.load();
     }

@@ -8,10 +8,11 @@ import static com.github.dandelion.core.asset.AssetStorage.store;
 import static org.fest.assertions.Assertions.assertThat;
 
 public class AssetStorageTest {
-    Asset asset = new Asset("name", "version", AssetType.js, "remote", "local");
-    Asset assetConflict = new Asset("name", "versionConflict", AssetType.js, "remote", "local");
-    Asset assetOverride = new Asset("name", "version2", AssetType.css, "remote", "local");
-    Asset asset2 = new Asset("name2", "version", AssetType.img, "remote", "local");
+    Asset asset = new Asset("nameAZ", "version", AssetType.js, "remote", "local");
+    Asset assetPriority = new Asset("nameAZ", "version2", AssetType.js, "remote", "local");
+    Asset assetConflict = new Asset("nameAZ", "versionConflict", AssetType.js, "remote", "local");
+    Asset assetOverride = new Asset("nameAZ", "version2", AssetType.css, "remote", "local");
+    Asset asset2 = new Asset("nameZA2", "version", AssetType.img, "remote", "local");
     Asset asset3 = new Asset("name3", "version", AssetType.js, "remote", "local");
     Asset asset4 = new Asset("name4", "version", AssetType.css, "remote", "local");
     Asset invalidAsset = new Asset();
@@ -111,5 +112,16 @@ public class AssetStorageTest {
         store(assetConflict, "another_scope");
 
         assertThat(assetsFor("scope", "another_scope")).hasSize(2).contains(asset, asset2);
+    }
+
+    @Test
+    public void should_manage_priorities() {
+        store(asset);
+        store(asset4);
+        store(asset2);
+        store(asset3);
+        store(assetPriority, "scope");
+
+        assertThat(assetsFor("scope")).hasSize(4).containsSequence(assetPriority, asset4, asset2, asset3);
     }
 }
