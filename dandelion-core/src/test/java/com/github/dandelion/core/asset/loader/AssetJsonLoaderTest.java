@@ -1,23 +1,25 @@
-package com.github.dandelion.core.asset;
+package com.github.dandelion.core.asset.loader;
 
-import com.github.dandelion.api.asset.AssetStorage;
+import com.github.dandelion.core.asset.AssetStorage;
+import com.github.dandelion.core.asset.json.AssetJsonLoader;
+import org.fest.assertions.Assertions;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 import static org.fest.assertions.Assertions.assertThat;
 
-public class JsonAssetLoaderTest {
-    static JsonAssetLoader loader;
+public class AssetJsonLoaderTest {
+    static AssetJsonLoader loader;
 
     @BeforeClass
     public static void set_up() {
-        loader = new JsonAssetLoader();
+        loader = new AssetJsonLoader();
         loader.load();
     }
 
     @Test
     public void should_load_default_json() {
-        assertThat(AssetStorage.assetsFor()).isNotEmpty();
+        Assertions.assertThat(AssetStorage.assetsFor()).isNotEmpty();
     }
 
     @Test

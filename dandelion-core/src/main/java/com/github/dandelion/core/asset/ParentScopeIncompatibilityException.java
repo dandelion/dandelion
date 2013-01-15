@@ -1,4 +1,4 @@
-package com.github.dandelion.api.asset;
+package com.github.dandelion.core.asset;
 
 /**
  * An asset can't have a couple of Scope/Parent Scope when his scope is already associated to another parent scope

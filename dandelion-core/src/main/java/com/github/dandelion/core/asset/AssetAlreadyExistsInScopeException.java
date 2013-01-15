@@ -1,4 +1,4 @@
-package com.github.dandelion.api.asset;
+package com.github.dandelion.core.asset;
 
 /**
  * An asset can't be add twice in the same scope (same name)

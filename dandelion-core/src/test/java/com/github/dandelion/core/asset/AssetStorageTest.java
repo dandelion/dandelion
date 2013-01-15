@@ -1,10 +1,10 @@
-package com.github.dandelion.api.asset;
+package com.github.dandelion.core.asset;
 
 import org.junit.Before;
 import org.junit.Test;
 
-import static com.github.dandelion.api.asset.AssetStorage.assetsFor;
-import static com.github.dandelion.api.asset.AssetStorage.store;
+import static com.github.dandelion.core.asset.AssetStorage.assetsFor;
+import static com.github.dandelion.core.asset.AssetStorage.store;
 import static org.fest.assertions.Assertions.assertThat;
 
 public class AssetStorageTest {

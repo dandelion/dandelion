@@ -1,4 +1,4 @@
-package com.github.dandelion.api.asset;
+package com.github.dandelion.core.asset;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -44,7 +44,7 @@ public final class AssetStorage {
      * @throws UndefinedParentScopeException
      *         An asset can't have a parent scope who don't already exists
      */
-    public static void store(Asset asset) {
+    public static void store(com.github.dandelion.core.asset.Asset asset) {
         store(asset, ROOT_SCOPE, ROOT_SCOPE);
     }
 
@@ -60,7 +60,7 @@ public final class AssetStorage {
      * @throws UndefinedParentScopeException
      *         An asset can't have a parent scope who don't already exists
      */
-    public static void store(Asset asset, String scope) {
+    public static void store(com.github.dandelion.core.asset.Asset asset, String scope) {
         store(asset, scope, ROOT_SCOPE);
     }
 
@@ -77,7 +77,7 @@ public final class AssetStorage {
      * @throws UndefinedParentScopeException
      *         An asset can't have a parent scope who don't already exists
      */
-    public static void store(Asset asset, String scope, String parentScope) {
+    public static void store(com.github.dandelion.core.asset.Asset asset, String scope, String parentScope) {
         StorageUnit storageUnit;
         if(storage.containsKey(scope)) {
             StorageUnit storedStorageUnit = storage.get(scope);
@@ -114,7 +114,7 @@ public final class AssetStorage {
      * @param asset asset to check
      * @param storedStorageUnit stored storage unit
      */
-    private static void checkAssetAlreadyExists(Asset asset, StorageUnit storedStorageUnit) {
+    private static void checkAssetAlreadyExists(com.github.dandelion.core.asset.Asset asset, StorageUnit storedStorageUnit) {
         if(storedStorageUnit.assets.contains(asset)) {
             throw new AssetAlreadyExistsInScopeException(asset);
         }
@@ -138,17 +138,17 @@ public final class AssetStorage {
      * @param scopes scopes of needed assets
      * @return the list of assets for scopes
      */
-    public static List<Asset> assetsFor(String ... scopes) {
+    public static List<com.github.dandelion.core.asset.Asset> assetsFor(String ... scopes) {
         if(scopes.length == 0
                 || (scopes.length == 1 && ROOT_SCOPE.equalsIgnoreCase(scopes[0])))
             return storage.get(ROOT_SCOPE).assets;
-        List<Asset> assets = new ArrayList<Asset>();
+        List<com.github.dandelion.core.asset.Asset> assets = new ArrayList<com.github.dandelion.core.asset.Asset>();
         for(String scope:scopes) {
-            List<Asset> scopedAssets = new ArrayList<Asset>();
+            List<com.github.dandelion.core.asset.Asset> scopedAssets = new ArrayList<com.github.dandelion.core.asset.Asset>();
             StorageUnit assetScope = storage.get(scope);
             if(assetScope != null) {
                 scopedAssets.addAll(assetScope.assets);
-                List<Asset> parentAssets = assetsFor(assetScope.parentScope);
+                List<com.github.dandelion.core.asset.Asset> parentAssets = assetsFor(assetScope.parentScope);
                 parentAssets.removeAll(scopedAssets);
                 scopedAssets.addAll(parentAssets);
             }

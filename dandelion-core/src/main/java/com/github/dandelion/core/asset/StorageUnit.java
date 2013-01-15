@@ -1,4 +1,4 @@
-package com.github.dandelion.api.asset;
+package com.github.dandelion.core.asset;
 
 import java.util.ArrayList;
 import java.util.List;

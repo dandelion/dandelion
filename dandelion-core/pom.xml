@@ -40,10 +40,22 @@
       </dependency>
 
       <dependency>
-         <groupId>org.slf4j</groupId>
-         <artifactId>slf4j-api</artifactId>
-         <scope>compile</scope>
+        <groupId>org.slf4j</groupId>
+        <artifactId>slf4j-api</artifactId>
+        <scope>compile</scope>
       </dependency>
+
+       <!-- Test -->
+       <dependency>
+           <groupId>junit</groupId>
+           <artifactId>junit</artifactId>
+           <version>4.11</version>
+       </dependency>
+       <dependency>
+           <groupId>org.easytesting</groupId>
+           <artifactId>fest-assert</artifactId>
+           <version>1.4</version>
+       </dependency>
 
    </dependencies>
 </project>

@@ -1,4 +1,4 @@
-package com.github.dandelion.api.asset;
+package com.github.dandelion.core.asset;
 
 /**
  * Definition of an Asset

@@ -1,7 +1,7 @@
-package com.github.dandelion.core.asset;
+package com.github.dandelion.core.asset.json;
 
-import com.github.dandelion.api.asset.Asset;
-import com.github.dandelion.api.asset.AssetStorage;
+import com.github.dandelion.core.asset.Asset;
+import com.github.dandelion.core.asset.AssetStorage;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,7 +9,7 @@ import java.util.List;
 /**
  * JSON component to wrapper Asset Definition
  */
-public class Component {
+public class JsonComponent {
 	
 	private String scope = AssetStorage.ROOT_SCOPE;
 	private String parent = AssetStorage.ROOT_SCOPE;
@@ -41,6 +41,6 @@ public class Component {
 
     @Override
     public String toString() {
-        return "Component [scope=" + scope + ", parent=" + parent + ", assets=" + assets + "]";
+        return "JsonComponent [scope=" + scope + ", parent=" + parent + ", assets=" + assets + "]";
     }
 }
