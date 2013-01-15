@@ -62,11 +62,13 @@ public class JsonAssetLoader {
 	}
 
     private void storeAssets(String scope) {
-        Component component = components.get(scope);
-        for(Asset asset:component.getAssets()) {
-            storeAsset(asset, component);
+        if(components.containsKey(scope)) {
+            Component component = components.get(scope);
+            for(Asset asset:component.getAssets()) {
+                storeAsset(asset, component);
+            }
+            components.remove(component);
         }
-        components.remove(component);
         if(scopes.containsKey(scope)) {
             for(String _scope:scopes.get(scope)) {
                 storeAssets(_scope);
