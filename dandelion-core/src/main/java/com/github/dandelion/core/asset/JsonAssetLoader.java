@@ -50,7 +50,7 @@ public class JsonAssetLoader {
 				System.out.println("Component = " + component);
 
                 components.put(component.getScope(), component);
-                fillScopes(scopes, component);
+                fillScopes(component);
 			}
 
             storeAssets(ROOT_SCOPE);
@@ -96,7 +96,7 @@ public class JsonAssetLoader {
         }
     }
 
-    private void fillScopes(Map<String, List<String>> scopes, Component component) {
+    private void fillScopes(Component component) {
         if(!scopes.containsKey(component.getParent())) {
             if(!component.getScope().equalsIgnoreCase(ROOT_SCOPE)) {
                 List<String> list = new ArrayList();
