@@ -10,6 +10,7 @@
    <name>Dandelion :: Core :: Parent</name>
 
    <modules>
+      <module>dandelion-api</module>
       <module>dandelion-core</module>
    </modules>
 
