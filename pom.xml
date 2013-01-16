@@ -11,6 +11,8 @@
 
    <modules>
       <module>dandelion-core</module>
+      <module>dandelion-thymeleaf</module>
+      <module>dandelion-jsp</module>
    </modules>
 
    <licenses>
@@ -81,6 +83,14 @@
             <scope>provided</scope>
          </dependency>
 
+         <!-- JSP -->
+         <dependency>
+            <groupId>javax.servlet.jsp</groupId>
+            <artifactId>jsp-api</artifactId>
+            <version>2.2</version>
+            <scope>provided</scope>
+         </dependency>
+         
          <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
