@@ -8,14 +8,11 @@ import static com.github.dandelion.core.asset.AssetStorage.store;
 import static org.fest.assertions.Assertions.assertThat;
 
 public class AssetStorageTest {
-    Asset asset = new Asset("nameAZ", "version", AssetType.js, "remote", "local");
-    Asset assetPriority = new Asset("nameAZ", "version2", AssetType.js, "remote", "local");
-    Asset assetConflict = new Asset("nameAZ", "versionConflict", AssetType.js, "remote", "local");
-    Asset assetOverride = new Asset("nameAZ", "version2", AssetType.css, "remote", "local");
-    Asset asset2 = new Asset("nameZA2", "version", AssetType.img, "remote", "local");
+    Asset asset = new Asset("name", "version", AssetType.js, "remote", "local");
+    Asset asset2 = new Asset("name2", "version", AssetType.img, "remote", "local");
     Asset asset3 = new Asset("name3", "version", AssetType.js, "remote", "local");
     Asset asset4 = new Asset("name4", "version", AssetType.css, "remote", "local");
-    Asset invalidAsset = new Asset();
+    Asset assetConflict = new Asset("name", "versionConflict", AssetType.js, "remote", "local");
 
     @Before
     public void set_up() {
@@ -24,7 +21,7 @@ public class AssetStorageTest {
 
     @Test
     public void should_not_store_invalid_asset() {
-        store(invalidAsset);
+        store(new Asset());
 
         assertThat(assetsFor()).hasSize(0);
     }
@@ -94,6 +91,7 @@ public class AssetStorageTest {
 
     @Test
     public void should_manage_override_assets() {
+        Asset assetOverride = new Asset("name", "version2", AssetType.css, "remote", "local");
         store(asset);
         store(assetOverride, "override");
         assertThat(assetsFor("override")).hasSize(1).contains(assetOverride);
@@ -116,6 +114,8 @@ public class AssetStorageTest {
 
     @Test
     public void should_manage_priorities() {
+        Asset assetPriority = new Asset("name", "version2", AssetType.js, "remote", "local");
+
         store(asset);
         store(asset4);
         store(asset2);
@@ -123,5 +123,27 @@ public class AssetStorageTest {
         store(assetPriority, "scope");
 
         assertThat(assetsFor("scope")).hasSize(4).containsSequence(assetPriority, asset4, asset2, asset3);
+    }
+
+    @Test
+    public void should_manage_detach_scope() {
+        Asset assetWithDetachScope = new Asset("detach", "version", AssetType.js, "remote", "local");
+
+        store(asset);
+        store(assetWithDetachScope, "scope", "none");
+
+        assertThat(assetsFor("scope")).hasSize(1).contains(assetWithDetachScope);
+        assertThat(assetsFor("default", "scope")).hasSize(2).contains(assetWithDetachScope, asset);
+    }
+
+    @Test
+    public void should_detach_scope_not_override_other_assets() {
+        Asset assetWithDetachScope = new Asset("name", "version", AssetType.js, "remote", "local");
+
+        store(asset);
+        store(assetWithDetachScope, "scope", "none");
+
+        assertThat(assetsFor("scope")).hasSize(1).contains(assetWithDetachScope);
+        assertThat(assetsFor("default", "scope")).hasSize(2).contains(assetWithDetachScope, asset);
     }
 }

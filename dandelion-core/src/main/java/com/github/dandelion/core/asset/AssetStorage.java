@@ -23,6 +23,11 @@ public final class AssetStorage {
      */
     public static final String ROOT_SCOPE = "default";
 
+    /**
+     * Define the Detach Scope string representation
+     */
+    public static final String DETACH_PARENT_SCOPE = "none";
+
     static {
         // A empty storage is a scope 'default' with no assets
         clearAll();
@@ -44,7 +49,7 @@ public final class AssetStorage {
      * @throws UndefinedParentScopeException
      *         An asset can't have a parent scope who don't already exists
      */
-    public static void store(com.github.dandelion.core.asset.Asset asset) {
+    public static void store(Asset asset) {
         store(asset, ROOT_SCOPE, ROOT_SCOPE);
     }
 
@@ -60,7 +65,7 @@ public final class AssetStorage {
      * @throws UndefinedParentScopeException
      *         An asset can't have a parent scope who don't already exists
      */
-    public static void store(com.github.dandelion.core.asset.Asset asset, String scope) {
+    public static void store(Asset asset, String scope) {
         store(asset, scope, ROOT_SCOPE);
     }
 
@@ -77,7 +82,10 @@ public final class AssetStorage {
      * @throws UndefinedParentScopeException
      *         An asset can't have a parent scope who don't already exists
      */
-    public static void store(com.github.dandelion.core.asset.Asset asset, String scope, String parentScope) {
+    public static void store(Asset asset, String scope, String parentScope) {
+        if(scope.equalsIgnoreCase(DETACH_PARENT_SCOPE)) {
+            throw new DetachScopeNotAllowedException(DETACH_PARENT_SCOPE);
+        }
         StorageUnit storageUnit;
         if(storage.containsKey(scope)) {
             StorageUnit storedStorageUnit = storage.get(scope);
@@ -103,7 +111,7 @@ public final class AssetStorage {
      * @param parentScope parent scope to check
      */
     private static void checkUnknownParentScope(String parentScope) {
-        if(!storage.containsKey(parentScope)) {
+        if(!storage.containsKey(parentScope) && !DETACH_PARENT_SCOPE.equalsIgnoreCase(parentScope)) {
             throw new UndefinedParentScopeException();
         }
     }
@@ -114,7 +122,7 @@ public final class AssetStorage {
      * @param asset asset to check
      * @param storedStorageUnit stored storage unit
      */
-    private static void checkAssetAlreadyExists(com.github.dandelion.core.asset.Asset asset, StorageUnit storedStorageUnit) {
+    private static void checkAssetAlreadyExists(Asset asset, StorageUnit storedStorageUnit) {
         if(storedStorageUnit.assets.contains(asset)) {
             throw new AssetAlreadyExistsInScopeException(asset);
         }
@@ -138,22 +146,24 @@ public final class AssetStorage {
      * @param scopes scopes of needed assets
      * @return the list of assets for scopes
      */
-    public static List<com.github.dandelion.core.asset.Asset> assetsFor(String ... scopes) {
+    public static List<Asset> assetsFor(String ... scopes) {
         if(scopes.length == 0
                 || (scopes.length == 1 && ROOT_SCOPE.equalsIgnoreCase(scopes[0])))
             return storage.get(ROOT_SCOPE).assets;
-        List<com.github.dandelion.core.asset.Asset> assets = new ArrayList<com.github.dandelion.core.asset.Asset>();
+        List<Asset> assets = new ArrayList<Asset>();
         for(String scope:scopes) {
-            List<com.github.dandelion.core.asset.Asset> scopedAssets = new ArrayList<com.github.dandelion.core.asset.Asset>();
+            List<Asset> scopedAssets = new ArrayList<Asset>();
             StorageUnit assetScope = storage.get(scope);
             if(assetScope != null) {
                 scopedAssets.addAll(assetScope.assets);
-                List<com.github.dandelion.core.asset.Asset> parentAssets = assetsFor(assetScope.parentScope);
-                parentAssets.removeAll(scopedAssets);
-                scopedAssets.addAll(parentAssets);
+                if(!DETACH_PARENT_SCOPE.equalsIgnoreCase(assetScope.parentScope)) {
+                    List<Asset> parentAssets = assetsFor(assetScope.parentScope);
+                    parentAssets.removeAll(scopedAssets);
+                    scopedAssets.addAll(parentAssets);
+                    scopedAssets.removeAll(assets);
+                }
+                assets.addAll(scopedAssets);
             }
-            scopedAssets.removeAll(assets);
-            assets.addAll(scopedAssets);
         }
         return assets;
     }

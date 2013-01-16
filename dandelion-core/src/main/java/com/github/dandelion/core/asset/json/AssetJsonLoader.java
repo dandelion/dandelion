@@ -87,6 +87,8 @@ public class AssetJsonLoader {
         } catch (ParentScopeIncompatibilityException e) {
             System.out.println("Incompatibility with Scope/Parent Scope -> '"
                     + e.getScope() + "/" + e.getParentScope() + "'");
+        } catch (DetachScopeNotAllowedException e) {
+            System.out.println("Not allowed usage of the detached scope " + e.getDetachScope() + " as scope of asset");
         } catch (UndefinedParentScopeException e) {
             System.out.println("Use of a undefined scope as a parent -> '" + jsonComponent.getParent() +"'");
             System.out.println("To avoid any configuration problem, a scope '"
