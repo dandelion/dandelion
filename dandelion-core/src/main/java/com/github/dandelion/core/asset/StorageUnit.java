@@ -1,5 +1,7 @@
 package com.github.dandelion.core.asset;
 
+import com.github.dandelion.core.api.asset.Asset;
+
 import java.util.ArrayList;
 import java.util.List;
 

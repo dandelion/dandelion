@@ -1,5 +1,7 @@
 package com.github.dandelion.core.asset;
 
+import com.github.dandelion.core.api.asset.Asset;
+import com.github.dandelion.core.api.asset.AssetType;
 import org.junit.Before;
 import org.junit.Test;
 
