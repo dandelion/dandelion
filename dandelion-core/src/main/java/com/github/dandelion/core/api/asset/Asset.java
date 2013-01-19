@@ -96,6 +96,7 @@ public class Asset {
 
         Asset asset = (Asset) o;
         if (!name.equals(asset.name)) return false;
+        if (!type.equals(asset.type)) return false;
 
         return true;
     }
@@ -105,7 +106,7 @@ public class Asset {
      */
     @Override
     public int hashCode() {
-        return name.hashCode();
+        return name.hashCode() + type.hashCode();
     }
 
     /**

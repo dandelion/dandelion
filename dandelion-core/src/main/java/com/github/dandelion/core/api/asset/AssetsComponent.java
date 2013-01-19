@@ -1,6 +1,6 @@
 package com.github.dandelion.core.api.asset;
 
-import com.github.dandelion.core.asset.AssetStorage;
+import com.github.dandelion.core.asset.AssetsStorage;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,11 +10,20 @@ import java.util.List;
  */
 public class AssetsComponent {
 	
-	private String scope = AssetStorage.ROOT_SCOPE;
-	private String parent = AssetStorage.ROOT_SCOPE;
+	private String scope = AssetsStorage.ROOT_SCOPE;
+	private String parent = AssetsStorage.ROOT_SCOPE;
 	private List<Asset> assets = new ArrayList<Asset>();
 
-	public String getScope() {
+    public AssetsComponent() {
+    }
+
+    public AssetsComponent(String scope, String parent, List<Asset> assets) {
+        this.scope = scope;
+        this.parent = parent;
+        this.assets = assets;
+    }
+
+    public String getScope() {
 		return scope;
 	}
 

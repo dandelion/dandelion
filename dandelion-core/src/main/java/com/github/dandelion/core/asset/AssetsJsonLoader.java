@@ -5,7 +5,7 @@ import java.io.InputStream;
 import java.util.*;
 import java.util.zip.ZipException;
 
-import com.github.dandelion.core.api.asset.AssetLoader;
+import com.github.dandelion.core.api.asset.AssetsLoader;
 import com.github.dandelion.core.api.asset.AssetsComponent;
 import org.codehaus.jackson.JsonParser;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -16,7 +16,7 @@ import com.github.dandelion.core.utils.scanner.ClassPathScanner;
 /**
  * Assets Loader for JSON definition
  */
-public class AssetJsonLoader implements AssetLoader {
+public class AssetsJsonLoader implements AssetsLoader {
 	private ObjectMapper mapper = new ObjectMapper();
 
 	/**

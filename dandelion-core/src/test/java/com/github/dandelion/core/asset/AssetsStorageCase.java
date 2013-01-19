@@ -5,11 +5,11 @@ import com.github.dandelion.core.api.asset.AssetType;
 import org.junit.Before;
 import org.junit.Test;
 
-import static com.github.dandelion.core.asset.AssetStorage.assetsFor;
-import static com.github.dandelion.core.asset.AssetStorage.store;
+import static com.github.dandelion.core.asset.AssetsStorage.assetsFor;
+import static com.github.dandelion.core.asset.AssetsStorage.store;
 import static org.fest.assertions.Assertions.assertThat;
 
-public class AssetStorageTest {
+public class AssetsStorageCase {
     Asset asset = new Asset("name", "version", AssetType.js, "remote", "local");
     Asset asset2 = new Asset("name2", "version", AssetType.img, "remote", "local");
     Asset asset3 = new Asset("name3", "version", AssetType.js, "remote", "local");
@@ -18,7 +18,7 @@ public class AssetStorageTest {
 
     @Before
     public void set_up() {
-        AssetStorage.clearAll();
+        AssetsStorage.clearAll();
     }
 
     @Test
@@ -84,6 +84,14 @@ public class AssetStorageTest {
     }
 
     @Test
+    public void should_manage_assets_with_different_types() {
+        Asset assetDifferentType = new Asset("name", "version", AssetType.css, "remote", "local");
+        store(asset);
+        store(assetDifferentType, "differentTypes");
+        assertThat(assetsFor("differentTypes")).hasSize(2).contains(assetDifferentType);
+    }
+
+    @Test
     public void should_store_empty_scope_by_lazy_workaround() {
         store(asset);
         store(null, "empty_scope");
@@ -93,7 +101,7 @@ public class AssetStorageTest {
 
     @Test
     public void should_manage_override_assets() {
-        Asset assetOverride = new Asset("name", "version2", AssetType.css, "remote", "local");
+        Asset assetOverride = new Asset("name", "version2", AssetType.js, "remote", "local");
         store(asset);
         store(assetOverride, "override");
         assertThat(assetsFor("override")).hasSize(1).contains(assetOverride);

@@ -14,11 +14,11 @@ import java.util.Map;
  * All scopes have a parent except for ROOT parent (aka Root Scope).<br/>
  * An asset can be access by his scope.<br/>
  */
-public final class AssetStorage {
+public final class AssetsStorage {
     /**
      * Storage Units
      */
-    private static Map<String, StorageUnit> storage;
+    private static Map<String, AssetsScopeStorageUnit> storage;
 
     /**
      * Define the Root Scope string representation
@@ -38,7 +38,7 @@ public final class AssetStorage {
     /**
      * Storage Unit Utility Class
      */
-    private AssetStorage() {}
+    private AssetsStorage() {}
 
     /**
      * Store an Asset in Root Scope as his scope
@@ -88,22 +88,22 @@ public final class AssetStorage {
         if(scope.equalsIgnoreCase(DETACH_PARENT_SCOPE)) {
             throw new DetachScopeNotAllowedException(DETACH_PARENT_SCOPE);
         }
-        StorageUnit storageUnit;
+        AssetsScopeStorageUnit assetsScopeStorageUnit;
         if(storage.containsKey(scope)) {
-            StorageUnit storedStorageUnit = storage.get(scope);
-            checkParentScopeIncompatibility(parentScope, storedStorageUnit);
-            checkAssetAlreadyExists(asset, storedStorageUnit);
-            storageUnit = storedStorageUnit;
+            AssetsScopeStorageUnit storedAssetsScopeStorageUnit = storage.get(scope);
+            checkParentScopeIncompatibility(parentScope, storedAssetsScopeStorageUnit);
+            checkAssetAlreadyExists(asset, storedAssetsScopeStorageUnit);
+            assetsScopeStorageUnit = storedAssetsScopeStorageUnit;
         } else {
             // create a new empty scope
             checkUnknownParentScope(parentScope);
-            storageUnit = new StorageUnit(scope, parentScope);
-            storage.put(scope, storageUnit);
+            assetsScopeStorageUnit = new AssetsScopeStorageUnit(scope, parentScope);
+            storage.put(scope, assetsScopeStorageUnit);
         }
 
         // don't add to the scope a null or invalid asset
         if(asset != null && asset.isValid()) {
-            storageUnit.assets.add(asset);
+            assetsScopeStorageUnit.assets.add(asset);
         }
     }
 
@@ -122,10 +122,10 @@ public final class AssetStorage {
      * Check if an asset is already in this scope (same name)
      * 
      * @param asset asset to check
-     * @param storedStorageUnit stored storage unit
+     * @param storedAssetsScopeStorageUnit stored storage unit
      */
-    private static void checkAssetAlreadyExists(Asset asset, StorageUnit storedStorageUnit) {
-        if(storedStorageUnit.assets.contains(asset)) {
+    private static void checkAssetAlreadyExists(Asset asset, AssetsScopeStorageUnit storedAssetsScopeStorageUnit) {
+        if(storedAssetsScopeStorageUnit.assets.contains(asset)) {
             throw new AssetAlreadyExistsInScopeException(asset);
         }
     }
@@ -134,11 +134,11 @@ public final class AssetStorage {
      * Check if an asset don't have a couple of Scope/Parent Scope identical to the couple Scope/Another parent scope
      *
      * @param parentScope parent scope to check
-     * @param storedStorageUnit stored storage unit
+     * @param storedAssetsScopeStorageUnit stored storage unit
      */
-    private static void checkParentScopeIncompatibility(String parentScope, StorageUnit storedStorageUnit) {
-        if(!storedStorageUnit.parentScope.equalsIgnoreCase(parentScope)) {
-            throw new ParentScopeIncompatibilityException(storedStorageUnit.scope, storedStorageUnit.parentScope);
+    private static void checkParentScopeIncompatibility(String parentScope, AssetsScopeStorageUnit storedAssetsScopeStorageUnit) {
+        if(!storedAssetsScopeStorageUnit.parentScope.equalsIgnoreCase(parentScope)) {
+            throw new ParentScopeIncompatibilityException(storedAssetsScopeStorageUnit.scope, storedAssetsScopeStorageUnit.parentScope);
         }
     }
 
@@ -155,7 +155,7 @@ public final class AssetStorage {
         List<Asset> assets = new ArrayList<Asset>();
         for(String scope:scopes) {
             List<Asset> scopedAssets = new ArrayList<Asset>();
-            StorageUnit assetScope = storage.get(scope);
+            AssetsScopeStorageUnit assetScope = storage.get(scope);
             if(assetScope != null) {
                 scopedAssets.addAll(assetScope.assets);
                 if(!DETACH_PARENT_SCOPE.equalsIgnoreCase(assetScope.parentScope)) {
@@ -174,7 +174,7 @@ public final class AssetStorage {
      * Clear the storage unit from all stored assets
      */
     public static void clearAll() {
-        storage = new HashMap<String, StorageUnit>();
-        storage.put(ROOT_SCOPE, new StorageUnit(ROOT_SCOPE, ROOT_SCOPE));
+        storage = new HashMap<String, AssetsScopeStorageUnit>();
+        storage.put(ROOT_SCOPE, new AssetsScopeStorageUnit(ROOT_SCOPE, ROOT_SCOPE));
     }
 }

@@ -8,7 +8,7 @@ import java.util.List;
 /**
  * A container of a list of assets associated to a scope and his parent scope
  */
-class StorageUnit {
+class AssetsScopeStorageUnit {
     String scope;
     String parentScope;
     List<Asset> assets;
@@ -18,7 +18,7 @@ class StorageUnit {
      * @param scope scope of assets
      * @param parentScope parent of scope
      */
-    public StorageUnit(String scope, String parentScope) {
+    public AssetsScopeStorageUnit(String scope, String parentScope) {
         this.scope = scope;
         this.parentScope = parentScope;
         this.assets = new ArrayList<Asset>();

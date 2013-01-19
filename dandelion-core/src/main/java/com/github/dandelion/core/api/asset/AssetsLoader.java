@@ -5,6 +5,6 @@ import java.util.List;
 /**
  * Public Api to define a Loader for Asset
  */
-public interface AssetLoader {
+public interface AssetsLoader {
     List<AssetsComponent> loadAssets();
 }
