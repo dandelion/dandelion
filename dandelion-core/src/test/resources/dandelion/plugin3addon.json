@@ -1,0 +1,13 @@
+{
+    "scope" : "plugin3addon",
+    "parent" : "plugin3",
+	"assets": [
+			{
+				"name" : "asset3addon",
+				"version" : "1",
+				"type" : "js",
+				"remote" : "remoteURL",
+				"local" : "localPath"
+			}
+    ]
+}

@@ -84,7 +84,7 @@ public class ClassPathResource implements Comparable<ClassPathResource> {
 
             return FileCopyUtils.copyToString(reader);
         } catch (IOException e) {
-            throw DandelionException.wrap(e, ClassPathResourceError.UNABLE_TO_LOAD_RESOURCE)
+            throw DandelionException.wrap(e, ClassPathResourceError.UNABLE_TO_LOAD_RESOURCE_WITH_ENCODING)
                     .set("location", location).set("encoding", encoding);
         }
     }

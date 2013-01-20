@@ -12,43 +12,41 @@ import org.codehaus.jackson.map.ObjectMapper;
 
 import com.github.dandelion.core.utils.ClassPathResource;
 import com.github.dandelion.core.utils.scanner.ClassPathScanner;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Assets Loader for JSON definition
  */
 public class AssetsJsonLoader implements AssetsLoader {
+    // Logger
+    private static final Logger LOG = LoggerFactory.getLogger(AssetsJsonLoader.class);
 	private ObjectMapper mapper = new ObjectMapper();
 
 	/**
 	 * Load assets from 'dandelion/*.json' files by Classpath Scanning.
 	 */
 	public List<AssetsComponent> loadAssets() {
-
-		// Get current classloader
 		ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
 		
 		mapper.configure(JsonParser.Feature.ALLOW_COMMENTS, true);
         List<AssetsComponent> assetsComponentList = new ArrayList<AssetsComponent>();
 		try {
-			System.out.println("=================================");
 			ClassPathResource[] resources = new ClassPathScanner().scanForResources("dandelion", "", "json");
 			System.out.println("resources = " + resources);
 			for(ClassPathResource resource : resources){
-				System.out.println("Location = " + resource.getLocation());
+				LOG.debug("Location = {}", resource.getLocation());
 			}
 
 			for (ClassPathResource resource : resources) {
-				// Get default file as stream
 				InputStream configFileStream = classLoader.getResourceAsStream(resource.getLocation());
 
 				AssetsComponent assetsComponent = mapper.readValue(configFileStream, AssetsComponent.class);
-				System.out.println("found " + assetsComponent);
+				LOG.debug("found {}", assetsComponent);
                 assetsComponentList.add(assetsComponent);
 			}
-		} catch (ZipException e) {
-			e.printStackTrace();
 		} catch (IOException e) {
-			e.printStackTrace();
+            LOG.error(e.getMessage(), e);
 		}
         return assetsComponentList;
 	}

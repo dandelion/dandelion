@@ -34,8 +34,10 @@
       <commons-beanutils.version>1.8.3</commons-beanutils.version>
       <jackson.version>1.9.9</jackson.version>
       <servlet.version>3.0.1</servlet.version>
-      <slf4j.version>1.6.4</slf4j.version>
-      <junit.version>4.10</junit.version>
+      <slf4j.version>1.7.2</slf4j.version>
+      <logback.version>1.0.9</logback.version>
+      <junit.version>4.11</junit.version>
+      <festassert.version>1.4</festassert.version>
 
       <!-- Maven plugins -->
       <maven.compiler.version>2.3.2</maven.compiler.version>
@@ -95,7 +97,11 @@
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
             <version>${slf4j.version}</version>
-            <scope>compile</scope>
+         </dependency>
+         <dependency>
+              <groupId>ch.qos.logback</groupId>
+              <artifactId>logback-classic</artifactId>
+              <version>${logback.version}</version>
          </dependency>
 
          <dependency>
@@ -104,6 +110,12 @@
             <version>${junit.version}</version>
             <scope>test</scope>
          </dependency>
+          <dependency>
+              <groupId>org.easytesting</groupId>
+              <artifactId>fest-assert</artifactId>
+              <version>${festassert.version}</version>
+              <scope>test</scope>
+          </dependency>
 
       </dependencies>
    </dependencyManagement>

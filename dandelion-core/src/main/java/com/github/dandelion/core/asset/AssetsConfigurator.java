@@ -7,6 +7,8 @@ import com.github.dandelion.core.api.asset.AssetsLoader;
 import com.github.dandelion.core.api.asset.AssetsComponent;
 import com.github.dandelion.core.utils.ClassPathResource;
 import com.github.dandelion.core.utils.scanner.ClassPathScanner;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.*;
@@ -30,6 +32,8 @@ import static com.github.dandelion.core.asset.AssetsStorage.ROOT_SCOPE;
  *
  */
 public class AssetsConfigurator {
+    // Logger
+    private static final Logger LOG = LoggerFactory.getLogger(AssetsConfigurator.class);
     static final AssetsConfigurator assetsConfigurator = new AssetsConfigurator();
 
     static {
@@ -78,26 +82,24 @@ public class AssetsConfigurator {
                         Class<AssetsLoader> cal = (Class<AssetsLoader>) classLoader.loadClass(assetsLoaderClassname);
                         assetsLoader = cal.newInstance();
                     } catch (ClassCastException e) {
-                        System.out.println("the 'assetsLoader["+ assetsLoaderClassname
-                                +"]' must implements 'com.github.dandelion.core.api.asset.AssetsLoader'");
+                        LOG.warn("the 'assetsLoader[{}]' must implements '{}'",
+                                assetsLoaderClassname, AssetsLoader.class.getCanonicalName());
                         return;
                     } catch (InstantiationException e) {
-                        System.out.println("the 'assetsLoader[" + assetsLoaderClassname
-                                + "]' should authorize instantiation");
+                        LOG.warn("the 'assetsLoader[{}]' should authorize instantiation", assetsLoaderClassname);
                         return;
                     } catch (IllegalAccessException e) {
-                        System.out.println("the 'assetsLoader[" + assetsLoaderClassname
-                                + "]' should authorize access from com.github.dandelion.core.asset.AssetsConfigurator");
+                        LOG.warn("the 'assetsLoader[{}]' should authorize access from '{}'",
+                                assetsLoaderClassname, AssetsConfigurator.class.getCanonicalName());
                         return;
                     } catch (ClassNotFoundException e) {
-                        System.out.println("the 'assetsLoader[" + assetsLoaderClassname
-                                + "]' must exists in the classpath");
+                        LOG.warn("the 'assetsLoader[{}]' must exists in the classpath", assetsLoaderClassname);
                         return;
                     }
                 }
             }
         } catch (IOException e) {
-            System.out.println("Assets configurator can't access/read to the file 'dandelion/dandelion.properties'");
+            LOG.error("Assets configurator can't access/read to the file 'dandelion/dandelion.properties'");
         }
 
         setDefaults();
@@ -206,29 +208,15 @@ public class AssetsConfigurator {
      * @param parentScope parent of this scope
      */
     private void storeAsset(Asset asset, String scope, String parentScope) {
-        System.out.println("Store " + asset.toString()
-                + " in scope '" + scope + "/"+ parentScope+"'");
+        LOG.debug("Store '{}' in scope '{}/{}'", asset, scope, parentScope);
         try {
             AssetsStorage.store(asset, scope, parentScope);
         } catch (DandelionException e) {
-            if(e.getErrorCode() == AssetsStorageError.ASSET_ALREADY_EXISTS_IN_SCOPE) {
-                System.out.println("Asset already exists, original asset -> "
-                            + e.get("originalAsset"));
-            } else if(e.getErrorCode() == AssetsStorageError.PARENT_SCOPE_INCOMPATIBILITY) {
-                System.out.println("Incompatibility with Scope/Parent Scope -> '"
-                        + e.get("scope") + "/" + e.get("parentScope") + "'");
-            } else if(e.getErrorCode() == AssetsStorageError.DETACH_SCOPE_NOT_ALLOWED) {
-                System.out.println("Not allowed usage of the detached scope "
-                        + e.get("detachScope") + " as scope of asset");
-            } else if(e.getErrorCode() == AssetsStorageError.UNDEFINED_PARENT_SCOPE) {
-                System.out.println("Use of a undefined scope as a parent -> '"
-                        + parentScope + "'");
-                System.out.println("To avoid any configuration problem, a scope '"
-                        + parentScope + "' with no assets is created");
+            LOG.debug(e.getLocalizedMessage());
+            if(e.getErrorCode() == AssetsStorageError.UNDEFINED_PARENT_SCOPE) {
+                LOG.debug("To avoid any configuration problem, a scope '{}' with no assets is created", parentScope);
                 AssetsStorage.store(null, parentScope);
                 storeAsset(asset, scope, parentScope);
-            } else {
-                throw e;
             }
         }
     }
