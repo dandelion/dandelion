@@ -14,12 +14,6 @@
    <name>Dandelion :: Core</name>
 
    <dependencies>
-      <dependency>
-          <groupId>com.github.dandelion</groupId>
-          <artifactId>dandelion-api</artifactId>
-          <version>${project.version}</version>
-      </dependency>
-
       <!-- Json simple -->
       <dependency>
          <groupId>com.googlecode.json-simple</groupId>
