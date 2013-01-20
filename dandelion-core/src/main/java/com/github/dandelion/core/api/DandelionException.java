@@ -1,7 +1,10 @@
 package com.github.dandelion.core.api;
 
+import java.text.MessageFormat;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.ResourceBundle;
 
 /**
  * Exception for Dandelion domain
@@ -14,7 +17,7 @@ public class DandelionException extends RuntimeException {
     /**
      * Parameters of this Exception
      */
-    private Map<String, Object> parameters = new HashMap<String, Object>();
+    private Map<String, Object> parameters = new LinkedHashMap<String, Object>();
 
     /**
      * @param errorCode Domain-Specific Error
@@ -22,6 +25,15 @@ public class DandelionException extends RuntimeException {
     public DandelionException(DandelionError errorCode) {
         super();
         this.errorCode = errorCode;
+    }
+
+    /**
+     * Create the Bundle Key for a Dandelion Error
+     * @param error Dandelion Error
+     * @return a valid Bundle Key
+     */
+    public static String createBundleKey(DandelionError error) {
+        return error.getClass().getSimpleName() + "__" + error.getNumber();
     }
 
     /**
@@ -80,5 +92,18 @@ public class DandelionException extends RuntimeException {
         } else {
             return new DandelionException(exception.getMessage(), exception, error);
         }
+    }
+
+    /**
+     * @return the localized Message for Dandelion Error
+     */
+    @Override
+    public String getLocalizedMessage() {
+        if (errorCode == null) {
+            return null;
+        }
+        String key = createBundleKey(errorCode);
+        ResourceBundle bundle = ResourceBundle.getBundle("com.github.dandelion.core.api.exceptions");
+        return MessageFormat.format(bundle.getString(key), parameters.values());
     }
 }

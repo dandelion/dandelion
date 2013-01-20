@@ -211,24 +211,12 @@ public class AssetsConfigurator {
         try {
             AssetsStorage.store(asset, scope, parentScope);
         } catch (DandelionException e) {
-            if(e.getErrorCode() == AssetsStorageError.ASSET_ALREADY_EXISTS_IN_SCOPE) {
-                System.out.println("Asset already exists, original asset -> "
-                            + e.get("originalAsset"));
-            } else if(e.getErrorCode() == AssetsStorageError.PARENT_SCOPE_INCOMPATIBILITY) {
-                System.out.println("Incompatibility with Scope/Parent Scope -> '"
-                        + e.get("scope") + "/" + e.get("parentScope") + "'");
-            } else if(e.getErrorCode() == AssetsStorageError.DETACH_SCOPE_NOT_ALLOWED) {
-                System.out.println("Not allowed usage of the detached scope "
-                        + e.get("detachScope") + " as scope of asset");
-            } else if(e.getErrorCode() == AssetsStorageError.UNDEFINED_PARENT_SCOPE) {
-                System.out.println("Use of a undefined scope as a parent -> '"
-                        + parentScope + "'");
+            System.out.println(e.getLocalizedMessage());
+            if(e.getErrorCode() == AssetsStorageError.UNDEFINED_PARENT_SCOPE) {
                 System.out.println("To avoid any configuration problem, a scope '"
                         + parentScope + "' with no assets is created");
                 AssetsStorage.store(null, parentScope);
                 storeAsset(asset, scope, parentScope);
-            } else {
-                throw e;
             }
         }
     }
