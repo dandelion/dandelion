@@ -1,6 +1,8 @@
 package com.github.dandelion.core.asset;
 
+import com.github.dandelion.core.api.DandelionException;
 import com.github.dandelion.core.api.asset.Asset;
+import com.github.dandelion.core.api.asset.AssetsStorageError;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -44,12 +46,6 @@ public final class AssetsStorage {
      * Store an Asset in Root Scope as his scope
      *
      * @param asset asset to store
-     * @throws ParentScopeIncompatibilityException
-     *         An asset can't have a couple of Scope/Parent Scope when his scope is already associated to another parent scope
-     * @throws AssetAlreadyExistsInScopeException
-     *         An asset can't be add twice in the same scope (same name)
-     * @throws UndefinedParentScopeException
-     *         An asset can't have a parent scope who don't already exists
      */
     public static void store(Asset asset) {
         store(asset, ROOT_SCOPE, ROOT_SCOPE);
@@ -60,12 +56,6 @@ public final class AssetsStorage {
      *
      * @param asset asset to store
      * @param scope scope of this asset
-     * @throws ParentScopeIncompatibilityException
-     *         An asset can't have a couple of Scope/Parent Scope when his scope is already associated to another parent scope
-     * @throws AssetAlreadyExistsInScopeException
-     *         An asset can't be add twice in the same scope (same name)
-     * @throws UndefinedParentScopeException
-     *         An asset can't have a parent scope who don't already exists
      */
     public static void store(Asset asset, String scope) {
         store(asset, scope, ROOT_SCOPE);
@@ -77,16 +67,11 @@ public final class AssetsStorage {
      * @param asset asset to store
      * @param scope scope of this asset
      * @param parentScope parent of the scope
-     * @throws ParentScopeIncompatibilityException
-     *         An asset can't have a couple of Scope/Parent Scope when his scope is already associated to another parent scope
-     * @throws AssetAlreadyExistsInScopeException
-     *         An asset can't be add twice in the same scope (same name)
-     * @throws UndefinedParentScopeException
-     *         An asset can't have a parent scope who don't already exists
      */
     public static void store(Asset asset, String scope, String parentScope) {
         if(scope.equalsIgnoreCase(DETACH_PARENT_SCOPE)) {
-            throw new DetachScopeNotAllowedException(DETACH_PARENT_SCOPE);
+            throw new DandelionException(AssetsStorageError.DETACH_SCOPE_NOT_ALLOWED)
+                    .set("detachScope", DETACH_PARENT_SCOPE);
         }
         AssetsScopeStorageUnit assetsScopeStorageUnit;
         if(storage.containsKey(scope)) {
@@ -114,7 +99,8 @@ public final class AssetsStorage {
      */
     private static void checkUnknownParentScope(String parentScope) {
         if(!storage.containsKey(parentScope) && !DETACH_PARENT_SCOPE.equalsIgnoreCase(parentScope)) {
-            throw new UndefinedParentScopeException();
+            throw new DandelionException(AssetsStorageError.UNDEFINED_PARENT_SCOPE)
+                    .set("parentScope", parentScope);
         }
     }
 
@@ -126,7 +112,8 @@ public final class AssetsStorage {
      */
     private static void checkAssetAlreadyExists(Asset asset, AssetsScopeStorageUnit storedAssetsScopeStorageUnit) {
         if(storedAssetsScopeStorageUnit.assets.contains(asset)) {
-            throw new AssetAlreadyExistsInScopeException(asset);
+            throw new DandelionException(AssetsStorageError.ASSET_ALREADY_EXISTS_IN_SCOPE)
+                    .set("originalAsset", asset);
         }
     }
 
@@ -138,7 +125,9 @@ public final class AssetsStorage {
      */
     private static void checkParentScopeIncompatibility(String parentScope, AssetsScopeStorageUnit storedAssetsScopeStorageUnit) {
         if(!storedAssetsScopeStorageUnit.parentScope.equalsIgnoreCase(parentScope)) {
-            throw new ParentScopeIncompatibilityException(storedAssetsScopeStorageUnit.scope, storedAssetsScopeStorageUnit.parentScope);
+            throw new DandelionException(AssetsStorageError.PARENT_SCOPE_INCOMPATIBILITY)
+                    .set("scope", storedAssetsScopeStorageUnit.scope)
+                    .set("parentScope", storedAssetsScopeStorageUnit.parentScope);
         }
     }
 

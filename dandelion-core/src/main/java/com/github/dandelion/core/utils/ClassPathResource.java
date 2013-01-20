@@ -10,6 +10,7 @@ import java.net.URLDecoder;
 import java.nio.charset.Charset;
 
 import com.github.dandelion.core.api.DandelionException;
+import com.github.dandelion.core.api.utils.ClassPathResourceError;
 
 /**
  * A resource on the classpath.
@@ -44,12 +45,12 @@ public class ClassPathResource implements Comparable<ClassPathResource> {
     public String getLocationOnDisk() {
         URL url = getUrl();
         if (url == null) {
-            throw new DandelionException("Unable to location resource on disk: " + location);
+            throw new DandelionException(ClassPathResourceError.UNABLE_TO_LOCATION_RESOURCE_ON_DISK).set("location", location);
         }
         try {
             return URLDecoder.decode(url.getPath(), "UTF-8");
         } catch (UnsupportedEncodingException e) {
-            throw new DandelionException("Unknown encoding: UTF-8", e);
+            throw DandelionException.wrap(e, ClassPathResourceError.UNKNOWN_ENCODING).set("encoding", "UTF-8");
         }
     }
 
@@ -77,13 +78,14 @@ public class ClassPathResource implements Comparable<ClassPathResource> {
         try {
             InputStream inputStream = getClassLoader().getResourceAsStream(location);
             if (inputStream == null) {
-                throw new DandelionException("Unable to obtain inputstream for resource: " + location);
+                throw new DandelionException(ClassPathResourceError.UNABLE_TO_OBTAIN_INPUTSTREAM_FOR_RESOURCE).set("location", location);
             }
             Reader reader = new InputStreamReader(inputStream, Charset.forName(encoding));
 
             return FileCopyUtils.copyToString(reader);
         } catch (IOException e) {
-            throw new DandelionException("Unable to load resource: " + location + " (encoding: " + encoding + ")", e);
+            throw DandelionException.wrap(e, ClassPathResourceError.UNABLE_TO_LOAD_RESOURCE)
+                    .set("location", location).set("encoding", encoding);
         }
     }
 
@@ -96,11 +98,12 @@ public class ClassPathResource implements Comparable<ClassPathResource> {
         try {
             InputStream inputStream = getClassLoader().getResourceAsStream(location);
             if (inputStream == null) {
-                throw new DandelionException("Unable to obtain inputstream for resource: " + location);
+                throw new DandelionException(ClassPathResourceError.UNABLE_TO_OBTAIN_INPUTSTREAM_FOR_RESOURCE).set("location", location);
             }
             return FileCopyUtils.copyToByteArray(inputStream);
         } catch (IOException e) {
-            throw new DandelionException("Unable to load resource: " + location, e);
+            throw DandelionException.wrap(e, ClassPathResourceError.UNABLE_TO_LOAD_RESOURCE)
+                    .set("location", location);
         }
     }
 
