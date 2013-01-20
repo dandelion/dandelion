@@ -1,147 +1,108 @@
 package com.github.dandelion.core.asset;
 
 import com.github.dandelion.core.api.asset.Asset;
-import com.github.dandelion.core.api.asset.AssetsLoader;
+import com.github.dandelion.core.api.asset.AssetLoader;
 import com.github.dandelion.core.api.asset.AssetsComponent;
 import com.github.dandelion.core.utils.ClassPathResource;
 import com.github.dandelion.core.utils.scanner.ClassPathScanner;
 
+import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.util.*;
 
-import static com.github.dandelion.core.asset.AssetsStorage.DETACH_PARENT_SCOPE;
-import static com.github.dandelion.core.asset.AssetsStorage.ROOT_SCOPE;
+import static com.github.dandelion.core.asset.AssetStorage.DETACH_PARENT_SCOPE;
+import static com.github.dandelion.core.asset.AssetStorage.ROOT_SCOPE;
 
 /**
- * Load Assets configuration
- * <ul>
- *     <li>assetsLoader :
- *          <ul>
- *               <li>the {@link com.github.dandelion.core.api.asset.AssetsLoader}
- * found in 'dandelion/dandelion.properties' for key 'assetsLoader'</li>
- *               <li>or {@link AssetsJsonLoader} by default</li>
- *          </ul>
- *     </li>
- *     <li>assetsAccess : type of access to assets content(remote [by default], local)</li>
- * </ul>
- * Default Asset Loader is
+ * Load all assets available from Asset Default Loader<br/>
  *
+ * Default Asset Loader is
+ * <ul>
+ *     <li>the {@link AssetLoader}
+ *     found in 'dandelion/dandelion.properties' for key 'assetDefaultLoader'</li>
+ *     <li>or {@link AssetJsonLoader} by default</li>
+ * </ul>
  */
-public class AssetsConfigurator {
-    static final AssetsConfigurator assetsConfigurator = new AssetsConfigurator();
-
-    static {
-        assetsConfigurator.initialize();
-    }
-
-    AssetsLoader assetsLoader;
-    String assetsAccess;
-
+public class AssetDefaultLoader {
+    static AssetDefaultLoader defaultLoader = new AssetDefaultLoader();
+    AssetLoader assetLoader = null;
     private Map<String, List<Asset>> componentsByScope = new HashMap<String, List<Asset>>();
     private Map<String, List<String>> scopesByParentScope = new HashMap<String, List<String>>();
     private Map<String, String> parentScopesByScope = new HashMap<String, String>();
 
-    private AssetsConfigurator() {
+    private AssetDefaultLoader() {
     }
 
     /**
-     * @return the Assets configurator instance
-     */
-    public static AssetsConfigurator getInstance() {
-        return assetsConfigurator;
-    }
-
-    /**
-     * Initialization of Assets Configurator on application load
+     * Initialization of Asset Default Loader on application load
      *
      * @throws IOException if a I/O error appends when 'dandelion/dandelion.properties' is loaded
      */
-    void initialize() {
-        try {
-            ClassPathResource[] resources = new ClassPathScanner().scanForResources("dandelion", "dandelion", "properties");
+    @PostConstruct
+    void initialize() throws IOException {
+        ClassPathResource[] resources = new ClassPathScanner().scanForResources("dandelion", "dandelion.properties", "dandelion.properties");
 
-            if(resources.length > 1) {
-                throw new IllegalStateException("only one file 'dandelion/dandelion.properties' can exists");
-            } else if(resources.length == 1) {
-                ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+        if(resources.length == 0) {
+            assetLoader = new AssetJsonLoader();
+        } else if(resources.length > 0) {
+            throw new IllegalStateException("only one file 'dandelion/dandelion.properties' can exists");
+        } else {
+            ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
 
-                Properties properties = new Properties();
-                properties.load(classLoader.getResourceAsStream(resources[0].getLocation()));
+            Properties properties = new Properties();
+            properties.load(classLoader.getResourceAsStream(resources[0].getLocation()));
 
-                assetsAccess = properties.getProperty("assetsAccess");
-
-                String assetsLoaderClassname = properties.getProperty("assetsLoader");
-                if(assetsLoaderClassname != null) {
-                    try {
-                        Class<AssetsLoader> cal = (Class<AssetsLoader>) classLoader.loadClass(assetsLoaderClassname);
-                        assetsLoader = cal.newInstance();
-                    } catch (ClassCastException e) {
-                        System.out.println("the 'assetsLoader["+ assetsLoaderClassname
-                                +"]' must implements 'com.github.dandelion.core.api.asset.AssetsLoader'");
-                        return;
-                    } catch (InstantiationException e) {
-                        System.out.println("the 'assetsLoader[" + assetsLoaderClassname
-                                + "]' should authorize instantiation");
-                        return;
-                    } catch (IllegalAccessException e) {
-                        System.out.println("the 'assetsLoader[" + assetsLoaderClassname
-                                + "]' should authorize access from com.github.dandelion.core.asset.AssetsConfigurator");
-                        return;
-                    } catch (ClassNotFoundException e) {
-                        System.out.println("the 'assetsLoader[" + assetsLoaderClassname
-                                + "]' must exists in the classpath");
-                        return;
-                    }
-                }
+            String adl = properties.getProperty("assetDefaultLoader");
+            try {
+                Class<AssetLoader> cal = (Class<AssetLoader>) classLoader.loadClass(adl);
+                assetLoader = cal.newInstance();
+            } catch (ClassCastException e) {
+                System.out.println("the 'assetDefaultLoader["+ adl
+                        +"]' must implements 'com.github.dandelion.core.api.asset.AssetLoader'");
+                return;
+            } catch (InstantiationException e) {
+                System.out.println("the 'assetDefaultLoader[" + adl
+                        + "]' should authorize instantiation");
+                return;
+            } catch (IllegalAccessException e) {
+                System.out.println("the 'assetDefaultLoader[" + adl
+                        + "]' should authorize access from com.github.dandelion.core.asset.AssetDefaultLoader");
+                return;
+            } catch (ClassNotFoundException e) {
+                System.out.println("the 'assetDefaultLoader[" + adl
+                        + "]' must exists in the classpath");
+                return;
             }
-        } catch (IOException e) {
-            System.out.println("Assets configurator can't access/read to the file 'dandelion/dandelion.properties'");
         }
 
-        setDefaults();
-        processAssetsLoading();
+        if(assetLoader == null){
+        	assetLoader = new AssetJsonLoader();
+        }
+        
+        process();
     }
 
     /**
-     * Set the default configuration when it's needed
+     * Process to the asset load from defined asset loader
      */
-    void setDefaults() {
-        if(assetsLoader == null) {
-            assetsLoader = new AssetsJsonLoader();
-        }
-        if(assetsAccess == null || assetsAccess.isEmpty()) {
-            assetsAccess = "remote";
-        }
-    }
-
-    /**
-     * Process to the assets loading from defined asset loader
-     */
-    void processAssetsLoading() {
-        if(assetsLoader == null) {
+    void process() {
+        if(assetLoader == null) {
             throw new IllegalStateException("a asset loader must be define");
         }
 
-        prepareAssetsLoading(assetsLoader.loadAssets());
+        prepareAssetsStorage(assetLoader.loadAssets());
 
         storeAssetsFromScope(ROOT_SCOPE, true);
         storeAssetsFromScope(DETACH_PARENT_SCOPE, true);
 
-        clearAssetsProcess();
+        clearAll();
     }
 
     /**
-     * Prepare Assets Loading by
-     *
-     * <ul>
-     *     <li>link a scope to all his assets</li>
-     *     <li>link a scope to his parent scope</li>
-     *     <li>link a parent scope to all his scopes</li>
-     * </ul>
-     *
+     * Prepare Assets storage
      * @param components components to analyze
      */
-    private void prepareAssetsLoading(List<AssetsComponent> components) {
+    private void prepareAssetsStorage(List<AssetsComponent> components) {
         for(AssetsComponent component:components) {
             parentScopesByScope.put(component.getScope(), component.getParent());
             if(scopesByParentScope.containsKey(component.getParent())) {
@@ -207,7 +168,7 @@ public class AssetsConfigurator {
         System.out.println("Store " + asset.toString()
                 + " in scope '" + scope + "/"+ parentScope+"'");
         try {
-            AssetsStorage.store(asset, scope, parentScope);
+            AssetStorage.store(asset, scope, parentScope);
         } catch (AssetAlreadyExistsInScopeException e) {
             System.out.println("Asset already exists, original asset -> "
                     + e.getOriginalAsset());
@@ -222,7 +183,7 @@ public class AssetsConfigurator {
                     + parentScope + "'");
             System.out.println("To avoid any configuration problem, a scope '"
                     + parentScope + "' with no assets is created");
-            AssetsStorage.store(null, parentScope);
+            AssetStorage.store(null, parentScope);
             storeAsset(asset, scope, parentScope);
         }
     }
@@ -230,7 +191,7 @@ public class AssetsConfigurator {
     /**
      * Clear all working attributes
      */
-    void clearAssetsProcess() {
+    void clearAll() {
         componentsByScope.clear();
         scopesByParentScope.clear();
         parentScopesByScope.clear();

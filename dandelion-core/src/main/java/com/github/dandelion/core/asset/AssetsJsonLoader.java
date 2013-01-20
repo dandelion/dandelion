@@ -32,6 +32,7 @@ public class AssetsJsonLoader implements AssetsLoader {
 		try {
 			System.out.println("=================================");
 			ClassPathResource[] resources = new ClassPathScanner().scanForResources("dandelion", "", "json");
+			System.out.println("resources = " + resources);
 			for(ClassPathResource resource : resources){
 				System.out.println("Location = " + resource.getLocation());
 			}
