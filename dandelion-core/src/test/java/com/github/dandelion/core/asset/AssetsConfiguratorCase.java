@@ -9,8 +9,7 @@ import static org.fest.assertions.Assertions.assertThat;
 public class AssetsConfiguratorCase {
     @BeforeClass
     public static void set_up() {
-        AssetsConfiguratorBean bean = new AssetsConfiguratorBean();
-        System.out.println("Bean loaded : " + bean.getClass());
+        new AssetsConfiguratorBean();
     }
 
     @Test

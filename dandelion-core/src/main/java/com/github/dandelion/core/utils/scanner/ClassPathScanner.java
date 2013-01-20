@@ -121,7 +121,6 @@ public class ClassPathScanner {
 
         Enumeration<URL> locationsUrls = getClassLoader().getResources(location);
         if (!locationsUrls.hasMoreElements()) {
-        	System.out.println("Unable to determine URL for classpath location: " + location + " (ClassLoader: " + getClassLoader() + ")");
             LOG.debug("Unable to determine URL for classpath location: " + location + " (ClassLoader: " + getClassLoader() + ")");
         }
         while (locationsUrls.hasMoreElements()) {
