@@ -1,15 +1,23 @@
 package com.github.dandelion.core.asset;
 
+import com.github.dandelion.api.DandelionExceptionMatcher;
+import com.github.dandelion.core.api.DandelionException;
 import com.github.dandelion.core.api.asset.Asset;
 import com.github.dandelion.core.api.asset.AssetType;
+import com.github.dandelion.core.api.asset.AssetsStorageError;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 import static com.github.dandelion.core.asset.AssetsStorage.assetsFor;
 import static com.github.dandelion.core.asset.AssetsStorage.store;
 import static org.fest.assertions.Assertions.assertThat;
 
 public class AssetsStorageCase {
+    @Rule
+    public ExpectedException expectedEx = ExpectedException.none();
+
     Asset asset = new Asset("name", "version", AssetType.js, "remote", "local");
     Asset asset2 = new Asset("name2", "version", AssetType.img, "remote", "local");
     Asset asset3 = new Asset("name3", "version", AssetType.js, "remote", "local");
@@ -70,16 +78,29 @@ public class AssetsStorageCase {
         assertThat(assetsFor("another_level")).hasSize(4).contains(asset, asset2, asset3, asset4);
     }
 
-    @Test(expected = ParentScopeIncompatibilityException.class)
+    @Test
     public void should_store_assets_with_same_scope_but_not_parent_scopes() {
+        expectedEx.expect(DandelionException.class);
+        expectedEx.expect(
+            new DandelionExceptionMatcher(AssetsStorageError.PARENT_SCOPE_INCOMPATIBILITY)
+                .set("scope", "same_scope")
+                .set("parentScope", "parent_scope")
+        );
+
         store(asset, "parent_scope");
         store(asset2, "another_parent_scope");
         store(asset3, "same_scope", "parent_scope");
         store(asset4, "same_scope", "another_parent_scope");
     }
 
-    @Test(expected = UndefinedParentScopeException.class)
+    @Test
     public void should_store_asset_with_unknown_parent_scope() {
+        expectedEx.expect(DandelionException.class);
+        expectedEx.expect(
+                new DandelionExceptionMatcher(AssetsStorageError.UNDEFINED_PARENT_SCOPE)
+                        .set("parentScope", "unknown_parent_scope")
+        );
+
         store(asset, "scope", "unknown_parent_scope");
     }
 
@@ -107,8 +128,14 @@ public class AssetsStorageCase {
         assertThat(assetsFor("override")).hasSize(1).contains(assetOverride);
     }
 
-    @Test(expected = AssetAlreadyExistsInScopeException.class)
+    @Test
     public void should_manage_conflicts_before_storage() {
+        expectedEx.expect(DandelionException.class);
+        expectedEx.expect(
+                new DandelionExceptionMatcher(AssetsStorageError.ASSET_ALREADY_EXISTS_IN_SCOPE)
+                        .set("originalAsset", asset)
+        );
+
         store(asset);
         store(assetConflict);
     }
