@@ -13,13 +13,13 @@
 
    <tag>
       <name>asset</name>
-      <tag-class>com.github.dandelion.jsp.AssetTag</tag-class>
+      <tag-class>com.github.dandelion.jsp.tag.AssetTag</tag-class>
       <body-content>empty</body-content>
       <description>Generates the HTML tags in order to have all assets loaded</description>
       <attribute>
          <name>scopes</name>
          <required>true</required>
-         <description>list of needed scopes (separated by comma)</description>
+         <description>List of requested scopes (comma separated)</description>
       </attribute>
    </tag>
 </taglib>

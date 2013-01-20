@@ -13,7 +13,8 @@ import org.slf4j.LoggerFactory;
 import com.github.dandelion.core.api.asset.Asset;
 import com.github.dandelion.core.api.tag.HtmlLink;
 import com.github.dandelion.core.api.tag.HtmlScript;
-import com.github.dandelion.core.asset.AssetStorage;
+import com.github.dandelion.core.asset.AssetsJsonLoader;
+import com.github.dandelion.core.asset.AssetsStorage;
 
 /**
  * <p>
@@ -24,7 +25,7 @@ import com.github.dandelion.core.asset.AssetStorage;
  * Usage :
  * 
  * <pre>
- * &lt;dandelion:asset scope="..." /&gt;
+ * &lt;dandelion:asset scopes="..." /&gt;
  * </pre>
  * 
  * @author Thibault Duchateau
@@ -34,7 +35,7 @@ public class AssetTag extends TagSupport {
 	private static final long serialVersionUID = -8609753777149757623L;
 	private static final Logger LOG = LoggerFactory.getLogger(AssetTag.class);
 		
-	private String scope;
+	private String scopes;
 
 	public int doStartTag() throws JspException {
 
@@ -43,25 +44,28 @@ public class AssetTag extends TagSupport {
 
 	public int doEndTag() throws JspException {
 
+		AssetsJsonLoader loader = new AssetsJsonLoader();
+		loader.loadAssets();
+		
 		// The stream to fill
 		JspWriter out = pageContext.getOut();
 
-		if (scope != null && !"".equals(scope)) {
+		if (scopes != null && !"".equals(scopes)) {
 
 			// Mode bourrin/test : j'utilise directement l'AssetStorage
-			List<Asset> assets = AssetStorage.assetsFor(scope);
-			System.out.println("scope = " + scope + ", assets = " + assets);
+			List<Asset> assets = AssetsStorage.assetsFor(scopes);
+			System.out.println("scope = " + scopes + ", assets = " + assets);
 
 			try {
 				for (Asset asset : assets) {
 					switch (asset.getType()) {
 					case css:
-						out.println(new HtmlLink(asset.getLocal()).toHtml());
+						out.println(new HtmlLink(asset.getRemote()).toHtml());
 						break;
 					case img:
 						break;
 					case js:
-						out.println(new HtmlScript(asset.getLocal()).toHtml());
+						out.println(new HtmlScript(asset.getRemote()).toHtml());
 						break;
 					default:
 						break;
@@ -81,11 +85,11 @@ public class AssetTag extends TagSupport {
 
 	// Boring stuff
 
-	public String getScope() {
-		return scope;
+	public String getScopes() {
+		return scopes;
 	}
 
-	public void setScope(String scope) {
-		this.scope = scope;
+	public void setScopes(String scope) {
+		this.scopes = scope;
 	}
 }
