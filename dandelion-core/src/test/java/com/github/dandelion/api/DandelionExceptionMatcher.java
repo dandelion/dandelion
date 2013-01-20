@@ -8,6 +8,9 @@ import org.hamcrest.Description;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Matcher for test {@link DandelionException}
+ */
 public class DandelionExceptionMatcher extends BaseMatcher {
     DandelionError error;
     private Map<String, Object> parameters = new HashMap<String, Object>();
@@ -39,9 +42,5 @@ public class DandelionExceptionMatcher extends BaseMatcher {
     public DandelionExceptionMatcher set(String field, Object value) {
         parameters.put(field, value);
         return this;
-    }
-
-    public <T> T get(String field) {
-        return (T) parameters.get(field);
     }
 }
