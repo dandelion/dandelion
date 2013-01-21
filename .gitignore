@@ -6,7 +6,5 @@ target/
 .project
 .classpath
 *.iml
-/dandelion-jsp/src/main/resources/rebel.xml
-/dandelion-thymeleaf/src/main/resources/rebel.xml
-/dandelion-api/src/main/resources/rebel.xml
-/dandelion-core/src/main/resources/rebel.xml
+
+rebel.xml
