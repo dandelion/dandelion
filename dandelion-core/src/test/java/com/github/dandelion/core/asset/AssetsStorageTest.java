@@ -36,13 +36,13 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
-import static com.github.dandelion.core.asset.AssetsStorage.assetsFor;
-import static com.github.dandelion.core.asset.AssetsStorage.store;
 import static org.fest.assertions.Assertions.assertThat;
 
-public class AssetsStorageCase {
+public class AssetsStorageTest {
     @Rule
     public ExpectedException expectedEx = ExpectedException.none();
+
+    AssetsStorage assetsStorage;
 
     Asset asset = new Asset("name", "version", AssetType.js, "remote", "local");
     Asset asset2 = new Asset("name2", "version", AssetType.img, "remote", "local");
@@ -52,56 +52,56 @@ public class AssetsStorageCase {
 
     @Before
     public void set_up() {
-        AssetsStorage.clearAll();
+        assetsStorage = new AssetsStorage();
     }
 
     @Test
     public void should_not_store_invalid_asset() {
-        store(new Asset());
+        assetsStorage.store(new Asset());
 
-        assertThat(assetsFor()).hasSize(0);
+        assertThat(assetsStorage.assetsFor()).hasSize(0);
     }
 
     @Test
     public void should_store_asset_in_default_scope() {
-        store(asset);
+        assetsStorage.store(asset);
 
-        assertThat(assetsFor("default")).hasSize(1).contains(asset);
+        assertThat(assetsStorage.assetsFor("default")).hasSize(1).contains(asset);
     }
 
     @Test
     public void should_store_assets_in_default_scope() {
-        store(asset);
-        store(asset2);
+        assetsStorage.store(asset);
+        assetsStorage.store(asset2);
 
-        assertThat(assetsFor("default")).hasSize(2).contains(asset, asset2);
+        assertThat(assetsStorage.assetsFor("default")).hasSize(2).contains(asset, asset2);
     }
 
     @Test
     public void should_access_to_assets_without_any_scope() {
-        store(asset);
-        store(asset2);
+        assetsStorage.store(asset);
+        assetsStorage.store(asset2);
 
-        assertThat(assetsFor()).hasSize(2);
+        assertThat(assetsStorage.assetsFor()).hasSize(2);
     }
 
     @Test
     public void should_store_asset_in_another_scope() {
-        store(asset);
-        store(asset2);
-        store(asset3, "another");
+        assetsStorage.store(asset);
+        assetsStorage.store(asset2);
+        assetsStorage.store(asset3, "another");
 
-        assertThat(assetsFor("another")).hasSize(3).contains(asset, asset2, asset3);
+        assertThat(assetsStorage.assetsFor("another")).hasSize(3).contains(asset, asset2, asset3);
     }
 
     @Test
     public void should_store_assets_in_another_level_scope() {
-        store(asset);
-        store(asset2);
-        store(asset3, "another");
-        store(asset4, "another_level", "another");
+        assetsStorage.store(asset);
+        assetsStorage.store(asset2);
+        assetsStorage.store(asset3, "another");
+        assetsStorage.store(asset4, "another_level", "another");
 
-        assertThat(assetsFor("another_level")).hasSize(4).contains(asset, asset2, asset3, asset4);
+        assertThat(assetsStorage.assetsFor("another_level")).hasSize(4).contains(asset, asset2, asset3, asset4);
     }
 
     @Test
@@ -113,10 +113,10 @@ public class AssetsStorageCase {
                 .set("parentScope", "parent_scope")
         );
 
-        store(asset, "parent_scope");
-        store(asset2, "another_parent_scope");
-        store(asset3, "same_scope", "parent_scope");
-        store(asset4, "same_scope", "another_parent_scope");
+        assetsStorage.store(asset, "parent_scope");
+        assetsStorage.store(asset2, "another_parent_scope");
+        assetsStorage.store(asset3, "same_scope", "parent_scope");
+        assetsStorage.store(asset4, "same_scope", "another_parent_scope");
     }
 
     @Test
@@ -127,31 +127,31 @@ public class AssetsStorageCase {
                         .set("parentScope", "unknown_parent_scope")
         );
 
-        store(asset, "scope", "unknown_parent_scope");
+        assetsStorage.store(asset, "scope", "unknown_parent_scope");
     }
 
     @Test
     public void should_manage_assets_with_different_types() {
         Asset assetDifferentType = new Asset("name", "version", AssetType.css, "remote", "local");
-        store(asset);
-        store(assetDifferentType, "differentTypes");
-        assertThat(assetsFor("differentTypes")).hasSize(2).contains(assetDifferentType);
+        assetsStorage.store(asset);
+        assetsStorage.store(assetDifferentType, "differentTypes");
+        assertThat(assetsStorage.assetsFor("differentTypes")).hasSize(2).contains(assetDifferentType);
     }
 
     @Test
     public void should_store_empty_scope_by_lazy_workaround() {
-        store(asset);
-        store(null, "empty_scope");
-        store(asset2, "not_empty_scope", "empty_scope");
-        assertThat(assetsFor("not_empty_scope")).hasSize(2).contains(asset, asset2);
+        assetsStorage.store(asset);
+        assetsStorage.store(null, "empty_scope");
+        assetsStorage.store(asset2, "not_empty_scope", "empty_scope");
+        assertThat(assetsStorage.assetsFor("not_empty_scope")).hasSize(2).contains(asset, asset2);
     }
 
     @Test
     public void should_manage_override_assets() {
         Asset assetOverride = new Asset("name", "version2", AssetType.js, "remote", "local");
-        store(asset);
-        store(assetOverride, "override");
-        assertThat(assetsFor("override")).hasSize(1).contains(assetOverride);
+        assetsStorage.store(asset);
+        assetsStorage.store(assetOverride, "override");
+        assertThat(assetsStorage.assetsFor("override")).hasSize(1).contains(assetOverride);
     }
 
     @Test
@@ -162,52 +162,52 @@ public class AssetsStorageCase {
                         .set("originalAsset", asset)
         );
 
-        store(asset);
-        store(assetConflict);
+        assetsStorage.store(asset);
+        assetsStorage.store(assetConflict);
     }
 
     @Test
     public void should_manage_conflicts_on_demand() {
-        store(asset2);
-        store(asset, "scope");
-        store(assetConflict, "another_scope");
+        assetsStorage.store(asset2);
+        assetsStorage.store(asset, "scope");
+        assetsStorage.store(assetConflict, "another_scope");
 
-        assertThat(assetsFor("scope", "another_scope")).hasSize(2).contains(asset, asset2);
+        assertThat(assetsStorage.assetsFor("scope", "another_scope")).hasSize(2).contains(asset, asset2);
     }
 
     @Test
     public void should_manage_priorities() {
         Asset assetPriority = new Asset("name", "version2", AssetType.js, "remote", "local");
 
-        store(asset);
-        store(asset4);
-        store(asset2);
-        store(asset3);
-        store(assetPriority, "scope");
+        assetsStorage.store(asset);
+        assetsStorage.store(asset4);
+        assetsStorage.store(asset2);
+        assetsStorage.store(asset3);
+        assetsStorage.store(assetPriority, "scope");
 
-        assertThat(assetsFor("scope")).hasSize(4).containsSequence(assetPriority, asset4, asset2, asset3);
+        assertThat(assetsStorage.assetsFor("scope")).hasSize(4).containsSequence(assetPriority, asset4, asset2, asset3);
     }
 
     @Test
     public void should_manage_detached_scope() {
         Asset assetWithDetachedScope = new Asset("detached", "version", AssetType.js, "remote", "local");
 
-        store(asset);
-        store(assetWithDetachedScope, "scope", "none");
+        assetsStorage.store(asset);
+        assetsStorage.store(assetWithDetachedScope, "scope", "none");
 
-        assertThat(assetsFor("scope")).hasSize(1).contains(assetWithDetachedScope);
-        assertThat(assetsFor("default", "scope")).hasSize(2).contains(assetWithDetachedScope, asset);
+        assertThat(assetsStorage.assetsFor("scope")).hasSize(1).contains(assetWithDetachedScope);
+        assertThat(assetsStorage.assetsFor("default", "scope")).hasSize(2).contains(assetWithDetachedScope, asset);
     }
 
     @Test
     public void should_detach_scope_not_override_other_assets() {
         Asset assetWithDetachedScope = new Asset("name", "version", AssetType.js, "remote", "local");
 
-        store(asset);
-        store(assetWithDetachedScope, "scope", "none");
+        assetsStorage.store(asset);
+        assetsStorage.store(assetWithDetachedScope, "scope", "none");
 
-        assertThat(assetsFor("scope")).hasSize(1).contains(assetWithDetachedScope);
-        assertThat(assetsFor("default", "scope")).hasSize(2).contains(assetWithDetachedScope, asset);
+        assertThat(assetsStorage.assetsFor("scope")).hasSize(1).contains(assetWithDetachedScope);
+        assertThat(assetsStorage.assetsFor("default", "scope")).hasSize(2).contains(assetWithDetachedScope, asset);
     }
 
     @Test
@@ -218,6 +218,6 @@ public class AssetsStorageCase {
                         .set("detachedScope", "none")
         );
 
-        store(asset, "none");
+        assetsStorage.store(asset, "none");
     }
 }

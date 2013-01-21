@@ -27,32 +27,68 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 package com.github.dandelion.core.asset;
 
-import org.fest.assertions.Assertions;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import java.util.List;
 
-import static org.fest.assertions.Assertions.assertThat;
+/**
+ * Assets API
+ */
+public final class Assets {
+    static AssetsConfigurator assetsConfigurator;
+    static AssetsStorage assetsStorage;
 
-public class AssetsConfiguratorCase {
-    @BeforeClass
-    public static void set_up() {
-        new AssetsConfiguratorBean();
+    /**
+     * Initialize Assets only if needed
+     */
+    static void initializeIfNeeded() {
+        if(assetsConfigurator == null) {
+            if(assetsStorage == null) {
+                initializeStorageIfNeeded();
+            }
+            initializeConfiguratorIfNeeded();
+        }
     }
 
-    @Test
-    public void should_load_default_json() {
-        Assertions.assertThat(AssetsStorage.assetsFor()).hasSize(0);
+    /**
+     * Initialize Assets Configurator only if needed
+     */
+    synchronized private static void initializeConfiguratorIfNeeded() {
+        if(assetsConfigurator == null) {
+            assetsConfigurator = new AssetsConfigurator(assetsStorage);
+            assetsConfigurator.initialize();
+        }
     }
 
-    @Test
-    public void should_load_other_scopes() {
-        assertThat(AssetsStorage.assetsFor("fake")).hasSize(2);
+    /**
+     * Initialize Assets Storage only if needed
+     */
+    synchronized private static void initializeStorageIfNeeded() {
+        if(assetsStorage == null) {
+            assetsStorage = new AssetsStorage();
+        }
     }
 
-    @Test
-    public void should_load_the_loading_type() {
-        assertThat(AssetsConfigurator.assetsConfigurator.assetsAccess).isEqualTo("local");
+    /**
+     * Get Source of Assets<br/>
+     *
+     * Configured by assetsSource in 'dandelion/dandelion.properties'
+     *
+     * @return source of Assets
+     */
+    public static AssetsSource getAssetsSource() {
+        initializeIfNeeded();
+        return assetsConfigurator.assetsSource;
+    }
+
+    /**
+     * Find Assets for Scopes
+     * @param scopes scopes of assets
+     * @return Assets of scopes
+     */
+    public static List<Asset> assetsFor(String ... scopes) {
+        initializeIfNeeded();
+        return assetsStorage.assetsFor(scopes);
     }
 }

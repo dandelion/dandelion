@@ -37,7 +37,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Tree Storage Units for Asset<br/>
+ * Tree Storage Units for Assets<br/>
  *
  * An asset is store by his scope.<br/>
  * All scopes have a parent except for ROOT parent (aka Root Scope).<br/>
@@ -45,9 +45,9 @@ import java.util.Map;
  */
 public final class AssetsStorage {
     /**
-     * Storage Units
+     * Assets Storage Units
      */
-    private static Map<String, AssetsScopeStorageUnit> storage;
+    private Map<String, AssetsScopeStorageUnit> storage;
 
     /**
      * Define the Root Scope string representation
@@ -59,22 +59,20 @@ public final class AssetsStorage {
      */
     public static final String DETACHED_PARENT_SCOPE = "none";
 
-    static {
-        // A empty storage is a scope 'default' with no assets
-        clearAll();
-    }
-
     /**
-     * Storage Unit Utility Class
+     * Assets Storage Utility
      */
-    private AssetsStorage() {}
+    AssetsStorage() {
+        storage = new HashMap<String, AssetsScopeStorageUnit>();
+        storage.put(ROOT_SCOPE, new AssetsScopeStorageUnit(ROOT_SCOPE, ROOT_SCOPE));
+    }
 
     /**
      * Store an Asset in Root Scope as his scope
      *
      * @param asset asset to store
      */
-    public static void store(Asset asset) {
+    public void store(Asset asset) {
         store(asset, ROOT_SCOPE, ROOT_SCOPE);
     }
 
@@ -84,7 +82,7 @@ public final class AssetsStorage {
      * @param asset asset to store
      * @param scope scope of this asset
      */
-    public static void store(Asset asset, String scope) {
+    public void store(Asset asset, String scope) {
         store(asset, scope, ROOT_SCOPE);
     }
 
@@ -95,7 +93,7 @@ public final class AssetsStorage {
      * @param scope scope of this asset
      * @param parentScope parent of the scope
      */
-    public static void store(Asset asset, String scope, String parentScope) {
+    public void store(Asset asset, String scope, String parentScope) {
         if(scope.equalsIgnoreCase(DETACHED_PARENT_SCOPE)) {
             throw new DandelionException(AssetsStorageError.DETACHED_SCOPE_NOT_ALLOWED)
                     .set("detachedScope", DETACHED_PARENT_SCOPE);
@@ -124,7 +122,7 @@ public final class AssetsStorage {
      * 
      * @param parentScope parent scope to check
      */
-    private static void checkUnknownParentScope(String parentScope) {
+    private void checkUnknownParentScope(String parentScope) {
         if(!storage.containsKey(parentScope) && !DETACHED_PARENT_SCOPE.equalsIgnoreCase(parentScope)) {
             throw new DandelionException(AssetsStorageError.UNDEFINED_PARENT_SCOPE)
                     .set("parentScope", parentScope);
@@ -137,7 +135,7 @@ public final class AssetsStorage {
      * @param asset asset to check
      * @param storedAssetsScopeStorageUnit stored storage unit
      */
-    private static void checkAssetAlreadyExists(Asset asset, AssetsScopeStorageUnit storedAssetsScopeStorageUnit) {
+    private void checkAssetAlreadyExists(Asset asset, AssetsScopeStorageUnit storedAssetsScopeStorageUnit) {
         if(storedAssetsScopeStorageUnit.assets.contains(asset)) {
             throw new DandelionException(AssetsStorageError.ASSET_ALREADY_EXISTS_IN_SCOPE)
                     .set("originalAsset", asset);
@@ -150,7 +148,7 @@ public final class AssetsStorage {
      * @param parentScope parent scope to check
      * @param storedAssetsScopeStorageUnit stored storage unit
      */
-    private static void checkParentScopeIncompatibility(String parentScope, AssetsScopeStorageUnit storedAssetsScopeStorageUnit) {
+    private void checkParentScopeIncompatibility(String parentScope, AssetsScopeStorageUnit storedAssetsScopeStorageUnit) {
         if(!storedAssetsScopeStorageUnit.parentScope.equalsIgnoreCase(parentScope)) {
             throw new DandelionException(AssetsStorageError.PARENT_SCOPE_INCOMPATIBILITY)
                     .set("scope", storedAssetsScopeStorageUnit.scope)
@@ -164,7 +162,7 @@ public final class AssetsStorage {
      * @param scopes scopes of needed assets
      * @return the list of assets for scopes
      */
-    public static List<Asset> assetsFor(String ... scopes) {
+    public List<Asset> assetsFor(String ... scopes) {
         if(scopes.length == 0
                 || (scopes.length == 1 && ROOT_SCOPE.equalsIgnoreCase(scopes[0])))
             return storage.get(ROOT_SCOPE).assets;
@@ -184,13 +182,5 @@ public final class AssetsStorage {
             }
         }
         return assets;
-    }
-
-    /**
-     * Clear the storage unit from all stored assets
-     */
-    public static void clearAll() {
-        storage = new HashMap<String, AssetsScopeStorageUnit>();
-        storage.put(ROOT_SCOPE, new AssetsScopeStorageUnit(ROOT_SCOPE, ROOT_SCOPE));
     }
 }

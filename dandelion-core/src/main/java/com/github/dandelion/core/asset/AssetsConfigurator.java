@@ -51,7 +51,7 @@ import static com.github.dandelion.core.asset.AssetsStorage.ROOT_SCOPE;
  *               <li>or {@link AssetsJsonLoader} by default</li>
  *          </ul>
  *     </li>
- *     <li>assetsAccess : type of access to assets content(remote [by default], local)</li>
+ *     <li>assetsSource : type of access to assets content(remote [by default], local)</li>
  * </ul>
  * Default Asset Loader is
  *
@@ -59,27 +59,16 @@ import static com.github.dandelion.core.asset.AssetsStorage.ROOT_SCOPE;
 public class AssetsConfigurator {
     // Logger
     private static final Logger LOG = LoggerFactory.getLogger(AssetsConfigurator.class);
-    static final AssetsConfigurator assetsConfigurator = new AssetsConfigurator();
-
-    static {
-        assetsConfigurator.initialize();
-    }
-
+    AssetsStorage assetsStorage;
     AssetsLoader assetsLoader;
-    String assetsAccess;
+    AssetsSource assetsSource;
 
     private Map<String, List<Asset>> componentsByScope = new HashMap<String, List<Asset>>();
     private Map<String, List<String>> scopesByParentScope = new HashMap<String, List<String>>();
     private Map<String, String> parentScopesByScope = new HashMap<String, String>();
 
-    private AssetsConfigurator() {
-    }
-
-    /**
-     * @return the Assets configurator instance
-     */
-    public static AssetsConfigurator getInstance() {
-        return assetsConfigurator;
+    AssetsConfigurator(AssetsStorage assetsStorage) {
+        this.assetsStorage = assetsStorage;
     }
 
     /**
@@ -99,7 +88,7 @@ public class AssetsConfigurator {
                 Properties properties = new Properties();
                 properties.load(classLoader.getResourceAsStream(resources[0].getLocation()));
 
-                assetsAccess = properties.getProperty("assetsAccess");
+                assetsSource = AssetsSource.map(properties.getProperty("assetsSource"));
 
                 String assetsLoaderClassname = properties.getProperty("assetsLoader");
                 if(assetsLoaderClassname != null) {
@@ -138,8 +127,8 @@ public class AssetsConfigurator {
         if(assetsLoader == null) {
             assetsLoader = new AssetsJsonLoader();
         }
-        if(assetsAccess == null || assetsAccess.isEmpty()) {
-            assetsAccess = "remote";
+        if(assetsSource == null) {
+            assetsSource = AssetsSource.REMOTE;
         }
     }
 
@@ -235,12 +224,12 @@ public class AssetsConfigurator {
     private void storeAsset(Asset asset, String scope, String parentScope) {
         LOG.debug("Store '{}' in scope '{}/{}'", asset, scope, parentScope);
         try {
-            AssetsStorage.store(asset, scope, parentScope);
+            assetsStorage.store(asset, scope, parentScope);
         } catch (DandelionException e) {
             LOG.debug(e.getLocalizedMessage());
             if(e.getErrorCode() == AssetsStorageError.UNDEFINED_PARENT_SCOPE) {
                 LOG.debug("To avoid any configuration problem, a scope '{}' with no assets is created", parentScope);
-                AssetsStorage.store(null, parentScope);
+                assetsStorage.store(null, parentScope);
                 storeAsset(asset, scope, parentScope);
             }
         }

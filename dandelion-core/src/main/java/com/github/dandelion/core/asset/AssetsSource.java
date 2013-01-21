@@ -27,17 +27,32 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 package com.github.dandelion.core.asset;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.junit.runners.Suite.SuiteClasses;
+/**
+ * Type of Source for Assets
+ */
+public enum AssetsSource {
+    /**
+     * Assets source in remote URL
+     */
+    REMOTE,
+    /**
+     * Assets source in local path
+     */
+    LOCAL;
 
-@RunWith(Suite.class)
-@SuiteClasses({
-    AssetsStorageCase.class,
-    AssetsConfiguratorCase.class,
-    AssetsDefaultLoaderCase.class
-})
-public class AssetsSuiteTest {
+    /**
+     * Transform a String into a AssetsSource
+     * @param assetsSource Source of Assets
+     * @return the mapped Source or <code>null</code>
+     */
+    public static AssetsSource map(String assetsSource) {
+        try {
+            return valueOf(assetsSource.toUpperCase());
+        } catch (Exception e) {
+            return null;
+        }
+    }
 }

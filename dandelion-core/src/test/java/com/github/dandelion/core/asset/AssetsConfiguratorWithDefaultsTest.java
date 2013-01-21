@@ -29,19 +29,42 @@
  */
 package com.github.dandelion.core.asset;
 
-import javax.annotation.PostConstruct;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
-/**
- * Public API of Assets Configurator accessible as a Bean
- */
-public class AssetsConfiguratorBean {
-    private AssetsConfigurator configurator;
+import static org.fest.assertions.Assertions.assertThat;
 
-    public AssetsConfiguratorBean() {
+public class AssetsConfiguratorWithDefaultsTest {
+    static AssetsConfigurator assetsConfigurator;
+
+    @BeforeClass
+    public static void set_up() {
+        assetsConfigurator = new AssetsConfigurator(new AssetsStorage());
+
+        // clean loaded configuration
+        assetsConfigurator.assetsLoader = null;
+        assetsConfigurator.assetsSource = null;
+
+        // simulate Default configuration
+        assetsConfigurator.setDefaults();
+        assetsConfigurator.processAssetsLoading();
     }
 
-    @PostConstruct
-    void init() {
-        configurator = AssetsConfigurator.getInstance();
+    @Test
+    public void should_load_default_json() {
+        assertThat(assetsConfigurator.assetsStorage.assetsFor()).hasSize(1);
+    }
+
+    @Test
+    public void should_load_other_scopes() {
+        assertThat(assetsConfigurator.assetsStorage.assetsFor("plugin1")).hasSize(3);
+        assertThat(assetsConfigurator.assetsStorage.assetsFor("plugin2")).hasSize(2);
+        assertThat(assetsConfigurator.assetsStorage.assetsFor("plugin1addon")).hasSize(4);
+        assertThat(assetsConfigurator.assetsStorage.assetsFor("plugin1addon", "plugin2")).hasSize(5);
+    }
+
+    @Test
+    public void should_load_the_default_loading_type() {
+        assertThat(assetsConfigurator.assetsSource).isEqualTo(AssetsSource.REMOTE);
     }
 }
