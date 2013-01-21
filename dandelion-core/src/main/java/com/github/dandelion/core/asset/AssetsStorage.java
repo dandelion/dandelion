@@ -57,9 +57,9 @@ public final class AssetsStorage {
     public static final String ROOT_SCOPE = "default";
 
     /**
-     * Define the Detach Scope string representation
+     * Define the Detached Scope string representation
      */
-    public static final String DETACH_PARENT_SCOPE = "none";
+    public static final String DETACHED_PARENT_SCOPE = "none";
 
     static {
         // A empty storage is a scope 'default' with no assets
@@ -98,9 +98,9 @@ public final class AssetsStorage {
      * @param parentScope parent of the scope
      */
     public static void store(Asset asset, String scope, String parentScope) {
-        if(scope.equalsIgnoreCase(DETACH_PARENT_SCOPE)) {
-            throw new DandelionException(AssetsStorageError.DETACH_SCOPE_NOT_ALLOWED)
-                    .set("detachScope", DETACH_PARENT_SCOPE);
+        if(scope.equalsIgnoreCase(DETACHED_PARENT_SCOPE)) {
+            throw new DandelionException(AssetsStorageError.DETACHED_SCOPE_NOT_ALLOWED)
+                    .set("detachedScope", DETACHED_PARENT_SCOPE);
         }
         AssetsScopeStorageUnit assetsScopeStorageUnit;
         if(storage.containsKey(scope)) {
@@ -127,7 +127,7 @@ public final class AssetsStorage {
      * @param parentScope parent scope to check
      */
     private static void checkUnknownParentScope(String parentScope) {
-        if(!storage.containsKey(parentScope) && !DETACH_PARENT_SCOPE.equalsIgnoreCase(parentScope)) {
+        if(!storage.containsKey(parentScope) && !DETACHED_PARENT_SCOPE.equalsIgnoreCase(parentScope)) {
             throw new DandelionException(AssetsStorageError.UNDEFINED_PARENT_SCOPE)
                     .set("parentScope", parentScope);
         }
@@ -176,7 +176,7 @@ public final class AssetsStorage {
             AssetsScopeStorageUnit assetScope = storage.get(scope);
             if(assetScope != null) {
                 scopedAssets.addAll(assetScope.assets);
-                if(!DETACH_PARENT_SCOPE.equalsIgnoreCase(assetScope.parentScope)) {
+                if(!DETACHED_PARENT_SCOPE.equalsIgnoreCase(assetScope.parentScope)) {
                     List<Asset> parentAssets = assetsFor(assetScope.parentScope);
                     parentAssets.removeAll(scopedAssets);
                     scopedAssets.addAll(parentAssets);

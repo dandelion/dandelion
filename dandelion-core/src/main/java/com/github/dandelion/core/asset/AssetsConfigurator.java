@@ -42,7 +42,7 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.util.*;
 
-import static com.github.dandelion.core.asset.AssetsStorage.DETACH_PARENT_SCOPE;
+import static com.github.dandelion.core.asset.AssetsStorage.DETACHED_PARENT_SCOPE;
 import static com.github.dandelion.core.asset.AssetsStorage.ROOT_SCOPE;
 
 /**
@@ -158,7 +158,7 @@ public class AssetsConfigurator {
         prepareAssetsLoading(assetsLoader.loadAssets());
 
         storeAssetsFromScope(ROOT_SCOPE, true);
-        storeAssetsFromScope(DETACH_PARENT_SCOPE, true);
+        storeAssetsFromScope(DETACHED_PARENT_SCOPE, true);
 
         clearAssetsProcess();
     }

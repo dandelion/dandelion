@@ -192,24 +192,35 @@ public class AssetsStorageCase {
     }
 
     @Test
-    public void should_manage_detach_scope() {
-        Asset assetWithDetachScope = new Asset("detach", "version", AssetType.js, "remote", "local");
+    public void should_manage_detached_scope() {
+        Asset assetWithDetachedScope = new Asset("detached", "version", AssetType.js, "remote", "local");
 
         store(asset);
-        store(assetWithDetachScope, "scope", "none");
+        store(assetWithDetachedScope, "scope", "none");
 
-        assertThat(assetsFor("scope")).hasSize(1).contains(assetWithDetachScope);
-        assertThat(assetsFor("default", "scope")).hasSize(2).contains(assetWithDetachScope, asset);
+        assertThat(assetsFor("scope")).hasSize(1).contains(assetWithDetachedScope);
+        assertThat(assetsFor("default", "scope")).hasSize(2).contains(assetWithDetachedScope, asset);
     }
 
     @Test
     public void should_detach_scope_not_override_other_assets() {
-        Asset assetWithDetachScope = new Asset("name", "version", AssetType.js, "remote", "local");
+        Asset assetWithDetachedScope = new Asset("name", "version", AssetType.js, "remote", "local");
 
         store(asset);
-        store(assetWithDetachScope, "scope", "none");
+        store(assetWithDetachedScope, "scope", "none");
 
-        assertThat(assetsFor("scope")).hasSize(1).contains(assetWithDetachScope);
-        assertThat(assetsFor("default", "scope")).hasSize(2).contains(assetWithDetachScope, asset);
+        assertThat(assetsFor("scope")).hasSize(1).contains(assetWithDetachedScope);
+        assertThat(assetsFor("default", "scope")).hasSize(2).contains(assetWithDetachedScope, asset);
+    }
+
+    @Test
+    public void should_not_allow_the_usage_of_detached_scope_as_a_scope() {
+        expectedEx.expect(DandelionException.class);
+        expectedEx.expect(
+                new DandelionExceptionMatcher(AssetsStorageError.DETACHED_SCOPE_NOT_ALLOWED)
+                        .set("detachedScope", "none")
+        );
+
+        store(asset, "none");
     }
 }

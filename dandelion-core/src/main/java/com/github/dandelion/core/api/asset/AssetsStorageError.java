@@ -43,7 +43,7 @@ public enum AssetsStorageError implements DandelionError {
      * An asset can't be add with 'Detached Scope' as his scope,
      * 'Detached Scope' is only allowed as a Parent Scope
      */
-    DETACH_SCOPE_NOT_ALLOWED(101),
+    DETACHED_SCOPE_NOT_ALLOWED(101),
     /**
      * An asset can't have a couple of Scope/Parent Scope
      * when his scope is already associated to another parent scope
