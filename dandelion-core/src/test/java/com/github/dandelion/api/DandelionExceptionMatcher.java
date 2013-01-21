@@ -29,8 +29,8 @@
  */
 package com.github.dandelion.api;
 
-import com.github.dandelion.core.api.DandelionError;
-import com.github.dandelion.core.api.DandelionException;
+import com.github.dandelion.core.DandelionError;
+import com.github.dandelion.core.DandelionException;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 

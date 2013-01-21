@@ -27,28 +27,55 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.github.dandelion.core.api.utils;
+package com.github.dandelion.core.asset;
 
-import com.github.dandelion.core.api.DandelionError;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
- * Possible Errors for 'ClassPath Resource'
+ * Definition of a set of asset link to Scope/Parent Scope
  */
-public enum ClassPathResourceError implements DandelionError {
-    UNABLE_TO_LOCATION_RESOURCE_ON_DISK(1),
-    UNKNOWN_ENCODING(2),
-    UNABLE_TO_OBTAIN_INPUTSTREAM_FOR_RESOURCE(3),
-    UNABLE_TO_LOAD_RESOURCE(4),
-    UNABLE_TO_LOAD_RESOURCE_WITH_ENCODING(5);
+public class AssetsComponent {
+	
+	private String scope = AssetsStorage.ROOT_SCOPE;
+	private String parent = AssetsStorage.ROOT_SCOPE;
+	private List<Asset> assets = new ArrayList<Asset>();
 
-    private final int number;
-
-    private ClassPathResourceError(int number) {
-        this.number = number;
+    public AssetsComponent() {
     }
 
+    public AssetsComponent(String scope, String parent, List<Asset> assets) {
+        this.scope = scope;
+        this.parent = parent;
+        this.assets = assets;
+    }
+
+    public String getScope() {
+		return scope;
+	}
+
+	public void setScope(String scope) {
+		this.scope = scope;
+	}
+
+	public List<Asset> getAssets() {
+		return assets;
+	}
+
+	public void setAssets(List<Asset> assets) {
+		this.assets = assets;
+	}
+
+	public String getParent() {
+		return parent;
+	}
+
+	public void setParent(String parent) {
+		this.parent = parent;
+	}
+
     @Override
-    public int getNumber() {
-        return number;
+    public String toString() {
+        return "AssetsComponent [scope=" + scope + ", parent=" + parent + ", assets=" + assets + "]";
     }
 }

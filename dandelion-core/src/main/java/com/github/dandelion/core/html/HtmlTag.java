@@ -2,20 +2,20 @@
  * [The "BSD licence"]
  * Copyright (c) 2013 Dandelion
  * All rights reserved.
- *
+ * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
  * are met:
- *
+ * 
  * 1. Redistributions of source code must retain the above copyright
  * notice, this list of conditions and the following disclaimer.
  * 2. Redistributions in binary form must reproduce the above copyright
  * notice, this list of conditions and the following disclaimer in the
  * documentation and/or other materials provided with the distribution.
- * 3. Neither the name of DataTables4j nor the names of its contributors
- * may be used to endorse or promote products derived from this software
+ * 3. Neither the name of DataTables4j nor the names of its contributors 
+ * may be used to endorse or promote products derived from this software 
  * without specific prior written permission.
- *
+ * 
  * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
  * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
  * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
@@ -27,57 +27,72 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.github.dandelion.core.api.asset;
-
-import com.github.dandelion.core.asset.AssetsStorage;
-
-import java.util.ArrayList;
-import java.util.List;
+package com.github.dandelion.core.html;
 
 /**
- * Definition of a set of asset link to Scope/Parent Scope
+ * Abstract superclass for all HTML tags.
+ * 
+ * @author Thibault Duchateau
  */
-public class AssetsComponent {
+public abstract class HtmlTag {
+
+	/**
+	 * Plain old HTML <code>id</code> attribute.
+	 */
+	protected String id;
 	
-	private String scope = AssetsStorage.ROOT_SCOPE;
-	private String parent = AssetsStorage.ROOT_SCOPE;
-	private List<Asset> assets = new ArrayList<Asset>();
+	/**
+	 * Plain old HTML <code>class</code> attribute.
+	 */
+	protected StringBuffer cssClass;
 
-    public AssetsComponent() {
-    }
+	/**
+	 * Plain old HTML <code>style</code> attribute.
+	 */
+	protected StringBuffer cssStyle;
 
-    public AssetsComponent(String scope, String parent, List<Asset> assets) {
-        this.scope = scope;
-        this.parent = parent;
-        this.assets = assets;
-    }
+	/**
+	 * Render the tag in HTML code.
+	 * 
+	 * @return the HTML code corresponding to the tag.
+	 */
+	public abstract String toHtml();
 
-    public String getScope() {
-		return scope;
+	public String getId() {
+		return id;
 	}
 
-	public void setScope(String scope) {
-		this.scope = scope;
+	public void setId(String id) {
+		this.id = id;
+	}
+	
+	public StringBuffer getCssClass() {
+		return cssClass;
 	}
 
-	public List<Asset> getAssets() {
-		return assets;
+	public void setCssClass(StringBuffer cssClass) {
+		this.cssClass = cssClass;
 	}
 
-	public void setAssets(List<Asset> assets) {
-		this.assets = assets;
+	public StringBuffer getCssStyle() {
+		return cssStyle;
 	}
 
-	public String getParent() {
-		return parent;
+	public void setCssStyle(StringBuffer cssStyle) {
+		this.cssStyle = cssStyle;
 	}
 
-	public void setParent(String parent) {
-		this.parent = parent;
+	public void addCssClass(String cssClass) {
+		if (this.cssClass == null) {
+			this.cssClass = new StringBuffer();
+		}
+		this.cssClass.append(cssClass);
 	}
 
-    @Override
-    public String toString() {
-        return "AssetsComponent [scope=" + scope + ", parent=" + parent + ", assets=" + assets + "]";
-    }
+	public void addCssStyle(String cssStyle) {
+		if (this.cssStyle == null) {
+			this.cssStyle = new StringBuffer();
+		}
+		this.cssStyle.append(cssStyle);
+	}
 }

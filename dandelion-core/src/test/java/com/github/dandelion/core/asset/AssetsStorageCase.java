@@ -30,10 +30,7 @@
 package com.github.dandelion.core.asset;
 
 import com.github.dandelion.api.DandelionExceptionMatcher;
-import com.github.dandelion.core.api.DandelionException;
-import com.github.dandelion.core.api.asset.Asset;
-import com.github.dandelion.core.api.asset.AssetType;
-import com.github.dandelion.core.api.asset.AssetsStorageError;
+import com.github.dandelion.core.DandelionException;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;

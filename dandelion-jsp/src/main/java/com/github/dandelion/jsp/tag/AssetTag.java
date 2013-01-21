@@ -7,12 +7,12 @@ import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.tagext.TagSupport;
 
+import com.github.dandelion.core.html.LinkTag;
+import com.github.dandelion.core.html.ScriptTag;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.github.dandelion.core.api.asset.Asset;
-import com.github.dandelion.core.api.tag.HtmlLink;
-import com.github.dandelion.core.api.tag.HtmlScript;
+import com.github.dandelion.core.asset.Asset;
 import com.github.dandelion.core.asset.AssetsJsonLoader;
 import com.github.dandelion.core.asset.AssetsStorage;
 
@@ -60,12 +60,12 @@ public class AssetTag extends TagSupport {
 				for (Asset asset : assets) {
 					switch (asset.getType()) {
 					case css:
-						out.println(new HtmlLink(asset.getRemote()).toHtml());
+						out.println(new LinkTag(asset.getRemote()).toHtml());
 						break;
 					case img:
 						break;
 					case js:
-						out.println(new HtmlScript(asset.getRemote()).toHtml());
+						out.println(new ScriptTag(asset.getRemote()).toHtml());
 						break;
 					default:
 						break;

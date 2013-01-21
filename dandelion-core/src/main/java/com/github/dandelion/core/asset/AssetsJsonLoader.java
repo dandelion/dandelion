@@ -32,10 +32,7 @@ package com.github.dandelion.core.asset;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
-import java.util.zip.ZipException;
 
-import com.github.dandelion.core.api.asset.AssetsLoader;
-import com.github.dandelion.core.api.asset.AssetsComponent;
 import org.codehaus.jackson.JsonParser;
 import org.codehaus.jackson.map.ObjectMapper;
 

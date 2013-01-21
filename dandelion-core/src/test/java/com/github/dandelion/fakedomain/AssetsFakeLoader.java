@@ -29,10 +29,10 @@
  */
 package com.github.dandelion.fakedomain;
 
-import com.github.dandelion.core.api.asset.Asset;
-import com.github.dandelion.core.api.asset.AssetType;
-import com.github.dandelion.core.api.asset.AssetsComponent;
-import com.github.dandelion.core.api.asset.AssetsLoader;
+import com.github.dandelion.core.asset.Asset;
+import com.github.dandelion.core.asset.AssetType;
+import com.github.dandelion.core.asset.AssetsComponent;
+import com.github.dandelion.core.asset.AssetsLoader;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -27,72 +27,50 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.github.dandelion.core.api.tag;
+package com.github.dandelion.core.html;
 
 /**
- * Abstract superclass for all HTML tags.
+ * Plain old HTML <code>link</code> tag.
  * 
  * @author Thibault Duchateau
  */
-public abstract class HtmlTag {
+public class LinkTag extends HtmlTag {
 
 	/**
-	 * Plain old HTML <code>id</code> attribute.
+	 * Plain old HTML <code>href</code> attribute.
 	 */
-	protected String id;
+	private String href;
 	
-	/**
-	 * Plain old HTML <code>class</code> attribute.
-	 */
-	protected StringBuffer cssClass;
-
-	/**
-	 * Plain old HTML <code>style</code> attribute.
-	 */
-	protected StringBuffer cssStyle;
-
-	/**
-	 * Render the tag in HTML code.
-	 * 
-	 * @return the HTML code corresponding to the tag.
-	 */
-	public abstract String toHtml();
-
-	public String getId() {
-		return id;
-	}
-
-	public void setId(String id) {
-		this.id = id;
+	public LinkTag(){
 	}
 	
-	public StringBuffer getCssClass() {
-		return cssClass;
+	public LinkTag(String href){
+		this.href = href;
 	}
-
-	public void setCssClass(StringBuffer cssClass) {
-		this.cssClass = cssClass;
-	}
-
-	public StringBuffer getCssStyle() {
-		return cssStyle;
-	}
-
-	public void setCssStyle(StringBuffer cssStyle) {
-		this.cssStyle = cssStyle;
-	}
-
-	public void addCssClass(String cssClass) {
-		if (this.cssClass == null) {
-			this.cssClass = new StringBuffer();
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public String toHtml(){
+		StringBuffer html = new StringBuffer();
+		html.append("<link rel=\"stylesheet\"");
+		
+		if(this.href != null){
+			html.append(" href=\"");
+			html.append(this.href);
+			html.append(" \"");
 		}
-		this.cssClass.append(cssClass);
+		
+		html.append("/>");
+		
+		return html.toString();
 	}
-
-	public void addCssStyle(String cssStyle) {
-		if (this.cssStyle == null) {
-			this.cssStyle = new StringBuffer();
-		}
-		this.cssStyle.append(cssStyle);
+	
+	public String getHref() {
+		return href;
+	}
+	public void setHref(String href) {
+		this.href = href;
 	}
 }

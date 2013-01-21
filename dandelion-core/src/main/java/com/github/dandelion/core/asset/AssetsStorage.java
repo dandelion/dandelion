@@ -29,9 +29,7 @@
  */
 package com.github.dandelion.core.asset;
 
-import com.github.dandelion.core.api.DandelionException;
-import com.github.dandelion.core.api.asset.Asset;
-import com.github.dandelion.core.api.asset.AssetsStorageError;
+import com.github.dandelion.core.DandelionException;
 
 import java.util.ArrayList;
 import java.util.HashMap;

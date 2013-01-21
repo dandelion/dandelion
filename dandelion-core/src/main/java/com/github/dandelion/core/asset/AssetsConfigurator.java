@@ -29,11 +29,7 @@
  */
 package com.github.dandelion.core.asset;
 
-import com.github.dandelion.core.api.DandelionException;
-import com.github.dandelion.core.api.asset.Asset;
-import com.github.dandelion.core.api.asset.AssetsStorageError;
-import com.github.dandelion.core.api.asset.AssetsLoader;
-import com.github.dandelion.core.api.asset.AssetsComponent;
+import com.github.dandelion.core.DandelionException;
 import com.github.dandelion.core.utils.ClassPathResource;
 import com.github.dandelion.core.utils.scanner.ClassPathScanner;
 import org.slf4j.Logger;
@@ -50,7 +46,7 @@ import static com.github.dandelion.core.asset.AssetsStorage.ROOT_SCOPE;
  * <ul>
  *     <li>assetsLoader :
  *          <ul>
- *               <li>the {@link com.github.dandelion.core.api.asset.AssetsLoader}
+ *               <li>the {@link AssetsLoader}
  * found in 'dandelion/dandelion.properties' for key 'assetsLoader'</li>
  *               <li>or {@link AssetsJsonLoader} by default</li>
  *          </ul>

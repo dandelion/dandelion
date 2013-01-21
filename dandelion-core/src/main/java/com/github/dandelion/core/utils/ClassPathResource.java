@@ -9,8 +9,7 @@ import java.net.URL;
 import java.net.URLDecoder;
 import java.nio.charset.Charset;
 
-import com.github.dandelion.core.api.DandelionException;
-import com.github.dandelion.core.api.utils.ClassPathResourceError;
+import com.github.dandelion.core.DandelionException;
 
 /**
  * A resource on the classpath.
