@@ -71,7 +71,7 @@ public final class Assets {
     }
 
     /**
-     * Get Source of Assets<br/>
+     * Get Configured Source of Assets<br/>
      *
      * Configured by assetsSource in 'dandelion/dandelion.properties'
      *
@@ -90,5 +90,21 @@ public final class Assets {
     public static List<Asset> assetsFor(String ... scopes) {
         initializeIfNeeded();
         return assetsStorage.assetsFor(scopes);
+    }
+
+    /**
+     * @param asset asset for extract source
+     * @return the source of this asset by the configured assets source.
+     */
+    public static String getAssetSource(Asset asset) {
+        switch (getAssetsSource()) {
+            case LOCAL:
+                return asset.getLocal();
+            case REMOTE:
+                return asset.getRemote();
+            default:
+                // to avoid failures
+                return "";
+        }
     }
 }
