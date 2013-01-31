@@ -40,6 +40,7 @@ import java.util.List;
  */
 public class AssetsRequestContext {
     private List<String> scopes;
+    private boolean alreadyRendered;
 
     private AssetsRequestContext() {
         this.scopes = new ArrayList<String>();
@@ -65,6 +66,7 @@ public class AssetsRequestContext {
      * @return this context
      */
     public AssetsRequestContext addScopes(String scopes) {
+        if(scopes == null) return this;
         return addScopes(scopes.split(","));
     }
 
@@ -101,5 +103,21 @@ public class AssetsRequestContext {
      */
     public String[] getScopes() {
         return scopes.toArray(new String[scopes.size()]);
+    }
+
+    /**
+     * @return <code>true</code> if this context his already rendered in the reponse
+     */
+    public boolean isAlreadyRendered() {
+        return alreadyRendered;
+    }
+
+    /**
+     * Set this context as rendered
+     * @return this context
+     */
+    public AssetsRequestContext hasBeenRendered() {
+        this.alreadyRendered = true;
+        return this;
     }
 }
