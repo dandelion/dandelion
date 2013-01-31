@@ -42,8 +42,8 @@
    <description>TODO</description>
 
    <tag>
-      <name>asset</name>
-      <tag-class>com.github.dandelion.jsp.tag.AssetTag</tag-class>
+      <name>assets</name>
+      <tag-class>com.github.dandelion.jsp.tag.AssetsTag</tag-class>
       <body-content>empty</body-content>
       <description>Generates the HTML tags in order to have all assets loaded</description>
       <attribute>
@@ -52,4 +52,15 @@
          <description>List of requested scopes (comma separated)</description>
       </attribute>
    </tag>
+    <tag>
+        <name>asset</name>
+        <tag-class>com.github.dandelion.jsp.tag.AssetTag</tag-class>
+        <body-content>empty</body-content>
+        <description>Add scopes on request context for usage in assets tag</description>
+        <attribute>
+            <name>scopes</name>
+            <required>true</required>
+            <description>List of requested scopes (comma separated)</description>
+        </attribute>
+    </tag>
 </taglib>

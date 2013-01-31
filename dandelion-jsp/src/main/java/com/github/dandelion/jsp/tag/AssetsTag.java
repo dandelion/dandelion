@@ -30,41 +30,80 @@
 
 package com.github.dandelion.jsp.tag;
 
+import com.github.dandelion.core.asset.Asset;
+import com.github.dandelion.core.asset.Assets;
 import com.github.dandelion.core.asset.AssetsRequestContext;
+import com.github.dandelion.core.html.LinkTag;
+import com.github.dandelion.core.html.ScriptTag;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.servlet.jsp.JspException;
+import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.tagext.TagSupport;
+import java.io.IOException;
+import java.util.List;
 
 /**
  * <p>
- * JSP tag in charge of add scopes on a request context for future use.
- *
+ * JSP tag in charge of generating necessary HTML <code>script</code> and
+ * <code>link</code> tags.
+ * 
  * <p>
  * Usage :
- *
+ * 
  * <pre>
- * &lt;dandelion:asset scopes="..." /&gt;
+ * &lt;dandelion:assets scopes="..." /&gt;
  * </pre>
- * @see AssetsTag
+ * 
+ * @author Thibault Duchateau
  */
-public class AssetTag extends TagSupport {
-    private static final Logger LOG = LoggerFactory.getLogger(AssetTag.class);
+public class AssetsTag extends TagSupport {
+	private static final Logger LOG = LoggerFactory.getLogger(AssetsTag.class);
+		
+	private String scopes;
 
-    private String scopes;
+	public int doStartTag() throws JspException {
 
-    public int doStartTag() throws JspException {
+		return SKIP_BODY;
+	}
 
-        return SKIP_BODY;
-    }
+	public int doEndTag() throws JspException {
+		JspWriter out = pageContext.getOut();
 
-    public int doEndTag() throws JspException {
-        LOG.debug("on this request, add scopes : {}", getScopes());
-        AssetsRequestContext.get(pageContext.getRequest()).addScopes(scopes);
+        AssetsRequestContext context = AssetsRequestContext
+                .get(pageContext.getRequest())
+                .addScopes(scopes);
+        if(context.isAlreadyRendered()) {
+            LOG.warn("This page have multiples assets tag, only one is needed");
+        }
+		if (context.hasScopes()) {
+			List<Asset> assets = Assets.assetsFor(context.getScopes());
+            LOG.debug("scope = " + scopes + ", assets = " + assets);
 
-        return EVAL_PAGE;
-    }
+			try {
+				for (Asset asset : assets) {
+					switch (asset.getType()) {
+					case css:
+						out.println(new LinkTag(Assets.getAssetSource(asset)).toHtml());
+						break;
+					case img:
+						break;
+					case js:
+						out.println(new ScriptTag(Assets.getAssetSource(asset)).toHtml());
+						break;
+					default:
+						break;
+					}
+				}
+                context.hasBeenRendered();
+			} catch (IOException e) {
+				throw new JspException(e);
+			}
+		}
+
+		return EVAL_PAGE;
+	}
 
     public String getScopes() {
         return scopes;
