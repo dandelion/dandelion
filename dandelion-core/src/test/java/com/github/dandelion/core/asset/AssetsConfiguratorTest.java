@@ -56,6 +56,6 @@ public class AssetsConfiguratorTest {
 
     @Test
     public void should_load_the_loading_type() {
-        assertThat(assetsConfigurator.assetsSource).isEqualTo(AssetsSource.LOCAL);
+        assertThat(assetsConfigurator.assetsLocations).isEqualTo("local");
     }
 }

@@ -35,18 +35,27 @@ import com.github.dandelion.core.asset.AssetsComponent;
 import com.github.dandelion.core.asset.AssetsLoader;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.fest.util.Collections.list;
 
 public class AssetsFakeLoader implements AssetsLoader {
     @Override
     public List<AssetsComponent> loadAssets() {
+        Map<String, String> locations = new HashMap<String, String>();
+        locations.put("remote", "remoteURL");
+        locations.put("local", "localPath");
+        Map<String, String> locations2 = new HashMap<String, String>();
+        locations.put("remote", "remoteURL2");
+        locations.put("local", "localPath2");
+
         return list(
             new AssetsComponent("default", "default", new ArrayList<Asset>()),
             new AssetsComponent("fake", "default", list(
-                new Asset("name", "version", AssetType.js, "remoteURL", "localPath"),
-                new Asset("name2", "version2", AssetType.js, "remoteURL2", "localPath2")
+                new Asset("name", "version", AssetType.js, locations),
+                new Asset("name2", "version2", AssetType.js, locations2)
             ))
         );
     }

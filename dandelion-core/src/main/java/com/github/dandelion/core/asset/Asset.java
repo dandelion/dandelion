@@ -29,13 +29,15 @@
  */
 package com.github.dandelion.core.asset;
 
+import java.util.Map;
+
 /**
  * Definition of an Asset
  * <ul>
  *     <li>Name of asset (aka Key)</li>
  *     <li>Version of asset</li>
  *     <li>Type of asset</li>
- *     <li>Content access
+ *     <li>Possibles locations of assets like :
  *         <ul>
  *             <li>Remote access (aka CDN, Static Content Server, Any url)</li>
  *             <li>Local access (Classpath)</li>
@@ -47,8 +49,7 @@ public class Asset {
 	String name;
 	String version;
 	AssetType type;
-	String remote;
-	String local;
+	Map<String, String> locations;
 
     /**
      * Declare an empty asset
@@ -61,15 +62,13 @@ public class Asset {
      * @param name name
      * @param version version
      * @param type type
-     * @param remote remote access
-     * @param local local access
+     * @param locations locations of source
      */
-    public Asset(String name, String version, AssetType type, String remote, String local) {
+    public Asset(String name, String version, AssetType type, Map<String, String> locations) {
         this.name = name;
         this.version = version;
         this.type = type;
-        this.remote = remote;
-        this.local = local;
+        this.locations = locations;
     }
 
     public String getName() {
@@ -90,18 +89,12 @@ public class Asset {
 	public void setType(AssetType type) {
 		this.type = type;
 	}
-	public String getRemote() {
-		return remote;
-	}
-	public void setRemote(String remote) {
-		this.remote = remote;
-	}
-	public String getLocal() {
-		return local;
-	}
-	public void setLocal(String local) {
-		this.local = local;
-	}
+    public Map<String, String> getLocations() {
+        return locations;
+    }
+    public void setLocations(Map<String, String> locations) {
+        this.locations = locations;
+    }
 
     /**
      * Validate this asset
@@ -111,7 +104,7 @@ public class Asset {
         if (name == null) return false;
         if (version == null) return false;
         if (type == null) return false;
-        if (remote == null && local == null) return false;
+        if (locations == null) return false;
         return true;
     }
 
@@ -143,8 +136,7 @@ public class Asset {
      */
     @Override
 	public String toString() {
-		return "Asset [name=" + name + ", version=" + version + ", type=" + type + ", remote=" + remote
-				+ ", local=" + local + "]";
+		return "Asset [name=" + name + ", version=" + version + ", type=" + type + ", locations=[" + locations + "]";
 	}
 	
 }

@@ -43,7 +43,7 @@ public class AssetsConfiguratorWithDefaultsTest {
 
         // clean loaded configuration
         assetsConfigurator.assetsLoader = null;
-        assetsConfigurator.assetsSource = null;
+        assetsConfigurator.assetsLocations = null;
 
         // simulate Default configuration
         assetsConfigurator.setDefaults();
@@ -65,6 +65,6 @@ public class AssetsConfiguratorWithDefaultsTest {
 
     @Test
     public void should_load_the_default_loading_type() {
-        assertThat(assetsConfigurator.assetsSource).isEqualTo(AssetsSource.REMOTE);
+        assertThat(assetsConfigurator.assetsLocations).isEqualTo("remote");
     }
 }

@@ -71,15 +71,15 @@ public final class Assets {
     }
 
     /**
-     * Get Configured Source of Assets<br/>
+     * Get Configured Locations of Assets<br/>
      *
-     * Configured by assetsSource in 'dandelion/dandelion.properties'
+     * Configured by assetsLocations in 'dandelion/dandelion.properties'
      *
-     * @return source of Assets
+     * @return locations of Assets
      */
-    public static AssetsSource getAssetsSource() {
+    public static String getAssetsLocations() {
         initializeIfNeeded();
-        return assetsConfigurator.assetsSource;
+        return assetsConfigurator.assetsLocations;
     }
 
     /**
@@ -93,18 +93,11 @@ public final class Assets {
     }
 
     /**
-     * @param asset asset for extract source
-     * @return the source of this asset by the configured assets source.
+     * @param asset asset for extract location
+     * @return the location of this asset by the configured assets locations.
      */
-    public static String getAssetSource(Asset asset) {
-        switch (getAssetsSource()) {
-            case LOCAL:
-                return asset.getLocal();
-            case REMOTE:
-                return asset.getRemote();
-            default:
-                // to avoid failures
-                return "";
-        }
+    public static String getAssetLocation(Asset asset) {
+        String location = asset.getLocations().get(getAssetsLocations());
+        return location!=null?location:"";
     }
 }

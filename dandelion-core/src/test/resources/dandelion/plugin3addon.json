@@ -6,8 +6,10 @@
 				"name" : "asset3addon",
 				"version" : "1",
 				"type" : "js",
-				"remote" : "remoteURL",
-				"local" : "localPath"
+                "locations" : {
+                    "remote" : "remoteURL",
+                    "local" : "localPath"
+                }
 			}
     ]
 }

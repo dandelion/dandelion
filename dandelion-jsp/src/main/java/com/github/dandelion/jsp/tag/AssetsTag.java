@@ -85,12 +85,12 @@ public class AssetsTag extends TagSupport {
 				for (Asset asset : assets) {
 					switch (asset.getType()) {
 					case css:
-						out.println(new LinkTag(Assets.getAssetSource(asset)).toHtml());
+						out.println(new LinkTag(Assets.getAssetLocation(asset)).toHtml());
 						break;
 					case img:
 						break;
 					case js:
-						out.println(new ScriptTag(Assets.getAssetSource(asset)).toHtml());
+						out.println(new ScriptTag(Assets.getAssetLocation(asset)).toHtml());
 						break;
 					default:
 						break;

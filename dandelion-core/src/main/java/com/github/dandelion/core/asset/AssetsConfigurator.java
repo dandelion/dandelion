@@ -51,7 +51,7 @@ import static com.github.dandelion.core.asset.AssetsStorage.ROOT_SCOPE;
  *               <li>or {@link AssetsJsonLoader} by default</li>
  *          </ul>
  *     </li>
- *     <li>assetsSource : type of access to assets content(remote [by default], local)</li>
+ *     <li>assetsLocations : type of access to assets content(remote [by default], local)</li>
  * </ul>
  * Default Asset Loader is
  *
@@ -61,7 +61,7 @@ public class AssetsConfigurator {
     private static final Logger LOG = LoggerFactory.getLogger(AssetsConfigurator.class);
     AssetsStorage assetsStorage;
     AssetsLoader assetsLoader;
-    AssetsSource assetsSource;
+    String assetsLocations;
 
     private Map<String, List<Asset>> componentsByScope = new HashMap<String, List<Asset>>();
     private Map<String, List<String>> scopesByParentScope = new HashMap<String, List<String>>();
@@ -88,7 +88,7 @@ public class AssetsConfigurator {
                 Properties properties = new Properties();
                 properties.load(classLoader.getResourceAsStream(resources[0].getLocation()));
 
-                assetsSource = AssetsSource.map(properties.getProperty("assetsSource"));
+                assetsLocations = properties.getProperty("assetsLocations");
 
                 String assetsLoaderClassname = properties.getProperty("assetsLoader");
                 if(assetsLoaderClassname != null) {
@@ -127,8 +127,8 @@ public class AssetsConfigurator {
         if(assetsLoader == null) {
             assetsLoader = new AssetsJsonLoader();
         }
-        if(assetsSource == null) {
-            assetsSource = AssetsSource.REMOTE;
+        if(assetsLocations == null) {
+            assetsLocations = "remote";
         }
     }
 

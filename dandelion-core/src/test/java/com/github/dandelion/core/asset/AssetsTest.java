@@ -48,6 +48,6 @@ public class AssetsTest {
 
     @Test
     public void should_load_the_loading_type() {
-        assertThat(Assets.getAssetsSource()).isEqualTo(AssetsSource.LOCAL);
+        assertThat(Assets.getAssetsLocations()).isEqualTo("local");
     }
 }

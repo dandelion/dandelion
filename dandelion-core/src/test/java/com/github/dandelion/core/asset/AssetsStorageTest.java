@@ -32,9 +32,13 @@ package com.github.dandelion.core.asset;
 import com.github.dandelion.api.DandelionExceptionMatcher;
 import com.github.dandelion.core.DandelionException;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.fest.assertions.Assertions.assertThat;
 
@@ -43,13 +47,23 @@ public class AssetsStorageTest {
     public ExpectedException expectedEx = ExpectedException.none();
 
     AssetsStorage assetsStorage;
+    
+    static Map<String, String> locations; 
+    static Asset asset, asset2, asset3, asset4, assetConflict;
 
-    Asset asset = new Asset("name", "version", AssetType.js, "remote", "local");
-    Asset asset2 = new Asset("name2", "version", AssetType.img, "remote", "local");
-    Asset asset3 = new Asset("name3", "version", AssetType.js, "remote", "local");
-    Asset asset4 = new Asset("name4", "version", AssetType.css, "remote", "local");
-    Asset assetConflict = new Asset("name", "versionConflict", AssetType.js, "remote", "local");
+    @BeforeClass
+    public static void set_up_class() {
+        locations = new HashMap<String, String>();
+        locations.put("remote", "remoteURL");
+        locations.put("local", "localPath");
 
+        asset = new Asset("name", "version", AssetType.js, locations);
+        asset2 = new Asset("name2", "version", AssetType.img, locations);
+        asset3 = new Asset("name3", "version", AssetType.js, locations);
+        asset4 = new Asset("name4", "version", AssetType.css, locations);
+        assetConflict = new Asset("name", "versionConflict", AssetType.js, locations);
+    }
+    
     @Before
     public void set_up() {
         assetsStorage = new AssetsStorage();
@@ -132,7 +146,7 @@ public class AssetsStorageTest {
 
     @Test
     public void should_manage_assets_with_different_types() {
-        Asset assetDifferentType = new Asset("name", "version", AssetType.css, "remote", "local");
+        Asset assetDifferentType = new Asset("name", "version", AssetType.css, locations);
         assetsStorage.store(asset);
         assetsStorage.store(assetDifferentType, "differentTypes");
         assertThat(assetsStorage.assetsFor("differentTypes")).hasSize(2).contains(assetDifferentType);
@@ -148,7 +162,7 @@ public class AssetsStorageTest {
 
     @Test
     public void should_manage_override_assets() {
-        Asset assetOverride = new Asset("name", "version2", AssetType.js, "remote", "local");
+        Asset assetOverride = new Asset("name", "version2", AssetType.js, locations);
         assetsStorage.store(asset);
         assetsStorage.store(assetOverride, "override");
         assertThat(assetsStorage.assetsFor("override")).hasSize(1).contains(assetOverride);
@@ -177,7 +191,7 @@ public class AssetsStorageTest {
 
     @Test
     public void should_manage_priorities() {
-        Asset assetPriority = new Asset("name", "version2", AssetType.js, "remote", "local");
+        Asset assetPriority = new Asset("name", "version2", AssetType.js, locations);
 
         assetsStorage.store(asset);
         assetsStorage.store(asset4);
@@ -190,7 +204,7 @@ public class AssetsStorageTest {
 
     @Test
     public void should_manage_detached_scope() {
-        Asset assetWithDetachedScope = new Asset("detached", "version", AssetType.js, "remote", "local");
+        Asset assetWithDetachedScope = new Asset("detached", "version", AssetType.js, locations);
 
         assetsStorage.store(asset);
         assetsStorage.store(assetWithDetachedScope, "scope", "none");
@@ -201,7 +215,7 @@ public class AssetsStorageTest {
 
     @Test
     public void should_detach_scope_not_override_other_assets() {
-        Asset assetWithDetachedScope = new Asset("name", "version", AssetType.js, "remote", "local");
+        Asset assetWithDetachedScope = new Asset("name", "version", AssetType.js, locations);
 
         assetsStorage.store(asset);
         assetsStorage.store(assetWithDetachedScope, "scope", "none");
