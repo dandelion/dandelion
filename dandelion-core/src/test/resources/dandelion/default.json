@@ -8,6 +8,15 @@
                     "remote" : "remoteURL",
                     "local" : "localPath"
                 }
-			}
+			},
+            {
+                "name" : "excludeAsset",
+                "version" : "1",
+                "type" : "js",
+                "locations" : {
+                    "remote" : "remoteURL",
+                    "local" : "localPath"
+                }
+            }
     ]
 }

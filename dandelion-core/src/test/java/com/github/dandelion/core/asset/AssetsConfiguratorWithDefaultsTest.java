@@ -33,6 +33,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import static org.fest.assertions.Assertions.assertThat;
+import static org.fest.util.Collections.list;
 
 public class AssetsConfiguratorWithDefaultsTest {
     static AssetsConfigurator assetsConfigurator;
@@ -46,8 +47,13 @@ public class AssetsConfiguratorWithDefaultsTest {
         assetsConfigurator.assetsLocations = null;
 
         // simulate Default configuration
-        assetsConfigurator.setDefaults();
-        assetsConfigurator.processAssetsLoading();
+        assetsConfigurator.setDefaultsIfNeeded();
+
+        // add excludes Scopes and Assets
+        assetsConfigurator.excludesScopes.addAll(list("excludeScope","excludeScope2"));
+        assetsConfigurator.excludesAssets.addAll(list("excludeAsset","excludeAsset2"));
+
+        assetsConfigurator.processAssetsLoading(false);
     }
 
     @Test

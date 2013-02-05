@@ -62,6 +62,8 @@ public class AssetsConfigurator {
     AssetsStorage assetsStorage;
     AssetsLoader assetsLoader;
     String assetsLocations;
+    List<String> excludesScopes;
+    List<String> excludesAssets;
 
     private Map<String, List<Asset>> componentsByScope = new HashMap<String, List<Asset>>();
     private Map<String, List<String>> scopesByParentScope = new HashMap<String, List<String>>();
@@ -89,63 +91,68 @@ public class AssetsConfigurator {
                 properties.load(classLoader.getResourceAsStream(resources[0].getLocation()));
 
                 assetsLocations = properties.getProperty("assetsLocations");
-
-                String assetsLoaderClassname = properties.getProperty("assetsLoader");
-                if(assetsLoaderClassname != null) {
-                    try {
-                        Class<AssetsLoader> cal = (Class<AssetsLoader>) classLoader.loadClass(assetsLoaderClassname);
-                        assetsLoader = cal.newInstance();
-                    } catch (ClassCastException e) {
-                        LOG.warn("the 'assetsLoader[{}]' must implements '{}'",
-                                assetsLoaderClassname, AssetsLoader.class.getCanonicalName());
-                        return;
-                    } catch (InstantiationException e) {
-                        LOG.warn("the 'assetsLoader[{}]' should authorize instantiation", assetsLoaderClassname);
-                        return;
-                    } catch (IllegalAccessException e) {
-                        LOG.warn("the 'assetsLoader[{}]' should authorize access from '{}'",
-                                assetsLoaderClassname, AssetsConfigurator.class.getCanonicalName());
-                        return;
-                    } catch (ClassNotFoundException e) {
-                        LOG.warn("the 'assetsLoader[{}]' must exists in the classpath", assetsLoaderClassname);
-                        return;
-                    }
-                }
+                excludesScopes = setPropertyAsList(properties.getProperty("excludesScopes"), ",");
+                excludesAssets = setPropertyAsList(properties.getProperty("excludesAssets"), ",");
+                assetsLoader = setPropertyAsAssetsLoader(classLoader, properties);
             }
         } catch (IOException e) {
             LOG.error("Assets configurator can't access/read to the file 'dandelion/dandelion.properties'");
         }
 
-        setDefaults();
-        processAssetsLoading();
+        processAssetsLoading(true);
+    }
+
+    private AssetsLoader setPropertyAsAssetsLoader(ClassLoader classLoader, Properties properties) {
+        String assetsLoaderClassname = properties.getProperty("assetsLoader");
+        if(assetsLoaderClassname != null) {
+            try {
+                Class<AssetsLoader> cal = (Class<AssetsLoader>) classLoader.loadClass(assetsLoaderClassname);
+                return cal.newInstance();
+            } catch (ClassCastException e) {
+                LOG.warn("the 'assetsLoader[{}]' must implements '{}'",
+                        assetsLoaderClassname, AssetsLoader.class.getCanonicalName());
+            } catch (InstantiationException e) {
+                LOG.warn("the 'assetsLoader[{}]' should authorize instantiation", assetsLoaderClassname);
+            } catch (IllegalAccessException e) {
+                LOG.warn("the 'assetsLoader[{}]' should authorize access from '{}'",
+                        assetsLoaderClassname, AssetsConfigurator.class.getCanonicalName());
+            } catch (ClassNotFoundException e) {
+                LOG.warn("the 'assetsLoader[{}]' must exists in the classpath", assetsLoaderClassname);
+            }
+        }
+        return null;
     }
 
     /**
      * Set the default configuration when it's needed
      */
-    void setDefaults() {
+    void setDefaultsIfNeeded() {
         if(assetsLoader == null) {
             assetsLoader = new AssetsJsonLoader();
         }
         if(assetsLocations == null) {
             assetsLocations = "remote";
         }
+        if(excludesScopes == null) {
+            excludesScopes = new ArrayList<String>();
+        }
+        if(excludesAssets == null) {
+            excludesAssets = new ArrayList<String>();
+        }
     }
 
     /**
      * Process to the assets loading from defined asset loader
      */
-    void processAssetsLoading() {
-        if(assetsLoader == null) {
-            throw new IllegalStateException("a asset loader must be define");
-        }
+    void processAssetsLoading(boolean defaultsNeeded) {
+        if(defaultsNeeded) setDefaultsIfNeeded();
 
         prepareAssetsLoading(assetsLoader.loadAssets());
 
         storeAssetsFromScope(ROOT_SCOPE, true);
         storeAssetsFromScope(DETACHED_PARENT_SCOPE, true);
 
-        clearAssetsProcess();
+        clearAllAssetsProcessElements();
     }
 
     /**
@@ -160,33 +167,20 @@ public class AssetsConfigurator {
      * @param components components to analyze
      */
     private void prepareAssetsLoading(List<AssetsComponent> components) {
-        for(AssetsComponent component:components) {
-            parentScopesByScope.put(component.getScope(), component.getParent());
-            if(scopesByParentScope.containsKey(component.getParent())) {
-                List<String> _scopes = scopesByParentScope.get(component.getParent());
-                if(!_scopes.contains(component.getScope())) {
-                    _scopes.add(component.getScope());
-                }
-            } else {
-                if(!component.getScope().equalsIgnoreCase(ROOT_SCOPE)) {
-                    List<String> list = new ArrayList();
-                    list.add(component.getScope());
-                    scopesByParentScope.put(component.getParent(), list);
-                }
-            }
+        LOG.debug("Excludes scopes are {}", excludesScopes);
+        LOG.debug("Excludes assets are {}", excludesAssets);
 
-            List<Asset> _assets;
-            if(componentsByScope.containsKey(component.getScope())) {
-                _assets = componentsByScope.get(component.getScope());
-                for(Asset asset:component.getAssets()) {
-                    _assets.add(asset);
-                }
-            } else {
-                _assets = new ArrayList<Asset>();
-                for(Asset asset:component.getAssets()) {
-                    _assets.add(asset);
-                }
-                componentsByScope.put(component.getScope(), _assets);
+        for(AssetsComponent component:components) {
+            LOG.debug("Prepare {}", component);
+
+            if(!excludesScopes.contains(component.getScope())
+                    && !excludesScopes.contains(component.getParent())) {
+                LOG.debug("Scope {} and his parent {} are not in excludes scopes",
+                        component.getScope(), component.getParent());
+
+                prepareParentScope(component);
+                prepareScope(component);
+                prepareAssets(component);
             }
         }
     }
@@ -238,9 +232,54 @@ public class AssetsConfigurator {
     /**
      * Clear all working attributes
      */
-    void clearAssetsProcess() {
+    void clearAllAssetsProcessElements() {
+        LOG.debug("Clear all assets process elements");
         componentsByScope.clear();
         scopesByParentScope.clear();
         parentScopesByScope.clear();
+    }
+
+    private List<String> setPropertyAsList(String values, String delimiter) {
+        if(values == null || values.isEmpty()) return null;
+        return Arrays.asList(values.split(delimiter));
+    }
+
+    private void prepareScope(AssetsComponent component) {
+        if (ROOT_SCOPE.equalsIgnoreCase(component.getScope())) {
+            LOG.debug("{} is the root scope", component.getScope());
+            return;
+        }
+        if (!scopesByParentScope.containsKey(component.getParent())) {
+            scopesByParentScope.put(component.getParent(), new ArrayList());
+        }
+        List<String> _scopes = scopesByParentScope.get(component.getParent());
+
+        if(!_scopes.contains(component.getScope())) {
+            LOG.debug("Store {} as child of {}", component.getScope(), component.getParent());
+            _scopes.add(component.getScope());
+        } else {
+            LOG.debug("Store {} is already a child of {}", component.getScope(), component.getParent());
+        }
+    }
+
+    private void prepareParentScope(AssetsComponent component) {
+        LOG.debug("Store {} as parent of {}", component.getParent(), component.getScope());
+        parentScopesByScope.put(component.getScope(), component.getParent());
+    }
+
+    private void prepareAssets(AssetsComponent component) {
+        if (!componentsByScope.containsKey(component.getScope())) {
+            componentsByScope.put(component.getScope(), new ArrayList<Asset>());
+        }
+        List<Asset> _assets = componentsByScope.get(component.getScope());
+
+        for(Asset asset:component.getAssets()) {
+            if(!excludesAssets.contains(asset.getName())) {
+                LOG.debug("Store {} as child of {}", asset.getName(), component.getScope());
+                _assets.add(asset);
+            } else {
+                LOG.debug("{} is exclude", asset.getName());
+            }
+        }
     }
 }
