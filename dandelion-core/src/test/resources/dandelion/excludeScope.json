@@ -1,0 +1,23 @@
+{
+    "scope" : "excludeScope",
+	"assets": [
+			{
+				"name" : "asset3",
+				"version" : "1",
+				"type" : "js",
+                "locations": {
+                    "remote" : "remoteURL",
+                    "local" : "localPath"
+                }
+			},
+            {
+                "name" : "excludeAsset2",
+                "version" : "1",
+                "type" : "js",
+                "locations" : {
+                    "remote" : "remoteURL",
+                    "local" : "localPath"
+                }
+            }
+    ]
+}
