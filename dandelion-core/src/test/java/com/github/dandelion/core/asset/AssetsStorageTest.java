@@ -29,7 +29,7 @@
  */
 package com.github.dandelion.core.asset;
 
-import com.github.dandelion.api.DandelionExceptionMatcher;
+import com.github.dandelion.core.DandelionExceptionMatcher;
 import com.github.dandelion.core.DandelionException;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -119,7 +119,7 @@ public class AssetsStorageTest {
     }
 
     @Test
-    public void should_store_assets_with_same_scope_but_not_parent_scopes() {
+    public void should_not_store_assets_with_same_scope_but_not_parent_scopes() {
         expectedEx.expect(DandelionException.class);
         expectedEx.expect(
             new DandelionExceptionMatcher(AssetsStorageError.PARENT_SCOPE_INCOMPATIBILITY)
@@ -134,7 +134,7 @@ public class AssetsStorageTest {
     }
 
     @Test
-    public void should_store_asset_with_unknown_parent_scope() {
+    public void should_not_store_asset_with_unknown_parent_scope() {
         expectedEx.expect(DandelionException.class);
         expectedEx.expect(
                 new DandelionExceptionMatcher(AssetsStorageError.UNDEFINED_PARENT_SCOPE)
@@ -169,7 +169,7 @@ public class AssetsStorageTest {
     }
 
     @Test
-    public void should_manage_conflicts_before_storage() {
+    public void should_detect_conflicts_before_storage() {
         expectedEx.expect(DandelionException.class);
         expectedEx.expect(
                 new DandelionExceptionMatcher(AssetsStorageError.ASSET_ALREADY_EXISTS_IN_SCOPE)

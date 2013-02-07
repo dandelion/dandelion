@@ -1,15 +1,15 @@
 {
-    "scope" : "excludeScope-child",
-    "parent" : "excludeScope",
-	"assets": [
-			{
-				"name" : "excludeScope-child",
-				"version" : "1",
-				"type" : "js",
-                "locations": {
-                    "remote" : "remoteURL",
-                    "local" : "localPath"
-                }
-			}
+    "scope": "excludedScope-child",
+    "parent": "excludedScope",
+    "assets": [
+        {
+            "name": "excludedScope-child",
+            "version": "1",
+            "type": "js",
+            "locations": {
+                "remote": "remoteURL",
+                "local": "localPath"
+            }
+        }
     ]
 }

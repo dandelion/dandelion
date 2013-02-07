@@ -29,11 +29,13 @@
  */
 package com.github.dandelion.core.asset;
 
+import com.github.dandelion.fakedomain.AssetsFakeLoader;
 import org.fest.assertions.Assertions;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 import static org.fest.assertions.Assertions.assertThat;
+import static org.fest.util.Collections.list;
 
 public class AssetsConfiguratorTest {
     static AssetsConfigurator assetsConfigurator;
@@ -45,17 +47,38 @@ public class AssetsConfiguratorTest {
     }
 
     @Test
-    public void should_load_default_json() {
-        Assertions.assertThat(assetsConfigurator.assetsStorage.assetsFor()).hasSize(0);
+    public void should_load_default_scope() {
+        assertThat(assetsConfigurator.assetsStorage.assetsFor()).hasSize(1);
     }
 
     @Test
     public void should_load_other_scopes() {
-        assertThat(assetsConfigurator.assetsStorage.assetsFor("fake")).hasSize(2);
+        assertThat(assetsConfigurator.assetsStorage.assetsFor("plugin1")).hasSize(3);
+        assertThat(assetsConfigurator.assetsStorage.assetsFor("plugin2")).hasSize(3);
+        assertThat(assetsConfigurator.assetsStorage.assetsFor("plugin1addon")).hasSize(4);
+        assertThat(assetsConfigurator.assetsStorage.assetsFor("plugin1addon", "plugin2")).hasSize(6);
     }
 
     @Test
-    public void should_load_the_loading_type() {
-        assertThat(assetsConfigurator.assetsLocations).isEqualTo("local");
+    public void should_load_the_assets_locations() {
+        assertThat(assetsConfigurator.assetsLocations).isEqualTo("remote");
+    }
+
+    @Test
+    public void should_work_with_another_loader() {
+        AssetsConfigurator anotherConfigurator = new AssetsConfigurator(new AssetsStorage());
+
+        // simulate Default configuration
+        anotherConfigurator.setDefaultsIfNeeded();
+
+        // clean loaded configuration
+        anotherConfigurator.assetsLoader = new AssetsFakeLoader();
+        anotherConfigurator.assetsLocations = "local";
+
+        anotherConfigurator.processAssetsLoading(false);
+
+        assertThat(anotherConfigurator.assetsStorage.assetsFor()).hasSize(0);
+        assertThat(anotherConfigurator.assetsStorage.assetsFor("fake")).hasSize(2);
+        assertThat(anotherConfigurator.assetsLocations).isEqualTo("local");
     }
 }

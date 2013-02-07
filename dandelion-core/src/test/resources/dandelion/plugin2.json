@@ -1,23 +1,32 @@
 {
-    "scope" : "plugin2",
-	"assets": [
-			{
-				"name" : "asset3",
-				"version" : "1",
-				"type" : "js",
-                "locations": {
-                    "remote" : "remoteURL",
-                    "local" : "localPath"
-                }
-			},
-            {
-                "name" : "excludeAsset2",
-                "version" : "1",
-                "type" : "js",
-                "locations" : {
-                    "remote" : "remoteURL",
-                    "local" : "localPath"
-                }
+    "scope": "plugin2",
+    "assets": [
+        {
+            "name": "asset3",
+            "version": "1",
+            "type": "js",
+            "locations": {
+                "remote": "remoteURL",
+                "local": "localPath"
             }
+        },
+        {
+            "name": "asset3",
+            "version": "1",
+            "type": "css",
+            "locations": {
+                "remote": "remoteURL",
+                "local": "localPath"
+            }
+        },
+        {
+            "name": "excludedAsset2",
+            "version": "1",
+            "type": "js",
+            "locations": {
+                "remote": "remoteURL",
+                "local": "localPath"
+            }
+        }
     ]
 }

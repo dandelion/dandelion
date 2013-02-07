@@ -29,25 +29,53 @@
  */
 package com.github.dandelion.core.asset;
 
-import org.fest.assertions.Assertions;
+import org.junit.BeforeClass;
 import org.junit.Test;
+
+import java.util.List;
 
 import static org.fest.assertions.Assertions.assertThat;
 
 public class AssetsTest {
 
+    @BeforeClass
+    public static void set_up_class() {
+        Assets.assetsConfigurator = null;
+        Assets.assetsStorage = null;
+        Assets.initializeIfNeeded();
+    }
+
     @Test
     public void should_load_default_json() {
-        Assertions.assertThat(Assets.assetsFor()).hasSize(0);
+        assertThat(Assets.assetsFor()).hasSize(1);
     }
 
     @Test
-    public void should_load_other_scopes() {
-        assertThat(Assets.assetsFor("fake")).hasSize(2);
+    public void should_load_the_assets_locations() {
+        assertThat(Assets.getAssetsLocations()).isEqualTo("remote");
     }
 
     @Test
-    public void should_load_the_loading_type() {
-        assertThat(Assets.getAssetsLocations()).isEqualTo("local");
+    public void should_be_the_remote_url_for_all_assets() {
+        List<Asset> assets = Assets.assetsFor("default","detachedScope","plugin1","plugin2");
+        assertThat(assets).hasSize(6);
+        for(Asset asset:assets) {
+            assertThat(Assets.getAssetLocation(asset)).isEqualTo("remoteURL");
+        }
+    }
+
+    @Test
+    public void should_exclude_assets_by_name() {
+        List<Asset> assets = Assets.assetsFor("detachedScope");
+        assertThat(Assets.excludeByName(assets, "asset3addon")).hasSize(1);
+        assertThat(Assets.excludeByName(assets, "asset1")).hasSize(0);
+    }
+
+    @Test
+    public void should_filter_assets_by_type() {
+        List<Asset> assets = Assets.assetsFor("plugin1", "plugin2", "plugin3addon", "plugin1addon2");
+        assertThat(Assets.filterByType(assets, AssetType.js)).hasSize(3);
+        assertThat(Assets.filterByType(assets, AssetType.img)).hasSize(1);
+        assertThat(Assets.filterByType(assets, AssetType.css)).hasSize(1);
     }
 }

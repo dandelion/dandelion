@@ -94,7 +94,7 @@ public final class AssetsStorage {
      * @param parentScope parent of the scope
      */
     public void store(Asset asset, String scope, String parentScope) {
-        if(scope.equalsIgnoreCase(DETACHED_PARENT_SCOPE)) {
+        if(DETACHED_PARENT_SCOPE.equalsIgnoreCase(scope)) {
             throw new DandelionException(AssetsStorageError.DETACHED_SCOPE_NOT_ALLOWED)
                     .set("detachedScope", DETACHED_PARENT_SCOPE);
         }

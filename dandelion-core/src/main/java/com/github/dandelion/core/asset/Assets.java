@@ -30,6 +30,8 @@
 
 package com.github.dandelion.core.asset;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -99,5 +101,37 @@ public final class Assets {
     public static String getAssetLocation(Asset asset) {
         String location = asset.getLocations().get(getAssetsLocations());
         return location!=null?location:"";
+    }
+
+    /**
+     * @param assets assets to filter
+     * @param filters exclude assets names
+     * @return a filtered list of assets
+     */
+    public static List<Asset> excludeByName(List<Asset> assets, String... filters) {
+        List<Asset> _assets = new ArrayList<Asset>();
+        List<String> _filters = new ArrayList<String>(Arrays.asList(filters));
+        for(Asset _asset:assets) {
+            if(!_filters.contains(_asset.getName())) {
+                _assets.add(_asset);
+            }
+        }
+        return _assets;
+    }
+
+    /**
+     * @param assets assets to filter
+     * @param filters filtered assets type
+     * @return a filtered list of assets
+     */
+    public static List<Asset> filterByType(List<Asset> assets, AssetType... filters) {
+        List<Asset> _assets = new ArrayList<Asset>();
+        List<AssetType> _filters = new ArrayList<AssetType>(Arrays.asList(filters));
+        for(Asset _asset:assets) {
+            if(_filters.contains(_asset.getType())) {
+                _assets.add(_asset);
+            }
+        }
+        return _assets;
     }
 }

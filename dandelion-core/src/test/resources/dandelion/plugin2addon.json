@@ -1,15 +1,15 @@
 {
-    "scope" : "plugin2addon",
-    "parent" : "plugin2",
-	"assets": [
-			{
-				"name" : "asset2addon",
-				"version" : "1",
-				"type" : "js",
-                "locations": {
-                    "remote" : "remoteURL",
-                    "local" : "localPath"
-                }
-			}
+    "scope": "plugin2addon",
+    "parent": "plugin2",
+    "assets": [
+        {
+            "name": "asset2addon",
+            "version": "1",
+            "type": "js",
+            "locations": {
+                "remote": "remoteURL",
+                "local": "localPath"
+            }
+        }
     ]
 }

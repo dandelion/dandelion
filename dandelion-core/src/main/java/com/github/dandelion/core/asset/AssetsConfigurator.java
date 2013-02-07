@@ -62,8 +62,8 @@ public class AssetsConfigurator {
     AssetsStorage assetsStorage;
     AssetsLoader assetsLoader;
     String assetsLocations;
-    List<String> excludesScopes;
-    List<String> excludesAssets;
+    List<String> excludedScopes;
+    List<String> excludedAssets;
 
     private Map<String, List<Asset>> componentsByScope = new HashMap<String, List<Asset>>();
     private Map<String, List<String>> scopesByParentScope = new HashMap<String, List<String>>();
@@ -91,8 +91,8 @@ public class AssetsConfigurator {
                 properties.load(classLoader.getResourceAsStream(resources[0].getLocation()));
 
                 assetsLocations = properties.getProperty("assetsLocations");
-                excludesScopes = setPropertyAsList(properties.getProperty("excludesScopes"), ",");
-                excludesAssets = setPropertyAsList(properties.getProperty("excludesAssets"), ",");
+                excludedScopes = setPropertyAsList(properties.getProperty("excludedScopes"), ",");
+                excludedAssets = setPropertyAsList(properties.getProperty("excludedAssets"), ",");
                 assetsLoader = setPropertyAsAssetsLoader(classLoader, properties);
             }
         } catch (IOException e) {
@@ -133,11 +133,11 @@ public class AssetsConfigurator {
         if(assetsLocations == null) {
             assetsLocations = "remote";
         }
-        if(excludesScopes == null) {
-            excludesScopes = new ArrayList<String>();
+        if(excludedScopes == null) {
+            excludedScopes = new ArrayList<String>();
         }
-        if(excludesAssets == null) {
-            excludesAssets = new ArrayList<String>();
+        if(excludedAssets == null) {
+            excludedAssets = new ArrayList<String>();
         }
     }
 
@@ -167,14 +167,14 @@ public class AssetsConfigurator {
      * @param components components to analyze
      */
     private void prepareAssetsLoading(List<AssetsComponent> components) {
-        LOG.debug("Excludes scopes are {}", excludesScopes);
-        LOG.debug("Excludes assets are {}", excludesAssets);
+        LOG.debug("Excludes scopes are {}", excludedScopes);
+        LOG.debug("Excludes assets are {}", excludedAssets);
 
         for(AssetsComponent component:components) {
             LOG.debug("Prepare {}", component);
 
-            if(!excludesScopes.contains(component.getScope())
-                    && !excludesScopes.contains(component.getParent())) {
+            if(!excludedScopes.contains(component.getScope())
+                    && !excludedScopes.contains(component.getParent())) {
                 LOG.debug("Scope {} and his parent {} are not in excludes scopes",
                         component.getScope(), component.getParent());
 
@@ -274,7 +274,7 @@ public class AssetsConfigurator {
         List<Asset> _assets = componentsByScope.get(component.getScope());
 
         for(Asset asset:component.getAssets()) {
-            if(!excludesAssets.contains(asset.getName())) {
+            if(!excludedAssets.contains(asset.getName())) {
                 LOG.debug("Store {} as child of {}", asset.getName(), component.getScope());
                 _assets.add(asset);
             } else {

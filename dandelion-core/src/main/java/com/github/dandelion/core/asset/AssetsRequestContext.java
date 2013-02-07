@@ -41,9 +41,11 @@ import java.util.List;
 public class AssetsRequestContext {
     private List<String> scopes;
     private boolean alreadyRendered;
+    private List<String> excludedAssets;
 
     private AssetsRequestContext() {
         this.scopes = new ArrayList<String>();
+        this.excludedAssets = new ArrayList<String>();
     }
 
     /**
@@ -58,6 +60,46 @@ public class AssetsRequestContext {
             servletRequest.setAttribute(AssetsRequestContext.class.getCanonicalName(), attribute);
         }
         return AssetsRequestContext.class.cast(attribute);
+    }
+
+    /**
+     * Fluent remover for scopes
+     * @param scopes scopes (separated by comma)
+     * @return this context
+     */
+    public AssetsRequestContext removeScopes(String scopes) {
+        if(scopes == null) return this;
+        return removeScopes(scopes.split(","));
+    }
+
+    /**
+     * Fluent remover for scopes
+     * @param scopes scopes
+     * @return this context
+     */
+    private AssetsRequestContext removeScopes(String... scopes) {
+        this.scopes.removeAll(Arrays.asList(scopes));
+        return this;
+    }
+
+    /**
+     * Fluent exclude for assets
+     * @param assets scopes (separated by comma)
+     * @return this context
+     */
+    public AssetsRequestContext excludeAssets(String assets) {
+        if(assets == null) return this;
+        return excludeAssets(assets.split(","));
+    }
+
+    /**
+     * Fluent exclude for assets
+     * @param assets scopes
+     * @return this context
+     */
+    private AssetsRequestContext excludeAssets(String... assets) {
+        this.excludedAssets.addAll(Arrays.asList(assets));
+        return this;
     }
 
     /**
@@ -81,16 +123,6 @@ public class AssetsRequestContext {
     }
 
     /**
-     * Fluent adder for one scope
-     * @param scope scope
-     * @return this context
-     */
-    public AssetsRequestContext addScope(String scope) {
-        this.scopes.add(scope);
-        return this;
-    }
-
-    /**
      * Verify if a scope has been stored in this context
      * @return <code>true</code> if this context have at least one scope stored
      */
@@ -103,6 +135,13 @@ public class AssetsRequestContext {
      */
     public String[] getScopes() {
         return scopes.toArray(new String[scopes.size()]);
+    }
+
+    /**
+     * @return all assets to remove
+     */
+    public String[] getExcludedAssets() {
+        return excludedAssets.toArray(new String[excludedAssets.size()]);
     }
 
     /**

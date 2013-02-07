@@ -1,23 +1,23 @@
 {
-    "scope" : "excludeScope2",
-	"assets": [
-			{
-				"name" : "asset3",
-				"version" : "1",
-				"type" : "js",
-                "locations": {
-                    "remote" : "remoteURL",
-                    "local" : "localPath"
-                }
-			},
-            {
-                "name" : "excludeAsset2",
-                "version" : "1",
-                "type" : "js",
-                "locations" : {
-                    "remote" : "remoteURL",
-                    "local" : "localPath"
-                }
+    "scope": "excludedScope2",
+    "assets": [
+        {
+            "name": "asset3",
+            "version": "1",
+            "type": "js",
+            "locations": {
+                "remote": "remoteURL",
+                "local": "localPath"
             }
+        },
+        {
+            "name": "excludedAsset2",
+            "version": "1",
+            "type": "js",
+            "locations": {
+                "remote": "remoteURL",
+                "local": "localPath"
+            }
+        }
     ]
 }

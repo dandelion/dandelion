@@ -1,15 +1,15 @@
 {
-    "scope" : "plugin3addon",
-    "parent" : "plugin3",
-	"assets": [
-			{
-				"name" : "asset3addon",
-				"version" : "1",
-				"type" : "js",
-                "locations" : {
-                    "remote" : "remoteURL",
-                    "local" : "localPath"
-                }
-			}
+    "scope": "plugin3addon",
+    "parent": "plugin3",
+    "assets": [
+        {
+            "name": "asset3addon",
+            "version": "1",
+            "type": "img",
+            "locations": {
+                "remote": "remoteURL",
+                "local": "localPath"
+            }
+        }
     ]
 }

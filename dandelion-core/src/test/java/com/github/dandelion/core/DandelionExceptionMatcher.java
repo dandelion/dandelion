@@ -27,10 +27,8 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.github.dandelion.api;
+package com.github.dandelion.core;
 
-import com.github.dandelion.core.DandelionError;
-import com.github.dandelion.core.DandelionException;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 

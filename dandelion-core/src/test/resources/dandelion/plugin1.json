@@ -1,14 +1,14 @@
 {
-    "scope" : "plugin1",
-	"assets": [
-			{
-				"name" : "asset2",
-				"version" : "1",
-				"type" : "js",
-                "locations" : {
-                    "remote" : "remoteURL",
-                    "local" : "localPath"
-                }
-			}
+    "scope": "plugin1",
+    "assets": [
+        {
+            "name": "asset2",
+            "version": "1",
+            "type": "js",
+            "locations": {
+                "remote": "remoteURL",
+                "local": "localPath"
+            }
+        }
     ]
 }

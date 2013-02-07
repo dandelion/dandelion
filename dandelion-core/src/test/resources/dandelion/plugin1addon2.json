@@ -1,11 +1,11 @@
 {
-    "scope": "detachedScope",
-    "parent": "none",
+    "scope": "plugin1addon2",
+    "parent": "plugin1",
     "assets": [
         {
-            "name": "asset1",
+            "name": "asset22",
             "version": "1",
-            "type": "js",
+            "type": "img",
             "locations": {
                 "remote": "remoteURL",
                 "local": "localPath"
