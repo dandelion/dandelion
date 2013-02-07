@@ -40,13 +40,23 @@ public class LinkTag extends HtmlTag {
 	 * Plain old HTML <code>href</code> attribute.
 	 */
 	private String href;
-	
-	public LinkTag(){
+    /**
+     * Plain old HTML <code>rel</code> attribute (by default 'stylesheet').
+     */
+    private String rel = "stylesheet";
+
+
+    public LinkTag(){
 	}
 	
 	public LinkTag(String href){
 		this.href = href;
 	}
+
+    public LinkTag(String href, String rel){
+        this(href);
+        this.rel = rel;
+    }
 	
 	/**
 	 * {@inheritDoc}
@@ -54,12 +64,14 @@ public class LinkTag extends HtmlTag {
 	@Override
 	public String toHtml(){
 		StringBuffer html = new StringBuffer();
-		html.append("<link rel=\"stylesheet\"");
+		html.append("<link rel=\"");
+        html.append(this.rel);
+        html.append("\"");
 		
 		if(this.href != null){
 			html.append(" href=\"");
 			html.append(this.href);
-			html.append(" \"");
+			html.append("\"");
 		}
 		
 		html.append("/>");
@@ -73,4 +85,12 @@ public class LinkTag extends HtmlTag {
 	public void setHref(String href) {
 		this.href = href;
 	}
+
+    public String getRel() {
+        return rel;
+    }
+
+    public void setRel(String rel) {
+        this.rel = rel;
+    }
 }

@@ -86,6 +86,7 @@ public abstract class HtmlTag {
 		if (this.cssClass == null) {
 			this.cssClass = new StringBuffer();
 		}
+        this.cssClass.append(" ");
 		this.cssClass.append(cssClass);
 	}
 
@@ -94,5 +95,8 @@ public abstract class HtmlTag {
 			this.cssStyle = new StringBuffer();
 		}
 		this.cssStyle.append(cssStyle);
+        if(!cssStyle.endsWith(";")) {
+            this.cssStyle.append(";");
+        }
 	}
 }
