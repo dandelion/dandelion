@@ -1,0 +1,32 @@
+{
+    "scope": "asset_scopes",
+    "assets": [
+        {
+            "name": "asset_scopes_3",
+            "version": "1",
+            "type": "css",
+            "locations": {
+                "remote": "asset_scopes_3_remoteURL",
+                "local": "asset_scopes_3_localPath"
+            }
+        },
+        {
+            "name": "asset_scopes_4",
+            "version": "1",
+            "type": "js",
+            "locations": {
+                "remote": "asset_scopes_4_remoteURL",
+                "local": "asset_scopes_4_localPath"
+            }
+        } ,
+        {
+            "name": "asset_scopes_4",
+            "version": "1",
+            "type": "img",
+            "locations": {
+                "remote": "asset_scopes_4_remoteURL",
+                "local": "asset_scopes_4_localPath"
+            }
+        }
+    ]
+}

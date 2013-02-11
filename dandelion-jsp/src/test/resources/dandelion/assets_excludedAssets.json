@@ -1,0 +1,23 @@
+{
+    "scope": "assets_excludedAssets",
+    "assets": [
+        {
+            "name": "assets_excludedAssets_1",
+            "version": "1",
+            "type": "js",
+            "locations": {
+                "remote": "assets_excludedAssets_1_remoteURL",
+                "local": "assets_excludedAssets_1_localPath"
+            }
+        },
+        {
+            "name": "assets_excludedAssets_2",
+            "version": "1",
+            "type": "js",
+            "locations": {
+                "remote": "assets_excludedAssets_2_remoteURL",
+                "local": "assets_excludedAssets_2_localPath"
+            }
+        }
+    ]
+}

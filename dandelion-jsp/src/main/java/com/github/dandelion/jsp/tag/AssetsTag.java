@@ -33,15 +33,13 @@ package com.github.dandelion.jsp.tag;
 import com.github.dandelion.core.asset.Asset;
 import com.github.dandelion.core.asset.Assets;
 import com.github.dandelion.core.asset.AssetsRequestContext;
-import com.github.dandelion.core.html.LinkTag;
-import com.github.dandelion.core.html.ScriptTag;
+import com.github.dandelion.jsp.util.AssetsRender;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.tagext.TagSupport;
-import java.io.IOException;
 import java.util.List;
 
 /**
@@ -55,13 +53,14 @@ import java.util.List;
  * <pre>
  * &lt;dandelion:assets scopes="..." /&gt;
  * </pre>
- * 
- * @author Thibault Duchateau
  */
 public class AssetsTag extends TagSupport {
 	private static final Logger LOG = LoggerFactory.getLogger(AssetsTag.class);
 		
 	private String scopes;
+    private String excludedScopes;
+    private String excludedAssets;
+    private boolean renderer = true;
 
 	public int doStartTag() throws JspException {
 
@@ -73,34 +72,24 @@ public class AssetsTag extends TagSupport {
 
         AssetsRequestContext context = AssetsRequestContext
                 .get(pageContext.getRequest())
-                .addScopes(scopes);
-        if(context.isAlreadyRendered()) {
-            LOG.warn("This page have multiples assets tag, only one is needed");
-        }
-		if (context.hasScopes()) {
-			List<Asset> assets = Assets.assetsFor(context.getScopes());
-            LOG.debug("scope = " + scopes + ", assets = " + assets);
+                .addScopes(getScopes())
+                .removeScopes(getExcludedScopes())
+                .excludeAssets(getExcludedAssets());
+        if(isRenderer()) {
+            if(context.isAlreadyRendered()) {
+                LOG.warn("This page have multiples 'assets' tag, only one need to be rendered");
+                LOG.warn("Consider to set 'renderer' attribute to 'false', on all previous 'assets' tags ");
+            }
+            if (context.hasScopes()) {
+                List<Asset> assets = Assets.assetsFor(context.getScopes());
+                assets = Assets.excludeByName(assets, context.getExcludedAssets());
 
-			try {
-				for (Asset asset : assets) {
-					switch (asset.getType()) {
-					case css:
-						out.println(new LinkTag(Assets.getAssetLocation(asset)).toHtml());
-						break;
-					case img:
-						break;
-					case js:
-						out.println(new ScriptTag(Assets.getAssetLocation(asset)).toHtml());
-						break;
-					default:
-						break;
-					}
-				}
+                AssetsRender.render(assets, out);
                 context.hasBeenRendered();
-			} catch (IOException e) {
-				throw new JspException(e);
-			}
-		}
+            }
+        } else {
+            LOG.warn("the renderer of assets is inactive for this time");
+        }
 
 		return EVAL_PAGE;
 	}
@@ -111,5 +100,29 @@ public class AssetsTag extends TagSupport {
 
     public void setScopes(String scopes) {
         this.scopes = scopes;
+    }
+
+    public String getExcludedScopes() {
+        return excludedScopes;
+    }
+
+    public void setExcludedScopes(String excludedScopes) {
+        this.excludedScopes = excludedScopes;
+    }
+
+    public String getExcludedAssets() {
+        return excludedAssets;
+    }
+
+    public void setExcludedAssets(String excludedAssets) {
+        this.excludedAssets = excludedAssets;
+    }
+
+    public boolean isRenderer() {
+        return renderer;
+    }
+
+    public void setRenderer(boolean renderer) {
+        this.renderer = renderer;
     }
 }
