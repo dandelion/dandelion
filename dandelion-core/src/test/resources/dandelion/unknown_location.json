@@ -1,0 +1,21 @@
+{
+    "scope": "unknown_location",
+    "parent": "none",
+    "assets": [
+        {
+            "name": "asset1",
+            "version": "1",
+            "type": "js",
+            "locations": {
+                "unknownLocation": "URL"
+            }
+        },{
+            "name": "asset2",
+            "version": "1",
+            "type": "js",
+            "locations": {
+                "anotherUnknownLocation": "URL"
+            }
+        }
+    ]
+}

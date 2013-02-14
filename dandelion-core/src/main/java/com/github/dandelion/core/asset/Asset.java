@@ -45,11 +45,12 @@ import java.util.Map;
  *     </li>
  * </ul>
  */
-public class Asset {
+public class Asset implements Cloneable {
 	String name;
 	String version;
 	AssetType type;
 	Map<String, String> locations;
+    int storagePosition = -1;
 
     /**
      * Declare an empty asset
@@ -138,5 +139,19 @@ public class Asset {
 	public String toString() {
 		return "Asset [name=" + name + ", version=" + version + ", type=" + type + ", locations=[" + locations + "]";
 	}
-	
+
+    String equalsKey() {
+        return name+"_"+type;
+    }
+
+    @Override
+    protected Object clone() {
+        Object o = null;
+        try {
+            o = super.clone();
+        } catch(CloneNotSupportedException e) {
+            e.printStackTrace(System.err);
+        }
+        return o;
+    }
 }

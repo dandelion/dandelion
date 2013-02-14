@@ -39,6 +39,8 @@ class AssetsScopeStorageUnit {
     String scope;
     String parentScope;
     List<Asset> assets;
+    String rootParentScope;
+    int storagePosition = -1;
 
     /**
      * A new container is a scope with his parent scope and a empty list of assets

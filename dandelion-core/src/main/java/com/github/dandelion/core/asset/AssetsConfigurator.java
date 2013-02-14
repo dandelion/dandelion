@@ -38,8 +38,7 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.util.*;
 
-import static com.github.dandelion.core.asset.AssetsStorage.DETACHED_PARENT_SCOPE;
-import static com.github.dandelion.core.asset.AssetsStorage.ROOT_SCOPE;
+import static com.github.dandelion.core.asset.AssetsStorage.*;
 
 /**
  * Load Assets configuration
@@ -61,7 +60,7 @@ public class AssetsConfigurator {
     private static final Logger LOG = LoggerFactory.getLogger(AssetsConfigurator.class);
     AssetsStorage assetsStorage;
     AssetsLoader assetsLoader;
-    String assetsLocations;
+    List<String> assetsLocations;
     List<String> excludedScopes;
     List<String> excludedAssets;
 
@@ -90,7 +89,7 @@ public class AssetsConfigurator {
                 Properties properties = new Properties();
                 properties.load(classLoader.getResourceAsStream(resources[0].getLocation()));
 
-                assetsLocations = properties.getProperty("assetsLocations");
+                assetsLocations = setPropertyAsList(properties.getProperty("assetsLocations"), ",");
                 excludedScopes = setPropertyAsList(properties.getProperty("excludedScopes"), ",");
                 excludedAssets = setPropertyAsList(properties.getProperty("excludedAssets"), ",");
                 assetsLoader = setPropertyAsAssetsLoader(classLoader, properties);
@@ -131,7 +130,7 @@ public class AssetsConfigurator {
             assetsLoader = new AssetsJsonLoader();
         }
         if(assetsLocations == null) {
-            assetsLocations = "remote";
+            assetsLocations = setPropertyAsList("remote,local", ",");
         }
         if(excludedScopes == null) {
             excludedScopes = new ArrayList<String>();
@@ -264,6 +263,10 @@ public class AssetsConfigurator {
 
     private void prepareParentScope(AssetsComponent component) {
         LOG.debug("Store {} as parent of {}", component.getParent(), component.getScope());
+        if(ROOT_SCOPE.equalsIgnoreCase(component.getParent())
+                && ROOT_SCOPE.equalsIgnoreCase(component.getScope())) {
+            component.setParent(MASTER_SCOPE);
+        }
         parentScopesByScope.put(component.getScope(), component.getParent());
     }
 

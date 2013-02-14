@@ -31,6 +31,7 @@ package com.github.dandelion.core.asset;
 
 import com.github.dandelion.core.DandelionExceptionMatcher;
 import com.github.dandelion.core.DandelionException;
+import org.fest.assertions.MapAssert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Rule;
@@ -38,9 +39,11 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static org.fest.assertions.Assertions.assertThat;
+import static org.fest.util.Collections.list;
 
 public class AssetsStorageTest {
     @Rule
@@ -67,6 +70,15 @@ public class AssetsStorageTest {
     @Before
     public void set_up() {
         assetsStorage = new AssetsStorage();
+    }
+
+    @Before
+    public void tear_down() {
+        asset.storagePosition = -1;
+        asset2.storagePosition = -1;
+        asset3.storagePosition = -1;
+        asset4.storagePosition = -1;
+        assetConflict.storagePosition = -1;
     }
 
     @Test
@@ -233,5 +245,56 @@ public class AssetsStorageTest {
         );
 
         assetsStorage.store(asset, "none");
+    }
+
+    @Test
+    public void should_merge_same_assets_with_distincts_locations() {
+        assetsStorage.store(asset);
+        Map<String, String> assetCloneLocations = new HashMap<String, String>();
+        assetCloneLocations.put("other", "otherURL");
+        Asset assetClone = new Asset(asset.getName(), asset.getVersion(), asset.getType(), assetCloneLocations);
+        assetsStorage.store(assetClone);
+
+        List<Asset> assets = assetsStorage.assetsFor();
+        assertThat(assets).hasSize(1).contains(asset);
+        assertThat(assets.get(0).getLocations()).includes(
+                MapAssert.entry("remote", "remoteURL"),
+                MapAssert.entry("local", "localPath"),
+                MapAssert.entry("other", "otherURL")
+        );
+    }
+
+    @Test
+    public void should_detect_conflicts_in_locations_before_storage() {
+        Map<String, String> assetCloneLocations = new HashMap<String, String>();
+        assetCloneLocations.put("remote", "otherURL");
+        Asset assetClone = new Asset(asset.getName(), asset.getVersion(), asset.getType(), assetCloneLocations);
+
+        expectedEx.expect(DandelionException.class);
+        expectedEx.expect(
+                new DandelionExceptionMatcher(AssetsStorageError.ASSET_LOCATION_ALREADY_EXISTS_IN_SCOPE)
+                        .set("locations", list("remote"))
+                        .set("asset", assetClone)
+        );
+
+        assetsStorage.store(asset);
+        assetsStorage.store(assetClone);
+    }
+
+    @Test
+    public void should_manage_tree_on_locations() {
+        assetsStorage.store(asset);
+        Map<String, String> assetCloneLocations = new HashMap<String, String>();
+        assetCloneLocations.put("other", "otherURL");
+        Asset assetClone = new Asset(asset.getName(), asset.getVersion(), asset.getType(), assetCloneLocations);
+        assetsStorage.store(assetClone, "other");
+
+        List<Asset> assets = assetsStorage.assetsFor("other");
+        assertThat(assets).hasSize(1).contains(assetClone);
+        assertThat(assets.get(0).getLocations()).includes(
+                MapAssert.entry("remote", "remoteURL"),
+                MapAssert.entry("local", "localPath"),
+                MapAssert.entry("other", "otherURL")
+        );
     }
 }

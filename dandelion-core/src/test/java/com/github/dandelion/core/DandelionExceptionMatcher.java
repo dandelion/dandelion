@@ -32,7 +32,9 @@ package com.github.dandelion.core;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -52,7 +54,9 @@ public class DandelionExceptionMatcher extends BaseMatcher {
         DandelionException e = DandelionException.class.cast(o);
         if(e.getErrorCode() != error) return false;
         for(Map.Entry<String,Object> entry:parameters.entrySet()) {
-            if(!entry.getValue().equals(e.get(entry.getKey()))) return false;
+            if(!entry.getValue().equals(e.get(entry.getKey()))) {
+                return false;
+            }
         }
         return true;
     }

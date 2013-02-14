@@ -52,7 +52,7 @@ public class AssetsTest {
 
     @Test
     public void should_load_the_assets_locations() {
-        assertThat(Assets.getAssetsLocations()).isEqualTo("remote");
+        assertThat(Assets.getAssetsLocations()).contains("remote");
     }
 
     @Test
@@ -72,10 +72,29 @@ public class AssetsTest {
     }
 
     @Test
-    public void should_filter_assets_by_type() {
-        List<Asset> assets = Assets.assetsFor("plugin1", "plugin2", "plugin3addon", "plugin1addon2");
-        assertThat(Assets.filterByType(assets, AssetType.js)).hasSize(3);
+    public void                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   should_filter_assets_by_type() {
+        List<Asset> assets = Assets.assetsFor("plugin1", "plugin2", "plugin1addon2", "plugin3addon");
+        assertThat(assets).hasSize(6);
         assertThat(Assets.filterByType(assets, AssetType.img)).hasSize(1);
         assertThat(Assets.filterByType(assets, AssetType.css)).hasSize(1);
+        assertThat(Assets.filterByType(assets, AssetType.js)).hasSize(4);
+    }
+
+    @Test
+    public void should_manage_unknown_location() {
+        List<Asset> assets = Assets.assetsFor("unknown_location");
+        assertThat(assets).hasSize(2);
+        for(Asset asset:assets) {
+            assertThat(Assets.getAssetLocation(asset)).isNotEqualTo("URL").isEmpty();
+        }
+    }
+
+    @Test
+    public void should_respect_locations_order() {
+        List<Asset> assets = Assets.assetsFor("locations_order");
+        assertThat(assets).hasSize(3);
+        for(Asset asset:assets) {
+            assertThat(Assets.getAssetLocation(asset)).isEqualTo("otherURL");
+        }
     }
 }

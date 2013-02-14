@@ -61,7 +61,7 @@ public class AssetsConfiguratorTest {
 
     @Test
     public void should_load_the_assets_locations() {
-        assertThat(assetsConfigurator.assetsLocations).isEqualTo("remote");
+        assertThat(assetsConfigurator.assetsLocations).containsSequence("other", "remote", "local");
     }
 
     @Test
@@ -73,12 +73,12 @@ public class AssetsConfiguratorTest {
 
         // clean loaded configuration
         anotherConfigurator.assetsLoader = new AssetsFakeLoader();
-        anotherConfigurator.assetsLocations = "local";
+        anotherConfigurator.assetsLocations = list("local");
 
         anotherConfigurator.processAssetsLoading(false);
 
         assertThat(anotherConfigurator.assetsStorage.assetsFor()).hasSize(0);
         assertThat(anotherConfigurator.assetsStorage.assetsFor("fake")).hasSize(2);
-        assertThat(anotherConfigurator.assetsLocations).isEqualTo("local");
+        assertThat(anotherConfigurator.assetsLocations).contains("local");
     }
 }

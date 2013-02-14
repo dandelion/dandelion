@@ -52,7 +52,11 @@ public enum AssetsStorageError implements DandelionError {
     /**
      * An asset can't have a parent scope who don't already exists
      */
-    UNDEFINED_PARENT_SCOPE(103);
+    UNDEFINED_PARENT_SCOPE(103),
+    /**
+     * A location can't be use twice in the same scope by an similar asset
+     */
+    ASSET_LOCATION_ALREADY_EXISTS_IN_SCOPE(104);
 
     private final int number;
 

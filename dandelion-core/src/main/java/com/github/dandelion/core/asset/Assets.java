@@ -79,7 +79,7 @@ public final class Assets {
      *
      * @return locations of Assets
      */
-    public static String getAssetsLocations() {
+    public static List<String> getAssetsLocations() {
         initializeIfNeeded();
         return assetsConfigurator.assetsLocations;
     }
@@ -99,8 +99,12 @@ public final class Assets {
      * @return the location of this asset by the configured assets locations.
      */
     public static String getAssetLocation(Asset asset) {
-        String location = asset.getLocations().get(getAssetsLocations());
-        return location!=null?location:"";
+        for(String location:getAssetsLocations()) {
+            if(asset.getLocations().containsKey(location)) {
+                return asset.getLocations().get(location);
+            }
+        }
+        return "";
     }
 
     /**
