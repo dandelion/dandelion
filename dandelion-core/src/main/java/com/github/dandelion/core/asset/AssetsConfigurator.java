@@ -30,8 +30,7 @@
 package com.github.dandelion.core.asset;
 
 import com.github.dandelion.core.DandelionException;
-import com.github.dandelion.core.utils.ClassPathResource;
-import com.github.dandelion.core.utils.scanner.ClassPathScanner;
+import com.github.dandelion.core.utils.DandelionScanner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -79,15 +78,12 @@ public class AssetsConfigurator {
      */
     void initialize() {
         try {
-            ClassPathResource[] resources = new ClassPathScanner().scanForResources("dandelion", "dandelion", "properties");
-
-            if(resources.length > 1) {
-                throw new IllegalStateException("only one file 'dandelion/dandelion.properties' can exists");
-            } else if(resources.length == 1) {
+            String resource = DandelionScanner.getResource("dandelion.properties");
+            if(resource != null) {
                 ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
 
                 Properties properties = new Properties();
-                properties.load(classLoader.getResourceAsStream(resources[0].getLocation()));
+                properties.load(classLoader.getResourceAsStream(resource));
 
                 assetsLocations = setPropertyAsList(properties.getProperty("assetsLocations"), ",");
                 excludedScopes = setPropertyAsList(properties.getProperty("excludedScopes"), ",");
