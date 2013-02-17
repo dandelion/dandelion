@@ -11,7 +11,7 @@
     <artifactId>dandelion-jsp</artifactId>
     <packaging>jar</packaging>
 
-    <name>Dandelion :: Core :: JSP</name>
+    <name>Dandelion :: JSP</name>
 
     <dependencies>
         <dependency>

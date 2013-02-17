@@ -11,7 +11,7 @@
    <artifactId>dandelion-thymeleaf</artifactId>
    <packaging>jar</packaging>
 
-   <name>Dandelion :: Core :: Thymeleaf</name>
+   <name>Dandelion :: Thymeleaf</name>
 
    <dependencies>
       <dependency>
