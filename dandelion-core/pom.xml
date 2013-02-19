@@ -1,54 +1,32 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-   <modelVersion>4.0.0</modelVersion>
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
 
-   <parent>
-      <groupId>com.github.dandelion</groupId>
-      <artifactId>dandelion</artifactId>
-      <version>1.0.0-SNAPSHOT</version>
-   </parent>
+    <parent>
+        <groupId>com.github.dandelion</groupId>
+        <artifactId>dandelion</artifactId>
+        <version>1.0.0-SNAPSHOT</version>
+    </parent>
 
-   <artifactId>dandelion-core</artifactId>
-   <packaging>jar</packaging>
+    <artifactId>dandelion-core</artifactId>
+    <packaging>jar</packaging>
 
-   <name>Dandelion :: Core</name>
+    <name>Dandelion :: Core</name>
 
-   <dependencies>
-      <dependency>
-         <groupId>org.codehaus.jackson</groupId>
-         <artifactId>jackson-mapper-asl</artifactId>
-         <version>1.9.9</version>
-      </dependency>
-      <dependency>
-         <groupId>com.fasterxml.jackson.core</groupId>
-         <artifactId>jackson-annotations</artifactId>
-         <version>2.1.2</version>
-      </dependency>
-
-       <!-- Servlet -->
-       <dependency>
-           <groupId>javax.servlet</groupId>
-           <artifactId>javax.servlet-api</artifactId>
-       </dependency>
-
-      <dependency>
-        <groupId>org.slf4j</groupId>
-        <artifactId>slf4j-api</artifactId>
-      </dependency>
-
-       <!-- Test -->
-       <dependency>
-           <groupId>junit</groupId>
-           <artifactId>junit</artifactId>
-       </dependency>
-       <dependency>
-           <groupId>org.easytesting</groupId>
-           <artifactId>fest-assert</artifactId>
-       </dependency>
-       <dependency>
-           <groupId>ch.qos.logback</groupId>
-           <artifactId>logback-classic</artifactId>
-           <scope>test</scope>
-       </dependency>
-   </dependencies>
+    <dependencies>
+        <dependency>
+            <groupId>org.codehaus.jackson</groupId>
+            <artifactId>jackson-mapper-asl</artifactId>
+            <version>1.9.9</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-annotations</artifactId>
+            <version>2.1.2</version>
+        </dependency>
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+        </dependency>
+    </dependencies>
 </project>
