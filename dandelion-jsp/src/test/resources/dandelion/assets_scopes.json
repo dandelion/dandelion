@@ -18,6 +18,15 @@
                 "remote": "assets_scopes_2_remoteURL",
                 "local": "assets_scopes_2_localPath"
             }
+        },
+        {
+            "name": "assets_scopes_3",
+            "version": "1",
+            "type": "css",
+            "locations": {
+                "remote": "assets_scopes_3_remoteURL",
+                "local": "assets_scopes_3_localPath"
+            }
         }
     ]
 }

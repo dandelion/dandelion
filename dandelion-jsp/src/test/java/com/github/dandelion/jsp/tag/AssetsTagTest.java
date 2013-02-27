@@ -32,8 +32,6 @@ package com.github.dandelion.jsp.tag;
 
 import com.github.dandelion.jsp.PhantomJsTest;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static org.fest.assertions.Assertions.assertThat;
 
@@ -46,6 +44,7 @@ public class AssetsTagTest extends PhantomJsTest {
     @Test
     public void assets_scopes() {
         goTo("/assets_scopes.jsp");
+        assertThat(text("link")).hasSize(1);
         assertThat(text("script")).hasSize(2);
     }
     @Test

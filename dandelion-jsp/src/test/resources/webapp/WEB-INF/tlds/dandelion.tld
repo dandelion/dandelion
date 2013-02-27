@@ -34,7 +34,7 @@
 <taglib xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee/web-jsptaglibrary_1_2.xsd"
         version="1.2">
-    <tlib-version>1.0.0-SNAPSHOT</tlib-version>
+    <tlib-version>0.1.0-SNAPSHOT</tlib-version>
     <jsp-version>1.2</jsp-version>
     <short-name>dandelion</short-name>
     <uri>http://github.com/dandelion</uri>
@@ -65,17 +65,6 @@
             <name>renderer</name>
             <required>false</required>
             <description>false to disactive the rendering system for assets</description>
-        </attribute>
-    </tag>
-    <tag>
-        <name>asset</name>
-        <tag-class>com.github.dandelion.jsp.tag.AssetTag</tag-class>
-        <body-content>empty</body-content>
-        <description>Add scopes on request context for usage in assets tag</description>
-        <attribute>
-            <name>scopes</name>
-            <required>true</required>
-            <description>List of requested scopes (comma separated)</description>
         </attribute>
     </tag>
 </taglib>
