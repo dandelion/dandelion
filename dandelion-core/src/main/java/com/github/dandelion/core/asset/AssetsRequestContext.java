@@ -41,10 +41,12 @@ import java.util.List;
 public class AssetsRequestContext {
     private List<String> scopes;
     private boolean alreadyRendered;
+    private List<String> excludedScopes;
     private List<String> excludedAssets;
 
     private AssetsRequestContext() {
         this.scopes = new ArrayList<String>();
+        this.excludedScopes = new ArrayList<String>();
         this.excludedAssets = new ArrayList<String>();
     }
 
@@ -63,22 +65,22 @@ public class AssetsRequestContext {
     }
 
     /**
-     * Fluent remover for scopes
+     * Fluent exclude for scopes
      * @param scopes scopes (separated by comma)
      * @return this context
      */
-    public AssetsRequestContext removeScopes(String scopes) {
+    public AssetsRequestContext excludeScopes(String scopes) {
         if(scopes == null) return this;
-        return removeScopes(scopes.split(","));
+        return excludeScopes(scopes.split(","));
     }
 
     /**
-     * Fluent remover for scopes
+     * Fluent exclude for scopes
      * @param scopes scopes
      * @return this context
      */
-    private AssetsRequestContext removeScopes(String... scopes) {
-        this.scopes.removeAll(Arrays.asList(scopes));
+    private AssetsRequestContext excludeScopes(String... scopes) {
+        this.excludedScopes.addAll(Arrays.asList(scopes));
         return this;
     }
 
@@ -123,18 +125,20 @@ public class AssetsRequestContext {
     }
 
     /**
-     * Verify if a scope has been stored in this context
-     * @return <code>true</code> if this context have at least one scope stored
+     * @return all stored scopes in this context
      */
-    public boolean hasScopes() {
-        return !this.scopes.isEmpty();
+    public String[] getScopes(boolean withoutExcludedScopes) {
+        List<String> _scopes = new ArrayList<String>(scopes);
+        if(withoutExcludedScopes)
+            _scopes.removeAll(excludedScopes);
+        return _scopes.toArray(new String[_scopes.size()]);
     }
 
     /**
-     * @return all stored scopes in this context
+     * @return all scopes to remove
      */
-    public String[] getScopes() {
-        return scopes.toArray(new String[scopes.size()]);
+    public String[] getExcludedScopes() {
+        return excludedScopes.toArray(new String[excludedScopes.size()]);
     }
 
     /**

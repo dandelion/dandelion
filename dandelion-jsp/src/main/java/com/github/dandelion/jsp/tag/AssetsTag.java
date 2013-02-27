@@ -73,20 +73,19 @@ public class AssetsTag extends TagSupport {
         AssetsRequestContext context = AssetsRequestContext
                 .get(pageContext.getRequest())
                 .addScopes(getScopes())
-                .removeScopes(getExcludedScopes())
+                .excludeScopes(getExcludedScopes())
                 .excludeAssets(getExcludedAssets());
         if(isRenderer()) {
             if(context.isAlreadyRendered()) {
                 LOG.warn("This page have multiples 'assets' tag, only one need to be rendered");
                 LOG.warn("Consider to set 'renderer' attribute to 'false', on all previous 'assets' tags ");
             }
-            if (context.hasScopes()) {
-                List<Asset> assets = Assets.assetsFor(context.getScopes());
-                assets = Assets.excludeByName(assets, context.getExcludedAssets());
 
-                AssetsRender.render(assets, out);
-                context.hasBeenRendered();
-            }
+            List<Asset> assets = Assets.assetsFor(context.getScopes(true));
+            assets = Assets.excludeByName(assets, context.getExcludedAssets());
+
+            AssetsRender.render(assets, out);
+            context.hasBeenRendered();
         } else {
             LOG.warn("the renderer of assets is inactive for this time");
         }
