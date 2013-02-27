@@ -64,7 +64,7 @@
         <attribute>
             <name>renderer</name>
             <required>false</required>
-            <description>false to disactive the rendering system for assets</description>
+            <description>false to disable the rendering system for assets</description>
         </attribute>
     </tag>
 </taglib>
