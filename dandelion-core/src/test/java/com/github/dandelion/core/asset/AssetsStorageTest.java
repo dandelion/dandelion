@@ -61,7 +61,7 @@ public class AssetsStorageTest {
         locations.put("local", "localPath");
 
         asset = new Asset("name", "version", AssetType.js, locations);
-        asset2 = new Asset("name2", "version", AssetType.img, locations);
+        asset2 = new Asset("name2", "version", AssetType.js, locations);
         asset3 = new Asset("name3", "version", AssetType.js, locations);
         asset4 = new Asset("name4", "version", AssetType.css, locations);
         assetConflict = new Asset("name", "versionConflict", AssetType.js, locations);

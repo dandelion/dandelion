@@ -5,7 +5,7 @@
         {
             "name": "asset3addon",
             "version": "1",
-            "type": "img",
+            "type": "css",
             "locations": {
                 "remote": "remoteURL",
                 "local": "localPath"

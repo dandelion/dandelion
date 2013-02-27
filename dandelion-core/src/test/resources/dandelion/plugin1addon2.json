@@ -5,7 +5,7 @@
         {
             "name": "asset22",
             "version": "1",
-            "type": "img",
+            "type": "css",
             "locations": {
                 "remote": "remoteURL",
                 "local": "localPath"
