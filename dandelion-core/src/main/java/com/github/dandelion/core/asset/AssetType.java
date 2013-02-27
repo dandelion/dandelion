@@ -40,9 +40,5 @@ public enum AssetType {
     /**
      * Cascade Style Sheet type
      */
-    css,
-    /**
-     * Image type
-     */
-    img
+    css
 }

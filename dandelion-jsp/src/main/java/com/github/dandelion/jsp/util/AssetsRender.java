@@ -56,8 +56,6 @@ public class AssetsRender {
                     case css:
                         out.println(new LinkTag(Assets.getAssetLocation(asset)).toHtml());
                         break;
-                    case img:
-                        break;
                     case js:
                         out.println(new ScriptTag(Assets.getAssetLocation(asset)).toHtml());
                         break;
