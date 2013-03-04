@@ -27,45 +27,44 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.github.dandelion.thymeleaf.dialect;
+package com.github.dandelion.thymeleaf.processor;
 
-import java.util.HashSet;
-import java.util.Set;
-
-import com.github.dandelion.thymeleaf.processor.AssetsAttrProcessor;
-import org.thymeleaf.dialect.AbstractDialect;
-import org.thymeleaf.processor.IProcessor;
+import com.github.dandelion.thymeleaf.dialect.DandelionDialect;
+import org.thymeleaf.Arguments;
+import org.thymeleaf.dom.Element;
+import org.thymeleaf.processor.ProcessorResult;
+import org.thymeleaf.processor.attr.AbstractAttrProcessor;
 
 /**
- * Thymeleaf Dialect for dandelion
- * <ul>
- *     <li>Prefix : ddl</li>
- *     <li>Namespace : http://www.thymeleaf.org/dandelion</li>
- * </ul>
+ * Base for all Dandelion Thymeleaf AttrProcessor
  */
-public class DandelionDialect extends AbstractDialect {
+public abstract class DandelionAttrProcessor extends AbstractAttrProcessor {
 
-	public static final String DIALECT_PREFIX = "ddl";
-	public static final String LAYOUT_NAMESPACE = "http://www.thymeleaf.org/dandelion";
-    public static final int HIGHEST_PRECEDENCE = 3500;
+    public DandelionAttrProcessor(String attributeName) {
+        super(attributeName);
+    }
 
-	public String getPrefix() {
-		return DIALECT_PREFIX;
-	}
+    @Override
+    protected ProcessorResult processAttribute(Arguments arguments, Element element, String attributeName) {
+        ProcessorResult processorResult = doProcessAttribute(arguments, element, attributeName);
+        //remove attribute name from the element before rendering
+        element.removeAttribute(attributeName);
+        return processorResult;
+    }
 
-	public boolean isLenient() {
-		return false;
-	}
+    @Override
+    public int getPrecedence() {
+        return DandelionDialect.HIGHEST_PRECEDENCE;
+    }
 
-	@Override
-	public Set<IProcessor> getProcessors() {
-		final Set<IProcessor> processors = new HashSet<IProcessor>();
+    /**
+     * Process the Attribute
+     *
+     * @param arguments Thymeleaf arguments
+     * @param element Element of the attribute
+     * @param attributeName attribute name
+     * @return result of process
+     */
+    protected abstract ProcessorResult doProcessAttribute(Arguments arguments, Element element, String attributeName);
 
-        // processors for the 'Assets' feature
-        for(AssetsAttributeName attr: AssetsAttributeName.values()) {
-            processors.add(new AssetsAttrProcessor(attr.getAttribute()));
-        }
-
-		return processors;
-	}
 }

@@ -27,45 +27,35 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.github.dandelion.thymeleaf.dialect;
-
-import java.util.HashSet;
-import java.util.Set;
-
-import com.github.dandelion.thymeleaf.processor.AssetsAttrProcessor;
-import org.thymeleaf.dialect.AbstractDialect;
-import org.thymeleaf.processor.IProcessor;
+package com.github.dandelion.thymeleaf.util;
 
 /**
- * Thymeleaf Dialect for dandelion
- * <ul>
- *     <li>Prefix : ddl</li>
- *     <li>Namespace : http://www.thymeleaf.org/dandelion</li>
- * </ul>
+ * Util for Thymeleaf Attribute
  */
-public class DandelionDialect extends AbstractDialect {
+public class AttributesUtil {
+    /**
+     * strip the Dialect Prefix from the attribute name
+     * @param attributeName attribute name
+     * @param dialectPrefix dialect prefix
+     * @return the clean attribute name
+     */
+    public static String stripPrefix(String attributeName, String dialectPrefix) {
+        if(!attributeName.startsWith(dialectPrefix)) return attributeName;
+        return attributeName.substring(dialectPrefix.length() + 1, attributeName.length());
+    }
 
-	public static final String DIALECT_PREFIX = "ddl";
-	public static final String LAYOUT_NAMESPACE = "http://www.thymeleaf.org/dandelion";
-    public static final int HIGHEST_PRECEDENCE = 3500;
-
-	public String getPrefix() {
-		return DIALECT_PREFIX;
-	}
-
-	public boolean isLenient() {
-		return false;
-	}
-
-	@Override
-	public Set<IProcessor> getProcessors() {
-		final Set<IProcessor> processors = new HashSet<IProcessor>();
-
-        // processors for the 'Assets' feature
-        for(AssetsAttributeName attr: AssetsAttributeName.values()) {
-            processors.add(new AssetsAttrProcessor(attr.getAttribute()));
+    /**
+     * Find the Attribute Name object who matches the attribute name String
+     * @param attributeName attribute name
+     * @param names attribute name objects
+     * @return the matched Attribute Name
+     */
+    public static AttributeName find(String attributeName, AttributeName[] names) {
+        for(AttributeName _name:names) {
+            if(_name.getAttribute().equals(attributeName)) {
+                return _name;
+            }
         }
-
-		return processors;
-	}
+        return null;
+    }
 }

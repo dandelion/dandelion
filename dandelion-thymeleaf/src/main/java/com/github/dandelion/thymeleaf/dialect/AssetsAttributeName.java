@@ -29,43 +29,26 @@
  */
 package com.github.dandelion.thymeleaf.dialect;
 
-import java.util.HashSet;
-import java.util.Set;
+import com.github.dandelion.thymeleaf.util.AttributeName;
 
-import com.github.dandelion.thymeleaf.processor.AssetsAttrProcessor;
-import org.thymeleaf.dialect.AbstractDialect;
-import org.thymeleaf.processor.IProcessor;
+public enum AssetsAttributeName implements AttributeName {
+    /** Add scopes to the page */
+    SCOPES("assets-scopes"),
+    /** Exclude scopes from the page */
+    EXCLUDED_SCOPES("assets-excludedScopes"),
+    /** Exclude Assets from the page */
+    EXCLUDED_ASSETS("assets-excludedAssets"),
+    /** Internal Use to finalize 'assets' in the page */
+    FINALIZER("assets-finalizer");
 
-/**
- * Thymeleaf Dialect for dandelion
- * <ul>
- *     <li>Prefix : ddl</li>
- *     <li>Namespace : http://www.thymeleaf.org/dandelion</li>
- * </ul>
- */
-public class DandelionDialect extends AbstractDialect {
+    private String attribute;
 
-	public static final String DIALECT_PREFIX = "ddl";
-	public static final String LAYOUT_NAMESPACE = "http://www.thymeleaf.org/dandelion";
-    public static final int HIGHEST_PRECEDENCE = 3500;
+    private AssetsAttributeName(String attribute) {
+        this.attribute = attribute;
+    }
 
-	public String getPrefix() {
-		return DIALECT_PREFIX;
-	}
-
-	public boolean isLenient() {
-		return false;
-	}
-
-	@Override
-	public Set<IProcessor> getProcessors() {
-		final Set<IProcessor> processors = new HashSet<IProcessor>();
-
-        // processors for the 'Assets' feature
-        for(AssetsAttributeName attr: AssetsAttributeName.values()) {
-            processors.add(new AssetsAttrProcessor(attr.getAttribute()));
-        }
-
-		return processors;
-	}
+    @Override
+    public String getAttribute() {
+        return attribute;
+    }
 }
