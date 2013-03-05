@@ -30,6 +30,7 @@
 package com.github.dandelion.core.asset;
 
 import com.github.dandelion.core.DandelionException;
+import com.github.dandelion.core.asset.loader.AssetsJsonLoader;
 import com.github.dandelion.core.utils.DandelionScanner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,7 +47,7 @@ import static com.github.dandelion.core.asset.AssetsStorage.*;
  *          <ul>
  *               <li>the {@link AssetsLoader}
  * found in 'dandelion/dandelion.properties' for key 'assetsLoader'</li>
- *               <li>or {@link AssetsJsonLoader} by default</li>
+ *               <li>or {@link com.github.dandelion.core.asset.loader.AssetsJsonLoader} by default</li>
  *          </ul>
  *     </li>
  *     <li>assetsLocations : type of access to assets content(remote [by default], local)</li>
