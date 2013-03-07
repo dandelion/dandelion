@@ -59,7 +59,7 @@ public class AssetsConfigurator {
     // Logger
     private static final Logger LOG = LoggerFactory.getLogger(AssetsConfigurator.class);
     AssetsStorage assetsStorage;
-    AssetsLoader assetsLoader;
+    List<AssetsLoader> assetsLoaders;
     List<String> assetsLocations;
     List<String> excludedScopes;
     List<String> excludedAssets;
@@ -86,7 +86,7 @@ public class AssetsConfigurator {
             assetsLocations = setPropertyAsList(properties.getProperty("assetsLocations"), ",");
             excludedScopes = setPropertyAsList(properties.getProperty("excludedScopes"), ",");
             excludedAssets = setPropertyAsList(properties.getProperty("excludedAssets"), ",");
-            assetsLoader = setPropertyAsAssetsLoader(classLoader, properties);
+            assetsLoaders = extractAssetsLoaders(classLoader, properties);
             assetsLocationWrappers = extractAssetsLocationWrappers(classLoader, properties);
         } catch (IOException e) {
             LOG.error("Assets configurator can't access/read to the file 'dandelion/dandelion.properties'");
@@ -96,10 +96,9 @@ public class AssetsConfigurator {
     }
 
     /**
-     *
-     * @param classLoader
-     * @return
-     * @throws IOException
+     * @param classLoader class loader
+     * @return the configuration properties
+     * @throws IOException resources as stream fail
      */
     private Properties getConfigurationProperties(ClassLoader classLoader) throws IOException {
         String mainResource = DandelionScanner.getResource("dandelion.properties");
@@ -119,6 +118,49 @@ public class AssetsConfigurator {
         properties.putAll(mainProperties);
 
         return properties;
+    }
+
+    /**
+     * @param classLoader class loader
+     * @param properties configuration properties
+     * @return instances of assets loader
+     */
+    private List<AssetsLoader> extractAssetsLoaders(ClassLoader classLoader, Properties properties) {
+        List<String> assetsLoaders = setPropertyAsList(properties.getProperty("assetsLoaders"), ",");
+        if(assetsLoaders == null) return null;
+        List<AssetsLoader> loaders = new ArrayList<AssetsLoader>();
+        for(String loader:assetsLoaders) {
+            AssetsLoader _loader = getAssetsLoader(classLoader, loader);
+            if(_loader != null) {
+                loaders.add(_loader);
+            }
+        }
+        return loaders;
+    }
+
+    /**
+     * @param classLoader class loader
+     * @param assetsLoader assets loader class name
+     * @return instance of assets loader
+     */
+    private AssetsLoader getAssetsLoader(ClassLoader classLoader, String assetsLoader) {
+        if(assetsLoader != null) {
+            try {
+                Class<AssetsLoader> cal = (Class<AssetsLoader>) classLoader.loadClass(assetsLoader);
+                return cal.newInstance();
+            } catch (ClassCastException e) {
+                LOG.warn("the 'assetsLoader[{}]' must implements '{}'",
+                        assetsLoader, AssetsLoader.class.getCanonicalName());
+            } catch (InstantiationException e) {
+                LOG.warn("the 'assetsLoader[{}]' should authorize instantiation", assetsLoader);
+            } catch (IllegalAccessException e) {
+                LOG.warn("the 'assetsLoader[{}]' should authorize access from '{}'",
+                        assetsLoader, AssetsConfigurator.class.getCanonicalName());
+            } catch (ClassNotFoundException e) {
+                LOG.warn("the 'assetsLoader[{}]' must exists in the classpath", assetsLoader);
+            }
+        }
+        return null;
     }
 
     /**
@@ -171,33 +213,13 @@ public class AssetsConfigurator {
         return null;
     }
 
-    private AssetsLoader setPropertyAsAssetsLoader(ClassLoader classLoader, Properties properties) {
-        String assetsLoaderClassname = properties.getProperty("assetsLoader");
-        if(assetsLoaderClassname != null) {
-            try {
-                Class<AssetsLoader> cal = (Class<AssetsLoader>) classLoader.loadClass(assetsLoaderClassname);
-                return cal.newInstance();
-            } catch (ClassCastException e) {
-                LOG.warn("the 'assetsLoader[{}]' must implements '{}'",
-                        assetsLoaderClassname, AssetsLoader.class.getCanonicalName());
-            } catch (InstantiationException e) {
-                LOG.warn("the 'assetsLoader[{}]' should authorize instantiation", assetsLoaderClassname);
-            } catch (IllegalAccessException e) {
-                LOG.warn("the 'assetsLoader[{}]' should authorize access from '{}'",
-                        assetsLoaderClassname, AssetsConfigurator.class.getCanonicalName());
-            } catch (ClassNotFoundException e) {
-                LOG.warn("the 'assetsLoader[{}]' must exists in the classpath", assetsLoaderClassname);
-            }
-        }
-        return null;
-    }
-
     /**
      * Set the default configuration when it's needed
      */
     void setDefaultsIfNeeded() {
-        if(assetsLoader == null) {
-            assetsLoader = new AssetsJsonLoader();
+        if(assetsLoaders == null) {
+            assetsLoaders = new ArrayList<AssetsLoader>();
+            assetsLoaders.add(new AssetsJsonLoader());
         }
         if(assetsLocations == null) {
             assetsLocations = setPropertyAsList("remote,local", ",");
@@ -219,7 +241,9 @@ public class AssetsConfigurator {
     void processAssetsLoading(boolean defaultsNeeded) {
         if(defaultsNeeded) setDefaultsIfNeeded();
 
-        prepareAssetsLoading(assetsLoader.loadAssets());
+        for(AssetsLoader assetsLoader:assetsLoaders) {
+            prepareAssetsLoading(assetsLoader.loadAssets());
+        }
 
         storeAssetsFromScope(ROOT_SCOPE, true);
         storeAssetsFromScope(DETACHED_PARENT_SCOPE, true);

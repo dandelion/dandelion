@@ -29,9 +29,12 @@
  */
 package com.github.dandelion.core.asset;
 
+import com.github.dandelion.core.asset.loader.AssetsJsonLoader;
 import com.github.dandelion.fakedomain.AssetsFakeLoader;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
+import java.util.ArrayList;
 
 import static org.fest.assertions.Assertions.assertThat;
 import static org.fest.util.Collections.list;
@@ -71,7 +74,8 @@ public class AssetsConfiguratorTest {
         anotherConfigurator.setDefaultsIfNeeded();
 
         // clean loaded configuration
-        anotherConfigurator.assetsLoader = new AssetsFakeLoader();
+        anotherConfigurator.assetsLoaders = new ArrayList<AssetsLoader>();
+        anotherConfigurator.assetsLoaders.add(new AssetsFakeLoader());
         anotherConfigurator.assetsLocations = list("local");
 
         anotherConfigurator.processAssetsLoading(false);
