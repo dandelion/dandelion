@@ -97,11 +97,7 @@ public class AssetsRender {
 
     private static List<String> renderLocations(Asset asset, AssetsTemplateParameters templateParameters, HttpServletRequest request) {
         List<String> locations = new ArrayList<String>();
-        if(!templateParameters.isTemplate(asset)) {
-            // In case of simple access, it's just a location
-            String location = Assets.getAssetLocation(asset);
-            locations.add(location);
-        } else {
+        if (templateParameters.isTemplate(asset)) {
             // In case of template, it's more complicated
             // Preparation of common variables
             String tplContext = RequestUtils.getCurrentUrl(request, false);
@@ -147,6 +143,10 @@ public class AssetsRender {
 
                 locations.add(location);
             }
+        } else {
+            // In case of simple access, it's just a location
+            String location = Assets.getAssetLocation(asset);
+            locations.add(location);
         }
         return locations;
     }

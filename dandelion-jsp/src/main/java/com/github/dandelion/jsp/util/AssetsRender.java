@@ -64,10 +64,7 @@ public class AssetsRender {
         try {
             for (Asset asset : assets) {
                 // Location setup
-                if(!templateParameters.isTemplate(asset)) {
-                    String location = Assets.getAssetLocation(asset);
-                    render(pageContext, asset, location);
-                } else {
+                if (templateParameters.isTemplate(asset)) {
                     HttpServletRequest request = (HttpServletRequest) pageContext.getRequest();
                     String tplContext = RequestUtils.getCurrentUrl(request, false);
                     String tplLocation = Assets.getAssetTemplateLocation(asset);
@@ -99,6 +96,9 @@ public class AssetsRender {
                         // Html tag setup
                         render(pageContext, asset, location);
                     }
+                } else {
+                    String location = Assets.getAssetLocation(asset);
+                    render(pageContext, asset, location);
                 }
             }
         } catch (IOException e) {
