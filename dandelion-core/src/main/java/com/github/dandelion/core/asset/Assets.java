@@ -101,9 +101,13 @@ public final class Assets {
      * @return the location of this asset by the configured assets locations.
      */
     public static String getAssetLocation(Asset asset) {
-        for(String location:getAssetsLocations()) {
-            if(asset.getLocations().containsKey(location)) {
-                return asset.getLocations().get(location);
+        for(String locationKey:getAssetsLocations()) {
+            if(asset.getLocations().containsKey(locationKey)) {
+                String location = asset.getLocations().get(locationKey);
+                if(assetsConfigurator.assetsLocationWrappers.containsKey(locationKey)) {
+                    location = assetsConfigurator.assetsLocationWrappers.get(locationKey).customize(location);
+                }
+                return location;
             }
         }
         return "";

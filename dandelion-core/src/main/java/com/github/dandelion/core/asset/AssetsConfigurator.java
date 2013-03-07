@@ -63,6 +63,7 @@ public class AssetsConfigurator {
     List<String> assetsLocations;
     List<String> excludedScopes;
     List<String> excludedAssets;
+    Map<String, AssetsLocationWrapper> assetsLocationWrappers;
 
     private Map<String, List<Asset>> componentsByScope = new HashMap<String, List<Asset>>();
     private Map<String, List<String>> scopesByParentScope = new HashMap<String, List<String>>();
@@ -90,12 +91,47 @@ public class AssetsConfigurator {
                 excludedScopes = setPropertyAsList(properties.getProperty("excludedScopes"), ",");
                 excludedAssets = setPropertyAsList(properties.getProperty("excludedAssets"), ",");
                 assetsLoader = setPropertyAsAssetsLoader(classLoader, properties);
+                assetsLocationWrappers = extractAssetsLocationWrappers(classLoader, properties);
             }
         } catch (IOException e) {
             LOG.error("Assets configurator can't access/read to the file 'dandelion/dandelion.properties'");
         }
 
         processAssetsLoading(true);
+    }
+
+    private Map<String, AssetsLocationWrapper> extractAssetsLocationWrappers(ClassLoader classLoader, Properties properties) {
+        Map<String, AssetsLocationWrapper> wrappers = new HashMap<String, AssetsLocationWrapper>();
+        for(String property:properties.stringPropertyNames()) {
+            if(property.startsWith("assetsLocationWrapper.")) {
+                setPropertyAsAssetsLocationWrapper(classLoader, properties, wrappers, property);
+            }
+        }
+        return wrappers;
+    }
+
+    private void setPropertyAsAssetsLocationWrapper(ClassLoader classLoader, Properties properties, Map<String, AssetsLocationWrapper> wrappers, String property) {
+        String wrapper = properties.getProperty(property);
+        String location = property.replace("assetsLocationWrapper.", "");
+        if(wrapper != null) {
+            try {
+                Class<AssetsLocationWrapper> cal = (Class<AssetsLocationWrapper>) classLoader.loadClass(wrapper);
+                AssetsLocationWrapper alw = cal.newInstance();
+                if(location.equalsIgnoreCase(alw.locationKey())) {
+                    wrappers.put(location, alw);
+                }
+            } catch (ClassCastException e) {
+                LOG.warn("the 'wrapper[{}]' must implements '{}'",
+                        wrapper, AssetsLocationWrapper.class.getCanonicalName());
+            } catch (InstantiationException e) {
+                LOG.warn("the 'wrapper[{}]' should authorize instantiation", wrapper);
+            } catch (IllegalAccessException e) {
+                LOG.warn("the 'wrapper[{}]' should authorize access from '{}'",
+                        wrapper, AssetsConfigurator.class.getCanonicalName());
+            } catch (ClassNotFoundException e) {
+                LOG.warn("the 'wrapper[{}]' must exists in the classpath", wrapper);
+            }
+        }
     }
 
     private AssetsLoader setPropertyAsAssetsLoader(ClassLoader classLoader, Properties properties) {
@@ -134,6 +170,9 @@ public class AssetsConfigurator {
         }
         if(excludedAssets == null) {
             excludedAssets = new ArrayList<String>();
+        }
+        if(assetsLocationWrappers == null) {
+            assetsLocationWrappers = new HashMap<String, AssetsLocationWrapper>();
         }
     }
 
