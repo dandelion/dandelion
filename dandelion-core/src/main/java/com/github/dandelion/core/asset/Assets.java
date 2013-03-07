@@ -107,7 +107,8 @@ public final class Assets {
                 if(assetsConfigurator.assetsLocationWrappers.containsKey(locationKey)) {
                     location = assetsConfigurator.assetsLocationWrappers.get(locationKey).customize(location);
                 }
-                return location;
+                if(location != null && !location.isEmpty())
+                    return location;
             }
         }
         return "";
