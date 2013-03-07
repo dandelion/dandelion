@@ -80,24 +80,40 @@ public class AssetsConfigurator {
      */
     void initialize() {
         try {
-            String resource = DandelionScanner.getResource("dandelion.properties");
-            if(resource != null) {
-                ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+            ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+            Properties properties = getConfigurationProperties(classLoader);
 
-                Properties properties = new Properties();
-                properties.load(classLoader.getResourceAsStream(resource));
-
-                assetsLocations = setPropertyAsList(properties.getProperty("assetsLocations"), ",");
-                excludedScopes = setPropertyAsList(properties.getProperty("excludedScopes"), ",");
-                excludedAssets = setPropertyAsList(properties.getProperty("excludedAssets"), ",");
-                assetsLoader = setPropertyAsAssetsLoader(classLoader, properties);
-                assetsLocationWrappers = extractAssetsLocationWrappers(classLoader, properties);
-            }
+            assetsLocations = setPropertyAsList(properties.getProperty("assetsLocations"), ",");
+            excludedScopes = setPropertyAsList(properties.getProperty("excludedScopes"), ",");
+            excludedAssets = setPropertyAsList(properties.getProperty("excludedAssets"), ",");
+            assetsLoader = setPropertyAsAssetsLoader(classLoader, properties);
+            assetsLocationWrappers = extractAssetsLocationWrappers(classLoader, properties);
         } catch (IOException e) {
             LOG.error("Assets configurator can't access/read to the file 'dandelion/dandelion.properties'");
         }
 
         processAssetsLoading(true);
+    }
+
+    /**
+     *
+     * @param classLoader
+     * @return
+     * @throws IOException
+     */
+    private Properties getConfigurationProperties(ClassLoader classLoader) throws IOException {
+        String mainResource = DandelionScanner.getResource("dandelion.properties");
+        Set<String> otherResources = DandelionScanner.getResources("dandelion", "properties");
+        otherResources.remove(mainResource);
+
+        Properties mainProperties = new Properties();
+        mainProperties.load(classLoader.getResourceAsStream(mainResource));
+
+        Properties properties = new Properties(mainProperties);
+        for(String resource:otherResources) {
+            properties.load(classLoader.getResourceAsStream(resource));
+        }
+        return properties;
     }
 
     private Map<String, AssetsLocationWrapper> extractAssetsLocationWrappers(ClassLoader classLoader, Properties properties) {
