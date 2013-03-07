@@ -16,5 +16,6 @@
 
     <modules>
         <module>dandelion-servlet2</module>
+        <module>dandelion-webjars</module>
     </modules>
 </project>
