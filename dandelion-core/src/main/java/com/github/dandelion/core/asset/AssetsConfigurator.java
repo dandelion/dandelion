@@ -116,26 +116,41 @@ public class AssetsConfigurator {
         return properties;
     }
 
+    /**
+     * Load all wrappers found in configuration properties<br/>
+     * a wrapper configuration have a key like assetsLocationWrapper.{location}<br/>
+     * {location} must match {@link com.github.dandelion.core.asset.AssetsLocationWrapper#locationKey()}
+     *
+     * @param classLoader class loader
+     * @param properties configuration properties
+     * @return all wrappers
+     */
     private Map<String, AssetsLocationWrapper> extractAssetsLocationWrappers(ClassLoader classLoader, Properties properties) {
         Map<String, AssetsLocationWrapper> wrappers = new HashMap<String, AssetsLocationWrapper>();
         for(String property:properties.stringPropertyNames()) {
             if(property.startsWith("assetsLocationWrapper.")) {
-                setPropertyAsAssetsLocationWrapper(classLoader, properties, wrappers, property);
+                AssetsLocationWrapper alw = getPropertyAsAssetsLocationWrapper(classLoader, properties.getProperty(property));
+                if(alw != null) {
+                    String location = property.replace("assetsLocationWrapper.", "");
+                    if(location.equalsIgnoreCase(alw.locationKey())) {
+                        wrappers.put(location, alw);
+                    }
+                }
             }
         }
         return wrappers;
     }
 
-    private void setPropertyAsAssetsLocationWrapper(ClassLoader classLoader, Properties properties, Map<String, AssetsLocationWrapper> wrappers, String property) {
-        String wrapper = properties.getProperty(property);
-        String location = property.replace("assetsLocationWrapper.", "");
+    /**
+     * @param classLoader class loader
+     * @param wrapper wrapper class name
+     * @return an instance of a wrapper
+     */
+    private AssetsLocationWrapper getPropertyAsAssetsLocationWrapper(ClassLoader classLoader, String wrapper) {
         if(wrapper != null) {
             try {
                 Class<AssetsLocationWrapper> cal = (Class<AssetsLocationWrapper>) classLoader.loadClass(wrapper);
-                AssetsLocationWrapper alw = cal.newInstance();
-                if(location.equalsIgnoreCase(alw.locationKey())) {
-                    wrappers.put(location, alw);
-                }
+                return cal.newInstance();
             } catch (ClassCastException e) {
                 LOG.warn("the 'wrapper[{}]' must implements '{}'",
                         wrapper, AssetsLocationWrapper.class.getCanonicalName());
@@ -148,6 +163,7 @@ public class AssetsConfigurator {
                 LOG.warn("the 'wrapper[{}]' must exists in the classpath", wrapper);
             }
         }
+        return null;
     }
 
     private AssetsLoader setPropertyAsAssetsLoader(ClassLoader classLoader, Properties properties) {
