@@ -28,39 +28,37 @@
   ~ (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
   ~ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   -->
-<taglib xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        version="1.2">
-    <tlib-version>0.1.0-SNAPSHOT</tlib-version>
-    <jsp-version>1.2</jsp-version>
+<taglib xmlns="http://java.sun.com/xml/ns/j2ee"
+        version="2.0">
+    <tlib-version>1.0</tlib-version>
     <short-name>dandelion</short-name>
     <uri>http://github.com/dandelion</uri>
-    <display-name>Dandelion</display-name>
-    <description>Taglib for Dandelion JSP module</description>
+    <!-- description : Taglib for Dandelion JSP module -->
 
     <tag>
         <name>assets</name>
         <tag-class>com.github.dandelion.jsp.tag.AssetsTag</tag-class>
         <body-content>empty</body-content>
-        <description>Generates the HTML tags in order to have all assets loaded</description>
+        <!-- description : Generates the HTML tags in order to have all assets loaded -->
         <attribute>
             <name>scopes</name>
             <required>false</required>
-            <description>List of requested scopes (comma separated)</description>
+            <!-- description : List of requested scopes (comma separated) -->
         </attribute>
         <attribute>
             <name>excludedScopes</name>
             <required>false</required>
-            <description>List of excluded scopes (comma separated)</description>
+            <!-- description : List of excluded scopes (comma separated) -->
         </attribute>
         <attribute>
             <name>excludedAssets</name>
             <required>false</required>
-            <description>List of excluded assets (comma separated)</description>
+            <!-- description : List of excluded assets (comma separated) -->
         </attribute>
         <attribute>
             <name>renderer</name>
             <required>false</required>
-            <description>false to disable the rendering system for assets</description>
+            <!-- description : false to disable the rendering system for assets -->
         </attribute>
     </tag>
 </taglib>
