@@ -106,13 +106,18 @@ public class AssetsConfigurator {
         Set<String> otherResources = DandelionScanner.getResources("dandelion", "properties");
         otherResources.remove(mainResource);
 
-        Properties mainProperties = new Properties();
-        mainProperties.load(classLoader.getResourceAsStream(mainResource));
-
-        Properties properties = new Properties(mainProperties);
+        // configure with all custom properties
+        Properties properties = new Properties();
         for(String resource:otherResources) {
             properties.load(classLoader.getResourceAsStream(resource));
         }
+
+        // override with main properties
+        Properties mainProperties = new Properties();
+        if(mainResource != null)
+            mainProperties.load(classLoader.getResourceAsStream(mainResource));
+        properties.putAll(mainProperties);
+
         return properties;
     }
 
