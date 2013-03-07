@@ -27,37 +27,55 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 package com.github.dandelion.core.asset;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 /**
- * Possible type of asset
+ * Bean to store parameters/values for an usage when the assets are rendered.
  */
-public enum AssetType {
-    /**
-     * Javascript type
-     */
-	js("application/javascript"),
-    /**
-     * Cascade Style Sheet type
-     */
-    css("text/css");
+public class AssetsTemplateParameters {
+    private List<String> assetsTemplates;
+    private Map<String, Map<String, String>> assetsParameters;
+    private Map<String, List<String>> groupIds;
 
-    private String contentType;
-
-    private AssetType(String contentType) {
-        this.contentType = contentType;
+    public AssetsTemplateParameters() {
+        this.assetsTemplates = new ArrayList<String>();
+        this.assetsParameters = new HashMap<String, Map<String, String>>();
+        this.groupIds = new HashMap<String, List<String>>();
     }
 
-    public String getContentType() {
-        return contentType;
+    public boolean isTemplate(Asset asset) {
+        return assetsTemplates.contains(asset.getName());
     }
 
-    public static AssetType typeOfAsset(String resource) {
-        for(AssetType type:values()) {
-            if(resource.endsWith(type.name())) {
-                return type;
-            }
+    public List<String> getGroupIds(Asset asset) {
+        return groupIds.get(asset.getName());
+    }
+
+    public Map<String, String> getParameters(Asset asset, String groupId) {
+        return assetsParameters.get(groupId + "|" + asset.getName());
+    }
+
+    public void addTemplateParameter(String assetName, String parameter, String value, String groupId) {
+        // name
+        assetsTemplates.add(assetName);
+
+        // group
+        if (!groupIds.containsKey(assetName)) {
+            groupIds.put(assetName, new ArrayList<String>());
         }
-        return null;
+        groupIds.get(assetName).add(groupId);
+
+        // parameter/value
+        String key = groupId + "|" + assetName;
+        if(!assetsParameters.containsKey(key)) {
+            assetsParameters.put(key, new HashMap<String, String>());
+        }
+        assetsParameters.get(key).put(parameter, value);
     }
 }

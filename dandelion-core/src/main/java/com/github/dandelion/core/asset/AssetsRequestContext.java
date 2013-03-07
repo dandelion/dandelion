@@ -43,11 +43,13 @@ public class AssetsRequestContext {
     private boolean alreadyRendered;
     private List<String> excludedScopes;
     private List<String> excludedAssets;
+    private AssetsTemplateParameters templateParameters;
 
     private AssetsRequestContext() {
         this.scopes = new ArrayList<String>();
         this.excludedScopes = new ArrayList<String>();
         this.excludedAssets = new ArrayList<String>();
+        this.templateParameters = new AssetsTemplateParameters();
     }
 
     /**
@@ -162,5 +164,39 @@ public class AssetsRequestContext {
     public AssetsRequestContext hasBeenRendered() {
         this.alreadyRendered = true;
         return this;
+    }
+
+    /**
+     * Add a parameter value on a specific asset name in Global Group
+     *
+     * @param templateAssetName template asset name
+     * @param parameter parameter
+     * @param value value
+     * @return this context
+     */
+    public AssetsRequestContext addTemplateParameter(String templateAssetName, String parameter, String value) {
+        return addTemplateParameter(templateAssetName, parameter, value, AssetsCache.GLOBAL_GROUP);
+    }
+
+    /**
+     * Add a parameter value on a specific asset name in a group
+     *
+     * @param templateAssetName template asset name
+     * @param parameter parameter
+     * @param value value
+     * @param groupId ID of the group of assets (can be null - aka global group)
+     * @return this context
+     */
+    public AssetsRequestContext addTemplateParameter(String templateAssetName, String parameter, String value, String groupId) {
+        if(groupId == null) groupId = AssetsCache.GLOBAL_GROUP;
+        templateParameters.addTemplateParameter(templateAssetName, parameter, value, groupId);
+        return this;
+    }
+
+    /**
+     * @return the parameter/value from template asset names.
+     */
+    public AssetsTemplateParameters getTemplateParameters() {
+        return templateParameters;
     }
 }

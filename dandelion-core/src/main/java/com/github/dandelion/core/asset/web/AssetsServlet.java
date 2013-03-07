@@ -27,37 +27,40 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.github.dandelion.core.asset;
+package com.github.dandelion.core.asset.web;
 
-/**
- * Possible type of asset
- */
-public enum AssetType {
-    /**
-     * Javascript type
-     */
-	js("application/javascript"),
-    /**
-     * Cascade Style Sheet type
-     */
-    css("text/css");
+import com.github.dandelion.core.asset.AssetType;
+import org.slf4j.Logger;
 
-    private String contentType;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
-    private AssetType(String contentType) {
-        this.contentType = contentType;
+import static com.github.dandelion.core.asset.AssetsCache.cache;
+import static com.github.dandelion.core.asset.AssetsCache.getCacheKey;
+import static com.github.dandelion.core.utils.DandelionUtils.isDevModeEnabled;
+
+public abstract class AssetsServlet extends HttpServlet {
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        getLogger().debug("Dandelion Asset servlet captured GET request {}", request.getRequestURI());
+
+        String resource = request.getParameter("r");
+        String cacheKey = getCacheKey(request);
+
+        if(isDevModeEnabled() && !cache.containsKey(cacheKey))
+            throw new ServletException("The Dandelion assets should have been generated!");
+
+        AssetType resourceType = AssetType.typeOfAsset(resource);
+        if(resourceType == null) return;
+
+        String fileContent = cache.get(cacheKey);
+        response.setContentType(resourceType.getContentType());
+        response.setHeader("Cache-Control","no-cache");
+        response.getWriter().write(fileContent);
     }
 
-    public String getContentType() {
-        return contentType;
-    }
-
-    public static AssetType typeOfAsset(String resource) {
-        for(AssetType type:values()) {
-            if(resource.endsWith(type.name())) {
-                return type;
-            }
-        }
-        return null;
-    }
+    protected abstract Logger getLogger();
 }

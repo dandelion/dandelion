@@ -32,9 +32,7 @@ package com.github.dandelion.core;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**

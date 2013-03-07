@@ -31,18 +31,11 @@ package com.github.dandelion.core.asset.loader;
 
 import com.github.dandelion.core.asset.AssetsComponent;
 import com.github.dandelion.core.asset.AssetsLoader;
-import com.github.dandelion.core.utils.DandelionScanner;
-import org.codehaus.jackson.JsonParser;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 
 /**
  * No Operations for Assets Loader

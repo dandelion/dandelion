@@ -41,6 +41,7 @@ import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
+import static com.github.dandelion.core.utils.DandelionUtils.devModeOverride;
 import static java.lang.Thread.currentThread;
 
 /**
@@ -86,7 +87,7 @@ public class DandelionScanner {
      */
     private static Set<String> getResources(String nameCondition, String prefixCondition, String suffixCondition) throws IOException {
         // load resources only if needed
-        if (resourcesSet == null) loadResources();
+        if (devModeOverride(resourcesSet == null)) loadResources();
         // filter the loaded resources with conditions
         return filterResources(nameCondition, prefixCondition, suffixCondition);
     }
@@ -97,7 +98,7 @@ public class DandelionScanner {
      * @throws IOException If I/O errors occur
      */
     synchronized private static void loadResources() throws IOException {
-        if (resourcesSet != null) return;
+        if (!devModeOverride(resourcesSet == null)) return;
         resourcesSet = new HashSet<String>();
         Enumeration<URL> resources = resourcesInDandelionFolder();
         if (!resources.hasMoreElements()) return;
@@ -124,6 +125,7 @@ public class DandelionScanner {
 
             int rootPathLength = resourcePath.substring(0, resourcePath.length()
                     - dandelionFolderPath.length()).length();
+            if(resourcePath.endsWith("/")) rootPathLength -= 1;
             File[] files = folder.listFiles();
             for (File file : files) {
                 if (file.canRead()) {

@@ -38,7 +38,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.tagext.TagSupport;
 import java.util.List;
 
@@ -62,14 +61,7 @@ public class AssetsTag extends TagSupport {
     private String excludedAssets;
     private boolean renderer = true;
 
-	public int doStartTag() throws JspException {
-
-		return SKIP_BODY;
-	}
-
 	public int doEndTag() throws JspException {
-		JspWriter out = pageContext.getOut();
-
         AssetsRequestContext context = AssetsRequestContext
                 .get(pageContext.getRequest())
                 .addScopes(getScopes())
@@ -84,10 +76,10 @@ public class AssetsTag extends TagSupport {
             List<Asset> assets = Assets.assetsFor(context.getScopes(true));
             assets = Assets.excludeByName(assets, context.getExcludedAssets());
 
-            AssetsRender.render(assets, out);
+            AssetsRender.render(assets, context.getTemplateParameters(), pageContext);
             context.hasBeenRendered();
         } else {
-            LOG.warn("the renderer of assets is inactive for this time");
+            LOG.debug("the renderer of assets is inactive for this time");
         }
 
 		return EVAL_PAGE;

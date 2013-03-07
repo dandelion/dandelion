@@ -29,7 +29,6 @@
   ~ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   -->
 <taglib xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee/web-jsptaglibrary_1_2.xsd"
         version="1.2">
     <tlib-version>0.1.0-SNAPSHOT</tlib-version>
     <jsp-version>1.2</jsp-version>

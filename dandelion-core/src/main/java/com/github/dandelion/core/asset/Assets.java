@@ -34,6 +34,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static com.github.dandelion.core.utils.DandelionUtils.devModeOverride;
+
 /**
  * Assets API
  */
@@ -45,8 +47,8 @@ public final class Assets {
      * Initialize Assets only if needed
      */
     static void initializeIfNeeded() {
-        if(assetsConfigurator == null) {
-            if(assetsStorage == null) {
+        if(devModeOverride(assetsConfigurator == null)) {
+            if(devModeOverride(assetsStorage == null)) {
                 initializeStorageIfNeeded();
             }
             initializeConfiguratorIfNeeded();
@@ -57,7 +59,7 @@ public final class Assets {
      * Initialize Assets Configurator only if needed
      */
     synchronized private static void initializeConfiguratorIfNeeded() {
-        if(assetsConfigurator == null) {
+        if(devModeOverride(assetsConfigurator == null)) {
             assetsConfigurator = new AssetsConfigurator(assetsStorage);
             assetsConfigurator.initialize();
         }
@@ -67,7 +69,7 @@ public final class Assets {
      * Initialize Assets Storage only if needed
      */
     synchronized private static void initializeStorageIfNeeded() {
-        if(assetsStorage == null) {
+        if(devModeOverride(assetsStorage == null)) {
             assetsStorage = new AssetsStorage();
         }
     }
@@ -137,5 +139,13 @@ public final class Assets {
             }
         }
         return _assets;
+    }
+
+    /**
+     * @param asset template asset
+     * @return the location of this asset
+     */
+    public static String getAssetTemplateLocation(Asset asset) {
+        return asset.getLocations().get("template");
     }
 }

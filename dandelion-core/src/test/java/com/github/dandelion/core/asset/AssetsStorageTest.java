@@ -29,8 +29,8 @@
  */
 package com.github.dandelion.core.asset;
 
-import com.github.dandelion.core.DandelionExceptionMatcher;
 import com.github.dandelion.core.DandelionException;
+import com.github.dandelion.core.DandelionExceptionMatcher;
 import org.fest.assertions.MapAssert;
 import org.junit.Before;
 import org.junit.BeforeClass;

@@ -27,37 +27,20 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.github.dandelion.core.asset;
+package com.github.dandelion.core.utils;
 
-/**
- * Possible type of asset
- */
-public enum AssetType {
-    /**
-     * Javascript type
-     */
-	js("application/javascript"),
-    /**
-     * Cascade Style Sheet type
-     */
-    css("text/css");
+public class DandelionUtils {
+    private static boolean devMode;
 
-    private String contentType;
-
-    private AssetType(String contentType) {
-        this.contentType = contentType;
+    static {
+        devMode = "true".equals(System.getProperty("dandelion.dev.mode"));
     }
 
-    public String getContentType() {
-        return contentType;
+    public static boolean isDevModeEnabled() {
+        return devMode;
     }
 
-    public static AssetType typeOfAsset(String resource) {
-        for(AssetType type:values()) {
-            if(resource.endsWith(type.name())) {
-                return type;
-            }
-        }
-        return null;
+    public static boolean devModeOverride(boolean realResult) {
+        return isDevModeEnabled() || realResult;
     }
 }

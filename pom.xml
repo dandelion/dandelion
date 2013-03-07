@@ -13,6 +13,7 @@
         <module>dandelion-core</module>
         <module>dandelion-thymeleaf</module>
         <module>dandelion-jsp</module>
+        <module>dandelion-extras</module>
     </modules>
 
     <licenses>

@@ -29,7 +29,6 @@
  */
 package com.github.dandelion.thymeleaf.processor;
 
-import com.github.dandelion.thymeleaf.dialect.DandelionDialect;
 import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.Element;
 import org.thymeleaf.processor.ProcessorResult;
@@ -53,9 +52,7 @@ public abstract class DandelionAttrProcessor extends AbstractAttrProcessor {
     }
 
     @Override
-    public int getPrecedence() {
-        return DandelionDialect.HIGHEST_PRECEDENCE;
-    }
+    public abstract int getPrecedence();
 
     /**
      * Process the Attribute

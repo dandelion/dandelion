@@ -30,7 +30,6 @@
 package com.github.dandelion.core.asset;
 
 import com.github.dandelion.fakedomain.AssetsFakeLoader;
-import org.fest.assertions.Assertions;
 import org.junit.BeforeClass;
 import org.junit.Test;
 

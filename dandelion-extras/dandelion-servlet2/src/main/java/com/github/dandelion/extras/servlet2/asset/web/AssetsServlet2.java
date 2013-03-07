@@ -27,37 +27,27 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.github.dandelion.core.asset;
+package com.github.dandelion.extras.servlet2.asset.web;
 
-/**
- * Possible type of asset
- */
-public enum AssetType {
-    /**
-     * Javascript type
-     */
-	js("application/javascript"),
-    /**
-     * Cascade Style Sheet type
-     */
-    css("text/css");
+import com.github.dandelion.core.asset.web.AssetsServlet;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-    private String contentType;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
-    private AssetType(String contentType) {
-        this.contentType = contentType;
+public class AssetsServlet2 extends AssetsServlet {
+    private static Logger LOG = LoggerFactory.getLogger(AssetsServlet2.class);
+
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        super.doGet(request, response);
     }
 
-    public String getContentType() {
-        return contentType;
-    }
-
-    public static AssetType typeOfAsset(String resource) {
-        for(AssetType type:values()) {
-            if(resource.endsWith(type.name())) {
-                return type;
-            }
-        }
-        return null;
+    @Override
+    protected Logger getLogger() {
+        return LOG;
     }
 }

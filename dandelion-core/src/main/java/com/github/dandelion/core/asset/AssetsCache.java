@@ -29,35 +29,34 @@
  */
 package com.github.dandelion.core.asset;
 
+import javax.servlet.http.HttpServletRequest;
+import java.util.HashMap;
+import java.util.Map;
+
 /**
- * Possible type of asset
+ * Cache System for store specific content of an asset
  */
-public enum AssetType {
-    /**
-     * Javascript type
-     */
-	js("application/javascript"),
-    /**
-     * Cascade Style Sheet type
-     */
-    css("text/css");
+public class AssetsCache {
+    public static final String GLOBAL_GROUP = "global-" + System.currentTimeMillis();
+    public static Map<String, String> cache;
 
-    private String contentType;
-
-    private AssetType(String contentType) {
-        this.contentType = contentType;
+    static{
+        cache = new HashMap<String, String>();
     }
 
-    public String getContentType() {
-        return contentType;
+    public static String getCacheKey(HttpServletRequest request) {
+        return new StringBuilder(request.getParameter("c"))
+                .append("|").append(request.getParameter("id"))
+                .append("|").append(request.getParameter("r")).toString();
     }
 
-    public static AssetType typeOfAsset(String resource) {
-        for(AssetType type:values()) {
-            if(resource.endsWith(type.name())) {
-                return type;
-            }
-        }
-        return null;
+    public static String generateCacheKey(String context, String id, String resource) {
+        return new StringBuilder(context).append("|").append(id).append("|").append(resource).toString();
+    }
+
+    public static String store(String context, String id, String resource, String content) {
+        String cacheKey = generateCacheKey(context, id, resource);
+        cache.put(cacheKey, content);
+        return cacheKey;
     }
 }

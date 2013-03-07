@@ -39,8 +39,9 @@ import com.github.dandelion.thymeleaf.util.AssetsRender;
 import com.github.dandelion.thymeleaf.util.AttributesUtil;
 import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.Element;
-import org.thymeleaf.processor.*;
+import org.thymeleaf.processor.ProcessorResult;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 /**
@@ -52,6 +53,11 @@ public class AssetsAttrProcessor extends DandelionAttrProcessor {
         super(attributeName);
     }
 
+    @Override
+    public int getPrecedence() {
+        return DandelionDialect.HIGHEST_PRECEDENCE;
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -61,8 +67,9 @@ public class AssetsAttrProcessor extends DandelionAttrProcessor {
                 = AttributesUtil.stripPrefix(attributeName, DandelionDialect.DIALECT_PREFIX);
         AssetsAttributeName assetsAttributeName
                 = (AssetsAttributeName) AttributesUtil.find(strippedAttributeName, AssetsAttributeName.values());
+        HttpServletRequest request = ArgumentsUtil.getWebContext(arguments).getHttpServletRequest();
         AssetsRequestContext context
-                = AssetsRequestContext.get(ArgumentsUtil.getWebContext(arguments).getHttpServletRequest());
+                = AssetsRequestContext.get(request);
         switch (assetsAttributeName) {
             case SCOPES:
                 context.addScopes(element.getAttributeValue(attributeName));
@@ -77,7 +84,7 @@ public class AssetsAttrProcessor extends DandelionAttrProcessor {
                 initializeIfNeeded(arguments);
                 break;
             case FINALIZER:
-                finalize(context, arguments, element);
+                finalize(context, arguments, request, element);
                 break;
         }
 
@@ -93,7 +100,7 @@ public class AssetsAttrProcessor extends DandelionAttrProcessor {
         AssetsRender.renderFinalizer(arguments);
     }
 
-    private void finalize(AssetsRequestContext context, Arguments arguments, Element element) {
+    private void finalize(AssetsRequestContext context, Arguments arguments, HttpServletRequest request, Element element) {
         arguments.getDocument().removeChild(element);
 
         List<Asset> assets = Assets.assetsFor(context.getScopes(true));
@@ -101,9 +108,9 @@ public class AssetsAttrProcessor extends DandelionAttrProcessor {
 
         for(Element __element: arguments.getDocument().getFirstElementChild().getElementChildren()) {
             if(__element.getNormalizedName().equals("head")) {
-                AssetsRender.renderLink(assets, __element);
+                AssetsRender.renderLink(assets, context.getTemplateParameters(), __element, request);
             } else if(__element.getNormalizedName().equals("body")) {
-                AssetsRender.renderScript(assets, __element);
+                AssetsRender.renderScript(assets, context.getTemplateParameters(), __element, request);
             }
         }
     }

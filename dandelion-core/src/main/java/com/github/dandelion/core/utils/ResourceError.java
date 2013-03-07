@@ -27,37 +27,26 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.github.dandelion.core.asset;
 
-/**
- * Possible type of asset
- */
-public enum AssetType {
-    /**
-     * Javascript type
-     */
-	js("application/javascript"),
-    /**
-     * Cascade Style Sheet type
-     */
-    css("text/css");
+package com.github.dandelion.core.utils;
 
-    private String contentType;
+import com.github.dandelion.core.DandelionError;
 
-    private AssetType(String contentType) {
-        this.contentType = contentType;
+public enum ResourceError implements DandelionError {
+    /** File path don't exists in the webapp */
+    FILE_PATH_DONT_EXISTS_IN_WEBAPP(10),
+    /** The content can't be read from the InputStream */
+    CONTENT_CANT_BE_READ_FROM_INPUTSTREAM(20);
+
+    private final int number;
+
+    private ResourceError(int number) {
+        this.number = number;
     }
 
-    public String getContentType() {
-        return contentType;
+    @Override
+    public int getNumber() {
+        return number;
     }
 
-    public static AssetType typeOfAsset(String resource) {
-        for(AssetType type:values()) {
-            if(resource.endsWith(type.name())) {
-                return type;
-            }
-        }
-        return null;
-    }
 }

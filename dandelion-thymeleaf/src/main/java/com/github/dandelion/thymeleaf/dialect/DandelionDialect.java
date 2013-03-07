@@ -29,12 +29,12 @@
  */
 package com.github.dandelion.thymeleaf.dialect;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import com.github.dandelion.thymeleaf.processor.AssetsAttrProcessor;
 import org.thymeleaf.dialect.AbstractDialect;
 import org.thymeleaf.processor.IProcessor;
+
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Thymeleaf Dialect for dandelion
