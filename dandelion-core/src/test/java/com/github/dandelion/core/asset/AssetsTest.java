@@ -60,7 +60,7 @@ public class AssetsTest {
         List<Asset> assets = Assets.assetsFor("default","detachedScope","plugin1","plugin2");
         assertThat(assets).hasSize(6);
         for(Asset asset:assets) {
-            assertThat(Assets.getAssetLocation(asset)).isEqualTo("remoteURL");
+            assertThat(Assets.getAssetLocations(asset, null)).contains("remoteURL");
         }
     }
 
@@ -84,7 +84,7 @@ public class AssetsTest {
         List<Asset> assets = Assets.assetsFor("unknown_location");
         assertThat(assets).hasSize(2);
         for(Asset asset:assets) {
-            assertThat(Assets.getAssetLocation(asset)).isNotEqualTo("URL").isEmpty();
+            assertThat(Assets.getAssetLocations(asset, null)).hasSize(1).contains("URL");
         }
     }
 
@@ -93,7 +93,7 @@ public class AssetsTest {
         List<Asset> assets = Assets.assetsFor("locations_order");
         assertThat(assets).hasSize(3);
         for(Asset asset:assets) {
-            assertThat(Assets.getAssetLocation(asset)).isEqualTo("otherURL");
+            assertThat(Assets.getAssetLocations(asset, null)).contains("otherURL");
         }
     }
 }

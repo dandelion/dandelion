@@ -30,9 +30,8 @@
 
 package com.github.dandelion.core.asset;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import javax.servlet.http.HttpServletRequest;
+import java.util.*;
 
 import static com.github.dandelion.core.utils.DandelionUtils.devModeOverride;
 
@@ -97,24 +96,6 @@ public final class Assets {
     }
 
     /**
-     * @param asset asset for extract location
-     * @return the location of this asset by the configured assets locations.
-     */
-    public static String getAssetLocation(Asset asset) {
-        for(String locationKey:getAssetsLocations()) {
-            if(asset.getLocations().containsKey(locationKey)) {
-                String location = asset.getLocations().get(locationKey);
-                if(assetsConfigurator.assetsLocationWrappers.containsKey(locationKey)) {
-                    location = assetsConfigurator.assetsLocationWrappers.get(locationKey).customize(location);
-                }
-                if(location != null && !location.isEmpty())
-                    return location;
-            }
-        }
-        return "";
-    }
-
-    /**
      * @param assets assets to filter
      * @param filters exclude assets names
      * @return a filtered list of assets
@@ -147,18 +128,58 @@ public final class Assets {
     }
 
     /**
-     * @param asset template asset
-     * @return the location of this asset
-     */
-    public static String getAssetTemplateLocation(Asset asset) {
-        return asset.getLocations().get("template");
-    }
-
-    /**
      * @param property configuration property
      * @return the configured value for property
      */
     public static String getConfigurationProperty(String property) {
         return assetsConfigurator.configuration.getProperty(property);
+    }
+
+    /**
+     * Get all possibles locations for a asset for a request context
+     * @param asset asset
+     * @param request http request
+     * @return all possibles locations
+     */
+    public static List<String> getAssetLocations(Asset asset, HttpServletRequest request) {
+        // no available locations = no locations
+        if(asset.getLocations().isEmpty()) {
+            // TODO log
+            return Collections.emptyList();
+        }
+
+        String locationKey = null;
+        if(asset.getLocations().size() == 1) {
+            // use the unique location if needed
+            // TODO log
+            for(Map.Entry<String, String> entry:asset.getLocations().entrySet()) {
+                locationKey = entry.getKey();
+            }
+        } else {
+            // otherwise search for the first match in authorized locations
+            // TODO log
+            for(String _locationKey:getAssetsLocations()) {
+                if(asset.getLocations().containsKey(_locationKey)) {
+                    String location = asset.getLocations().get(_locationKey);
+                    if(location != null && !location.isEmpty()) {
+                        locationKey = _locationKey;
+                        break;
+                    }
+                }
+            }
+        }
+
+        // And if any location was found = no locations
+        if(locationKey == null) {
+            // TODO log
+            return Collections.emptyList();
+        }
+
+        // Otherwise check for wrapper
+        if(assetsConfigurator.assetsLocationWrappers.containsKey(locationKey)) {
+            // TODO log
+            return assetsConfigurator.assetsLocationWrappers.get(locationKey).wrapLocation(asset, request);
+        }
+        return Arrays.asList(asset.getLocations().get(locationKey));
     }
 }

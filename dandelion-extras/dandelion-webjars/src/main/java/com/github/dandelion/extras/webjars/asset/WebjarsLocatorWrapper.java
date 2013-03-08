@@ -30,8 +30,13 @@
 
 package com.github.dandelion.extras.webjars.asset;
 
+import com.github.dandelion.core.asset.Asset;
 import com.github.dandelion.core.asset.AssetsLocationWrapper;
 import org.webjars.WebJarAssetLocator;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Assets Location Wrapper for Webjars
@@ -46,12 +51,9 @@ public class WebjarsLocatorWrapper implements AssetsLocationWrapper {
         return "webjars";
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    public String customize(String location) {
+    public List<String> wrapLocation(Asset asset, HttpServletRequest request) {
         WebJarAssetLocator locator = new WebJarAssetLocator();
-        return locator.getFullPath(location);
+        return Arrays.asList(locator.getFullPath(asset.getLocations().get(locationKey())));
     }
 }

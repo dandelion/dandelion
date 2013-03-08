@@ -29,7 +29,6 @@
  */
 package com.github.dandelion.core.asset;
 
-import com.github.dandelion.core.asset.loader.AssetsJsonLoader;
 import com.github.dandelion.fakedomain.AssetsFakeLoader;
 import org.junit.BeforeClass;
 import org.junit.Test;

@@ -30,8 +30,11 @@
 
 package com.github.dandelion.core.asset;
 
+import javax.servlet.http.HttpServletRequest;
+import java.util.List;
+
 /**
- * Wrapper for customize a location associate with a location key
+ * Wrapper for one or many locations associate with a location key
  */
 public interface AssetsLocationWrapper {
 
@@ -41,8 +44,10 @@ public interface AssetsLocationWrapper {
     String locationKey();
 
     /**
-     * @param location the location of asset
-     * @return the customized location
+     *
+     * @param asset asset
+     * @param request http request
+     * @return the customized locations
      */
-    String customize(String location);
+    List<String> wrapLocation(Asset asset, HttpServletRequest request);
 }
