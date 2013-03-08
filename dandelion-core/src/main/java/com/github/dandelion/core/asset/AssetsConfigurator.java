@@ -51,7 +51,7 @@ import static com.github.dandelion.core.asset.AssetsStorage.*;
  *               <li>or {@link com.github.dandelion.core.asset.loader.AssetsJsonLoader} by default</li>
  *          </ul>
  *     </li>
- *     <li>assetsLocations : type of access to assets content(remote [by default], local)</li>
+ *     <li>assets.locations : type of access to assets content(remote [by default], local)</li>
  * </ul>
  * Default Asset Loader is
  *
@@ -81,9 +81,9 @@ public class AssetsConfigurator {
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         Properties configuration = Configuration.getProperties();
 
-        assetsLocations = setPropertyAsList(configuration.getProperty("assetsLocations"), ",");
-        excludedScopes = setPropertyAsList(configuration.getProperty("excludedScopes"), ",");
-        excludedAssets = setPropertyAsList(configuration.getProperty("excludedAssets"), ",");
+        assetsLocations = setPropertyAsList(configuration.getProperty("assets.locations"), ",");
+        excludedScopes = setPropertyAsList(configuration.getProperty("assets.excluded.scopes"), ",");
+        excludedAssets = setPropertyAsList(configuration.getProperty("assets.excluded.assets"), ",");
         assetsLoaders = extractAssetsLoaders(classLoader, configuration);
         assetsLocationWrappers = extractAssetsLocationWrappers(classLoader, configuration);
 
@@ -96,7 +96,7 @@ public class AssetsConfigurator {
      * @return instances of assets loader
      */
     private List<AssetsLoader> extractAssetsLoaders(ClassLoader classLoader, Properties properties) {
-        List<String> assetsLoaders = setPropertyAsList(properties.getProperty("assetsLoaders"), ",");
+        List<String> assetsLoaders = setPropertyAsList(properties.getProperty("assets.loaders"), ",");
         if(assetsLoaders == null) return null;
         List<AssetsLoader> loaders = new ArrayList<AssetsLoader>();
         for(String loader:assetsLoaders) {
@@ -135,7 +135,7 @@ public class AssetsConfigurator {
 
     /**
      * Load all wrappers found in configuration properties<br/>
-     * a wrapper configuration have a key like assetsLocationWrapper.{location}<br/>
+     * a wrapper configuration have a key like assets.location.wrapper.{location}<br/>
      * {location} must match {@link com.github.dandelion.core.asset.AssetsLocationWrapper#locationKey()}
      *
      * @param classLoader class loader
@@ -145,10 +145,10 @@ public class AssetsConfigurator {
     private Map<String, AssetsLocationWrapper> extractAssetsLocationWrappers(ClassLoader classLoader, Properties properties) {
         Map<String, AssetsLocationWrapper> wrappers = new HashMap<String, AssetsLocationWrapper>();
         for(String property:properties.stringPropertyNames()) {
-            if(property.startsWith("assetsLocationWrapper.")) {
+            if(property.startsWith("assets.location.wrapper.")) {
                 AssetsLocationWrapper alw = getPropertyAsAssetsLocationWrapper(classLoader, properties.getProperty(property));
                 if(alw != null) {
-                    String location = property.replace("assetsLocationWrapper.", "");
+                    String location = property.replace("assets.location.wrapper.", "");
                     if(location.equalsIgnoreCase(alw.locationKey())) {
                         wrappers.put(location, alw);
                     }

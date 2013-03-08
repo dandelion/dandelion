@@ -76,7 +76,7 @@ public final class Assets {
     /**
      * Get Configured Locations of Assets<br/>
      *
-     * Configured by assetsLocations in 'dandelion/dandelion.properties'
+     * Configured by assets.locations in 'dandelion/dandelion.properties'
      *
      * @return locations of Assets
      */
