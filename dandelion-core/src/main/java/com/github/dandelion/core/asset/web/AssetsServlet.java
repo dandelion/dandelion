@@ -43,6 +43,10 @@ import static com.github.dandelion.core.asset.AssetsCache.getCacheKey;
 import static com.github.dandelion.core.utils.DandelionUtils.isDevModeEnabled;
 
 public abstract class AssetsServlet extends HttpServlet {
+    public static final String DANDELION_ASSETS = "dandelionAssets";
+    public static final String DANDELION_ASSETS_URL = "/dandelion-assets/";
+    public static final String DANDELION_ASSETS_URL_PATTERN = "/dandelion-assets/*";
+
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         getLogger().debug("Dandelion Asset servlet captured GET request {}", request.getRequestURI());

@@ -38,7 +38,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-@WebServlet(name="dandelionAssets", urlPatterns={"/dandelion-assets/*"})
+@WebServlet(name= AssetsServlet.DANDELION_ASSETS, urlPatterns={AssetsServlet.DANDELION_ASSETS_URL_PATTERN})
 public class AssetsServlet3 extends AssetsServlet {
     private static Logger LOG = LoggerFactory.getLogger(AssetsServlet3.class);
 
