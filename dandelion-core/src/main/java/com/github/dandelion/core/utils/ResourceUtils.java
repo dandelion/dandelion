@@ -33,7 +33,7 @@ import com.github.dandelion.core.DandelionException;
 
 import java.io.*;
 
-public class ResourceUtils {
+public final class ResourceUtils {
 
     private static final int DEFAULT_BUFFER_SIZE = 1024 * 4;
 

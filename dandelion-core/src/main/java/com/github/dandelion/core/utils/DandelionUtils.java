@@ -29,7 +29,7 @@
  */
 package com.github.dandelion.core.utils;
 
-public class DandelionUtils {
+public final class DandelionUtils {
     private static boolean devMode;
 
     static {

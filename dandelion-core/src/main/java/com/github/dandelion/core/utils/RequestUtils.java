@@ -32,7 +32,7 @@ package com.github.dandelion.core.utils;
 
 import javax.servlet.http.HttpServletRequest;
 
-public class RequestUtils {
+public final class RequestUtils {
 
     /**
      * Return the current URL, without query parameters.

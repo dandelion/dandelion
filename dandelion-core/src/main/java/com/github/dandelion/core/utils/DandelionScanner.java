@@ -47,7 +47,7 @@ import static java.lang.Thread.currentThread;
 /**
  * Scanner for resources in Dandelion Folder
  */
-public class DandelionScanner {
+public final class DandelionScanner {
     static Set<String> resourcesSet;
 
     /**
