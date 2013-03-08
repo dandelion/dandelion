@@ -64,6 +64,7 @@ public class AssetsConfigurator {
     List<String> excludedScopes;
     List<String> excludedAssets;
     Map<String, AssetsLocationWrapper> assetsLocationWrappers;
+    Properties configuration;
 
     private Map<String, List<Asset>> componentsByScope = new HashMap<String, List<Asset>>();
     private Map<String, List<String>> scopesByParentScope = new HashMap<String, List<String>>();
@@ -81,13 +82,13 @@ public class AssetsConfigurator {
     void initialize() {
         try {
             ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-            Properties properties = getConfigurationProperties(classLoader);
+            configuration = getConfigurationProperties(classLoader);
 
-            assetsLocations = setPropertyAsList(properties.getProperty("assetsLocations"), ",");
-            excludedScopes = setPropertyAsList(properties.getProperty("excludedScopes"), ",");
-            excludedAssets = setPropertyAsList(properties.getProperty("excludedAssets"), ",");
-            assetsLoaders = extractAssetsLoaders(classLoader, properties);
-            assetsLocationWrappers = extractAssetsLocationWrappers(classLoader, properties);
+            assetsLocations = setPropertyAsList(configuration.getProperty("assetsLocations"), ",");
+            excludedScopes = setPropertyAsList(configuration.getProperty("excludedScopes"), ",");
+            excludedAssets = setPropertyAsList(configuration.getProperty("excludedAssets"), ",");
+            assetsLoaders = extractAssetsLoaders(classLoader, configuration);
+            assetsLocationWrappers = extractAssetsLocationWrappers(classLoader, configuration);
         } catch (IOException e) {
             LOG.error("Assets configurator can't access/read to the file 'dandelion/dandelion.properties'");
         }

@@ -153,4 +153,12 @@ public final class Assets {
     public static String getAssetTemplateLocation(Asset asset) {
         return asset.getLocations().get("template");
     }
+
+    /**
+     * @param property configuration property
+     * @return the configured value for property
+     */
+    public static String getConfigurationProperty(String property) {
+        return assetsConfigurator.configuration.getProperty(property);
+    }
 }
