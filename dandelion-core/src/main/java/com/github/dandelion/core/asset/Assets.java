@@ -128,14 +128,6 @@ public final class Assets {
     }
 
     /**
-     * @param property configuration property
-     * @return the configured value for property
-     */
-    public static String getConfigurationProperty(String property) {
-        return assetsConfigurator.configuration.getProperty(property);
-    }
-
-    /**
      * Get all possibles locations for a asset for a request context
      * @param asset asset
      * @param request http request

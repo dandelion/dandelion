@@ -31,6 +31,7 @@ package com.github.dandelion.core.asset;
 
 import com.github.dandelion.core.DandelionException;
 import com.github.dandelion.core.asset.loader.AssetsJsonLoader;
+import com.github.dandelion.core.config.Configuration;
 import com.github.dandelion.core.utils.DandelionScanner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -64,7 +65,6 @@ public class AssetsConfigurator {
     List<String> excludedScopes;
     List<String> excludedAssets;
     Map<String, AssetsLocationWrapper> assetsLocationWrappers;
-    Properties configuration;
 
     private Map<String, List<Asset>> componentsByScope = new HashMap<String, List<Asset>>();
     private Map<String, List<String>> scopesByParentScope = new HashMap<String, List<String>>();
@@ -76,49 +76,18 @@ public class AssetsConfigurator {
 
     /**
      * Initialization of Assets Configurator on application load
-     *
-     * @throws IOException if a I/O error appends when 'dandelion/dandelion.properties' is loaded
      */
     void initialize() {
-        try {
-            ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-            configuration = getConfigurationProperties(classLoader);
+        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+        Properties configuration = Configuration.getProperties();
 
-            assetsLocations = setPropertyAsList(configuration.getProperty("assetsLocations"), ",");
-            excludedScopes = setPropertyAsList(configuration.getProperty("excludedScopes"), ",");
-            excludedAssets = setPropertyAsList(configuration.getProperty("excludedAssets"), ",");
-            assetsLoaders = extractAssetsLoaders(classLoader, configuration);
-            assetsLocationWrappers = extractAssetsLocationWrappers(classLoader, configuration);
-        } catch (IOException e) {
-            LOG.error("Assets configurator can't access/read to the file 'dandelion/dandelion.properties'");
-        }
+        assetsLocations = setPropertyAsList(configuration.getProperty("assetsLocations"), ",");
+        excludedScopes = setPropertyAsList(configuration.getProperty("excludedScopes"), ",");
+        excludedAssets = setPropertyAsList(configuration.getProperty("excludedAssets"), ",");
+        assetsLoaders = extractAssetsLoaders(classLoader, configuration);
+        assetsLocationWrappers = extractAssetsLocationWrappers(classLoader, configuration);
 
         processAssetsLoading(true);
-    }
-
-    /**
-     * @param classLoader class loader
-     * @return the configuration properties
-     * @throws IOException resources as stream fail
-     */
-    private Properties getConfigurationProperties(ClassLoader classLoader) throws IOException {
-        String mainResource = DandelionScanner.getResource("dandelion", "dandelion.properties");
-        Set<String> otherResources = DandelionScanner.getResources("dandelion", "dandelion", "properties");
-        otherResources.remove(mainResource);
-
-        // configure with all custom properties
-        Properties properties = new Properties();
-        for(String resource:otherResources) {
-            properties.load(classLoader.getResourceAsStream(resource));
-        }
-
-        // override with main properties
-        Properties mainProperties = new Properties();
-        if(mainResource != null)
-            mainProperties.load(classLoader.getResourceAsStream(mainResource));
-        properties.putAll(mainProperties);
-
-        return properties;
     }
 
     /**
