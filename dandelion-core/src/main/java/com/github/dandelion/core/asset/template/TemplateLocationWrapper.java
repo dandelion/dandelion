@@ -47,16 +47,16 @@ import static com.github.dandelion.core.utils.DandelionUtils.isDevModeEnabled;
  * Wrapper for "template" location
  */
 public class TemplateLocationWrapper implements AssetsLocationWrapper {
-    private Map<String, String> templateContentCache;
+    private Map<String, String> cache;
 
     public TemplateLocationWrapper() {
-        templateContentCache = new HashMap<String, String>();
+        cache = new HashMap<String, String>();
     }
 
-    private String getTemplateContent(String templateLocation) {
-        if(isDevModeEnabled() || !templateContentCache.containsKey(templateLocation))
-            templateContentCache.put(templateLocation, ResourceUtils.getFileContentFromClasspath(templateLocation));
-        return templateContentCache.get(templateLocation);
+    private String getTemplateContent(String tplLocation) {
+        if(isDevModeEnabled() || !cache.containsKey(tplLocation))
+            cache.put(tplLocation, ResourceUtils.getFileContentFromClasspath(tplLocation));
+        return cache.get(tplLocation);
     }
 
     @Override
@@ -67,7 +67,7 @@ public class TemplateLocationWrapper implements AssetsLocationWrapper {
     @Override
     public List<String> wrapLocation(Asset asset, HttpServletRequest request) {
         List<String> locations = new ArrayList<String>();
-        AssetsTemplateParameters templateParameters = AssetsRequestContext.get(request).getTemplateParameters();
+        AssetParameters templateParameters = AssetsRequestContext.get(request).getParameters();
         // Preparation of common variables
         String tplLocation = asset.getLocations().get(locationKey());
         String tplContext = RequestUtils.getCurrentUrl(request, true);
@@ -83,14 +83,14 @@ public class TemplateLocationWrapper implements AssetsLocationWrapper {
 
             if(isDevModeEnabled() || !AssetsCache.cache.containsKey(cacheKey)) {
                 // extraction of parameters/values
-                Map<String, String> tplParameters
+                Map<String, Object> tplParameters
                         = templateParameters.getParameters(asset, groupId);
 
 
                 // transform the template content into specific content
                 String content = tplContent;
-                for(Map.Entry<String, String> entry:tplParameters.entrySet()) {
-                    content = content.replace(entry.getKey(), entry.getValue());
+                for(Map.Entry<String, Object> entry:tplParameters.entrySet()) {
+                    content = content.replace(entry.getKey(), entry.getValue().toString());
                 }
 
                 // and store the specific content into the cache system
