@@ -108,9 +108,9 @@ public class AssetsAttrProcessor extends DandelionAttrProcessor {
 
         for(Element __element: arguments.getDocument().getFirstElementChild().getElementChildren()) {
             if(__element.getNormalizedName().equals("head")) {
-                AssetsRender.renderLink(assets, context.getTemplateParameters(), __element, request);
+                AssetsRender.renderLink(assets, __element, request);
             } else if(__element.getNormalizedName().equals("body")) {
-                AssetsRender.renderScript(assets, context.getTemplateParameters(), __element, request);
+                AssetsRender.renderScript(assets, __element, request);
             }
         }
     }

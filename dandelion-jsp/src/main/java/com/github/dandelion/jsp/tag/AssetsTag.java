@@ -76,7 +76,7 @@ public class AssetsTag extends TagSupport {
             List<Asset> assets = Assets.assetsFor(context.getScopes(true));
             assets = Assets.excludeByName(assets, context.getExcludedAssets());
 
-            AssetsRender.render(assets, context.getTemplateParameters(), pageContext);
+            AssetsRender.render(assets, pageContext);
             context.hasBeenRendered();
         } else {
             LOG.debug("the renderer of assets is inactive for this time");
