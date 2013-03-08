@@ -109,27 +109,22 @@ public class Asset implements Cloneable {
         return true;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
         Asset asset = (Asset) o;
-        if (!name.equals(asset.name)) return false;
-        if (!type.equals(asset.type)) return false;
-
+        if (name != null ? !name.equals(asset.name) : asset.name != null) return false;
+        if (type != asset.type) return false;
         return true;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public int hashCode() {
-        return name.hashCode() + type.hashCode();
+        int result = name != null ? name.hashCode() : 0;
+        result = 31 * result + (type != null ? type.hashCode() : 0);
+        return result;
     }
 
     /**

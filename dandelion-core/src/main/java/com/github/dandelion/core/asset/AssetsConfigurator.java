@@ -101,8 +101,8 @@ public class AssetsConfigurator {
      * @throws IOException resources as stream fail
      */
     private Properties getConfigurationProperties(ClassLoader classLoader) throws IOException {
-        String mainResource = DandelionScanner.getResource("dandelion.properties");
-        Set<String> otherResources = DandelionScanner.getResources("dandelion", "properties");
+        String mainResource = DandelionScanner.getResource("dandelion", "dandelion.properties");
+        Set<String> otherResources = DandelionScanner.getResources("dandelion", "dandelion", "properties");
         otherResources.remove(mainResource);
 
         // configure with all custom properties
