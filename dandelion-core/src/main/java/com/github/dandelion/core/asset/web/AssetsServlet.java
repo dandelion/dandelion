@@ -30,6 +30,7 @@
 package com.github.dandelion.core.asset.web;
 
 import com.github.dandelion.core.asset.AssetType;
+import com.github.dandelion.core.config.Configuration;
 import org.slf4j.Logger;
 
 import javax.servlet.ServletException;
@@ -46,6 +47,8 @@ public abstract class AssetsServlet extends HttpServlet {
     public static final String DANDELION_ASSETS = "dandelionAssets";
     public static final String DANDELION_ASSETS_URL = "/dandelion-assets/";
     public static final String DANDELION_ASSETS_URL_PATTERN = "/dandelion-assets/*";
+    private static final String ASSETS_CACHE_CONTROL = "assets.cache.control";
+    private String cacheControl;
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -54,17 +57,33 @@ public abstract class AssetsServlet extends HttpServlet {
         String resource = request.getParameter("r");
         String cacheKey = getCacheKey(request);
 
-        if(isDevModeEnabled() && !cache.containsKey(cacheKey))
+        if (isDevModeEnabled() && !cache.containsKey(cacheKey))
             throw new ServletException("The Dandelion assets should have been generated!");
 
         AssetType resourceType = AssetType.typeOfAsset(resource);
-        if(resourceType == null) return;
+        if (resourceType == null) return;
 
         String fileContent = cache.get(cacheKey);
         response.setContentType(resourceType.getContentType());
-        response.setHeader("Cache-Control","no-cache");
+        response.setHeader("Cache-Control", getCacheControl());
         response.getWriter().write(fileContent);
     }
 
     protected abstract Logger getLogger();
+
+    public String getCacheControl() {
+        if(cacheControl == null) {
+            initializeCacheControl();
+        }
+        return cacheControl;
+    }
+
+    synchronized private void initializeCacheControl() {
+        if(cacheControl != null) return;
+        String _cacheControl = Configuration.getProperty(ASSETS_CACHE_CONTROL);
+        if(isDevModeEnabled() || _cacheControl == null || _cacheControl.isEmpty()) {
+            _cacheControl = "no-cache";
+        }
+        cacheControl = _cacheControl;
+    }
 }
