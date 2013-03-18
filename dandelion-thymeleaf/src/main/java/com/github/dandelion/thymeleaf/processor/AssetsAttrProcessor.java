@@ -71,6 +71,8 @@ public class AssetsAttrProcessor extends DandelionAttrProcessor {
         AssetsRequestContext context
                 = AssetsRequestContext.get(request);
         switch (assetsAttributeName) {
+            case STACK:
+                initializeIfNeeded(arguments);
             case SCOPES:
                 context.addScopes(element.getAttributeValue(attributeName));
                 initializeIfNeeded(arguments);
