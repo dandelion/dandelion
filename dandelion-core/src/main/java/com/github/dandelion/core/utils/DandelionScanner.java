@@ -128,10 +128,8 @@ public final class DandelionScanner {
             if (!folder.isDirectory()) return;
             File[] files = folder.listFiles();
             for (File file : files) {
-                if (file.canRead()) {
-                    if (!file.isDirectory()) {
-                    	resourcesSet.add("dandelion" + File.separator +  file.getName());
-                    }
+                if (file.canRead() && !file.isDirectory()) {
+                    resourcesSet.add(folderPath + File.separator + file.getName());
                 }
             }
         }
