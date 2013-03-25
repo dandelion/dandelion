@@ -59,9 +59,9 @@ public class AssetsJsonLoader implements AssetsLoader {
         List<AssetsComponent> assetsComponentList = new ArrayList<AssetsComponent>();
 		try {
             Set<String> resources = DandelionScanner.getResources("dandelion", null, ".json");
-            System.out.println("resources = " + resources);
             ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
 			for (String resource : resources) {
+                LOG.debug("resources {}", resource);
 				InputStream configFileStream = classLoader.getResourceAsStream(resource);
 
 				AssetsComponent assetsComponent = mapper.readValue(configFileStream, AssetsComponent.class);
