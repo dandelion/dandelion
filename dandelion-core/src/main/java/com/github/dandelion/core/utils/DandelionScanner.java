@@ -126,15 +126,11 @@ public final class DandelionScanner {
             File folder = new File(resourcePath);
             // dandelion folder need to be ... a folder
             if (!folder.isDirectory()) return;
-
-            int rootPathLength = resourcePath.substring(0, resourcePath.length()
-                    - folderPath.length()).length();
-            if(resourcePath.endsWith("/")) rootPathLength -= 1;
             File[] files = folder.listFiles();
             for (File file : files) {
                 if (file.canRead()) {
                     if (!file.isDirectory()) {
-                        resourcesSet.add(file.getAbsolutePath().substring(rootPathLength));
+                    	resourcesSet.add("dandelion" + File.separator +  file.getName());
                     }
                 }
             }
