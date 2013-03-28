@@ -192,7 +192,7 @@ public class AssetsConfigurator {
             assetsLoaders.add(new AssetsJsonLoader());
         }
         if(assetsLocations == null) {
-            assetsLocations = setPropertyAsList("remote,local", ",");
+            assetsLocations = setPropertyAsList("cdn,classpath", ",");
         }
         if(excludedScopes == null) {
             excludedScopes = new ArrayList<String>();
