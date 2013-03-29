@@ -31,6 +31,7 @@ package com.github.dandelion.core.asset.loader;
 
 import com.github.dandelion.core.asset.AssetsComponent;
 import com.github.dandelion.core.asset.AssetsLoader;
+import com.github.dandelion.core.asset.AssetsStorage;
 import com.github.dandelion.core.utils.DandelionScanner;
 import org.codehaus.jackson.JsonParser;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -65,6 +66,7 @@ public class AssetsJsonLoader implements AssetsLoader {
 				InputStream configFileStream = classLoader.getResourceAsStream(resource);
 
 				AssetsComponent assetsComponent = mapper.readValue(configFileStream, AssetsComponent.class);
+
 				LOG.debug("found {}", assetsComponent);
                 assetsComponentList.add(assetsComponent);
 			}

@@ -39,6 +39,7 @@ public class AssetsComponent {
 	
 	private String scope = AssetsStorage.ROOT_SCOPE;
 	private String parent = AssetsStorage.ROOT_SCOPE;
+    private boolean override = false;
 	private List<Asset> assets = new ArrayList<Asset>();
 
     public AssetsComponent() {
@@ -48,6 +49,13 @@ public class AssetsComponent {
         this.scope = scope;
         this.parent = parent;
         this.assets = assets;
+    }
+
+    public AssetsComponent(String scope, boolean override, List<Asset> assets) {
+        this.scope = scope;
+        this.override = override;
+        this.assets = assets;
+
     }
 
     public String getScope() {
@@ -74,8 +82,16 @@ public class AssetsComponent {
 		this.parent = parent;
 	}
 
+    public boolean isOverride() {
+        return override;
+    }
+
+    public void setOverride(boolean override) {
+        this.override = override;
+    }
+
     @Override
     public String toString() {
-        return "AssetsComponent [scope=" + scope + ", parent=" + parent + ", assets=" + assets + "]";
+        return "AssetsComponent [scope=" + scope + ", parent=" + parent + ", override=" + override + ", assets=" + assets + "]";
     }
 }

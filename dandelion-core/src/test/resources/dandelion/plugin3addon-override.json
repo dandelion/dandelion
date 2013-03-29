@@ -1,14 +1,15 @@
 {
     "scope": "plugin3addon",
+    "override": true,
     "parent": "plugin3",
     "assets": [
         {
             "name": "asset3addon",
-            "version": "3addon",
+            "version": "1",
             "type": "css",
             "locations": {
-                "remote": "remoteURL3addon",
-                "local": "localPath3addon"
+                "remote": "remoteURL",
+                "local": "localPath"
             }
         }
     ]

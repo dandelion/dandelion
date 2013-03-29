@@ -1,31 +1,32 @@
 {
     "scope": "plugin2",
+    "override": true,
     "assets": [
         {
             "name": "asset3",
-            "version": "3",
+            "version": "1",
             "type": "js",
             "locations": {
-                "remote": "remoteURL3",
-                "local": "localPath3"
+                "remote": "remoteURL",
+                "local": "localPath"
             }
         },
         {
             "name": "asset3",
-            "version": "3",
+            "version": "1",
             "type": "css",
             "locations": {
-                "remote": "remoteURL3",
-                "local": "localPath3"
+                "remote": "remoteURL",
+                "local": "localPath"
             }
         },
         {
             "name": "excludedAsset2",
-            "version": "2",
+            "version": "1",
             "type": "js",
             "locations": {
-                "remote": "remoteURL2",
-                "local": "localPath2"
+                "remote": "remoteURL",
+                "local": "localPath"
             }
         }
     ]

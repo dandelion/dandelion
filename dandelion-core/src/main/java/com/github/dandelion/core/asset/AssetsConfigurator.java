@@ -32,11 +32,9 @@ package com.github.dandelion.core.asset;
 import com.github.dandelion.core.DandelionException;
 import com.github.dandelion.core.asset.loader.AssetsJsonLoader;
 import com.github.dandelion.core.config.Configuration;
-import com.github.dandelion.core.utils.DandelionScanner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
 import java.util.*;
 
 import static com.github.dandelion.core.asset.AssetsStorage.*;
@@ -66,9 +64,10 @@ public class AssetsConfigurator {
     List<String> excludedAssets;
     Map<String, AssetsLocationWrapper> assetsLocationWrappers;
 
-    private Map<String, List<Asset>> componentsByScope = new HashMap<String, List<Asset>>();
+    private Map<String, List<Asset>> assetsByScope = new HashMap<String, List<Asset>>();
     private Map<String, List<String>> scopesByParentScope = new HashMap<String, List<String>>();
     private Map<String, String> parentScopesByScope = new HashMap<String, String>();
+    private Map<String, List<Asset>> overrideAssetsByScope = new HashMap<String, List<Asset>>();
 
     AssetsConfigurator(AssetsStorage assetsStorage) {
         this.assetsStorage = assetsStorage;
@@ -214,11 +213,24 @@ public class AssetsConfigurator {
         for(AssetsLoader assetsLoader:assetsLoaders) {
             prepareAssetsLoading(assetsLoader.loadAssets());
         }
+        
+        overrideAssetsByScope();
 
         storeAssetsFromScope(ROOT_SCOPE, true);
         storeAssetsFromScope(DETACHED_PARENT_SCOPE, true);
 
         clearAllAssetsProcessElements();
+    }
+
+    /**
+     * Override all assets of a scope by `override` assets
+     */
+    private void overrideAssetsByScope() {
+        for(Map.Entry<String, List<Asset>> entry:assetsByScope.entrySet()) {
+            if(overrideAssetsByScope.containsKey(entry.getKey())) {
+                entry.setValue(overrideAssetsByScope.get(entry.getKey()));
+            }
+        }
     }
 
     /**
@@ -244,9 +256,13 @@ public class AssetsConfigurator {
                 LOG.debug("Scope {} and his parent {} are not in excludes scopes",
                         component.getScope(), component.getParent());
 
-                prepareParentScope(component);
-                prepareScope(component);
-                prepareAssets(component);
+                if(component.isOverride()) {
+                    prepareOverrideAssets(component);
+                } else {
+                    prepareParentScope(component);
+                    prepareScope(component);
+                    prepareAssets(component);
+                }
             }
         }
     }
@@ -258,8 +274,8 @@ public class AssetsConfigurator {
      * @param recursiveMode <code>true</code> to activate recursive mode for scope/parent scope
      */
     private void storeAssetsFromScope(String scope, boolean recursiveMode) {
-        if(componentsByScope.containsKey(scope)) {
-            List<Asset> _assets = componentsByScope.get(scope);
+        if(assetsByScope.containsKey(scope)) {
+            List<Asset> _assets = assetsByScope.get(scope);
             for(Asset _asset:_assets) {
                 storeAsset(_asset, scope, parentScopesByScope.get(scope));
             }
@@ -300,9 +316,10 @@ public class AssetsConfigurator {
      */
     void clearAllAssetsProcessElements() {
         LOG.debug("Clear all assets process elements");
-        componentsByScope.clear();
+        assetsByScope.clear();
         scopesByParentScope.clear();
         parentScopesByScope.clear();
+        overrideAssetsByScope.clear();
     }
 
     private List<String> setPropertyAsList(String values, String delimiter) {
@@ -338,10 +355,10 @@ public class AssetsConfigurator {
     }
 
     private void prepareAssets(AssetsComponent component) {
-        if (!componentsByScope.containsKey(component.getScope())) {
-            componentsByScope.put(component.getScope(), new ArrayList<Asset>());
+        if (!assetsByScope.containsKey(component.getScope())) {
+            assetsByScope.put(component.getScope(), new ArrayList<Asset>());
         }
-        List<Asset> _assets = componentsByScope.get(component.getScope());
+        List<Asset> _assets = assetsByScope.get(component.getScope());
 
         for(Asset asset:component.getAssets()) {
             if(!excludedAssets.contains(asset.getName())) {
@@ -351,5 +368,16 @@ public class AssetsConfigurator {
                 LOG.debug("{} is exclude", asset.getName());
             }
         }
+    }
+
+    private void prepareOverrideAssets(AssetsComponent component) {
+        List<Asset> _assets = new ArrayList<Asset>();
+
+        for(Asset asset:component.getAssets()) {
+            if(!excludedAssets.contains(asset.getName())) {
+                _assets.add(asset);
+            }
+        }
+        overrideAssetsByScope.put(component.getScope(), _assets);
     }
 }
