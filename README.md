@@ -1,7 +1,7 @@
 Dandelion
 ========================
 
-[Dandelion](http://dandelion.github.com) is the core of all modules that helps you to manage your assets in your application.
+[Dandelion](http://dandelion.github.io) is the core of all modules that helps you to manage your assets in your application.
 
 See the documentation here : [http://dandelion.github.io/dandelion](http://dandelion.github.io/dandelion)
 
