@@ -3,7 +3,7 @@
     <parent>
         <artifactId>dandelion</artifactId>
         <groupId>com.github.dandelion</groupId>
-        <version>0.1.0</version>
+        <version>0.1.1-SNAPSHOT</version>
     </parent>
     <artifactId>dandelion-thymeleaf</artifactId>
     <packaging>jar</packaging>
