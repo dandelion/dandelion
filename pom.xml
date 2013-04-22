@@ -1,60 +1,58 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-
+    <parent>
+        <artifactId>oss-parent</artifactId>
+        <groupId>org.sonatype.oss</groupId>
+        <version>7</version>
+    </parent>
     <groupId>com.github.dandelion</groupId>
     <artifactId>dandelion</artifactId>
     <version>0.1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
-
     <name>Dandelion</name>
-
+    <description>Dandelion, Extensible web library for funnier web development</description>
+    <licenses>
+        <license>
+            <distribution>repo</distribution>
+            <name>BSD 3-Clause</name>
+            <url>http://opensource.org/licenses/BSD-3-Clause</url>
+        </license>
+    </licenses>
+    <properties>
+        <!-- Maven plugins -->
+        <maven.compiler.version>2.3.2</maven.compiler.version>
+        <maven.javadoc.version>2.8.1</maven.javadoc.version>
+        <maven.project-report-info.version>2.5.1</maven.project-report-info.version>
+        <maven.release.version>2.3.2</maven.release.version>
+        <maven.site.version>3.1</maven.site.version>
+        <maven.source.version>2.2</maven.source.version>
+        <!-- Configuration -->
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    </properties>
     <modules>
         <module>dandelion-core</module>
         <module>dandelion-thymeleaf</module>
         <module>dandelion-jsp</module>
         <module>dandelion-extras</module>
     </modules>
-
-    <licenses>
-        <license>
-            <name>BSD 3-Clause</name>
-            <url>http://opensource.org/licenses/BSD-3-Clause</url>
-            <distribution>repo</distribution>
-        </license>
-    </licenses>
-
-    <properties>
-        <!-- Configuration -->
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-
-        <!-- Maven plugins -->
-        <maven.compiler.version>2.3.2</maven.compiler.version>
-        <maven.javadoc.version>2.8.1</maven.javadoc.version>
-        <maven.source.version>2.2</maven.source.version>
-        <maven.project-report-info.version>2.5.1</maven.project-report-info.version>
-        <maven.site.version>3.1</maven.site.version>
-        <maven.release.version>2.3.2</maven.release.version>
-    </properties>
-
     <dependencyManagement>
         <dependencies>
-            <dependency>
-                <groupId>javax.servlet</groupId>
-                <artifactId>javax.servlet-api</artifactId>
-                <version>3.0.1</version>
-                <scope>provided</scope>
-            </dependency>
             <dependency>
                 <groupId>javax.servlet.jsp</groupId>
                 <artifactId>jsp-api</artifactId>
                 <version>2.2</version>
                 <scope>provided</scope>
             </dependency>
+            <dependency>
+                <groupId>javax.servlet</groupId>
+                <artifactId>javax.servlet-api</artifactId>
+                <version>3.0.1</version>
+                <scope>provided</scope>
+            </dependency>
         </dependencies>
     </dependencyManagement>
-
     <dependencies>
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -80,7 +78,6 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
-
     <build>
         <plugins>
             <plugin>
@@ -94,11 +91,71 @@
             </plugin>
         </plugins>
     </build>
-
+    <issueManagement>
+        <system>GitHub</system>
+        <url>https://github.com/dandelion/issues/issues</url>
+    </issueManagement>
     <scm>
         <connection>scm:git:git://github.com/dandelion/dandelion.git</connection>
         <developerConnection>scm:git:git@github.com:dandelion/dandelion.git</developerConnection>
         <url>http://github.com/dandelion/dandelion</url>
     </scm>
-
+    <profiles>
+        <profile>
+            <id>release-sign-artifacts</id>
+            <activation>
+                <property>
+                    <name>performRelease</name>
+                    <value>true</value>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <version>1.4</version>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <version>${maven.javadoc.version}</version>
+                        <configuration>
+                            <stylesheet>maven</stylesheet>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>attach-javadocs</id>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-source-plugin</artifactId>
+                        <version>${maven.source.version}</version>
+                        <executions>
+                            <execution>
+                                <id>attach-sources</id>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>
