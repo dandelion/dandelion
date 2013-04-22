@@ -6,8 +6,8 @@
             "version": "1",
             "type": "js",
             "locations": {
-                "remote": "assets_scopes_1_remoteURL",
-                "local": "assets_scopes_1_localPath"
+                "cdn": "assets_scopes_1_remoteURL",
+                "classpath": "assets_scopes_1_localPath"
             }
         },
         {
@@ -15,8 +15,8 @@
             "version": "1",
             "type": "js",
             "locations": {
-                "remote": "assets_scopes_2_remoteURL",
-                "local": "assets_scopes_2_localPath"
+                "cdn": "assets_scopes_2_remoteURL",
+                "classpath": "assets_scopes_2_localPath"
             }
         },
         {
@@ -24,8 +24,8 @@
             "version": "1",
             "type": "css",
             "locations": {
-                "remote": "assets_scopes_3_remoteURL",
-                "local": "assets_scopes_3_localPath"
+                "cdn": "assets_scopes_3_remoteURL",
+                "classpath": "assets_scopes_3_localPath"
             }
         }
     ]

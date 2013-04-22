@@ -6,8 +6,8 @@
             "version": "1",
             "type": "js",
             "locations": {
-                "remote": "assets_excludedScopes_1_remoteURL",
-                "local": "assets_excludedScopes_1_localPath"
+                "cdn": "assets_excludedScopes_1_remoteURL",
+                "classpath": "assets_excludedScopes_1_localPath"
             }
         },
         {
@@ -15,8 +15,8 @@
             "version": "1",
             "type": "js",
             "locations": {
-                "remote": "assets_excludedScopes_2_remoteURL",
-                "local": "assets_excludedScopes_2_localPath"
+                "cdn": "assets_excludedScopes_2_remoteURL",
+                "classpath": "assets_excludedScopes_2_localPath"
             }
         }
     ]
