@@ -32,7 +32,7 @@ package com.github.dandelion.jsp.tag;
 
 import com.github.dandelion.core.asset.Asset;
 import com.github.dandelion.core.asset.Assets;
-import com.github.dandelion.core.asset.AssetsRequestContext;
+import com.github.dandelion.core.asset.web.AssetsRequestContext;
 import com.github.dandelion.jsp.util.AssetsRender;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -28,7 +28,9 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package com.github.dandelion.core.asset;
+package com.github.dandelion.core.asset.web;
+
+import com.github.dandelion.core.asset.AssetsCache;
 
 import javax.servlet.ServletRequest;
 import java.util.ArrayList;

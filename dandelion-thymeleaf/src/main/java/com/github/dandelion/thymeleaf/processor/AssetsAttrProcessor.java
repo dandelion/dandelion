@@ -31,7 +31,7 @@ package com.github.dandelion.thymeleaf.processor;
 
 import com.github.dandelion.core.asset.Asset;
 import com.github.dandelion.core.asset.Assets;
-import com.github.dandelion.core.asset.AssetsRequestContext;
+import com.github.dandelion.core.asset.web.AssetsRequestContext;
 import com.github.dandelion.thymeleaf.dialect.AssetsAttributeName;
 import com.github.dandelion.thymeleaf.dialect.DandelionDialect;
 import com.github.dandelion.thymeleaf.util.ArgumentsUtil;
