@@ -28,49 +28,75 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package com.github.dandelion.core.asset.delegate;
+package com.github.dandelion.core.asset.wrapper;
 
 import com.github.dandelion.core.asset.*;
+import com.github.dandelion.core.asset.web.AssetParameters;
+import com.github.dandelion.core.asset.web.AssetsRequestContext;
 import com.github.dandelion.core.asset.web.AssetsServlet;
 import com.github.dandelion.core.utils.RequestUtils;
+import com.github.dandelion.core.utils.ResourceUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import static com.github.dandelion.core.utils.DandelionUtils.isDevModeEnabled;
 
-public class DelegateLocationWrapper implements AssetsLocationWrapper {
-    public static final String DELEGATE_CONTENT_PARAM = "DELEGATE_CONTENT";
+/**
+ * Wrapper for "template" location
+ */
+public class TemplateLocationWrapper implements AssetsLocationWrapper {
+    private Map<String, String> cache;
+
+    public TemplateLocationWrapper() {
+        cache = new HashMap<String, String>();
+    }
+
+    private String getTemplateContent(String tplLocation) {
+        if(isDevModeEnabled() || !cache.containsKey(tplLocation))
+            cache.put(tplLocation, ResourceUtils.getFileContentFromClasspath(tplLocation));
+        return cache.get(tplLocation);
+    }
 
     @Override
     public String locationKey() {
-        return "delegate";
+        return "template";
     }
 
     @Override
     public List<String> wrapLocation(Asset asset, HttpServletRequest request) {
         List<String> locations = new ArrayList<String>();
-        AssetParameters params = AssetsRequestContext.get(request).getParameters();
+        AssetParameters templateParameters = AssetsRequestContext.get(request).getParameters();
         // Preparation of common variables
-        String dcLocation = asset.getLocations().get(locationKey());
-        String dcContext = RequestUtils.getCurrentUrl(request, true);
-        dcContext = dcContext.replaceAll("\\?", "_").replaceAll("&", "_");
+        String tplLocation = asset.getLocations().get(locationKey());
+        String tplContext = RequestUtils.getCurrentUrl(request, true);
+        tplContext = tplContext.replaceAll("\\?", "_").replaceAll("&", "_");
+        // extract the template content from classpath
+        String tplContent = getTemplateContent(tplLocation);
 
-        // delegate are link to multiple groups (due to the possibility to have more than one asset in a page.
-        for(String groupId:params.getGroupIds(asset)) {
+        // template are link to multiple groups (due to the possibility to have more than one asset in a page.
+        for(String groupId:templateParameters.getGroupIds(asset)) {
 
             // on each group, generate the cache key.
-            String cacheKey = AssetsCache.generateCacheKey(dcContext, groupId, dcLocation);
+            String cacheKey = AssetsCache.generateCacheKey(tplContext, groupId, tplLocation);
 
             if(isDevModeEnabled() || !AssetsCache.cache.containsKey(cacheKey)) {
-                Map<String, Object> dcParams = params.getParameters(asset, groupId);
-                String content = ((DelegateContent) dcParams
-                        .get(DELEGATE_CONTENT_PARAM)).getContent(request);
+                // extraction of parameters/values
+                Map<String, Object> tplParameters
+                        = templateParameters.getParameters(asset, groupId);
+
+
+                // transform the template content into specific content
+                String content = tplContent;
+                for(Map.Entry<String, Object> entry:tplParameters.entrySet()) {
+                    content = content.replace(entry.getKey(), entry.getValue().toString());
+                }
 
                 // and store the specific content into the cache system
-                AssetsCache.store(dcContext, groupId, dcLocation, content);
+                AssetsCache.store(tplContext, groupId, tplLocation, content);
             }
 
             // Always set the location to retrieve the content from the case
@@ -78,9 +104,9 @@ public class DelegateLocationWrapper implements AssetsLocationWrapper {
             String baseUrl = RequestUtils.getBaseUrl(request);
             String accessLocation = new StringBuilder(baseUrl)
                     .append(AssetsServlet.DANDELION_ASSETS_URL)
-                    .append("?c=").append(dcContext)
+                    .append("?c=").append(tplContext)
                     .append("&id=").append(groupId)
-                    .append("&r=").append(dcLocation).toString();
+                    .append("&r=").append(tplLocation).toString();
 
             locations.add(accessLocation);
         }

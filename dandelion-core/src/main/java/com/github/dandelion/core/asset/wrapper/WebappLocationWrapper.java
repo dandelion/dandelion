@@ -28,32 +28,26 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package com.github.dandelion.extras.webjars.asset;
+package com.github.dandelion.core.asset.wrapper;
 
 import com.github.dandelion.core.asset.Asset;
-import com.github.dandelion.core.asset.AssetsLocationWrapper;
-import org.webjars.WebJarAssetLocator;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Arrays;
 import java.util.List;
 
 /**
- * Assets Location Wrapper for Webjars
+ * Wrapper for "webapp" location
  */
-public class WebjarsLocatorWrapper implements AssetsLocationWrapper {
-
-    /**
-     * {@inheritDoc}
-     */
+public class WebappLocationWrapper implements AssetsLocationWrapper {
     @Override
     public String locationKey() {
-        return "webjars";
+        return "webapp";
     }
 
     @Override
     public List<String> wrapLocation(Asset asset, HttpServletRequest request) {
-        WebJarAssetLocator locator = new WebJarAssetLocator();
-        return Arrays.asList(locator.getFullPath(asset.getLocations().get(locationKey())));
+        String location = asset.getLocations().get(locationKey());
+        return Arrays.asList(request.getContextPath() + location);
     }
 }

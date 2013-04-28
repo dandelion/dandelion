@@ -28,7 +28,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package com.github.dandelion.core.asset.classpath;
+package com.github.dandelion.core.asset.wrapper;
 
 import com.github.dandelion.core.asset.*;
 import com.github.dandelion.core.asset.web.AssetsServlet;

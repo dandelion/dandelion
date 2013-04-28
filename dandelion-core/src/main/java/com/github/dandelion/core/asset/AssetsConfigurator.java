@@ -31,6 +31,7 @@ package com.github.dandelion.core.asset;
 
 import com.github.dandelion.core.DandelionException;
 import com.github.dandelion.core.asset.loader.AssetsJsonLoader;
+import com.github.dandelion.core.asset.wrapper.AssetsLocationWrapper;
 import com.github.dandelion.core.config.Configuration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -135,7 +136,7 @@ public class AssetsConfigurator {
     /**
      * Load all wrappers found in configuration properties<br/>
      * a wrapper configuration have a key like assets.location.wrapper.{location}<br/>
-     * {location} must match {@link com.github.dandelion.core.asset.AssetsLocationWrapper#locationKey()}
+     * {location} must match {@link com.github.dandelion.core.asset.wrapper.AssetsLocationWrapper#locationKey()}
      *
      * @param classLoader class loader
      * @param properties configuration properties

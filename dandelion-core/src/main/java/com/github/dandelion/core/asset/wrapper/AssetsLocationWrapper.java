@@ -28,18 +28,28 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package com.github.dandelion.core.asset.delegate;
+package com.github.dandelion.core.asset.wrapper;
+
+import com.github.dandelion.core.asset.Asset;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 /**
- * Delegate to generate a content
+ * Wrapper for one or many locations associate with a location key
  */
-public interface DelegateContent {
+public interface AssetsLocationWrapper {
 
     /**
-     * @param request http request
-     * @return get the generated content
+     * @return the location key who match this wrapper
      */
-    String getContent(HttpServletRequest request);
+    String locationKey();
+
+    /**
+     *
+     * @param asset asset
+     * @param request http request
+     * @return the customized locations
+     */
+    List<String> wrapLocation(Asset asset, HttpServletRequest request);
 }
