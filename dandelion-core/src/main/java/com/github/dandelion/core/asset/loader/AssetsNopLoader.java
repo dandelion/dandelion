@@ -30,7 +30,6 @@
 package com.github.dandelion.core.asset.loader;
 
 import com.github.dandelion.core.asset.AssetsComponent;
-import com.github.dandelion.core.asset.AssetsLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

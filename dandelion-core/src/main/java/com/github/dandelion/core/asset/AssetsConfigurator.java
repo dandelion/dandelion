@@ -31,6 +31,7 @@ package com.github.dandelion.core.asset;
 
 import com.github.dandelion.core.DandelionException;
 import com.github.dandelion.core.asset.loader.AssetsJsonLoader;
+import com.github.dandelion.core.asset.loader.AssetsLoader;
 import com.github.dandelion.core.asset.wrapper.AssetsLocationWrapper;
 import com.github.dandelion.core.config.Configuration;
 import org.slf4j.Logger;
