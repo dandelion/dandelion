@@ -28,18 +28,18 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package com.github.dandelion.extras.webjars.asset.wrapper;
+package com.github.dandelion.core.asset.wrapper;
 
 import com.github.dandelion.core.asset.Asset;
 import com.github.dandelion.core.asset.AssetsCache;
-import com.github.dandelion.core.asset.wrapper.AssetsLocationWrapper;
+import com.github.dandelion.core.asset.web.AssetParameters;
+import com.github.dandelion.core.asset.web.AssetsRequestContext;
 import com.github.dandelion.core.asset.web.AssetsServlet;
-import com.github.dandelion.core.asset.wrapper.CacheableLocationWrapper;
 import com.github.dandelion.core.utils.RequestUtils;
 import com.github.dandelion.core.utils.ResourceUtils;
-import org.webjars.WebJarAssetLocator;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -47,22 +47,45 @@ import java.util.Map;
 import static com.github.dandelion.core.utils.DandelionUtils.isDevModeEnabled;
 
 /**
- * Assets Location Wrapper for Webjars
+ * Base for Wrapper with caching faculty
  */
-public class WebjarsLocationWrapper extends CacheableLocationWrapper {
-    private static WebJarAssetLocator locator = new WebJarAssetLocator();
-
-    /**
-     * {@inheritDoc}
-     */
+public abstract class CacheableLocationWrapper implements AssetsLocationWrapper {
     @Override
-    public String locationKey() {
-        return "webjars";
+    public List<String> wrapLocation(Asset asset, HttpServletRequest request) {
+
+        String location = asset.getLocations().get(locationKey());
+        String context = RequestUtils.getCurrentUrl(request, true);
+        context = context.replaceAll("\\?", "_").replaceAll("&", "_");
+
+        List<String> locations = new ArrayList<String>();
+        AssetParameters params = AssetsRequestContext.get(request).getParameters();
+
+        List<String> groudIds = params.getGroupIds(asset);
+        if(groudIds == null || groudIds.isEmpty()) {
+            groudIds = Arrays.asList(AssetsCache.GLOBAL_GROUP);
+        }
+
+        for(String groupId:groudIds) {
+            String cacheKey = AssetsCache.generateCacheKey(context, groupId, location);
+
+            Map<String, Object> parameters = params.getParameters(asset, groupId);
+            if(isDevModeEnabled() || !AssetsCache.cache.containsKey(cacheKey)) {
+                String content = getContent(asset, location, parameters, request);
+                AssetsCache.store(context, groupId, location, content);
+            }
+
+            String baseUrl = RequestUtils.getBaseUrl(request);
+            String accessLocation = new StringBuilder(baseUrl)
+                    .append(AssetsServlet.DANDELION_ASSETS_URL)
+                    .append("?c=").append(context)
+                    .append("&id=").append(groupId)
+                    .append("&r=").append(location).toString();
+
+            locations.add(accessLocation);
+        }
+
+        return locations;
     }
 
-    @Override
-    protected String getContent(Asset asset, String location, Map<String, Object> parameters, HttpServletRequest request) {
-        String webjarsLocation = locator.getFullPath(location);
-        return ResourceUtils.getFileContentFromClasspath(webjarsLocation);
-    }
+    protected abstract String getContent(Asset asset, String location, Map<String, Object> parameters, HttpServletRequest request);
 }

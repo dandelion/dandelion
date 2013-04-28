@@ -30,44 +30,23 @@
 
 package com.github.dandelion.core.asset.wrapper;
 
-import com.github.dandelion.core.asset.*;
-import com.github.dandelion.core.asset.web.AssetsServlet;
-import com.github.dandelion.core.utils.RequestUtils;
+import com.github.dandelion.core.asset.Asset;
 import com.github.dandelion.core.utils.ResourceUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 
-import static com.github.dandelion.core.utils.DandelionUtils.isDevModeEnabled;
-
 /**
  * Wrapper for "classpath" location
  */
-public class ClasspathLocationWrapper implements AssetsLocationWrapper {
+public class ClasspathLocationWrapper extends CacheableLocationWrapper {
     @Override
     public String locationKey() {
         return "classpath";
     }
 
     @Override
-    public List<String> wrapLocation(Asset asset, HttpServletRequest request) {
-        String tplLocation = asset.getLocations().get(locationKey());
-        String tplContext = RequestUtils.getCurrentUrl(request, true);
-        tplContext = tplContext.replaceAll("\\?", "_").replaceAll("&", "_");
-
-        String cacheKey = AssetsCache.generateCacheKey(tplContext, AssetsCache.GLOBAL_GROUP, tplLocation);
-        if(isDevModeEnabled() || !AssetsCache.cache.containsKey(cacheKey)) {
-            String content = ResourceUtils.getFileContentFromClasspath(tplLocation);
-            AssetsCache.store(tplContext, AssetsCache.GLOBAL_GROUP, tplLocation, content);
-        }
-
-        String baseUrl = RequestUtils.getBaseUrl(request);
-        String accessLocation = new StringBuilder(baseUrl)
-                .append(AssetsServlet.DANDELION_ASSETS_URL)
-                .append("?c=").append(tplContext)
-                .append("&id=").append(AssetsCache.GLOBAL_GROUP)
-                .append("&r=").append(tplLocation).toString();
-
-        return Arrays.asList(accessLocation);
+    protected String getContent(Asset asset, String location, Map<String, Object> parameters, HttpServletRequest request) {
+        return ResourceUtils.getFileContentFromClasspath(location);
     }
 }

@@ -48,7 +48,7 @@ import static com.github.dandelion.core.utils.DandelionUtils.isDevModeEnabled;
 /**
  * Wrapper for "template" location
  */
-public class TemplateLocationWrapper implements AssetsLocationWrapper {
+public class TemplateLocationWrapper extends CacheableLocationWrapper {
     private Map<String, String> cache;
 
     public TemplateLocationWrapper() {
@@ -67,49 +67,11 @@ public class TemplateLocationWrapper implements AssetsLocationWrapper {
     }
 
     @Override
-    public List<String> wrapLocation(Asset asset, HttpServletRequest request) {
-        List<String> locations = new ArrayList<String>();
-        AssetParameters templateParameters = AssetsRequestContext.get(request).getParameters();
-        // Preparation of common variables
-        String tplLocation = asset.getLocations().get(locationKey());
-        String tplContext = RequestUtils.getCurrentUrl(request, true);
-        tplContext = tplContext.replaceAll("\\?", "_").replaceAll("&", "_");
-        // extract the template content from classpath
-        String tplContent = getTemplateContent(tplLocation);
-
-        // template are link to multiple groups (due to the possibility to have more than one asset in a page.
-        for(String groupId:templateParameters.getGroupIds(asset)) {
-
-            // on each group, generate the cache key.
-            String cacheKey = AssetsCache.generateCacheKey(tplContext, groupId, tplLocation);
-
-            if(isDevModeEnabled() || !AssetsCache.cache.containsKey(cacheKey)) {
-                // extraction of parameters/values
-                Map<String, Object> tplParameters
-                        = templateParameters.getParameters(asset, groupId);
-
-
-                // transform the template content into specific content
-                String content = tplContent;
-                for(Map.Entry<String, Object> entry:tplParameters.entrySet()) {
-                    content = content.replace(entry.getKey(), entry.getValue().toString());
-                }
-
-                // and store the specific content into the cache system
-                AssetsCache.store(tplContext, groupId, tplLocation, content);
-            }
-
-            // Always set the location to retrieve the content from the case
-            // See AssetsServlet
-            String baseUrl = RequestUtils.getBaseUrl(request);
-            String accessLocation = new StringBuilder(baseUrl)
-                    .append(AssetsServlet.DANDELION_ASSETS_URL)
-                    .append("?c=").append(tplContext)
-                    .append("&id=").append(groupId)
-                    .append("&r=").append(tplLocation).toString();
-
-            locations.add(accessLocation);
+    protected String getContent(Asset asset, String location, Map<String, Object> parameters, HttpServletRequest request) {
+        String content = getTemplateContent(location);
+        for(Map.Entry<String, Object> entry:parameters.entrySet()) {
+            content = content.replace(entry.getKey(), entry.getValue().toString());
         }
-        return locations;
+        return content;
     }
 }
