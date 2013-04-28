@@ -170,7 +170,7 @@ public final class Assets {
         // Otherwise check for wrapper
         if(assetsConfigurator.assetsLocationWrappers.containsKey(locationKey)) {
             // TODO log
-            return assetsConfigurator.assetsLocationWrappers.get(locationKey).wrapLocation(asset, request);
+            return assetsConfigurator.assetsLocationWrappers.get(locationKey).wrapLocations(asset, request);
         }
         return Arrays.asList(asset.getLocations().get(locationKey));
     }

@@ -51,7 +51,7 @@ import static com.github.dandelion.core.utils.DandelionUtils.isDevModeEnabled;
  */
 public abstract class CacheableLocationWrapper implements AssetsLocationWrapper {
     @Override
-    public List<String> wrapLocation(Asset asset, HttpServletRequest request) {
+    public List<String> wrapLocations(Asset asset, HttpServletRequest request) {
 
         String location = asset.getLocations().get(locationKey());
         String context = RequestUtils.getCurrentUrl(request, true);
@@ -60,12 +60,12 @@ public abstract class CacheableLocationWrapper implements AssetsLocationWrapper 
         List<String> locations = new ArrayList<String>();
         AssetParameters params = AssetsRequestContext.get(request).getParameters();
 
-        List<String> groudIds = params.getGroupIds(asset);
-        if(groudIds == null || groudIds.isEmpty()) {
-            groudIds = Arrays.asList(AssetsCache.GLOBAL_GROUP);
+        List<String> groupIds = params.getGroupIds(asset);
+        if(groupIds == null || groupIds.isEmpty()) {
+            groupIds = Arrays.asList(AssetsCache.GLOBAL_GROUP);
         }
 
-        for(String groupId:groudIds) {
+        for(String groupId:groupIds) {
             String cacheKey = AssetsCache.generateCacheKey(context, groupId, location);
 
             Map<String, Object> parameters = params.getParameters(asset, groupId);

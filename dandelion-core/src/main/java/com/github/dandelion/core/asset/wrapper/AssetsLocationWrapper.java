@@ -46,10 +46,11 @@ public interface AssetsLocationWrapper {
     String locationKey();
 
     /**
+     * Wrapper an asset into one or more customized locations.
      *
      * @param asset asset
      * @param request http request
      * @return the customized locations
      */
-    List<String> wrapLocation(Asset asset, HttpServletRequest request);
+    List<String> wrapLocations(Asset asset, HttpServletRequest request);
 }

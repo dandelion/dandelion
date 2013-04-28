@@ -46,7 +46,7 @@ public class WebappLocationWrapper implements AssetsLocationWrapper {
     }
 
     @Override
-    public List<String> wrapLocation(Asset asset, HttpServletRequest request) {
+    public List<String> wrapLocations(Asset asset, HttpServletRequest request) {
         String location = asset.getLocations().get(locationKey());
         return Arrays.asList(request.getContextPath() + location);
     }
