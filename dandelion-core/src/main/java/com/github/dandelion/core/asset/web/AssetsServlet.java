@@ -39,15 +39,16 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-import static com.github.dandelion.core.asset.AssetsCache.cache;
-import static com.github.dandelion.core.asset.AssetsCache.getCacheKey;
+import static com.github.dandelion.core.asset.cache.AssetsCache.cache;
+import static com.github.dandelion.core.asset.cache.AssetsCache.getCacheKey;
 import static com.github.dandelion.core.utils.DandelionUtils.isDevModeEnabled;
 
 public abstract class AssetsServlet extends HttpServlet {
     public static final String DANDELION_ASSETS = "dandelionAssets";
     public static final String DANDELION_ASSETS_URL = "/dandelion-assets/";
     public static final String DANDELION_ASSETS_URL_PATTERN = "/dandelion-assets/*";
-    private static final String ASSETS_CACHE_CONTROL = "assets.cache.control";
+    private static final String CACHE_CONTROL = "assets.servlet.cache.control";
+    public static final String DEFAULT_CACHE_CONTROL = "no-cache";
     private String cacheControl;
 
     @Override
@@ -80,9 +81,9 @@ public abstract class AssetsServlet extends HttpServlet {
 
     synchronized private void initializeCacheControl() {
         if(cacheControl != null) return;
-        String _cacheControl = Configuration.getProperty(ASSETS_CACHE_CONTROL);
+        String _cacheControl = Configuration.getProperty(CACHE_CONTROL);
         if(isDevModeEnabled() || _cacheControl == null || _cacheControl.isEmpty()) {
-            _cacheControl = "no-cache";
+            _cacheControl = DEFAULT_CACHE_CONTROL;
         }
         cacheControl = _cacheControl;
     }

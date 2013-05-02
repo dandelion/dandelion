@@ -31,20 +31,12 @@
 package com.github.dandelion.extras.webjars.asset.wrapper;
 
 import com.github.dandelion.core.asset.Asset;
-import com.github.dandelion.core.asset.AssetsCache;
-import com.github.dandelion.core.asset.wrapper.AssetsLocationWrapper;
-import com.github.dandelion.core.asset.web.AssetsServlet;
 import com.github.dandelion.core.asset.wrapper.CacheableLocationWrapper;
-import com.github.dandelion.core.utils.RequestUtils;
 import com.github.dandelion.core.utils.ResourceUtils;
 import org.webjars.WebJarAssetLocator;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
-
-import static com.github.dandelion.core.utils.DandelionUtils.isDevModeEnabled;
 
 /**
  * Assets Location Wrapper for Webjars

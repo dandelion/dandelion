@@ -30,7 +30,7 @@
 
 package com.github.dandelion.core.asset.web;
 
-import com.github.dandelion.core.asset.AssetsCache;
+import com.github.dandelion.core.asset.cache.AssetsCache;
 
 import javax.servlet.ServletRequest;
 import java.util.ArrayList;
@@ -177,7 +177,7 @@ public class AssetsRequestContext {
      * @return this context
      */
     public AssetsRequestContext addParameter(String assetName, String parameter, Object value) {
-        return addParameter(assetName, parameter, value, AssetsCache.GLOBAL_GROUP);
+        return addParameter(assetName, parameter, value, AssetParameters.GLOBAL_GROUP);
     }
 
     /**
@@ -190,7 +190,7 @@ public class AssetsRequestContext {
      * @return this context
      */
     public AssetsRequestContext addParameter(String assetName, String parameter, Object value, String groupId) {
-        if(groupId == null) groupId = AssetsCache.GLOBAL_GROUP;
+        if(groupId == null) groupId = AssetParameters.GLOBAL_GROUP;
         parameters.add(assetName, parameter, value, groupId);
         return this;
     }

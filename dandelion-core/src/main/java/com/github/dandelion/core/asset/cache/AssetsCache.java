@@ -27,7 +27,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.github.dandelion.core.asset;
+package com.github.dandelion.core.asset.cache;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
@@ -37,7 +37,6 @@ import java.util.Map;
  * Cache System for store specific content of an asset
  */
 public class AssetsCache {
-    public static final String GLOBAL_GROUP = "global-" + System.currentTimeMillis();
     public static Map<String, String> cache;
 
     static{

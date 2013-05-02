@@ -31,12 +31,11 @@
 package com.github.dandelion.core.asset.wrapper;
 
 import com.github.dandelion.core.asset.Asset;
-import com.github.dandelion.core.asset.AssetsCache;
+import com.github.dandelion.core.asset.cache.AssetsCache;
 import com.github.dandelion.core.asset.web.AssetParameters;
 import com.github.dandelion.core.asset.web.AssetsRequestContext;
 import com.github.dandelion.core.asset.web.AssetsServlet;
 import com.github.dandelion.core.utils.RequestUtils;
-import com.github.dandelion.core.utils.ResourceUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
@@ -50,6 +49,7 @@ import static com.github.dandelion.core.utils.DandelionUtils.isDevModeEnabled;
  * Base for Wrapper with caching faculty
  */
 public abstract class CacheableLocationWrapper implements AssetsLocationWrapper {
+
     @Override
     public List<String> wrapLocations(Asset asset, HttpServletRequest request) {
 
@@ -62,7 +62,7 @@ public abstract class CacheableLocationWrapper implements AssetsLocationWrapper 
 
         List<String> groupIds = params.getGroupIds(asset);
         if(groupIds == null || groupIds.isEmpty()) {
-            groupIds = Arrays.asList(AssetsCache.GLOBAL_GROUP);
+            groupIds = Arrays.asList(AssetParameters.GLOBAL_GROUP);
         }
 
         for(String groupId:groupIds) {

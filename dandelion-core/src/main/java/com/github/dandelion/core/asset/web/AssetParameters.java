@@ -41,6 +41,8 @@ import java.util.Map;
  * Bean to store parameters/values for an usage when the assets are rendered.
  */
 public class AssetParameters {
+    public static final String GLOBAL_GROUP = "global-" + System.currentTimeMillis();
+
     private Map<String, Map<String, Object>> parameters;
     private Map<String, List<String>> groupIds;
 
