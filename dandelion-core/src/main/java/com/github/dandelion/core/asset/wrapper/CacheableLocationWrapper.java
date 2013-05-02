@@ -31,7 +31,7 @@
 package com.github.dandelion.core.asset.wrapper;
 
 import com.github.dandelion.core.asset.Asset;
-import com.github.dandelion.core.asset.cache.AssetsCache;
+import com.github.dandelion.core.asset.cache.AssetsCacheSystem;
 import com.github.dandelion.core.asset.web.AssetParameters;
 import com.github.dandelion.core.asset.web.AssetsRequestContext;
 import com.github.dandelion.core.asset.web.AssetsServlet;
@@ -66,12 +66,12 @@ public abstract class CacheableLocationWrapper implements AssetsLocationWrapper 
         }
 
         for(String groupId:groupIds) {
-            String cacheKey = AssetsCache.generateCacheKey(context, groupId, location);
+            String cacheKey = AssetsCacheSystem.getCacheKey(context, groupId, location);
 
             Map<String, Object> parameters = params.getParameters(asset, groupId);
-            if(isDevModeEnabled() || !AssetsCache.cache.containsKey(cacheKey)) {
+            if(isDevModeEnabled() || !AssetsCacheSystem.checkCacheKey(cacheKey)) {
                 String content = getContent(asset, location, parameters, request);
-                AssetsCache.store(context, groupId, location, content);
+                AssetsCacheSystem.storeCacheContent(context, groupId, location, content);
             }
 
             String baseUrl = RequestUtils.getBaseUrl(request);

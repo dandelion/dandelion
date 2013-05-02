@@ -27,20 +27,34 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 package com.github.dandelion.core.asset.cache;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Cache System for store specific content of an asset
+ * Cache System for store specific content of an asset from a Map
  */
-public interface AssetsCache {
+public class DefaultAssetsCache implements AssetsCache {
+    private Map<String, String> cache;
 
-    boolean checkCacheKey(String cacheKey);
+    public DefaultAssetsCache() {
+        cache = new HashMap<String, String>();
+    }
 
-    String getCacheContent(String cacheKey);
+    @Override
+    public boolean checkCacheKey(String cacheKey) {
+        return cache.containsKey(cacheKey);
+    }
 
-    void storeCacheContent(String cacheKey, String cacheContent);
+    @Override
+    public String getCacheContent(String cacheKey) {
+        return cache.get(cacheKey);
+    }
+
+    @Override
+    public void storeCacheContent(String cacheKey, String cacheContent) {
+        cache.put(cacheKey, cacheContent);
+    }
 }

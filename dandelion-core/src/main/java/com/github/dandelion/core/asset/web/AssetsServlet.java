@@ -30,6 +30,7 @@
 package com.github.dandelion.core.asset.web;
 
 import com.github.dandelion.core.asset.AssetType;
+import com.github.dandelion.core.asset.cache.AssetsCacheSystem;
 import com.github.dandelion.core.config.Configuration;
 import org.slf4j.Logger;
 
@@ -39,8 +40,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-import static com.github.dandelion.core.asset.cache.AssetsCache.cache;
-import static com.github.dandelion.core.asset.cache.AssetsCache.getCacheKey;
 import static com.github.dandelion.core.utils.DandelionUtils.isDevModeEnabled;
 
 public abstract class AssetsServlet extends HttpServlet {
@@ -55,16 +54,16 @@ public abstract class AssetsServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         getLogger().debug("Dandelion Asset servlet captured GET request {}", request.getRequestURI());
 
-        String resource = request.getParameter("r");
-        String cacheKey = getCacheKey(request);
+        String cacheKey = AssetsCacheSystem.getCacheKeyFromRequest(request);
 
-        if (isDevModeEnabled() && !cache.containsKey(cacheKey))
+        if (isDevModeEnabled() && !AssetsCacheSystem.checkCacheKey(cacheKey))
             throw new ServletException("The Dandelion assets should have been generated!");
 
+        String resource = request.getParameter("r");
         AssetType resourceType = AssetType.typeOfAsset(resource);
         if (resourceType == null) return;
 
-        String fileContent = cache.get(cacheKey);
+        String fileContent = AssetsCacheSystem.getCacheContent(cacheKey);
         response.setContentType(resourceType.getContentType());
         response.setHeader("Cache-Control", getCacheControl());
         response.getWriter().write(fileContent);
