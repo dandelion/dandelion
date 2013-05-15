@@ -29,20 +29,17 @@
  */
 package com.github.dandelion.thymeleaf.processor;
 
-import com.github.dandelion.core.asset.Asset;
-import com.github.dandelion.core.asset.Assets;
 import com.github.dandelion.core.asset.web.AssetsRequestContext;
 import com.github.dandelion.thymeleaf.dialect.AssetsAttributeName;
 import com.github.dandelion.thymeleaf.dialect.DandelionDialect;
 import com.github.dandelion.thymeleaf.util.ArgumentsUtil;
-import com.github.dandelion.thymeleaf.util.AssetsRender;
+import com.github.dandelion.thymeleaf.util.AssetsFinalizerProcessorUtil;
 import com.github.dandelion.thymeleaf.util.AttributesUtil;
 import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.Element;
 import org.thymeleaf.processor.ProcessorResult;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.List;
 
 /**
  * Processor for all attribute names for 'Assets' feature
@@ -72,48 +69,24 @@ public class AssetsAttrProcessor extends DandelionAttrProcessor {
                 = AssetsRequestContext.get(request);
         switch (assetsAttributeName) {
             case STACK:
-                initializeIfNeeded(arguments);
+                AssetsFinalizerProcessorUtil.initialize(arguments, DandelionDialect.DIALECT_PREFIX);
             case SCOPES:
                 context.addScopes(element.getAttributeValue(attributeName));
-                initializeIfNeeded(arguments);
+                AssetsFinalizerProcessorUtil.initialize(arguments, DandelionDialect.DIALECT_PREFIX);
                 break;
             case EXCLUDED_SCOPES:
                 context.excludeScopes(element.getAttributeValue(attributeName));
-                initializeIfNeeded(arguments);
+                AssetsFinalizerProcessorUtil.initialize(arguments, DandelionDialect.DIALECT_PREFIX);
                 break;
             case EXCLUDED_ASSETS:
                 context.excludeAssets(element.getAttributeValue(attributeName));
-                initializeIfNeeded(arguments);
+                AssetsFinalizerProcessorUtil.initialize(arguments, DandelionDialect.DIALECT_PREFIX);
                 break;
             case FINALIZER:
-                finalize(context, arguments, request, element);
+                AssetsFinalizerProcessorUtil.treat(context, arguments, request, element);
                 break;
         }
 
         return ProcessorResult.ok();
-    }
-
-    private void initializeIfNeeded(Arguments arguments) {
-        for(Element _element: arguments.getDocument().getElementChildren()) {
-            if(AssetsAttributeName.FINALIZER.getAttribute().equals(_element.getAttributeValue("id"))) {
-                return;
-            }
-        }
-        AssetsRender.renderFinalizer(arguments);
-    }
-
-    private void finalize(AssetsRequestContext context, Arguments arguments, HttpServletRequest request, Element element) {
-        arguments.getDocument().removeChild(element);
-
-        List<Asset> assets = Assets.assetsFor(context.getScopes(true));
-        assets = Assets.excludeByName(assets, context.getExcludedAssets());
-
-        for(Element __element: arguments.getDocument().getFirstElementChild().getElementChildren()) {
-            if(__element.getNormalizedName().equals("head")) {
-                AssetsRender.renderLink(assets, __element, request);
-            } else if(__element.getNormalizedName().equals("body")) {
-                AssetsRender.renderScript(assets, __element, request);
-            }
-        }
     }
 }

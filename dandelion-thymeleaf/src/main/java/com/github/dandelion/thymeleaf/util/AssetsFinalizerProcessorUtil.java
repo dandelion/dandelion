@@ -27,13 +27,13 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 package com.github.dandelion.thymeleaf.util;
 
 import com.github.dandelion.core.asset.Asset;
-import com.github.dandelion.core.asset.AssetType;
 import com.github.dandelion.core.asset.Assets;
+import com.github.dandelion.core.asset.web.AssetsRequestContext;
 import com.github.dandelion.thymeleaf.dialect.AssetsAttributeName;
-import com.github.dandelion.thymeleaf.dialect.DandelionDialect;
 import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.Element;
 
@@ -41,43 +41,39 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 /**
- * Render of Assets for Thymeleaf
+ * Utility for Assets Finalizer Processor
  */
-public class AssetsRender {
-    /**
-     * Render all <code>&lt;link/&gt;</code> of CSS assets by adding them in thymeleaf model
-     * @param assets asset to treat
-     * @param root thymeleaf element root
-     * @param request http request
-     */
-    public static void renderLink(List<Asset> assets, Element root, HttpServletRequest request) {
-        for(Asset asset: Assets.filterByType(assets, AssetType.css)) {
-            for(String location:renderLocations(asset, request)) {
-                Element link = new Element("link");
-                link.setAttribute("rel", "stylesheet");
-                link.setAttribute("href", location);
-                root.insertChild(root.numChildren(), link);
+public class AssetsFinalizerProcessorUtil {
+
+    public static void initialize(Arguments arguments, String dialectPrefix) {
+        for(Element _element: arguments.getDocument().getElementChildren()) {
+            if(AssetsAttributeName.FINALIZER.getAttribute().equals(_element.getAttributeValue("id"))) {
+                return;
             }
         }
+        create(arguments, dialectPrefix);
     }
 
-    /**
-     * Render all <code>&lt;script/&gt;</code> of JS assets by adding them in thymeleaf model
-     * @param assets asset to treat
-     * @param root thymeleaf element root
-     * @param request http request
-     */
-    public static void renderScript(List<Asset> assets, Element root, HttpServletRequest request) {
-        for(Asset asset:Assets.filterByType(assets, AssetType.js)) {
-            for(String location:renderLocations(asset, request)) {
-                Element script = new Element("script");
-                script.setAttribute("src", location);
-                root.insertChild(root.numChildren(), script);
+    private static void create(Arguments arguments, String dialectPrefix) {
+        Element finalizer = new Element("div");
+        finalizer.setAttribute("id", AssetsAttributeName.FINALIZER.getAttribute());
+        finalizer.setAttribute(dialectPrefix + ":" + AssetsAttributeName.FINALIZER.getAttribute(), "internalUse");
+        finalizer.setRecomputeProcessorsImmediately(true);
+        arguments.getDocument().insertChild(arguments.getDocument().numChildren(), finalizer);
+    }
+
+    public static void treat(AssetsRequestContext context, Arguments arguments, HttpServletRequest request, Element element) {
+        arguments.getDocument().removeChild(element);
+
+        List<Asset> assets = Assets.assetsFor(context.getScopes(true));
+        assets = Assets.excludeByName(assets, context.getExcludedAssets());
+
+        for(Element __element: arguments.getDocument().getFirstElementChild().getElementChildren()) {
+            if(__element.getNormalizedName().equals("head")) {
+                AssetsRender.renderLink(assets, __element, request);
+            } else if(__element.getNormalizedName().equals("body")) {
+                AssetsRender.renderScript(assets, __element, request);
             }
         }
-    }
-
-    private static List<String> renderLocations(Asset asset, HttpServletRequest request) {
-        return Assets.getAssetLocations(asset, request);
     }
 }
