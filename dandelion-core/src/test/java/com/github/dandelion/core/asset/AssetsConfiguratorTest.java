@@ -36,6 +36,8 @@ import org.junit.Test;
 
 import java.util.ArrayList;
 
+import static com.github.dandelion.core.asset.AssetDOMPosition.body;
+import static com.github.dandelion.core.asset.AssetDOMPosition.head;
 import static org.fest.assertions.Assertions.assertThat;
 import static org.fest.util.Collections.list;
 
@@ -59,6 +61,7 @@ public class AssetsConfiguratorTest {
         assertThat(assetsConfigurator.assetsStorage.assetsFor("plugin2")).hasSize(3);
         assertThat(assetsConfigurator.assetsStorage.assetsFor("plugin1addon")).hasSize(4);
         assertThat(assetsConfigurator.assetsStorage.assetsFor("plugin1addon", "plugin2")).hasSize(6);
+        assertThat(assetsConfigurator.assetsStorage.assetsFor("plugin4")).hasSize(3).onProperty("dom").containsSequence(head, null, body);
     }
 
     @Test

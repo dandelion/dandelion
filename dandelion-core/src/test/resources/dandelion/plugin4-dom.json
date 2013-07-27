@@ -1,0 +1,35 @@
+{
+    "parent": "none",
+    "scope": "plugin4",
+    "assets": [
+        {
+            "name": "asset4",
+            "version": "3",
+            "type": "js",
+            "dom": "head",
+            "locations": {
+                "remote": "remoteURL3",
+                "local": "localPath3"
+            }
+        },
+        {
+            "name": "asset4",
+            "version": "3",
+            "type": "css",
+            "locations": {
+                "remote": "remoteURL3",
+                "local": "localPath3"
+            }
+        },
+        {
+            "name": "asset4-1",
+            "version": "2",
+            "type": "js",
+            "dom": "body",
+            "locations": {
+                "remote": "remoteURL2",
+                "local": "localPath2"
+            }
+        }
+    ]
+}

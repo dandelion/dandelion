@@ -30,6 +30,7 @@
 package com.github.dandelion.thymeleaf.util;
 
 import com.github.dandelion.core.asset.Asset;
+import com.github.dandelion.core.asset.AssetDOMPosition;
 import com.github.dandelion.core.asset.AssetType;
 import com.github.dandelion.core.asset.Assets;
 import com.github.dandelion.thymeleaf.dialect.AssetsAttributeName;
@@ -38,6 +39,7 @@ import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.Element;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -49,14 +51,18 @@ public class AssetsRender {
      * @param assets asset to treat
      * @param root thymeleaf element root
      * @param request http request
+     * @param positions filter positions
      */
-    public static void renderLink(List<Asset> assets, Element root, HttpServletRequest request) {
+    public static void renderLink(List<Asset> assets, Element root, HttpServletRequest request, AssetDOMPosition... positions) {
+        List<AssetDOMPosition> _positions = Arrays.asList(positions);
         for(Asset asset: Assets.filterByType(assets, AssetType.css)) {
-            for(String location:renderLocations(asset, request)) {
-                Element link = new Element("link");
-                link.setAttribute("rel", "stylesheet");
-                link.setAttribute("href", location);
-                root.insertChild(root.numChildren(), link);
+            if(_positions.contains(asset.getDom())) {
+                for(String location:renderLocations(asset, request)) {
+                    Element link = new Element("link");
+                    link.setAttribute("rel", "stylesheet");
+                    link.setAttribute("href", location);
+                    root.insertChild(root.numChildren(), link);
+                }
             }
         }
     }
@@ -66,13 +72,17 @@ public class AssetsRender {
      * @param assets asset to treat
      * @param root thymeleaf element root
      * @param request http request
+     * @param positions filter positions
      */
-    public static void renderScript(List<Asset> assets, Element root, HttpServletRequest request) {
+    public static void renderScript(List<Asset> assets, Element root, HttpServletRequest request, AssetDOMPosition... positions) {
+        List<AssetDOMPosition> _positions = Arrays.asList(positions);
         for(Asset asset:Assets.filterByType(assets, AssetType.js)) {
-            for(String location:renderLocations(asset, request)) {
-                Element script = new Element("script");
-                script.setAttribute("src", location);
-                root.insertChild(root.numChildren(), script);
+            if(_positions.contains(asset.getDom())) {
+                for(String location:renderLocations(asset, request)) {
+                    Element script = new Element("script");
+                    script.setAttribute("src", location);
+                    root.insertChild(root.numChildren(), script);
+                }
             }
         }
     }

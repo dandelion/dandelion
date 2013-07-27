@@ -37,6 +37,7 @@ import java.util.Map;
  *     <li>Name of asset (aka Key)</li>
  *     <li>Version of asset</li>
  *     <li>Type of asset</li>
+ *     <li>DOM positionning</li>
  *     <li>Possibles locations of assets like :
  *         <ul>
  *             <li>Remote access (aka CDN, Static Content Server, Any url)</li>
@@ -49,7 +50,8 @@ public class Asset implements Cloneable {
 	String name;
 	String version;
 	AssetType type;
-	Map<String, String> locations;
+    AssetDOMPosition dom;
+    Map<String, String> locations;
     int storagePosition = -1;
 
     /**
@@ -90,6 +92,12 @@ public class Asset implements Cloneable {
 	public void setType(AssetType type) {
 		this.type = type;
 	}
+    public AssetDOMPosition getDom() {
+        return dom;
+    }
+    public void setDom(AssetDOMPosition dom) {
+        this.dom = dom;
+    }
     public Map<String, String> getLocations() {
         return locations;
     }
@@ -132,7 +140,7 @@ public class Asset implements Cloneable {
      */
     @Override
 	public String toString() {
-		return "Asset [name=" + name + ", version=" + version + ", type=" + type + ", locations=[" + locations + "]";
+		return "Asset [name=" + name + ", version=" + version + ", type=" + type + ", dom=" + dom + ", locations=[" + locations + "]";
 	}
 
     String equalsKey() {

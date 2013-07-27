@@ -31,6 +31,7 @@
 package com.github.dandelion.thymeleaf.util;
 
 import com.github.dandelion.core.asset.Asset;
+import com.github.dandelion.core.asset.AssetDOMPosition;
 import com.github.dandelion.core.asset.Assets;
 import com.github.dandelion.core.asset.web.AssetsRequestContext;
 import com.github.dandelion.thymeleaf.dialect.AssetsAttributeName;
@@ -70,9 +71,11 @@ public class AssetsFinalizerProcessorUtil {
 
         for(Element __element: arguments.getDocument().getFirstElementChild().getElementChildren()) {
             if(__element.getNormalizedName().equals("head")) {
-                AssetsRender.renderLink(assets, __element, request);
+                AssetsRender.renderLink(assets, __element, request, AssetDOMPosition.head, null);
+                AssetsRender.renderScript(assets, __element, request, AssetDOMPosition.head);
             } else if(__element.getNormalizedName().equals("body")) {
-                AssetsRender.renderScript(assets, __element, request);
+                AssetsRender.renderLink(assets, __element, request, AssetDOMPosition.body);
+                AssetsRender.renderScript(assets, __element, request, AssetDOMPosition.body, null);
             }
         }
     }
