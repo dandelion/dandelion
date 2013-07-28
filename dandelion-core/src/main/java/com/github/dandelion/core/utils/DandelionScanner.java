@@ -35,9 +35,7 @@ import java.io.IOException;
 import java.net.JarURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.Enumeration;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
@@ -48,7 +46,7 @@ import static java.lang.Thread.currentThread;
  * Scanner for resources in Dandelion Folder
  */
 public final class DandelionScanner {
-    static Set<String> resourcesSet;
+    static Map<String, Set<String>> resourcesSets = new HashMap<String, Set<String>>();
 
     /**
      * Get the resource by this name in dandelion folder
@@ -89,9 +87,9 @@ public final class DandelionScanner {
      */
     private static Set<String> getResources(String folderPath, String nameCondition, String prefixCondition, String suffixCondition) throws IOException {
         // load resources only if needed
-        if (devModeOverride(resourcesSet == null)) loadResources(folderPath);
+        if (devModeOverride(resourcesSets.get(folderPath) == null)) loadResources(folderPath);
         // filter the loaded resources with conditions
-        return filterResources(nameCondition, prefixCondition, suffixCondition);
+        return filterResources(folderPath, nameCondition, prefixCondition, suffixCondition);
     }
 
     /**
@@ -101,9 +99,9 @@ public final class DandelionScanner {
      * @throws IOException If I/O errors occur
      */
     synchronized private static void loadResources(String folderPath) throws IOException {
-        if (!devModeOverride(resourcesSet == null)) return;
-        resourcesSet = new HashSet<String>();
-        Enumeration<URL> resources = resourcesInDandelionFolder(folderPath);
+        if (!devModeOverride(resourcesSets.get(folderPath) == null)) return;
+        resourcesSets.put(folderPath, new HashSet<String>());
+        Enumeration<URL> resources = resourcesInFolder(folderPath);
         if (!resources.hasMoreElements()) return;
         while (resources.hasMoreElements()) {
             URL resource = resources.nextElement();
@@ -127,9 +125,11 @@ public final class DandelionScanner {
             // dandelion folder need to be ... a folder
             if (!folder.isDirectory()) return;
             File[] files = folder.listFiles();
-            for (File file : files) {
-                if (file.canRead() && !file.isDirectory()) {
-                    resourcesSet.add(folderPath + File.separator + file.getName());
+            if(files!= null) {
+                for (File file : files) {
+                    if (file.canRead() && !file.isDirectory()) {
+                        resourcesSets.get(folderPath).add(folderPath + File.separator + file.getName());
+                    }
                 }
             }
         }
@@ -154,7 +154,7 @@ public final class DandelionScanner {
                 while (entries.hasMoreElements()) {
                     String entryName = entries.nextElement().getName();
                     if (entryName.startsWith(folderPath)) {
-                        resourcesSet.add(entryName);
+                        resourcesSets.get(folderPath).add(entryName);
                     }
                 }
             } finally {
@@ -166,14 +166,15 @@ public final class DandelionScanner {
     /**
      * Filter resources who match condition
      *
+     * @param folderPath path of the resource folder
      * @param nameCondition   name condition
      * @param prefixCondition prefix condition
      * @param suffixCondition suffix condition
      * @return filtered resources
      */
-    private static Set<String> filterResources(String nameCondition, String prefixCondition, String suffixCondition) {
+    private static Set<String> filterResources(String folderPath, String nameCondition, String prefixCondition, String suffixCondition) {
         Set<String> _filteredResources = new HashSet<String>();
-        for (String _resource : resourcesSet) {
+        for (String _resource : resourcesSets.get(folderPath)) {
             String fileName = _resource.substring(_resource.lastIndexOf("/") + 1);
             // if name condition is set, it's the only test on resources.
             if (nameCondition != null) {
@@ -200,7 +201,7 @@ public final class DandelionScanner {
      * @return all resources from the folder
      * @throws IOException If I/O errors occur
      */
-    private static Enumeration<URL> resourcesInDandelionFolder(String folderPath) throws IOException {
+    private static Enumeration<URL> resourcesInFolder(String folderPath) throws IOException {
         return currentThread().getContextClassLoader().getResources(folderPath);
     }
 }
