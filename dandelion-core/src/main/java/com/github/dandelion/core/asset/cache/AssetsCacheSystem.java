@@ -34,8 +34,6 @@ import com.github.dandelion.core.config.Configuration;
 
 import javax.servlet.http.HttpServletRequest;
 
-import static com.github.dandelion.core.utils.DandelionUtils.isDevModeEnabled;
-
 public class AssetsCacheSystem {
     private static final String ASSETS_CACHE = "assets.cache";
     private static AssetsCache assetsCache;
@@ -60,7 +58,7 @@ public class AssetsCacheSystem {
     }
 
     public static String getCacheKey(String context, String id, String resource) {
-        return new StringBuilder(context).append("|").append(id).append("|").append(resource).toString();
+        return context + "|" + id + "|" + resource;
     }
 
     public static String getCacheKeyFromRequest(HttpServletRequest request) {

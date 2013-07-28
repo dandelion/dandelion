@@ -30,8 +30,6 @@
 
 package com.github.dandelion.core.asset.web;
 
-import com.github.dandelion.core.asset.cache.AssetsCache;
-
 import javax.servlet.ServletRequest;
 import java.util.ArrayList;
 import java.util.Arrays;

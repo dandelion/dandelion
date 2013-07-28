@@ -33,9 +33,6 @@ import com.github.dandelion.core.asset.Asset;
 import com.github.dandelion.core.asset.AssetDOMPosition;
 import com.github.dandelion.core.asset.AssetType;
 import com.github.dandelion.core.asset.Assets;
-import com.github.dandelion.thymeleaf.dialect.AssetsAttributeName;
-import com.github.dandelion.thymeleaf.dialect.DandelionDialect;
-import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.Element;
 
 import javax.servlet.http.HttpServletRequest;

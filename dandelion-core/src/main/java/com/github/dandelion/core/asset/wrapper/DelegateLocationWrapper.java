@@ -30,18 +30,10 @@
 
 package com.github.dandelion.core.asset.wrapper;
 
-import com.github.dandelion.core.asset.*;
-import com.github.dandelion.core.asset.web.AssetParameters;
-import com.github.dandelion.core.asset.web.AssetsRequestContext;
-import com.github.dandelion.core.asset.web.AssetsServlet;
-import com.github.dandelion.core.utils.RequestUtils;
+import com.github.dandelion.core.asset.Asset;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
-
-import static com.github.dandelion.core.utils.DandelionUtils.isDevModeEnabled;
 
 public class DelegateLocationWrapper extends CacheableLocationWrapper {
     public static final String DELEGATE_CONTENT_PARAM = "DELEGATE_CONTENT";

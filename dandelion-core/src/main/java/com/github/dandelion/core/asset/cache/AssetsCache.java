@@ -29,10 +29,6 @@
  */
 package com.github.dandelion.core.asset.cache;
 
-import javax.servlet.http.HttpServletRequest;
-import java.util.HashMap;
-import java.util.Map;
-
 /**
  * Cache System for store specific content of an asset
  */

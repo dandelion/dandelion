@@ -34,7 +34,7 @@ import com.github.dandelion.core.asset.Asset;
 import com.github.dandelion.core.utils.ResourceUtils;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.*;
+import java.util.Map;
 
 /**
  * Wrapper for "classpath" location
