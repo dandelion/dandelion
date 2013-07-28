@@ -40,15 +40,23 @@ public class ScriptTag extends HtmlTag {
 	 * Plain old HTML <code>src</code> attribute.
 	 */
 	private String src;
+    private boolean async = false;
+    private boolean defer = false;
 	
 	public ScriptTag(){
 	}
 	
-	public ScriptTag(String src){
+	public ScriptTag(String src) {
 		this.src = src;
 	}
-	
-	/**
+
+    public ScriptTag(String src, boolean async, boolean defer) {
+        this.src = src;
+        this.async = async;
+        this.defer = defer;
+    }
+
+    /**
 	 * {@inheritDoc}
 	 */
 	@Override
@@ -60,6 +68,8 @@ public class ScriptTag extends HtmlTag {
 			html.append(" src=\"");
 			html.append(this.src);
 			html.append("\"");
+            if(async) html.append(" async");
+            if(defer) html.append(" defer");
 		}
 		
 		html.append("></script>");
@@ -73,4 +83,16 @@ public class ScriptTag extends HtmlTag {
 	public void setSrc(String src) {
 		this.src = src;
 	}
+    public boolean isAsync() {
+        return async;
+    }
+    public void setAsync(boolean async) {
+        this.async = async;
+    }
+    public boolean isDefer() {
+        return defer;
+    }
+    public void setDefer(boolean defer) {
+        this.defer = defer;
+    }
 }

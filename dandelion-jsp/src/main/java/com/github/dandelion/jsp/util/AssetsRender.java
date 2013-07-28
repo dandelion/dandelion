@@ -62,7 +62,7 @@ public class AssetsRender {
                             tag = new LinkTag(location);
                             break;
                         case js:
-                            tag = new ScriptTag(location);
+                            tag = new ScriptTag(location, asset.isAsync(), asset.isDefer());
                             break;
                     }
                     // Output the Html tag

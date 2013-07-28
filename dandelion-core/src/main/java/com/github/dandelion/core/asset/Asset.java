@@ -38,6 +38,8 @@ import java.util.Map;
  *     <li>Version of asset</li>
  *     <li>Type of asset</li>
  *     <li>DOM positionning</li>
+ *     <li>Asynchron (Only for script)</li>
+ *     <li>Defered (Only for script)</li>
  *     <li>Possibles locations of assets like :
  *         <ul>
  *             <li>Remote access (aka CDN, Static Content Server, Any url)</li>
@@ -51,6 +53,8 @@ public class Asset implements Cloneable {
 	String version;
 	AssetType type;
     AssetDOMPosition dom;
+    boolean async = false;
+    boolean defer = false;
     Map<String, String> locations;
     int storagePosition = -1;
 
@@ -98,6 +102,18 @@ public class Asset implements Cloneable {
     public void setDom(AssetDOMPosition dom) {
         this.dom = dom;
     }
+    public boolean isAsync() {
+        return async;
+    }
+    public void setAsync(boolean async) {
+        this.async = async;
+    }
+    public boolean isDefer() {
+        return defer;
+    }
+    public void setDefer(boolean defer) {
+        this.defer = defer;
+    }
     public Map<String, String> getLocations() {
         return locations;
     }
@@ -140,7 +156,11 @@ public class Asset implements Cloneable {
      */
     @Override
 	public String toString() {
-		return "Asset [name=" + name + ", version=" + version + ", type=" + type + ", dom=" + dom + ", locations=[" + locations + "]";
+		return "Asset [name=" + name + ", version=" + version + ", type=" + type
+                + (dom!=null?", dom=" + dom:"")
+                + (async?", async=" + async:"")
+                + (defer?", defer=" + defer:"")
+                + ", locations=[" + locations + "]";
 	}
 
     String equalsKey() {

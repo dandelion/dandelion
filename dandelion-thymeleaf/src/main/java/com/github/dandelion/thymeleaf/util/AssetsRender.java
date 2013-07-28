@@ -81,6 +81,8 @@ public class AssetsRender {
                 for(String location:renderLocations(asset, request)) {
                     Element script = new Element("script");
                     script.setAttribute("src", location);
+                    if(asset.isAsync()) script.setAttribute("async", true, "async");
+                    if(asset.isDefer()) script.setAttribute("defer", true, "defer");
                     root.insertChild(root.numChildren(), script);
                 }
             }
