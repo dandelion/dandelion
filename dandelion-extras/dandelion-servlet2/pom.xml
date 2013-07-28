@@ -4,7 +4,7 @@
     <parent>
         <artifactId>dandelion-extras</artifactId>
         <groupId>com.github.dandelion</groupId>
-        <version>0.2.1-SNAPSHOT</version>
+        <version>0.2.1</version>
     </parent>
     <artifactId>dandelion-servlet2</artifactId>
     <name>Dandelion :: Extras :: Servlet 2 compatibility</name>
