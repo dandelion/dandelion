@@ -97,8 +97,9 @@ public class AssetsConfigurator {
      * @return instances of assets loader
      */
     private List<AssetsLoader> extractAssetsLoaders(ClassLoader classLoader, Properties properties) {
-        List<String> assetsLoaders = setPropertyAsList(properties.getProperty("assets.loaders"), ",");
-        if(assetsLoaders == null) return null;
+        List<String> assetsLoaders = new ArrayList<String>();
+        assetsLoaders.addAll(Configuration.propertyBeginWith("assets.loader.for.", properties));
+        assetsLoaders.addAll(notNull(setPropertyAsList(properties.getProperty("assets.loaders"), ",")));
         List<AssetsLoader> loaders = new ArrayList<AssetsLoader>();
         for(String loader:assetsLoaders) {
             AssetsLoader _loader = getAssetsLoader(classLoader, loader);
@@ -106,7 +107,11 @@ public class AssetsConfigurator {
                 loaders.add(_loader);
             }
         }
-        return loaders;
+        return loaders.isEmpty()?null:loaders;
+    }
+
+    private List<String> notNull(List<String> values) {
+        return values!=null?values:new ArrayList<String>();
     }
 
     /**
@@ -335,7 +340,7 @@ public class AssetsConfigurator {
             return;
         }
         if (!scopesByParentScope.containsKey(component.getParent())) {
-            scopesByParentScope.put(component.getParent(), new ArrayList());
+            scopesByParentScope.put(component.getParent(), new ArrayList<String>());
         }
         List<String> _scopes = scopesByParentScope.get(component.getParent());
 

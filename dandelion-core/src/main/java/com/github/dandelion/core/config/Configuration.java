@@ -35,6 +35,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 
@@ -79,5 +81,21 @@ public class Configuration {
                 LOG.error("Assets configurator can't access/read to some file under 'dandelion/dandelion*.properties'");
             }
         }
+    }
+
+    /**
+     * Filter property who begin with starter
+     * @param starter starter string
+     * @param properties properties to filter
+     * @return a filtered list of values
+     */
+    public static List<String> propertyBeginWith(String starter, Properties properties) {
+        List<String> values = new ArrayList<String>();
+        for(String key:properties.stringPropertyNames()) {
+            if(key.startsWith(starter)) {
+                values.add(properties.getProperty(key));
+            }
+        }
+        return values;
     }
 }
