@@ -7,7 +7,7 @@
     </parent>
     <groupId>com.github.dandelion</groupId>
     <artifactId>dandelion</artifactId>
-    <version>0.2.1</version>
+    <version>0.2.2-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>Dandelion</name>
     <description>Dandelion, Extensible web library for funnier web development</description>
