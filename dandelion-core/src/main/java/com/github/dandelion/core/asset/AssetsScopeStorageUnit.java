@@ -33,7 +33,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * A container of a list of assets associated to a scope and his parent scope
+ * Container of assets associated to a scope and its parent scope
  */
 class AssetsScopeStorageUnit {
     String scope;

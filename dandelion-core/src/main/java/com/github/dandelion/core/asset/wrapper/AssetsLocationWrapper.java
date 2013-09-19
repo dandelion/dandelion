@@ -36,17 +36,17 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 /**
- * Wrapper for one or many locations associate with a location key
+ * Wrapper for one or many locations associated with a location key
  */
 public interface AssetsLocationWrapper {
 
     /**
-     * @return the location key who match this wrapper
+     * @return the location key that matches this wrapper
      */
     String locationKey();
 
     /**
-     * Wrapper an asset into one or more customized locations.
+     * Wrap an asset into one or more customized locations.
      *
      * @param asset asset
      * @param request http request

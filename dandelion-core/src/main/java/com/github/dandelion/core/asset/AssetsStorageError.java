@@ -36,25 +36,25 @@ import com.github.dandelion.core.DandelionError;
  */
 public enum AssetsStorageError implements DandelionError {
     /**
-     * An asset can't be add twice in the same scope (same name)
+     * An asset can't be added twice in the same scope (same name)
      */
     ASSET_ALREADY_EXISTS_IN_SCOPE(100),
     /**
-     * An asset can't be add with 'Detached Scope' as his scope,
+     * An asset can't be added with a 'Detached Scope',
      * 'Detached Scope' is only allowed as a Parent Scope
      */
     DETACHED_SCOPE_NOT_ALLOWED(101),
     /**
      * An asset can't have a couple of Scope/Parent Scope
-     * when his scope is already associated to another parent scope
+     * when its scope is already associated to another parent scope
      */
     PARENT_SCOPE_INCOMPATIBILITY(102),
     /**
-     * An asset can't have a parent scope who don't already exists
+     * An asset can't have a parent scope that doesn't already exist
      */
     UNDEFINED_PARENT_SCOPE(103),
     /**
-     * A location can't be use twice in the same scope by an similar asset
+     * A location can't be used twice in the same scope by a similar asset
      */
     ASSET_LOCATION_ALREADY_EXISTS_IN_SCOPE(104);
 

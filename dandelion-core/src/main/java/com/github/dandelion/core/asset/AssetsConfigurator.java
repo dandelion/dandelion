@@ -47,7 +47,7 @@ import static com.github.dandelion.core.asset.AssetsStorage.*;
  *     <li>assetsLoader :
  *          <ul>
  *               <li>the {@link AssetsLoader}
- * found in 'dandelion/dandelion.properties' for key 'assetsLoader'</li>
+ * found in 'dandelion/dandelion.properties' for the key 'assetsLoader'</li>
  *               <li>or {@link com.github.dandelion.core.asset.loader.AssetsJsonLoader} by default</li>
  *          </ul>
  *     </li>

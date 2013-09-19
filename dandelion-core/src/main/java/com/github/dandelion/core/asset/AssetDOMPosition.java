@@ -31,7 +31,7 @@
 package com.github.dandelion.core.asset;
 
 /**
- * Possible DOM position for Asset
+ * Possible DOM position of an Asset
  */
 public enum AssetDOMPosition {
     head, body;

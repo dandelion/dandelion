@@ -36,7 +36,7 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * Request Context to stock all needed assets by scopes during page processing
+ * Request Context used to store all needed assets by scopes during the pages processing
  */
 public class AssetsRequestContext {
     private List<String> scopes;

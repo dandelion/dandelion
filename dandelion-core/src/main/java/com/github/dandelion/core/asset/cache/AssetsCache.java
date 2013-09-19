@@ -30,7 +30,7 @@
 package com.github.dandelion.core.asset.cache;
 
 /**
- * Cache System for store specific content of an asset
+ * Cache System to store specific content of an asset
  */
 public interface AssetsCache {
 

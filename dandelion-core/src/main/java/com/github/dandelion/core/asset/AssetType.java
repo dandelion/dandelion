@@ -30,7 +30,7 @@
 package com.github.dandelion.core.asset;
 
 /**
- * Possible type of asset
+ * Possible types of asset
  */
 public enum AssetType {
     /**

@@ -36,9 +36,9 @@ import java.util.*;
 /**
  * Tree Storage Units for Assets<br/>
  * <p/>
- * An asset is store by his scope.<br/>
+ * An asset is stored by its scope.<br/>
  * All scopes have a parent except for ROOT parent (aka Root Scope).<br/>
- * An asset can be access by his scope.<br/>
+ * An asset can be accessed by its scope.<br/>
  */
 public final class AssetsStorage {
     static final int ASSET_SCOPE_STORAGE_POSITION = 1000;

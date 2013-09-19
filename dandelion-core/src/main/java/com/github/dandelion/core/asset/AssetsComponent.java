@@ -33,7 +33,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Definition of a set of asset link to Scope/Parent Scope
+ * Definition of a set of assets link to Scope/Parent Scope
  */
 public class AssetsComponent {
 	

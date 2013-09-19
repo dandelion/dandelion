@@ -79,7 +79,7 @@ public class AssetsRender {
                     Element script = new Element("script");
                     script.setAttribute("src", location);
                     if(asset.isAsync()) script.setAttribute("async", true, "async");
-                    if(asset.isDefer()) script.setAttribute("defer", true, "defer");
+                    if(asset.isDeferred()) script.setAttribute("defer", true, "defer");
                     root.insertChild(root.numChildren(), script);
                 }
             }
