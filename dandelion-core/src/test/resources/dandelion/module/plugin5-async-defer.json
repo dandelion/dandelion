@@ -18,7 +18,7 @@
             "version": "5",
             "type": "js",
             "dom": "body",
-            "defer": "true",
+            "deferred": "true",
             "locations": {
                 "remote": "remoteURL",
                 "local": "localPath"
@@ -30,7 +30,7 @@
             "type": "js",
             "dom": "body",
             "async": "true",
-            "defer": "true",
+            "deferred": "true",
             "locations": {
                 "remote": "remoteURL",
                 "local": "localPath"

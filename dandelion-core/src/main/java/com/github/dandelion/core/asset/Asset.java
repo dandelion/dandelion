@@ -159,7 +159,7 @@ public class Asset implements Cloneable {
 		return "Asset [name=" + name + ", version=" + version + ", type=" + type
                 + (dom!=null?", dom=" + dom:"")
                 + (async?", async=" + async:"")
-                + (deferred?", defer=" + deferred:"")
+                + (deferred?", deferred=" + deferred:"")
                 + ", locations=[" + locations + "]";
 	}
 

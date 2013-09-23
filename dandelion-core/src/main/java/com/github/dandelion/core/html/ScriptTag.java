@@ -41,7 +41,7 @@ public class ScriptTag extends HtmlTag {
 	 */
 	private String src;
     private boolean async = false;
-    private boolean defer = false;
+    private boolean deferred = false;
 	
 	public ScriptTag(){
 	}
@@ -50,10 +50,10 @@ public class ScriptTag extends HtmlTag {
 		this.src = src;
 	}
 
-    public ScriptTag(String src, boolean async, boolean defer) {
+    public ScriptTag(String src, boolean async, boolean deferred) {
         this.src = src;
         this.async = async;
-        this.defer = defer;
+        this.deferred = deferred;
     }
 
     /**
@@ -69,7 +69,7 @@ public class ScriptTag extends HtmlTag {
 			html.append(this.src);
 			html.append("\"");
             if(async) html.append(" async");
-            if(defer) html.append(" defer");
+            if(deferred) html.append(" defer");
 		}
 		
 		html.append("></script>");
@@ -89,10 +89,10 @@ public class ScriptTag extends HtmlTag {
     public void setAsync(boolean async) {
         this.async = async;
     }
-    public boolean isDefer() {
-        return defer;
+    public boolean isDeferred() {
+        return deferred;
     }
-    public void setDefer(boolean defer) {
-        this.defer = defer;
+    public void setDeferred(boolean deferred) {
+        this.deferred = deferred;
     }
 }
