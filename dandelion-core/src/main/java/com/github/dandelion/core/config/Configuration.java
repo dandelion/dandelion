@@ -30,22 +30,22 @@
 
 package com.github.dandelion.core.config;
 
-import com.github.dandelion.core.utils.DandelionScanner;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Locale;
 import java.util.Properties;
-import java.util.Set;
 
 /**
- * Dandelion Configuration (dandelion/dandelion*.properties)
+ * <p>
+ * Entry point for the whole Dandelion configuration.
+ * 
+ * <p>
+ * The configuration is loaded only once using the configured instance of
+ * {@link ConfigurationLoader}.
+ * 
+ * @since v0.0.3
  */
 public class Configuration {
-    private static final Logger LOG = LoggerFactory.getLogger(Configuration.class);
-    static Properties configuration;
+
+	static Properties configuration;
 
     public static Properties getProperties() {
         if(configuration == null) {
@@ -58,44 +58,33 @@ public class Configuration {
         return getProperties().getProperty(key);
     }
 
+	/**
+	 * <p>
+	 * Load the Dandelion configuration using the following strategy:
+	 * <ul>
+	 * <li>All default properties files are loaded (dandelion, webanalytics,
+	 * ...)</li>
+	 * <li>If it exists, the user properties are loaded using the bundle
+	 * mechanism and override the default configuration</li>
+	 * </ul>
+	 */
     synchronized private static void loadConfiguration() {
         if(configuration == null) {
-            try {
-                ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-                String mainResource = DandelionScanner.getResource("dandelion", "dandelion.properties");
-                Set<String> otherResources = DandelionScanner.getResources("dandelion", "dandelion", "properties");
-                otherResources.remove(mainResource);
-
-                // configure with all custom properties
-                configuration = new Properties();
-                for(String resource:otherResources) {
-                    configuration.load(classLoader.getResourceAsStream(resource));
-                }
-
-                // override with main properties
-                Properties mainProperties = new Properties();
-                if(mainResource != null)
-                    mainProperties.load(classLoader.getResourceAsStream(mainResource));
-                    configuration.putAll(mainProperties);
-            } catch (IOException e) {
-                LOG.error("Assets configurator can't access/read to some file under 'dandelion/dandelion*.properties'");
-            }
+        	
+        	ConfigurationLoader confLoader = DandelionConfigurator.getConfigurationLoader();
+        	Locale locale = null;
+    		
+    		// Retrieve the locale either from a configured LocaleResolver or using the default locale
+        	// TODO the request must be accessible in some way here
+//    		if (request != null) {
+//    			locale = DandelionConfigurator.getLocaleResolver().resolveLocale(request);
+//    		} 
+//    		else {
+    			locale = Locale.getDefault();
+//    		}
+    		
+    		configuration = confLoader.loadDefaultConfiguration();
+    		configuration.putAll(confLoader.loadUserConfiguration(locale));
         }
-    }
-
-    /**
-     * Filter properties which begin with a given prefix.
-     * @param prefix prefix string
-     * @param properties properties to filter
-     * @return a filtered list of values
-     */
-    public static List<String> propertyBeginWith(String prefix, Properties properties) {
-        List<String> values = new ArrayList<String>();
-        for(String key:properties.stringPropertyNames()) {
-            if(key.startsWith(prefix)) {
-                values.add(properties.getProperty(key));
-            }
-        }
-        return values;
     }
 }

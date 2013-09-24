@@ -66,7 +66,7 @@ public class AssetsConfiguratorTest {
         assertThat(assetsConfigurator.assetsStorage.assetsFor("plugin5")).hasSize(3)
                 .onProperty("async").containsSequence(true, false, true);
         assertThat(assetsConfigurator.assetsStorage.assetsFor("plugin5"))
-                .onProperty("defer").containsSequence(false, true, true);
+                .onProperty("deferred").containsSequence(false, true, true);
     }
 
     @Test
