@@ -69,8 +69,8 @@ public class AssetsTag extends TagSupport {
                 .excludeAssets(getExcludedAssets());
         if(isRenderer()) {
             if(context.isAlreadyRendered()) {
-                LOG.warn("This page have multiples 'assets' tag, only one need to be rendered");
-                LOG.warn("Consider to set 'renderer' attribute to 'false', on all previous 'assets' tags ");
+                LOG.warn("This page has multiple 'assets' tags, only one is needed for the asset rendering");
+                LOG.warn("Please consider to set the 'renderer' attribute to 'false' on all previous 'assets' tags");
             }
 
             List<Asset> assets = Assets.assetsFor(context.getScopes(true));
@@ -79,7 +79,7 @@ public class AssetsTag extends TagSupport {
             AssetsRender.render(assets, pageContext);
             context.hasBeenRendered();
         } else {
-            LOG.debug("the renderer of assets is inactive for this time");
+            LOG.debug("The renderer of assets is inactive for this time");
         }
 
 		return EVAL_PAGE;

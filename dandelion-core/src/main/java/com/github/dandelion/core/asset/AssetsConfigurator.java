@@ -307,7 +307,7 @@ public class AssetsConfigurator {
      * @param parentScope parent of this scope
      */
     private void storeAsset(Asset asset, String scope, String parentScope) {
-        LOG.debug("Store '{}' in scope '{}/{}'", asset, scope, parentScope);
+        LOG.debug("Stored '{}' in scope '{}/{}'", asset, scope, parentScope);
         try {
             assetsStorage.store(asset, scope, parentScope);
         } catch (DandelionException e) {
@@ -324,7 +324,7 @@ public class AssetsConfigurator {
      * Clear all working attributes
      */
     void clearAllAssetsProcessElements() {
-        LOG.debug("Clear all assets process elements");
+        LOG.debug("Clearing all assets process elements");
         assetsByScope.clear();
         scopesByParentScope.clear();
         parentScopesByScope.clear();
@@ -347,15 +347,15 @@ public class AssetsConfigurator {
         List<String> _scopes = scopesByParentScope.get(component.getParent());
 
         if(!_scopes.contains(component.getScope())) {
-            LOG.debug("Store {} as child of {}", component.getScope(), component.getParent());
+            LOG.debug("Stored {} as child of {}", component.getScope(), component.getParent());
             _scopes.add(component.getScope());
         } else {
-            LOG.debug("Store {} is already a child of {}", component.getScope(), component.getParent());
+            LOG.debug("{} is already a child of {}", component.getScope(), component.getParent());
         }
     }
 
     private void prepareParentScope(AssetsComponent component) {
-        LOG.debug("Store {} as parent of {}", component.getParent(), component.getScope());
+        LOG.debug("Stored {} as parent of {}", component.getParent(), component.getScope());
         if(ROOT_SCOPE.equalsIgnoreCase(component.getParent())
                 && ROOT_SCOPE.equalsIgnoreCase(component.getScope())) {
             component.setParent(MASTER_SCOPE);
@@ -371,10 +371,10 @@ public class AssetsConfigurator {
 
         for(Asset asset:component.getAssets()) {
             if(!excludedAssets.contains(asset.getName())) {
-                LOG.debug("Store {} as child of {}", asset.getName(), component.getScope());
+                LOG.debug("Stored {} as child of {}", asset.getName(), component.getScope());
                 _assets.add(asset);
             } else {
-                LOG.debug("{} is exclude", asset.getName());
+                LOG.debug("{} is excluded", asset.getName());
             }
         }
     }
