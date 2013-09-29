@@ -27,20 +27,19 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
 package com.github.dandelion.core.asset;
+
+import com.github.dandelion.core.asset.wrapper.AssetsLocationWrapper;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 
 import static com.github.dandelion.core.utils.DandelionUtils.devModeOverride;
 
-/**
- * Assets API
- */
-public final class Assets {
+public class AssetStack {
     static AssetsConfigurator assetsConfigurator;
     static AssetsStorage assetsStorage;
+    static AssetProcessor assetProcessor;
 
     /**
      * Initialize Assets only if needed
@@ -51,6 +50,9 @@ public final class Assets {
                 initializeStorageIfNeeded();
             }
             initializeConfiguratorIfNeeded();
+        }
+        if(devModeOverride(assetProcessor == null)) {
+            initializePreparedProcessorIfNeeded();
         }
     }
 
@@ -74,15 +76,58 @@ public final class Assets {
     }
 
     /**
+     * Initialize Prepared Assets Processor only if needed
+     */
+    synchronized private static void initializePreparedProcessorIfNeeded() {
+        if(devModeOverride(assetProcessor == null)) {
+            assetProcessor = new AssetProcessor();
+        }
+    }
+
+    /**
      * Get Configured Locations of Assets<br/>
      *
-     * Configured by assets.locations in 'dandelion/dandelion.properties'
+     * Configured by assets.locations in 'dandelion/*.properties'
      *
      * @return locations of Assets
      */
     public static List<String> getAssetsLocations() {
         initializeIfNeeded();
         return assetsConfigurator.assetsLocations;
+    }
+
+    /**
+     * Get Configured Wrappers for Locations of Assets<br/>
+     *
+     * Configured by assets.locations in 'dandelion/*.properties'
+     *
+     * @return wrappers for locations of Assets
+     */
+    public static Map<String, AssetsLocationWrapper> getAssetsLocationWrappers() {
+        initializeIfNeeded();
+        return assetsConfigurator.assetsLocationWrappers;
+    }
+
+    /**
+     * Prepare Assets of Scopes for rendering
+     * @param scopes scopes of assets
+     * @param request http request
+     * @return Prepared Assets of scopes
+     */
+    public static List<Asset> prepareAssetsFor(HttpServletRequest request, String[] scopes, String[] excludeAssetsName) {
+        initializeIfNeeded();
+        return processAssets(excludeByName(assetsFor(scopes), excludeAssetsName), request);
+    }
+
+    /**
+     * Prepare Assets of Scopes for rendering
+     * @param assets assets to process
+     * @param request http request
+     * @return Prepared Assets of scopes
+     */
+    public static List<Asset> processAssets(List<Asset> assets, HttpServletRequest request) {
+        initializeIfNeeded();
+        return assetProcessor.process(assets, request);
     }
 
     /**
@@ -95,6 +140,8 @@ public final class Assets {
         return assetsStorage.assetsFor(scopes);
     }
 
+
+
     /**
      * @param assets assets to filter
      * @param filters exclude assets names
@@ -105,6 +152,23 @@ public final class Assets {
         List<String> _filters = new ArrayList<String>(Arrays.asList(filters));
         for(Asset _asset:assets) {
             if(!_filters.contains(_asset.getName())) {
+                _assets.add(_asset);
+            }
+        }
+        return _assets;
+    }
+
+    /**
+     * @param assets assets to filter
+     * @param filters filtered assets dom position
+     * @return a filtered list of assets
+     */
+    public static List<Asset> filterByDOMPosition(List<Asset> assets, AssetDOMPosition... filters) {
+        List<Asset> _assets = new ArrayList<Asset>();
+        List<AssetDOMPosition> _filters = new ArrayList<AssetDOMPosition>(Arrays.asList(filters));
+        for(Asset _asset:assets) {
+            AssetDOMPosition position = _asset.getDom() == null?_asset.getType().getDefaultDom():_asset.getDom();
+            if(_filters.contains(position)) {
                 _assets.add(_asset);
             }
         }
@@ -125,53 +189,5 @@ public final class Assets {
             }
         }
         return _assets;
-    }
-
-    /**
-     * Get all possibles locations for a asset for a request context
-     * @param asset asset
-     * @param request http request
-     * @return all possibles locations
-     */
-    public static List<String> getAssetLocations(Asset asset, HttpServletRequest request) {
-        // no available locations = no locations
-        if(asset.getLocations().isEmpty()) {
-            // TODO log
-            return Collections.emptyList();
-        }
-
-        String locationKey = null;
-        if(asset.getLocations().size() == 1) {
-            // use the unique location if needed
-            // TODO log
-            for(Map.Entry<String, String> entry:asset.getLocations().entrySet()) {
-                locationKey = entry.getKey();
-            }
-        } else {
-            // otherwise search for the first match in authorized locations
-            // TODO log
-            for(String _locationKey:getAssetsLocations()) {
-                if(asset.getLocations().containsKey(_locationKey)) {
-                    String location = asset.getLocations().get(_locationKey);
-                    if(location != null && !location.isEmpty()) {
-                        locationKey = _locationKey;
-                        break;
-                    }
-                }
-            }
-        }
-
-        // And if any location was found = no locations
-        if(locationKey == null) {
-            // TODO log
-            return Collections.emptyList();
-        }
-
-        // Otherwise check for wrapper
-        if(assetsConfigurator.assetsLocationWrappers.containsKey(locationKey)) {
-            // TODO log
-            return assetsConfigurator.assetsLocationWrappers.get(locationKey).wrapLocations(asset, request);
-        }
-        return Arrays.asList(asset.getLocations().get(locationKey));
     }
 }

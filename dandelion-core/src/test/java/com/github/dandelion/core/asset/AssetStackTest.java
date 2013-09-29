@@ -36,64 +36,61 @@ import java.util.List;
 
 import static org.fest.assertions.Assertions.assertThat;
 
-public class AssetsTest {
+public class AssetStackTest {
 
     @BeforeClass
     public static void set_up_class() {
-        Assets.assetsConfigurator = null;
-        Assets.assetsStorage = null;
-        Assets.initializeIfNeeded();
     }
 
     @Test
     public void should_load_default_json() {
-        assertThat(Assets.assetsFor()).hasSize(1);
+        assertThat(AssetStack.assetsFor()).hasSize(1);
     }
 
     @Test
     public void should_load_the_assets_locations() {
-        assertThat(Assets.getAssetsLocations()).contains("remote");
+        assertThat(AssetStack.getAssetsLocations()).contains("remote");
     }
 
     @Test
     public void should_be_the_remote_url_for_all_assets() {
-        List<Asset> assets = Assets.assetsFor("default","detachedScope","plugin1","plugin2");
+        List<Asset> assets = AssetStack.prepareAssetsFor(null, new String[]{"default", "detachedScope", "plugin1", "plugin2"}, new String[0]);
         assertThat(assets).hasSize(6);
         for(Asset asset:assets) {
-            assertThat(Assets.getAssetLocations(asset, null)).contains("remoteURL");
+            assertThat(asset.getLocations().values()).contains("remoteURL");
         }
     }
 
     @Test
     public void should_exclude_assets_by_name() {
-        List<Asset> assets = Assets.assetsFor("detachedScope");
-        assertThat(Assets.excludeByName(assets, "asset3addon")).hasSize(1);
-        assertThat(Assets.excludeByName(assets, "asset1")).hasSize(0);
+        List<Asset> assets = AssetStack.assetsFor("detachedScope");
+        assertThat(AssetStack.excludeByName(assets, "asset3addon")).hasSize(1);
+        assertThat(AssetStack.excludeByName(assets, "asset1")).hasSize(0);
     }
 
     @Test
     public void should_filter_assets_by_type() {
-        List<Asset> assets = Assets.assetsFor("plugin1", "plugin2", "plugin1addon2", "plugin3addon");
+        List<Asset> assets = AssetStack.assetsFor("plugin1", "plugin2", "plugin1addon2", "plugin3addon");
         assertThat(assets).hasSize(6);
-        assertThat(Assets.filterByType(assets, AssetType.css)).hasSize(2);
-        assertThat(Assets.filterByType(assets, AssetType.js)).hasSize(4);
+        assertThat(AssetStack.filterByType(assets, AssetType.css)).hasSize(2);
+        assertThat(AssetStack.filterByType(assets, AssetType.js)).hasSize(4);
     }
 
     @Test
     public void should_manage_unknown_location() {
-        List<Asset> assets = Assets.assetsFor("unknown_location");
+        List<Asset> assets = AssetStack.prepareAssetsFor(null, new String[]{"unknown_location"}, new String[0]);
         assertThat(assets).hasSize(2);
         for(Asset asset:assets) {
-            assertThat(Assets.getAssetLocations(asset, null)).hasSize(1).contains("URL");
+            assertThat(asset.getLocations().values()).hasSize(1).contains("URL");
         }
     }
 
     @Test
     public void should_respect_locations_order() {
-        List<Asset> assets = Assets.assetsFor("locations_order");
+        List<Asset> assets = AssetStack.prepareAssetsFor(null, new String[]{"locations_order"}, new String[0]);
         assertThat(assets).hasSize(3);
         for(Asset asset:assets) {
-            assertThat(Assets.getAssetLocations(asset, null)).contains("otherURL");
+            assertThat(asset.getLocations().values()).contains("otherURL");
         }
     }
 }

@@ -31,12 +31,13 @@
 package com.github.dandelion.jsp.tag;
 
 import com.github.dandelion.core.asset.Asset;
-import com.github.dandelion.core.asset.Assets;
+import com.github.dandelion.core.asset.AssetStack;
 import com.github.dandelion.core.asset.web.AssetsRequestContext;
 import com.github.dandelion.jsp.util.AssetsRender;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.TagSupport;
 import java.util.List;
@@ -45,17 +46,17 @@ import java.util.List;
  * <p>
  * JSP tag in charge of generating necessary HTML <code>script</code> and
  * <code>link</code> tags.
- * 
+ *
  * <p>
  * Usage :
- * 
+ *
  * <pre>
  * &lt;dandelion:assets scopes="..." /&gt;
  * </pre>
  */
 public class AssetsTag extends TagSupport {
 	private static final Logger LOG = LoggerFactory.getLogger(AssetsTag.class);
-		
+
 	private String scopes;
     private String excludedScopes;
     private String excludedAssets;
@@ -73,8 +74,7 @@ public class AssetsTag extends TagSupport {
                 LOG.warn("Please consider to set the 'renderer' attribute to 'false' on all previous 'assets' tags");
             }
 
-            List<Asset> assets = Assets.assetsFor(context.getScopes(true));
-            assets = Assets.excludeByName(assets, context.getExcludedAssets());
+            List<Asset> assets = AssetStack.prepareAssetsFor((HttpServletRequest) pageContext.getRequest(), context.getScopes(true), context.getExcludedAssets());
 
             AssetsRender.render(assets, pageContext);
             context.hasBeenRendered();

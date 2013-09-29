@@ -29,44 +29,20 @@
  */
 package com.github.dandelion.core.asset;
 
-import static com.github.dandelion.core.asset.AssetDOMPosition.*;
+import com.github.dandelion.core.asset.processor.AssetProcessorEntry;
+import com.github.dandelion.core.asset.processor.AssetProcessorUtils;
 
-/**
- * Possible types of asset<br/>
- * The order in the enum represent the order in dom
- */
-public enum AssetType {
-    /**
-     * Cascade Style Sheet type
-     */
-    css("text/css", head),
-    /**
-     * Javascript type
-     */
-	js("application/javascript", body);
+import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
-    private String contentType;
-    private AssetDOMPosition defaultDom;
+public class AssetProcessor {
+    AssetProcessorEntry starter;
 
-    private AssetType(String contentType, AssetDOMPosition defaultDom) {
-        this.contentType = contentType;
-        this.defaultDom = defaultDom;
+    AssetProcessor() {
+        this.starter = AssetProcessorUtils.getAssetsProcessorStarterEntry();
     }
 
-    public String getContentType() {
-        return contentType;
-    }
-
-    public AssetDOMPosition getDefaultDom() {
-        return defaultDom;
-    }
-
-    public static AssetType typeOfAsset(String resource) {
-        for(AssetType type:values()) {
-            if(resource.endsWith(type.name())) {
-                return type;
-            }
-        }
-        return null;
+    public List<Asset> process(List<Asset> assets, HttpServletRequest request) {
+        return starter.doProcess(assets, request);
     }
 }

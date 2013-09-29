@@ -27,46 +27,25 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.github.dandelion.core.asset;
+package com.github.dandelion.core.asset.processor;
 
-import static com.github.dandelion.core.asset.AssetDOMPosition.*;
+import com.github.dandelion.core.asset.Asset;
 
-/**
- * Possible types of asset<br/>
- * The order in the enum represent the order in dom
- */
-public enum AssetType {
-    /**
-     * Cascade Style Sheet type
-     */
-    css("text/css", head),
-    /**
-     * Javascript type
-     */
-	js("application/javascript", body);
+import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
-    private String contentType;
-    private AssetDOMPosition defaultDom;
+public abstract class AssetProcessorEntry {
+    private AssetProcessorEntry nextEntry;
 
-    private AssetType(String contentType, AssetDOMPosition defaultDom) {
-        this.contentType = contentType;
-        this.defaultDom = defaultDom;
+    public void setNextEntry(AssetProcessorEntry nextEntry) {
+        this.nextEntry = nextEntry;
     }
 
-    public String getContentType() {
-        return contentType;
+    public List<Asset> doProcess(List<Asset> assets, HttpServletRequest request) {
+        List<Asset> _assets = process(assets, request);
+        return nextEntry==null?_assets:nextEntry.doProcess(_assets, request);
     }
 
-    public AssetDOMPosition getDefaultDom() {
-        return defaultDom;
-    }
+    public abstract List<Asset> process(List<Asset> assets, HttpServletRequest request);
 
-    public static AssetType typeOfAsset(String resource) {
-        for(AssetType type:values()) {
-            if(resource.endsWith(type.name())) {
-                return type;
-            }
-        }
-        return null;
-    }
 }

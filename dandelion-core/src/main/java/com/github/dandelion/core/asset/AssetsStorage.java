@@ -122,7 +122,7 @@ public final class AssetsStorage {
      * @return the list of assets for scopes
      */
     public List<Asset> assetsFor(String... scopes) {
-        List<Asset> assets = new ArrayList(assetsMapFor(scopes).values());
+        List<Asset> assets = new ArrayList<Asset>(assetsMapFor(scopes).values());
         Collections.sort(assets, assetStoragePositionComparator);
         return assets;
     }
@@ -150,7 +150,7 @@ public final class AssetsStorage {
             } catch (DandelionException e) {
                 // TODO this code isn't in the right place
                 Asset originalAsset = storedScopeUnit.assets.get(
-                        storedScopeUnit.assets.indexOf(e.get("originalAsset"))
+                        storedScopeUnit.assets.indexOf(asset)
                 );
                 checkAssetsLocationAlreadyExists(asset, originalAsset, e);
                 // merge the asset locations to the original asset
@@ -201,7 +201,7 @@ public final class AssetsStorage {
      *
      * @param asset         asset to check
      * @param originalAsset original asset
-     * @param e
+     * @param e             dandelion exception
      */
     private void checkAssetsLocationAlreadyExists(Asset asset, Asset originalAsset, DandelionException e) {
         List<String> locations = new ArrayList<String>();
@@ -250,7 +250,7 @@ public final class AssetsStorage {
             if (assetScope != null) {
                 for (Asset asset : assetScope.assets) {
                     String key = asset.equalsKey() + "_" + assetScope.rootParentScope;
-                    scopedAssetsMap.put(key, Asset.class.cast(asset.clone()));
+                    scopedAssetsMap.put(key, Asset.class.cast(asset.clone(false)));
                 }
 
                 Map<String, Asset> parentAssets = assetsMapFor(assetScope.parentScope);

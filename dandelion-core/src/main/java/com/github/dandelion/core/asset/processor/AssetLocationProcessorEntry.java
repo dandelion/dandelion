@@ -30,16 +30,16 @@
 package com.github.dandelion.core.asset.processor;
 
 import com.github.dandelion.core.asset.Asset;
-import com.github.dandelion.core.asset.AssetsStack;
+import com.github.dandelion.core.asset.AssetStack;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 
-public class AssetsLocationProcessorEntry extends AssetsProcessorEntry {
+public class AssetLocationProcessorEntry extends AssetProcessorEntry {
     // Logger
-    private static final Logger LOG = LoggerFactory.getLogger(AssetsLocationProcessorEntry.class);
+    private static final Logger LOG = LoggerFactory.getLogger(AssetLocationProcessorEntry.class);
 
     @Override
     public List<Asset> process(List<Asset> assets, HttpServletRequest request) {
@@ -62,7 +62,7 @@ public class AssetsLocationProcessorEntry extends AssetsProcessorEntry {
             } else {
                 // otherwise search for the first match in authorized locations
                 LOG.debug("search the right location for {}.", asset.toString());
-                for(String searchedLocationKey: AssetsStack.getAssetsLocations()) {
+                for(String searchedLocationKey: AssetStack.getAssetsLocations()) {
                     if(asset.getLocations().containsKey(searchedLocationKey)) {
                         String location = asset.getLocations().get(searchedLocationKey);
                         if(location != null && !location.isEmpty()) {
@@ -76,14 +76,14 @@ public class AssetsLocationProcessorEntry extends AssetsProcessorEntry {
 
             // And if any location was found = no locations
             if(locationKey == null) {
-                LOG.warn("any location match the asked locations {} for {}.", AssetsStack.getAssetsLocations(), asset.toString());
+                LOG.warn("any location match the asked locations {} for {}.", AssetStack.getAssetsLocations(), asset.toString());
                 continue;
             }
 
             // Otherwise check for wrapper
-            if(AssetsStack.getAssetsLocationWrappers().containsKey(locationKey)) {
+            if(AssetStack.getAssetsLocationWrappers().containsKey(locationKey)) {
                 LOG.debug("use location wrapper for {} on {}.", locationKey, asset);
-                List<String> wrappedUrls = AssetsStack.getAssetsLocationWrappers().get(locationKey).wrapLocations(asset, request);
+                List<String> wrappedUrls = AssetStack.getAssetsLocationWrappers().get(locationKey).wrapLocations(asset, request);
                 for(String wrapperUrl:wrappedUrls) {
                     Asset wrappedAsset = asset.clone(true);
                     wrappedAsset.getLocations().put(locationKey, wrapperUrl);

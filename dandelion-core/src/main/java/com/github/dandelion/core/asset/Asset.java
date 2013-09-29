@@ -29,6 +29,7 @@
  */
 package com.github.dandelion.core.asset;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -48,7 +49,7 @@ import java.util.Map;
  *     </li>
  * </ul>
  */
-public class Asset implements Cloneable {
+public class Asset {
 	String name;
 	String version;
 	AssetType type;
@@ -65,7 +66,7 @@ public class Asset implements Cloneable {
     }
 
     /**
-     * Enforce the declaration of a full asset
+     * Enforce the declaration of a full asset (mandatory fields)
      * @param name name
      * @param version version
      * @param type type
@@ -76,6 +77,18 @@ public class Asset implements Cloneable {
         this.version = version;
         this.type = type;
         this.locations = locations;
+    }
+
+    protected Asset(String name, String version, AssetType type, AssetDOMPosition dom,
+                    boolean async, boolean deferred, Map<String, String> locations, int storagePosition) {
+        this.name = name;
+        this.version = version;
+        this.type = type;
+        this.dom = dom;
+        this.async = async;
+        this.deferred = deferred;
+        this.locations = locations;
+        this.storagePosition = storagePosition;
     }
 
     public String getName() {
@@ -126,11 +139,7 @@ public class Asset implements Cloneable {
      * @return <code>true</code> if the asset is valid
      */
     public boolean isValid() {
-        if (name == null) return false;
-        if (version == null) return false;
-        if (type == null) return false;
-        if (locations == null) return false;
-        return true;
+        return name != null && version != null && type != null && locations != null;
     }
 
     @Override
@@ -139,9 +148,7 @@ public class Asset implements Cloneable {
         if (o == null || getClass() != o.getClass()) return false;
 
         Asset asset = (Asset) o;
-        if (name != null ? !name.equals(asset.name) : asset.name != null) return false;
-        if (type != asset.type) return false;
-        return true;
+        return !(name != null ? !name.equals(asset.name) : asset.name != null) && type == asset.type;
     }
 
     @Override
@@ -167,14 +174,8 @@ public class Asset implements Cloneable {
         return name+"_"+type;
     }
 
-    @Override
-    protected Object clone() {
-        Object o = null;
-        try {
-            o = super.clone();
-        } catch(CloneNotSupportedException e) {
-            e.printStackTrace(System.err);
-        }
-        return o;
+    public Asset clone(boolean withoutLocations) {
+        return new Asset(name, version, type, dom, async, deferred,
+                withoutLocations?new HashMap<String, String>():locations, storagePosition);
     }
 }

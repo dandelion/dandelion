@@ -27,46 +27,11 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.github.dandelion.core.asset;
+package com.github.dandelion.core.asset.processor;
 
-import static com.github.dandelion.core.asset.AssetDOMPosition.*;
-
-/**
- * Possible types of asset<br/>
- * The order in the enum represent the order in dom
- */
-public enum AssetType {
-    /**
-     * Cascade Style Sheet type
-     */
-    css("text/css", head),
-    /**
-     * Javascript type
-     */
-	js("application/javascript", body);
-
-    private String contentType;
-    private AssetDOMPosition defaultDom;
-
-    private AssetType(String contentType, AssetDOMPosition defaultDom) {
-        this.contentType = contentType;
-        this.defaultDom = defaultDom;
-    }
-
-    public String getContentType() {
-        return contentType;
-    }
-
-    public AssetDOMPosition getDefaultDom() {
-        return defaultDom;
-    }
-
-    public static AssetType typeOfAsset(String resource) {
-        for(AssetType type:values()) {
-            if(resource.endsWith(type.name())) {
-                return type;
-            }
-        }
-        return null;
+public class AssetProcessorUtils {
+    public static AssetProcessorEntry getAssetsProcessorStarterEntry() {
+        // TODO externalize configuration of processor entry
+        return new AssetLocationProcessorEntry();
     }
 }

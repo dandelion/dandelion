@@ -31,12 +31,12 @@
 package com.github.dandelion.jsp.util;
 
 import com.github.dandelion.core.asset.Asset;
-import com.github.dandelion.core.asset.Assets;
+import com.github.dandelion.core.asset.AssetStack;
+import com.github.dandelion.core.asset.AssetType;
 import com.github.dandelion.core.html.HtmlTag;
 import com.github.dandelion.core.html.LinkTag;
 import com.github.dandelion.core.html.ScriptTag;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.PageContext;
 import java.io.IOException;
@@ -54,24 +54,33 @@ public class AssetsRender {
      */
     public static void render(List<Asset> assets, PageContext pageContext) throws JspException {
         try {
-            for (Asset asset : assets) {
-                for(String location:Assets.getAssetLocations(asset, (HttpServletRequest) pageContext.getRequest())) {
-                    HtmlTag tag = null;
-                    switch (asset.getType()) {
-                        case css:
-                            tag = new LinkTag(location);
-                            break;
-                        case js:
-                            tag = new ScriptTag(location, asset.isAsync(), asset.isDeferred());
-                            break;
-                    }
-                    // Output the Html tag
-                    if(tag != null)
-                        pageContext.getOut().println(tag.toHtml());
+            for (AssetType type:AssetType.values()) {
+                for (Asset asset : AssetStack.filterByType(assets, type)) {
+                    render(asset, pageContext);
                 }
             }
         } catch (IOException e) {
             throw new JspException(e);
         }
     }
+
+    private static void render(Asset asset, PageContext pageContext) throws IOException {
+
+        for(String location:asset.getLocations().values()) {
+            HtmlTag tag = null;
+            switch (asset.getType()) {
+                case css:
+                    tag = new LinkTag(location);
+                    break;
+                case js:
+                    tag = new ScriptTag(location, asset.isAsync(), asset.isDeferred());
+                    break;
+            }
+
+            // Output the Html tag
+            pageContext.getOut().println(tag.toHtml());
+        }
+    }
+
+
 }
