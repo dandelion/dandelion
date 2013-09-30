@@ -18,6 +18,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.github.dandelion.core.asset.Asset;
 import com.github.dandelion.core.asset.AssetDOMPosition;
 import com.github.dandelion.core.asset.AssetStack;
+import com.github.dandelion.core.asset.AssetType;
 import com.github.dandelion.core.html.LinkTag;
 import com.github.dandelion.core.html.ScriptTag;
 
@@ -40,47 +41,74 @@ public class AssetFilter implements Filter{
 		CharResponseWrapper wrapper = new CharResponseWrapper(response);
 		filterChain.doFilter(request, wrapper);
 
-		CharArrayWriter caw = new CharArrayWriter();
-		String html = wrapper.toString();
-		
-		AssetsRequestContext context = AssetsRequestContext.get(request);
-		List<Asset> assets = AssetStack.prepareAssetsFor(request, context.getScopes(true), new String[]{});
-		List<Asset> assetsHead = AssetStack.filterByDOMPosition(assets, AssetDOMPosition.head);
-		List<Asset> assetsBody = AssetStack.filterByDOMPosition(assets, AssetDOMPosition.body);
-		
-		StringBuffer htmlHead = new StringBuffer();
-		StringBuffer htmlBody = new StringBuffer();
-		
-		for(Asset assetHead : assetsHead){
-			for(String location: assetHead.getLocations().values()) {
-				htmlHead.append(new LinkTag(location).toHtml());
-			}
-		}
-		
-		for(Asset assetBody : assetsBody){
-			for(String location: assetBody.getLocations().values()) {
-				htmlBody.append(new ScriptTag(location, assetBody.isAsync(), assetBody.isDeferred()).toHtml());
-			}
-		}
-	
-		if (wrapper.getContentType() != null && wrapper.getContentType().indexOf("text/html") != -1) {
-			
-			// Process CSS assets
-			html = html.replace("</head>", htmlHead + "</head>");
-			
-			// Process CSS assets
-			html = html.replace("</body>", htmlBody + "</body>");
-			
-			caw.write(html);
-			response.setContentLength(caw.toString().length());
-			out.write(caw.toString());
-		} else {
-			out.write(wrapper.toString());
-		}
+        if(!generateHtmlAssets(request, response, out, wrapper)) {
+            out.write(wrapper.toString());
+        }
+
 		out.close();
 	}
 
-	@Override
+    private boolean generateHtmlAssets(HttpServletRequest request, HttpServletResponse response, PrintWriter out, CharResponseWrapper wrapper) throws IOException {
+        // not compatible with Assets generation
+        if (wrapper.getContentType() != null && wrapper.getContentType().contains("text/html")) {
+            return false;
+        }
+
+        // get assets for generation
+        AssetsRequestContext context = AssetsRequestContext.get(request);
+        List<Asset> assets = AssetStack.prepareAssetsFor(request, context.getScopes(true), context.getExcludedAssets());
+        if(assets.isEmpty()) {
+            return false;
+        }
+
+        // generation
+        String html = wrapper.toString();
+        html = generateHeadAssets(assets, html);
+        html = generateBodyAssets(assets, html);
+        printHtml(response, out, html);
+        return true;
+    }
+
+    private String generateHeadAssets(List<Asset> assets, String html) {
+        List<Asset> assetsHead = AssetStack.filterByDOMPosition(assets, AssetDOMPosition.head);
+        if(!assetsHead.isEmpty()) {
+            StringBuilder htmlHead = new StringBuilder();
+            for(AssetType type:AssetType.values()) {
+                for(Asset assetHead : AssetStack.filterByType(assetsHead, type)){
+                    for(String location: assetHead.getLocations().values()) {
+                        htmlHead.append(new LinkTag(location).toHtml());
+                    }
+                }
+            }
+            html = html.replace("</head>", htmlHead + "</head>");
+        }
+        return html;
+    }
+
+    private String generateBodyAssets(List<Asset> assets, String html) {
+        List<Asset> assetsBody = AssetStack.filterByDOMPosition(assets, AssetDOMPosition.body);
+        if(!assetsBody.isEmpty()) {
+            StringBuilder htmlBody = new StringBuilder();
+            for(AssetType type:AssetType.values()) {
+                for(Asset assetBody : AssetStack.filterByType(assetsBody, type)) {
+                    for(String location: assetBody.getLocations().values()) {
+                        htmlBody.append(new ScriptTag(location, assetBody.isAsync(), assetBody.isDeferred()).toHtml());
+                    }
+                }
+            }
+            html = html.replace("</body>", htmlBody + "</body>");
+        }
+        return html;
+    }
+
+    private void printHtml(HttpServletResponse response, PrintWriter out, String html) throws IOException {
+        CharArrayWriter caw = new CharArrayWriter();
+        caw.write(html);
+        response.setContentLength(caw.toString().length());
+        out.write(caw.toString());
+    }
+
+    @Override
 	public void destroy() {
 	}
 }
