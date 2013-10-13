@@ -77,6 +77,9 @@ public abstract class CacheableLocationWrapper implements AssetsLocationWrapper 
             String baseUrl = RequestUtils.getBaseUrl(request);
             String accessLocation = new StringBuilder(baseUrl)
                     .append(AssetsServlet.DANDELION_ASSETS_URL)
+                    .append(asset.getName())
+                    .append(".")
+                    .append(asset.getType())
                     .append("?c=").append(context)
                     .append("&id=").append(groupId)
                     .append("&r=").append(location).toString();
