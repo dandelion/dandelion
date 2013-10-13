@@ -50,7 +50,7 @@ public class AssetFilter implements Filter{
 
     private boolean generateHtmlAssets(HttpServletRequest request, HttpServletResponse response, PrintWriter out, CharResponseWrapper wrapper) throws IOException {
         // not compatible with Assets generation
-        if (wrapper.getContentType() != null && wrapper.getContentType().contains("text/html")) {
+        if (wrapper.getContentType() == null || !wrapper.getContentType().contains("text/html")) {
             return false;
         }
 
@@ -77,6 +77,7 @@ public class AssetFilter implements Filter{
                 for(Asset assetHead : AssetStack.filterByType(assetsHead, type)){
                     for(String location: assetHead.getLocations().values()) {
                         htmlHead.append(new LinkTag(location).toHtml());
+                        htmlHead.append("\n");
                     }
                 }
             }
@@ -93,6 +94,7 @@ public class AssetFilter implements Filter{
                 for(Asset assetBody : AssetStack.filterByType(assetsBody, type)) {
                     for(String location: assetBody.getLocations().values()) {
                         htmlBody.append(new ScriptTag(location, assetBody.isAsync(), assetBody.isDeferred()).toHtml());
+                        htmlBody.append("\n");
                     }
                 }
             }
