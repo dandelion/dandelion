@@ -31,7 +31,7 @@
 <taglib xmlns="http://java.sun.com/xml/ns/j2ee"
         version="2.0">
     <description>Taglib for Dandelion JSP module</description>
-    <tlib-version>1.0</tlib-version>
+    <tlib-version>0.30</tlib-version>
     <short-name>dandelion</short-name>
     <uri>http://github.com/dandelion</uri>
 
@@ -44,21 +44,25 @@
             <description>List of requested scopes (comma separated)</description>
             <name>scopes</name>
             <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
         </attribute>
         <attribute>
             <description>List of excluded scopes (comma separated)</description>
             <name>excludedScopes</name>
             <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
         </attribute>
         <attribute>
             <description>List of excluded assets (comma separated)</description>
             <name>excludedAssets</name>
             <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
         </attribute>
         <attribute>
-            <description>false to disable the rendering system for assets</description>
-            <name>renderer</name>
+            <description>Active or deactive the rendering of the assets</description>
+            <name>render</name>
             <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
         </attribute>
     </tag>
 </taglib>

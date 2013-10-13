@@ -22,6 +22,12 @@ import com.github.dandelion.core.asset.AssetType;
 import com.github.dandelion.core.html.LinkTag;
 import com.github.dandelion.core.html.ScriptTag;
 
+/**
+ * Filter used to inject web resources at the right positions, depending on what
+ * the asset stack contains.
+ * 
+ * @since 0.3.0
+ */
 @WebFilter(filterName = "AssetFilter", value = { "/*" })
 public class AssetFilter implements Filter{
 

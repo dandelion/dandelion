@@ -38,7 +38,7 @@
 </head>
 <body>
    <dandelion:assets scopes="assets_scopes"/>
-   <dandelion:assets scopes="assets_scopes" renderer="false"/>
+   <dandelion:assets scopes="assets_scopes" render="false"/>
    <dandelion:assets scopes="assets_scopes"/>
 </body>
 </html>
