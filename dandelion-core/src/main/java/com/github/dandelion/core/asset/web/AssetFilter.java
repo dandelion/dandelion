@@ -11,7 +11,6 @@ import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
-import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -23,100 +22,102 @@ import com.github.dandelion.core.html.LinkTag;
 import com.github.dandelion.core.html.ScriptTag;
 
 /**
- * Filter used to inject web resources at the right positions, depending on what
- * the asset stack contains.
+ * Dandelion filter used to inject web resources at the right positions,
+ * depending on the content of the asset stack.
  * 
  * @since 0.3.0
  */
-@WebFilter(filterName = "AssetFilter", value = { "/*" })
-public class AssetFilter implements Filter{
+public class AssetFilter implements Filter {
 
 	@Override
 	public void init(FilterConfig filterConfig) throws ServletException {
+		// Nothing to do here
 	}
-	
-	public void doFilter(ServletRequest servletRequest, ServletResponse serlvetResponse, FilterChain filterChain) throws IOException,
-			ServletException {
+
+	public void doFilter(ServletRequest servletRequest, ServletResponse serlvetResponse, FilterChain filterChain)
+			throws IOException, ServletException {
 
 		HttpServletRequest request = (HttpServletRequest) servletRequest;
 		HttpServletResponse response = (HttpServletResponse) serlvetResponse;
-
-		PrintWriter out = response.getWriter();
 
 		// Wrap the response to modify it later
 		CharResponseWrapper wrapper = new CharResponseWrapper(response);
 		filterChain.doFilter(request, wrapper);
 
-        if(!generateHtmlAssets(request, response, out, wrapper)) {
-            out.write(wrapper.toString());
-        }
+		PrintWriter out = response.getWriter();
+		if (!generateHtmlAssets(request, response, out, wrapper)) {
+			out.write(wrapper.toString());
+		}
 
+		// out.flush();
 		out.close();
 	}
 
-    private boolean generateHtmlAssets(HttpServletRequest request, HttpServletResponse response, PrintWriter out, CharResponseWrapper wrapper) throws IOException {
-        // not compatible with Assets generation
-        if (wrapper.getContentType() == null || !wrapper.getContentType().contains("text/html")) {
-            return false;
-        }
+	private boolean generateHtmlAssets(HttpServletRequest request, HttpServletResponse response, PrintWriter out,
+			CharResponseWrapper wrapper) throws IOException {
+		// not compatible with Assets generation
+		if (wrapper.getContentType() == null || !wrapper.getContentType().contains("text/html")) {
+			return false;
+		}
 
-        // get assets for generation
-        AssetsRequestContext context = AssetsRequestContext.get(request);
-        List<Asset> assets = AssetStack.prepareAssetsFor(request, context.getScopes(true), context.getExcludedAssets());
-        if(assets.isEmpty()) {
-            return false;
-        }
+		// get assets for generation
+		AssetsRequestContext context = AssetsRequestContext.get(request);
+		List<Asset> assets = AssetStack.prepareAssetsFor(request, context.getScopes(true), context.getExcludedAssets());
+		if (assets.isEmpty()) {
+			return false;
+		}
 
-        // generation
-        String html = wrapper.toString();
-        html = generateHeadAssets(assets, html);
-        html = generateBodyAssets(assets, html);
-        printHtml(response, out, html);
-        return true;
-    }
+		// generation
+		String html = wrapper.toString();
+		html = generateHeadAssets(assets, html);
+		html = generateBodyAssets(assets, html);
+		printHtml(response, out, html);
+		return true;
+	}
 
-    private String generateHeadAssets(List<Asset> assets, String html) {
-        List<Asset> assetsHead = AssetStack.filterByDOMPosition(assets, AssetDOMPosition.head);
-        if(!assetsHead.isEmpty()) {
-            StringBuilder htmlHead = new StringBuilder();
-            for(AssetType type:AssetType.values()) {
-                for(Asset assetHead : AssetStack.filterByType(assetsHead, type)){
-                    for(String location: assetHead.getLocations().values()) {
-                        htmlHead.append(new LinkTag(location).toHtml());
-                        htmlHead.append("\n");
-                    }
-                }
-            }
-            html = html.replace("</head>", htmlHead + "</head>");
-        }
-        return html;
-    }
+	private String generateHeadAssets(List<Asset> assets, String html) {
+		List<Asset> assetsHead = AssetStack.filterByDOMPosition(assets, AssetDOMPosition.head);
+		if (!assetsHead.isEmpty()) {
+			StringBuilder htmlHead = new StringBuilder();
+			for (AssetType type : AssetType.values()) {
+				for (Asset assetHead : AssetStack.filterByType(assetsHead, type)) {
+					for (String location : assetHead.getLocations().values()) {
+						htmlHead.append(new LinkTag(location).toHtml());
+						htmlHead.append("\n");
+					}
+				}
+			}
+			html = html.replace("</head>", htmlHead + "</head>");
+		}
+		return html;
+	}
 
-    private String generateBodyAssets(List<Asset> assets, String html) {
-        List<Asset> assetsBody = AssetStack.filterByDOMPosition(assets, AssetDOMPosition.body);
-        if(!assetsBody.isEmpty()) {
-            StringBuilder htmlBody = new StringBuilder();
-            for(AssetType type:AssetType.values()) {
-                for(Asset assetBody : AssetStack.filterByType(assetsBody, type)) {
-                    for(String location: assetBody.getLocations().values()) {
-                        htmlBody.append(new ScriptTag(location, assetBody.isAsync(), assetBody.isDeferred()).toHtml());
-                        htmlBody.append("\n");
-                    }
-                }
-            }
-            html = html.replace("</body>", htmlBody + "</body>");
-        }
-        return html;
-    }
+	private String generateBodyAssets(List<Asset> assets, String html) {
+		List<Asset> assetsBody = AssetStack.filterByDOMPosition(assets, AssetDOMPosition.body);
+		if (!assetsBody.isEmpty()) {
+			StringBuilder htmlBody = new StringBuilder();
+			for (AssetType type : AssetType.values()) {
+				for (Asset assetBody : AssetStack.filterByType(assetsBody, type)) {
+					for (String location : assetBody.getLocations().values()) {
+						htmlBody.append(new ScriptTag(location, assetBody.isAsync(), assetBody.isDeferred()).toHtml());
+						htmlBody.append("\n");
+					}
+				}
+			}
+			html = html.replace("</body>", htmlBody + "</body>");
+		}
+		return html;
+	}
 
-    private void printHtml(HttpServletResponse response, PrintWriter out, String html) throws IOException {
-        CharArrayWriter caw = new CharArrayWriter();
-        caw.write(html);
-        response.setContentLength(caw.toString().length());
-        out.write(caw.toString());
-    }
+	private void printHtml(HttpServletResponse response, PrintWriter out, String html) throws IOException {
+		CharArrayWriter caw = new CharArrayWriter();
+		caw.write(html);
+		response.setContentLength(caw.toString().length());
+		out.write(caw.toString());
+	}
 
-    @Override
+	@Override
 	public void destroy() {
+		// Nothing to do here
 	}
 }

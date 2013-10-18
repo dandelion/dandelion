@@ -56,12 +56,15 @@ public abstract class AssetsServlet extends HttpServlet {
 
         String cacheKey = AssetsCacheSystem.getCacheKeyFromRequest(request);
 
-        if (isDevModeEnabled() && !AssetsCacheSystem.checkCacheKey(cacheKey))
-            throw new ServletException("The Dandelion assets should have been generated!");
+        if (isDevModeEnabled() && !AssetsCacheSystem.checkCacheKey(cacheKey)) {
+        	throw new ServletException("The Dandelion assets should have been generated!");
+        }
 
         String resource = request.getParameter("r");
         AssetType resourceType = AssetType.typeOfAsset(resource);
-        if (resourceType == null) return;
+        if (resourceType == null) {
+        	return;
+        }
 
         String fileContent = AssetsCacheSystem.getCacheContent(cacheKey);
         response.setContentType(resourceType.getContentType());
@@ -79,7 +82,10 @@ public abstract class AssetsServlet extends HttpServlet {
     }
 
     synchronized private void initializeCacheControl() {
-        if(cacheControl != null) return;
+        if(cacheControl != null) {
+        	return;
+        }
+        
         String _cacheControl = Configuration.getProperty(CACHE_CONTROL);
         if(isDevModeEnabled() || _cacheControl == null || _cacheControl.isEmpty()) {
             _cacheControl = DEFAULT_CACHE_CONTROL;
