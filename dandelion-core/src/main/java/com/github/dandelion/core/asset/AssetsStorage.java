@@ -237,7 +237,7 @@ public final class AssetsStorage {
      * Retrieve the assets (as map) for a groups of scopes.
      *
      * @param scopes scopes of needed assets
-     * @return the map of assets for scopes (key is the Asset#equalsKey)
+     * @return the map of assets for scopes (key is the Asset#getAssetKey)
      */
     private Map<String, Asset> assetsMapFor(String... scopes) {
         if (scopes.length == 0) {
@@ -249,7 +249,7 @@ public final class AssetsStorage {
             AssetsScopeStorageUnit assetScope = storage.get(scope);
             if (assetScope != null) {
                 for (Asset asset : assetScope.assets) {
-                    String key = asset.equalsKey() + "_" + assetScope.rootParentScope;
+                    String key = asset.getAssetKey() + "_" + assetScope.rootParentScope;
                     scopedAssetsMap.put(key, Asset.class.cast(asset.clone(false)));
                 }
 
