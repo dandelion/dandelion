@@ -165,7 +165,7 @@ public class Asset {
 	}
 
     public String getAssetKey() {
-        return name + "_" + type;
+        return name + "." + type;
     }
 
     public Asset clone(boolean withoutLocations) {
