@@ -41,15 +41,17 @@ import com.github.dandelion.core.DandelionException;
  * <p>
  * The default implementation is the {@link StandardConfigurationLoader} class
  * but it can be replaced by another class that implements this interface thanks
- * to the {@link DatatablesConfigurator}.
+ * to the {@link DandelionConfigurator}.
  * 
  * @author Thibault Duchateau
  * @since 0.3.0
  */
 public interface ConfigurationLoader {
 
-	public final static String DT_DEFAULT_PROPERTIES = "dandelion/dandelion.properties";
-	public final static String DT_USER_PROPERTIES = "dandelion";
+	public final static String DANDELION_DEFAULT_PROPERTIES = "dandelion/dandelion.properties";
+	public final static String DANDELION_USER_PROPERTIES = "dandelion";
+    public final static String DANDELION_CONFIGURATION = "dandelion.configuration";
+    public final static String DANDELION_CONFLOADER_CLASS = "dandelion.confloader.class";
 
 	/**
 	 * <p>
@@ -61,7 +63,7 @@ public interface ConfigurationLoader {
 	 * </ul>
 	 * 
 	 * @return the default properties
-	 * @throws ConfigurationLoadingException
+	 * @throws DandelionException
 	 *             if the default properties cannot be loader.
 	 */
 	public Properties loadDefaultConfiguration() throws DandelionException;

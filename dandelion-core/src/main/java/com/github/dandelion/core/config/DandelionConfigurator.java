@@ -37,7 +37,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.github.dandelion.core.DandelionException;
-import com.github.dandelion.core.constants.SystemConstants;
 import com.github.dandelion.core.i18n.LocaleResolver;
 import com.github.dandelion.core.i18n.StandardLocaleResolver;
 import com.github.dandelion.core.utils.ClassUtils;
@@ -85,7 +84,7 @@ public class DandelionConfigurator {
 	 */
 	@SuppressWarnings("unchecked")
 	public static LocaleResolver getLocaleResolver() {
-		Properties userProperties = null;
+		Properties userProperties;
 		String className = null;
 		ConfigurationLoader configurationLoader = getConfigurationLoader();
 
@@ -151,15 +150,15 @@ public class DandelionConfigurator {
 
 			LOG.debug("Initializing the configuration loader...");
 
-			if (StringUtils.isNotBlank(System.getProperty(SystemConstants.DANDELION_CONFLOADER_CLASS))) {
+			if (StringUtils.isNotBlank(System.getProperty(ConfigurationLoader.DANDELION_CONFLOADER_CLASS))) {
 				Class<?> clazz;
 				try {
-					clazz = ClassUtils.getClass(System.getProperty(SystemConstants.DANDELION_CONFLOADER_CLASS));
+					clazz = ClassUtils.getClass(System.getProperty(ConfigurationLoader.DANDELION_CONFLOADER_CLASS));
 					configurationLoader = (ConfigurationLoader) ClassUtils.getNewInstance(clazz);
 				} catch (Exception e) {
 					LOG.warn(
 							"Unable to instantiate the configured {} due to a {} exception. Falling back to the default one.",
-							SystemConstants.DANDELION_CONFLOADER_CLASS, e.getClass().getName(), e);
+                            ConfigurationLoader.DANDELION_CONFLOADER_CLASS, e.getClass().getName(), e);
 				}
 			}
 

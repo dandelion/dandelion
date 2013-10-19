@@ -47,7 +47,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.github.dandelion.core.DandelionException;
-import com.github.dandelion.core.constants.SystemConstants;
 import com.github.dandelion.core.utils.BundleUtils;
 import com.github.dandelion.core.utils.DandelionScanner;
 import com.github.dandelion.core.utils.StringUtils;
@@ -86,7 +85,7 @@ public class StandardConfigurationLoader implements ConfigurationLoader {
 		InputStream propertiesStream = null;
 
 		try {
-			Reader reader = null;
+			Reader reader;
 
 			Set<String> resources = DandelionScanner.getResources("dandelion", "dandelion", "properties");
 			for(String resource : resources) {
@@ -97,7 +96,7 @@ public class StandardConfigurationLoader implements ConfigurationLoader {
 			}
 		} catch (IOException e) {
 			throw DandelionException.wrap(e, ConfigurationError.DEFAULT_CONFIGURATION_LOADING)
-					.set("default name", DT_DEFAULT_PROPERTIES);
+					.set("default name", DANDELION_DEFAULT_PROPERTIES);
 		} finally {
 			if (propertiesStream != null) {
 				try {
@@ -123,14 +122,14 @@ public class StandardConfigurationLoader implements ConfigurationLoader {
 		ResourceBundle userBundle = null;
 
 		// First check if the resource bundle is externalized
-		if (StringUtils.isNotBlank(System.getProperty(SystemConstants.DANDELION_CONFIGURATION))) {
+		if (StringUtils.isNotBlank(System.getProperty(ConfigurationLoader.DANDELION_CONFIGURATION))) {
 
-			String path = System.getProperty(SystemConstants.DANDELION_CONFIGURATION);
+			String path = System.getProperty(ConfigurationLoader.DANDELION_CONFIGURATION);
 
 			try {
 				URL resourceURL = new File(path).toURI().toURL();
 				URLClassLoader urlLoader = new URLClassLoader(new URL[] { resourceURL });
-				userBundle = ResourceBundle.getBundle(DT_USER_PROPERTIES, locale, urlLoader, new UTF8Control());
+				userBundle = ResourceBundle.getBundle(DANDELION_USER_PROPERTIES, locale, urlLoader, new UTF8Control());
 				LOG.debug("User configuration loaded");
 			} catch (MalformedURLException e) {
 				LOG.warn("Wrong path to the externalized bundle", e);
@@ -144,13 +143,13 @@ public class StandardConfigurationLoader implements ConfigurationLoader {
 		if (userBundle == null) {
 			try {
 				// The user bundle is read using UTF-8
-				userBundle = ResourceBundle.getBundle(DT_USER_PROPERTIES, locale, new UTF8Control());
+				userBundle = ResourceBundle.getBundle(DANDELION_USER_PROPERTIES, locale, new UTF8Control());
 				LOG.debug("User configuration loaded");
 			} catch (MissingResourceException e) {
 				// if no resource bundle is found, try using the context
 				// classloader
 				try {
-					userBundle = ResourceBundle.getBundle(DT_USER_PROPERTIES, locale, Thread.currentThread()
+					userBundle = ResourceBundle.getBundle(DANDELION_USER_PROPERTIES, locale, Thread.currentThread()
 							.getContextClassLoader(), new UTF8Control());
 					LOG.debug("User configuration loaded");
 				} catch (MissingResourceException mre) {
