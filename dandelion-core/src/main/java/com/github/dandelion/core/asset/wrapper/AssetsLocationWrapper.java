@@ -54,5 +54,11 @@ public interface AssetsLocationWrapper {
      */
     List<String> wrapLocations(Asset asset, HttpServletRequest request);
 
+    /**
+     * Get contents of all locations in the asset
+     * @param asset asset
+     * @param request http request
+     * @return the content of locations
+     */
     List<String> getContents(Asset asset, HttpServletRequest request);
 }

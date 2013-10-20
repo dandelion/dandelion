@@ -55,11 +55,17 @@ public class TemplateLocationWrapper extends CacheableLocationWrapper {
         return cache.get(tplLocation);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String locationKey() {
         return "template";
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected String getContent(Asset asset, String location, Map<String, Object> parameters, HttpServletRequest request) {
         String content = getTemplateContent(location);

@@ -50,6 +50,9 @@ import static com.github.dandelion.core.utils.DandelionUtils.isDevModeEnabled;
  */
 public abstract class CacheableLocationWrapper implements AssetsLocationWrapper {
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<String> wrapLocations(Asset asset, HttpServletRequest request) {
 
@@ -88,6 +91,9 @@ public abstract class CacheableLocationWrapper implements AssetsLocationWrapper 
         return locations;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<String> getContents(Asset asset, HttpServletRequest request) {
         String location = asset.getLocations().get(locationKey());

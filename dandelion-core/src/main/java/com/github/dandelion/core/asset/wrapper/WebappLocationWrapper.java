@@ -45,17 +45,27 @@ import java.util.List;
  * Wrapper for "webapp" location
  */
 public class WebappLocationWrapper implements AssetsLocationWrapper {
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String locationKey() {
         return "webapp";
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<String> wrapLocations(Asset asset, HttpServletRequest request) {
         String location = asset.getLocations().get(locationKey());
         return Arrays.asList(request.getContextPath() + location);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<String> getContents(Asset asset, HttpServletRequest request) {
         String location = asset.getLocations().get(locationKey());

@@ -40,11 +40,18 @@ import java.util.Map;
  * Wrapper for "classpath" location
  */
 public class ClasspathLocationWrapper extends CacheableLocationWrapper {
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String locationKey() {
         return "classpath";
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected String getContent(Asset asset, String location, Map<String, Object> parameters, HttpServletRequest request) {
         return ResourceUtils.getFileContentFromClasspath(location);

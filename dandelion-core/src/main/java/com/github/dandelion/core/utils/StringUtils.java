@@ -35,8 +35,7 @@ import java.util.Random;
 public class StringUtils {
 
 	private static final String NUMERIC = "0123456789";
-	private static Random RANDOM = new Random();
-	public static final String EMPTY = "";
+	private static final Random RANDOM = new Random();
 
 	/**
 	 * <p>
@@ -62,7 +61,7 @@ public class StringUtils {
 			return true;
 		}
 		for (int i = 0; i < strLen; i++) {
-			if ((Character.isWhitespace(str.charAt(i)) == false)) {
+			if (!Character.isWhitespace(str.charAt(i))) {
 				return false;
 			}
 		}
@@ -98,11 +97,6 @@ public class StringUtils {
 	 * {@link Character#toTitleCase(char)}. No other letters are changed.
 	 * </p>
 	 * 
-	 * <p>
-	 * For a word based algorithm, see {@link WordUtils#capitalize(String)}. A
-	 * <code>null</code> input String returns <code>null</code>.
-	 * </p>
-	 * 
 	 * <pre>
 	 * StringUtils.capitalize(null)  = null
 	 * StringUtils.capitalize("")    = ""
@@ -113,7 +107,6 @@ public class StringUtils {
 	 * @param str
 	 *            the String to capitalize, may be null
 	 * @return the capitalized String, <code>null</code> if null String input
-	 * @see WordUtils#capitalize(String)
 	 * @see #uncapitalize(String)
 	 * @since 2.0
 	 */
@@ -135,11 +128,6 @@ public class StringUtils {
 	 * {@link Character#toLowerCase(char)}. No other letters are changed.
 	 * </p>
 	 * 
-	 * <p>
-	 * For a word based algorithm, see {@link WordUtils#uncapitalize(String)}. A
-	 * <code>null</code> input String returns <code>null</code>.
-	 * </p>
-	 * 
 	 * <pre>
 	 * StringUtils.uncapitalize(null)  = null
 	 * StringUtils.uncapitalize("")    = ""
@@ -150,7 +138,6 @@ public class StringUtils {
 	 * @param str
 	 *            the String to uncapitalize, may be null
 	 * @return the uncapitalized String, <code>null</code> if null String input
-	 * @see WordUtils#uncapitalize(String)
 	 * @see #capitalize(String)
 	 * @since 2.0
 	 */
@@ -288,7 +275,6 @@ public class StringUtils {
 	 * </pre>
 	 * @param str the CharSequence to check (may be {@code null})
 	 * @return {@code true} if the CharSequence is not null and has length
-	 * @see #hasText(String)
 	 */
 	public static boolean hasLength(CharSequence str) {
 		return (str != null && str.length() > 0);
@@ -306,10 +292,9 @@ public class StringUtils {
 	}
 	
 	/**
-	 * TODO
-	 * @return
+	 * @return a random number with 5 digits
 	 */
-	public static String getRamdomNumber(){
+	public static String getRamdomNumber() {
 		return StringUtils.randomNumeric(5);
 	}
 }

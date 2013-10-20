@@ -38,11 +38,17 @@ import java.util.Map;
 public class DelegateLocationWrapper extends CacheableLocationWrapper {
     public static final String DELEGATE_CONTENT_PARAM = "DELEGATE_CONTENT";
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String locationKey() {
         return "delegate";
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected String getContent(Asset asset, String location, Map<String, Object> parameters, HttpServletRequest request) {
         return ((DelegateContent) parameters.get(DELEGATE_CONTENT_PARAM)).getContent(request);

@@ -170,10 +170,7 @@ public class DandelionConfigurator {
 		return configurationLoader;
 	}
 
-	/**
-	 * <b>FOR INTERNAL USE ONLY</b>
-	 */
-	public static void clear() {
+	static void clear() {
 		configurationLoader = null;
 		localeResolver = null;
 	}

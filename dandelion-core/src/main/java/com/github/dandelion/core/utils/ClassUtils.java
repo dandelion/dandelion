@@ -55,9 +55,7 @@ public class ClassUtils {
 	 * @param className
 	 *            The class name.
 	 * @return The corresponding class.
-	 * @throws ClassNotFoundException 
-	 * @throws BadConfigurationException
-	 *             if the class doesn't exist.
+	 * @throws ClassNotFoundException
 	 *             
 	 * Tries to load a class with more classloaders. Can be useful in J2EE
 	 * applications if jar is loaded from a different classloader than user
@@ -91,35 +89,11 @@ public class ClassUtils {
 	 *            The class to instanciate.
 	 * @return a new instance of the given class.
 	 * @throws IllegalAccessException 
-	 * @throws InstantiationException 
-	 * @throws BadConfigurationException
-	 *             if the class is not instanciable.
+	 * @throws InstantiationException
 	 */
 	public static Object getNewInstance(Class<?> klass) throws InstantiationException, IllegalAccessException {
 		return klass.newInstance();
 	}
-
-//	/**
-//	 * <p>
-//	 * Invoke a method called methodName on the object obj, with arguments args.
-//	 * 
-//	 * @param obj
-//	 *            The object on which to invoke the method.
-//	 * @param methodName
-//	 *            The method name to invoke.
-//	 * @param args
-//	 *            The potential args used in the method.
-//	 * @return An object returned by the invoked method.
-//	 * @throws InvocationTargetException 
-//	 * @throws IllegalAccessException 
-//	 * @throws NoSuchMethodException 
-//	 * @throws BadConfigurationException
-//	 *             if the methodName doesn't exist for the given object.
-//	 */
-//	public static Object invokeMethod(Object obj, String methodName, Object[] args) throws NoSuchMethodException,
-//			IllegalAccessException, InvocationTargetException {
-//		return MethodUtils.invokeMethod(obj, methodName, args);
-//	}
 
 	/**
 	 * <p>
@@ -128,7 +102,6 @@ public class ClassUtils {
 	 * @param className
 	 *            The class to test.
 	 * @return true if the class can be used, false otherwise.
-	 * @throws BadConfigurationException
 	 */
 	public static Boolean canBeUsed(String className) {
 		Boolean canBeUsed = false;
@@ -149,9 +122,6 @@ public class ClassUtils {
 	 * 
 	 * @param className
 	 *            the name of the class to check
-	 * @param classLoader
-	 *            the class loader to use (may be {@code null}, which indicates
-	 *            the default class loader)
 	 * @return whether the specified class is present
 	 */
 	public static boolean isPresent(String className) {
@@ -231,13 +201,16 @@ public class ClassUtils {
 			return classes;
 		}
 		File[] files = dir.listFiles();
+        if(files == null) {
+            return classes;
+        }
 		for (File file : files) {
 			if (file.isDirectory()) {
 				classes.addAll(findClasses(file.getAbsolutePath(), packageName + "." + file.getName()));
 			} else if (file.getName().endsWith(".class")) {
 				// Build the class name with the package name and the file after
 				// removing the .class extension
-				String className = packageName + '.' + file.getName().substring(0, file.getName().length() - 6);
+				String className = packageName + '.' + file.getName().substring(0, file.getName().length() - ".class".length());
 				classes.add(className);
 			}
 		}
