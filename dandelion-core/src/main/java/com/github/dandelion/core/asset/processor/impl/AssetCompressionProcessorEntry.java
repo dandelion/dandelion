@@ -35,7 +35,7 @@ import com.github.dandelion.core.asset.Asset;
 import com.github.dandelion.core.asset.AssetStack;
 import com.github.dandelion.core.asset.cache.AssetsCacheSystem;
 import com.github.dandelion.core.asset.processor.spi.AssetProcessorEntry;
-import com.github.dandelion.core.asset.wrapper.AssetsLocationWrapper;
+import com.github.dandelion.core.asset.wrapper.spi.AssetsLocationWrapper;
 import com.github.dandelion.core.config.Configuration;
 import com.github.dandelion.core.DevMode;
 import com.github.dandelion.core.utils.RequestUtils;

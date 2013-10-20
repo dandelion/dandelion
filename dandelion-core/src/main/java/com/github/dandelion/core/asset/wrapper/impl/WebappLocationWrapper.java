@@ -28,32 +28,45 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package com.github.dandelion.core.asset.wrapper;
+package com.github.dandelion.core.asset.wrapper.impl;
 
 import com.github.dandelion.core.asset.Asset;
+import com.github.dandelion.core.asset.wrapper.spi.AssetsLocationWrapper;
 import com.github.dandelion.core.utils.ResourceUtils;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Map;
+import java.util.Arrays;
+import java.util.List;
 
 /**
- * Wrapper for "classpath" location
+ * Wrapper for "webapp" location
  */
-public class ClasspathLocationWrapper extends CacheableLocationWrapper {
+public class WebappLocationWrapper implements AssetsLocationWrapper {
 
     /**
      * {@inheritDoc}
      */
     @Override
     public String locationKey() {
-        return "classpath";
+        return "webapp";
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    protected String getContent(Asset asset, String location, Map<String, Object> parameters, HttpServletRequest request) {
-        return ResourceUtils.getFileContentFromClasspath(location, false);
+    public List<String> wrapLocations(Asset asset, HttpServletRequest request) {
+        String location = asset.getLocations().get(locationKey());
+        return Arrays.asList(request.getContextPath() + location);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<String> getContents(Asset asset, HttpServletRequest request) {
+        String location = asset.getLocations().get(locationKey());
+        String content = ResourceUtils.getContentFromUrl(location, true);
+        return Arrays.asList(content);
     }
 }

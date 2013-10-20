@@ -28,12 +28,13 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package com.github.dandelion.core.asset.wrapper;
+package com.github.dandelion.core.asset.wrapper.impl;
 
 import com.github.dandelion.core.asset.Asset;
 import com.github.dandelion.core.asset.cache.AssetsCacheSystem;
 import com.github.dandelion.core.asset.web.AssetParameters;
 import com.github.dandelion.core.asset.web.AssetsRequestContext;
+import com.github.dandelion.core.asset.wrapper.spi.AssetsLocationWrapper;
 import com.github.dandelion.core.utils.RequestUtils;
 
 import javax.servlet.http.HttpServletRequest;

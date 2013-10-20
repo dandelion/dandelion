@@ -28,22 +28,25 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package com.github.dandelion.core.asset.wrapper;
+package com.github.dandelion.core.asset.wrapper.impl;
 
 import com.github.dandelion.core.asset.Asset;
+import com.github.dandelion.core.utils.ResourceUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 
-public class DelegateLocationWrapper extends CacheableLocationWrapper {
-    public static final String DELEGATE_CONTENT_PARAM = "DELEGATE_CONTENT";
+/**
+ * Wrapper for "classpath" location
+ */
+public class ClasspathLocationWrapper extends CacheableLocationWrapper {
 
     /**
      * {@inheritDoc}
      */
     @Override
     public String locationKey() {
-        return "delegate";
+        return "classpath";
     }
 
     /**
@@ -51,6 +54,6 @@ public class DelegateLocationWrapper extends CacheableLocationWrapper {
      */
     @Override
     protected String getContent(Asset asset, String location, Map<String, Object> parameters, HttpServletRequest request) {
-        return ((DelegateContent) parameters.get(DELEGATE_CONTENT_PARAM)).getContent(request);
+        return ResourceUtils.getFileContentFromClasspath(location, false);
     }
 }

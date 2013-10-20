@@ -30,7 +30,7 @@
 package com.github.dandelion.core.asset;
 
 import com.github.dandelion.core.asset.processor.AssetProcessor;
-import com.github.dandelion.core.asset.wrapper.AssetsLocationWrapper;
+import com.github.dandelion.core.asset.wrapper.spi.AssetsLocationWrapper;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;

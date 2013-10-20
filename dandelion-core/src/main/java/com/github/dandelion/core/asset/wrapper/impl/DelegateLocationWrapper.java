@@ -28,44 +28,29 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package com.github.dandelion.core.asset.wrapper;
+package com.github.dandelion.core.asset.wrapper.impl;
 
 import com.github.dandelion.core.asset.Asset;
-import com.github.dandelion.core.utils.ResourceUtils;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Arrays;
-import java.util.List;
+import java.util.Map;
 
-/**
- * Wrapper for "webapp" location
- */
-public class WebappLocationWrapper implements AssetsLocationWrapper {
+public class DelegateLocationWrapper extends CacheableLocationWrapper {
+    public static final String DELEGATE_CONTENT_PARAM = "DELEGATE_CONTENT";
 
     /**
      * {@inheritDoc}
      */
     @Override
     public String locationKey() {
-        return "webapp";
+        return "delegate";
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public List<String> wrapLocations(Asset asset, HttpServletRequest request) {
-        String location = asset.getLocations().get(locationKey());
-        return Arrays.asList(request.getContextPath() + location);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public List<String> getContents(Asset asset, HttpServletRequest request) {
-        String location = asset.getLocations().get(locationKey());
-        String content = ResourceUtils.getContentFromUrl(location, true);
-        return Arrays.asList(content);
+    protected String getContent(Asset asset, String location, Map<String, Object> parameters, HttpServletRequest request) {
+        return ((DelegateContent) parameters.get(DELEGATE_CONTENT_PARAM)).getContent(request);
     }
 }

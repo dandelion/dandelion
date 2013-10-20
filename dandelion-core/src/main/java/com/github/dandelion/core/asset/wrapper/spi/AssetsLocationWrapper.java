@@ -28,50 +28,37 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package com.github.dandelion.core.asset.wrapper;
+package com.github.dandelion.core.asset.wrapper.spi;
 
 import com.github.dandelion.core.asset.Asset;
-import com.github.dandelion.core.utils.ResourceUtils;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.HashMap;
-import java.util.Map;
-
-import static com.github.dandelion.core.DevMode.isDevModeEnabled;
+import java.util.List;
 
 /**
- * Wrapper for "template" location
+ * Wrapper for one or many locations associated with a location key
  */
-public class TemplateLocationWrapper extends CacheableLocationWrapper {
-    private Map<String, String> cache;
-
-    public TemplateLocationWrapper() {
-        cache = new HashMap<String, String>();
-    }
-
-    private String getTemplateContent(String tplLocation) {
-        if(isDevModeEnabled() || !cache.containsKey(tplLocation))
-            cache.put(tplLocation, ResourceUtils.getFileContentFromClasspath(tplLocation, false));
-        return cache.get(tplLocation);
-    }
+public interface AssetsLocationWrapper {
 
     /**
-     * {@inheritDoc}
+     * @return the location key that matches this wrapper
      */
-    @Override
-    public String locationKey() {
-        return "template";
-    }
+    String locationKey();
 
     /**
-     * {@inheritDoc}
+     * Wrap an asset into one or more customized locations.
+     *
+     * @param asset asset
+     * @param request http request
+     * @return the customized locations
      */
-    @Override
-    protected String getContent(Asset asset, String location, Map<String, Object> parameters, HttpServletRequest request) {
-        String content = getTemplateContent(location);
-        for(Map.Entry<String, Object> entry:parameters.entrySet()) {
-            content = content.replace(entry.getKey(), entry.getValue().toString());
-        }
-        return content;
-    }
+    List<String> wrapLocations(Asset asset, HttpServletRequest request);
+
+    /**
+     * Get contents of all locations in the asset
+     * @param asset asset
+     * @param request http request
+     * @return the content of locations
+     */
+    List<String> getContents(Asset asset, HttpServletRequest request);
 }

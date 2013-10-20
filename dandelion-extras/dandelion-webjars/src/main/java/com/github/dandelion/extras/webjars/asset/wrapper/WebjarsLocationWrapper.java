@@ -31,7 +31,7 @@
 package com.github.dandelion.extras.webjars.asset.wrapper;
 
 import com.github.dandelion.core.asset.Asset;
-import com.github.dandelion.core.asset.wrapper.CacheableLocationWrapper;
+import com.github.dandelion.core.asset.wrapper.impl.CacheableLocationWrapper;
 import com.github.dandelion.core.utils.ResourceUtils;
 import org.webjars.WebJarAssetLocator;
 

@@ -32,7 +32,8 @@ package com.github.dandelion.core.asset;
 import com.github.dandelion.core.DandelionException;
 import com.github.dandelion.core.asset.loader.AssetsJsonLoader;
 import com.github.dandelion.core.asset.loader.AssetsLoader;
-import com.github.dandelion.core.asset.wrapper.AssetsLocationWrapper;
+import com.github.dandelion.core.asset.wrapper.AssetsLocationWrapperSystem;
+import com.github.dandelion.core.asset.wrapper.spi.AssetsLocationWrapper;
 import com.github.dandelion.core.config.Configuration;
 import com.github.dandelion.core.utils.PropertiesUtils;
 
@@ -88,7 +89,7 @@ public class AssetsConfigurator {
         excludedScopes = setPropertyAsList(configuration.getProperty("assets.excluded.scopes"), ",");
         excludedAssets = setPropertyAsList(configuration.getProperty("assets.excluded.assets"), ",");
         assetsLoaders = extractAssetsLoaders(classLoader, configuration);
-        assetsLocationWrappers = extractAssetsLocationWrappers(classLoader, configuration);
+        assetsLocationWrappers = extractAssetsLocationWrappers();
 
         processAssetsLoading(true);
     }
@@ -142,53 +143,15 @@ public class AssetsConfigurator {
     }
 
     /**
-     * Load all wrappers found in configuration properties<br/>
-     * a wrapper configuration have a key like assets.location.wrapper.{location}<br/>
-     * {location} must match {@link com.github.dandelion.core.asset.wrapper.AssetsLocationWrapper#locationKey()}
-     *
-     * @param classLoader class loader
-     * @param properties configuration properties
-     * @return all wrappers
+     * Load all wrappers found
+     * @return all wrappers accessible by locationKey
      */
-    private Map<String, AssetsLocationWrapper> extractAssetsLocationWrappers(ClassLoader classLoader, Properties properties) {
+    private Map<String, AssetsLocationWrapper> extractAssetsLocationWrappers() {
         Map<String, AssetsLocationWrapper> wrappers = new HashMap<String, AssetsLocationWrapper>();
-        for(String property:properties.stringPropertyNames()) {
-            if(property.startsWith("assets.location.wrapper.")) {
-                AssetsLocationWrapper alw = getPropertyAsAssetsLocationWrapper(classLoader, properties.getProperty(property));
-                if(alw != null) {
-                    String location = property.replace("assets.location.wrapper.", "");
-                    if(location.equalsIgnoreCase(alw.locationKey())) {
-                        wrappers.put(location, alw);
-                    }
-                }
-            }
+        for(AssetsLocationWrapper wrapper: AssetsLocationWrapperSystem.getWrappers()) {
+            wrappers.put(wrapper.locationKey(), wrapper);
         }
         return wrappers;
-    }
-
-    /**
-     * @param classLoader class loader
-     * @param wrapper wrapper class name
-     * @return an instance of a wrapper
-     */
-    private AssetsLocationWrapper getPropertyAsAssetsLocationWrapper(ClassLoader classLoader, String wrapper) {
-        if(wrapper != null) {
-            try {
-                Class<AssetsLocationWrapper> cal = (Class<AssetsLocationWrapper>) classLoader.loadClass(wrapper);
-                return cal.newInstance();
-            } catch (ClassCastException e) {
-                LOG.warn("the 'wrapper[{}]' must implements '{}'",
-                        wrapper, AssetsLocationWrapper.class.getCanonicalName());
-            } catch (InstantiationException e) {
-                LOG.warn("the 'wrapper[{}]' should authorize instantiation", wrapper);
-            } catch (IllegalAccessException e) {
-                LOG.warn("the 'wrapper[{}]' should authorize access from '{}'",
-                        wrapper, AssetsConfigurator.class.getCanonicalName());
-            } catch (ClassNotFoundException e) {
-                LOG.warn("the 'wrapper[{}]' must exists in the classpath", wrapper);
-            }
-        }
-        return null;
     }
 
     /**
