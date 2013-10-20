@@ -35,15 +35,15 @@ import com.github.dandelion.core.asset.Asset;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 
-public class DelegateLocationWrapper extends CacheableLocationWrapper {
-    public static final String DELEGATE_CONTENT_PARAM = "DELEGATE_CONTENT";
+public class DelegatedLocationWrapper extends CacheableLocationWrapper {
+    public static final String DELEGATED_CONTENT_PARAM = "DELEGATED_CONTENT";
 
     /**
      * {@inheritDoc}
      */
     @Override
     public String locationKey() {
-        return "delegate";
+        return "delegated";
     }
 
     /**
@@ -51,6 +51,6 @@ public class DelegateLocationWrapper extends CacheableLocationWrapper {
      */
     @Override
     protected String getContent(Asset asset, String location, Map<String, Object> parameters, HttpServletRequest request) {
-        return ((DelegateContent) parameters.get(DELEGATE_CONTENT_PARAM)).getContent(request);
+        return ((DelegatedContent) parameters.get(DELEGATED_CONTENT_PARAM)).getContent(request);
     }
 }

@@ -35,7 +35,7 @@ import javax.servlet.http.HttpServletRequest;
 /**
  * Delegate to generate a content
  */
-public interface DelegateContent {
+public interface DelegatedContent {
 
     /**
      * @param request http request
