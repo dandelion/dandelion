@@ -31,13 +31,20 @@
 package com.github.dandelion.core.asset.cache;
 
 import com.github.dandelion.core.asset.AssetType;
-import com.github.dandelion.core.config.Configuration;
+import com.github.dandelion.core.asset.cache.impl.DefaultAssetsCache;
+import com.github.dandelion.core.asset.cache.spi.AssetsCache;
 import com.github.dandelion.core.utils.Sha1Utils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.ServiceLoader;
 
 public class AssetsCacheSystem {
-    private static final String ASSETS_CACHE = "assets.cache";
+    // Logger
+    private static final Logger LOG = LoggerFactory.getLogger(AssetsCacheSystem.class);
+
+    private static ServiceLoader<AssetsCache> loader = ServiceLoader.load(AssetsCache.class);
     private static AssetsCache assetsCache;
 
     private AssetsCacheSystem() {
@@ -51,11 +58,19 @@ public class AssetsCacheSystem {
 
     synchronized private static void initializeAssetsCacheIfNeeded() {
         if(assetsCache != null) return;
-        String _assetsCache = Configuration.getProperty(ASSETS_CACHE);
-        try {
-            assetsCache = (AssetsCache) Class.forName(_assetsCache).newInstance();
-        } catch (Exception e) {
+
+        for (AssetsCache ac : loader) {
+            if (assetsCache != null) {
+                LOG.info("found {} assets cache but it's already configured with {} cache system", ac.getAssetsCacheName(), assetsCache.getAssetsCacheName());
+            } else if (!ac.getAssetsCacheName().equals("default")) {
+                assetsCache = ac;
+                LOG.info("setup assets cache with {} cache system", assetsCache.getAssetsCacheName());
+            }
+        }
+
+        if (assetsCache == null) {
             assetsCache = new DefaultAssetsCache();
+            LOG.info("setup assets cache with {} cache system", assetsCache.getAssetsCacheName());
         }
     }
 
@@ -80,5 +95,9 @@ public class AssetsCacheSystem {
     public static void storeCacheContent(String context, String groupId, String location, AssetType type, String content) {
         initializeAssetsCache();
         assetsCache.storeCacheContent(generateCacheKey(context, groupId, location, type), content);
+    }
+
+    public static String getAssetsCacheName() {
+        return assetsCache.getAssetsCacheName();
     }
 }

@@ -28,7 +28,9 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package com.github.dandelion.core.asset.cache;
+package com.github.dandelion.core.asset.cache.impl;
+
+import com.github.dandelion.core.asset.cache.spi.AssetsCache;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -41,6 +43,11 @@ public class DefaultAssetsCache implements AssetsCache {
 
     public DefaultAssetsCache() {
         cache = new HashMap<String, String>();
+    }
+
+    @Override
+    public String getAssetsCacheName() {
+        return "default";
     }
 
     @Override
