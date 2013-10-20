@@ -30,7 +30,7 @@
 package com.github.dandelion.core.asset.loader;
 
 import com.github.dandelion.core.asset.AssetsComponent;
-import com.github.dandelion.core.utils.DandelionScanner;
+import com.github.dandelion.core.utils.ResourceScanner;
 import org.codehaus.jackson.JsonParser;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
@@ -57,7 +57,7 @@ public class AssetsJsonLoader implements AssetsLoader {
 		mapper.configure(JsonParser.Feature.ALLOW_COMMENTS, true);
         List<AssetsComponent> assetsComponentList = new ArrayList<AssetsComponent>();
 		try {
-            Set<String> resources = DandelionScanner.getResources(getFolder(), null, ".json");
+            Set<String> resources = ResourceScanner.getResources(getFolder(), null, ".json");
             ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
 			for (String resource : resources) {
                 LOG.debug("resources {}", resource);

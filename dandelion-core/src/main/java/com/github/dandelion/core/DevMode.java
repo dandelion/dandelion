@@ -27,33 +27,21 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+package com.github.dandelion.core;
 
-package com.github.dandelion.core.utils;
+public final class DevMode {
+    public final static String DANDELION_DEV_MODE = "dandelion.dev.mode";
+    private static boolean devMode = false;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.URL;
+    static {
+        devMode = Boolean.TRUE.toString().equals(System.getProperty(DANDELION_DEV_MODE, Boolean.toString(devMode)));
+    }
 
-/**
- * Utilities for URL
- */
-public class UrlUtils {
-    public static String getUrlContent(String url) {
-        try {
-            URL urlLocation = new URL(url);
-            BufferedReader in = new BufferedReader(
-                    new InputStreamReader(urlLocation.openStream()));
+    public static boolean isDevModeEnabled() {
+        return devMode;
+    }
 
-            StringBuilder content = new StringBuilder();
-            String inputLine;
-            while ((inputLine = in.readLine()) != null) {
-                content.append(inputLine);
-            }
-            in.close();
-            return content.toString();
-        } catch(IOException e) {
-            return null;
-        }
+    public static boolean devModeOverride(boolean realResult) {
+        return isDevModeEnabled() || realResult;
     }
 }

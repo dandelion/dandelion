@@ -43,14 +43,11 @@ import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.Set;
 
+import com.github.dandelion.core.utils.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.github.dandelion.core.DandelionException;
-import com.github.dandelion.core.utils.BundleUtils;
-import com.github.dandelion.core.utils.DandelionScanner;
-import com.github.dandelion.core.utils.StringUtils;
-import com.github.dandelion.core.utils.UTF8Control;
 
 /**
  * <p>
@@ -87,7 +84,7 @@ public class StandardConfigurationLoader implements ConfigurationLoader {
 		try {
 			Reader reader;
 
-			Set<String> resources = DandelionScanner.getResources("dandelion", "dandelion", "properties");
+			Set<String> resources = ResourceScanner.getResources("dandelion", "dandelion", "properties");
 			for(String resource : resources) {
 				propertiesStream = Thread.currentThread().getContextClassLoader()
 						.getResourceAsStream(resource);
@@ -158,6 +155,6 @@ public class StandardConfigurationLoader implements ConfigurationLoader {
 			}
 		}
 
-		return BundleUtils.toProperties(userBundle);
+		return PropertiesUtils.bundleToProperties(userBundle);
 	}
 }

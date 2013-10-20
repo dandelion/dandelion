@@ -58,6 +58,6 @@ public class WebjarsLocationWrapper extends CacheableLocationWrapper {
     @Override
     protected String getContent(Asset asset, String location, Map<String, Object> parameters, HttpServletRequest request) {
         String webjarsLocation = locator.getFullPath(location);
-        return ResourceUtils.getFileContentFromClasspath(webjarsLocation);
+        return ResourceUtils.getFileContentFromClasspath(webjarsLocation, false);
     }
 }

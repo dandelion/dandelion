@@ -34,7 +34,6 @@ import com.github.dandelion.core.asset.Asset;
 import com.github.dandelion.core.asset.cache.AssetsCacheSystem;
 import com.github.dandelion.core.asset.web.AssetParameters;
 import com.github.dandelion.core.asset.web.AssetsRequestContext;
-import com.github.dandelion.core.asset.web.AssetsServlet;
 import com.github.dandelion.core.utils.RequestUtils;
 
 import javax.servlet.http.HttpServletRequest;
@@ -44,7 +43,7 @@ import java.util.List;
 import java.util.Map;
 
 import static com.github.dandelion.core.asset.web.AssetsServlet.DANDELION_ASSETS_URL;
-import static com.github.dandelion.core.utils.DandelionUtils.isDevModeEnabled;
+import static com.github.dandelion.core.DevMode.isDevModeEnabled;
 
 /**
  * Base for Wrapper with caching faculty

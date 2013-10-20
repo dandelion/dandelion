@@ -49,7 +49,6 @@ import java.util.zip.ZipInputStream;
 public class ClassUtils {
 
 	/**
-	 * <p>
 	 * Get a Java class from its name.
 	 * 
 	 * @param className
@@ -82,7 +81,6 @@ public class ClassUtils {
 	}
 
 	/**
-	 * <p>
 	 * Instanciate a class.
 	 * 
 	 * @param klass
@@ -96,7 +94,6 @@ public class ClassUtils {
 	}
 
 	/**
-	 * <p>
 	 * Test if a class exists in the classPath, trying to load it with its name.
 	 * 
 	 * @param className

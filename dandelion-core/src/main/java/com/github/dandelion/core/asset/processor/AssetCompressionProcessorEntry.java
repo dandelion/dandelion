@@ -34,12 +34,11 @@ import com.github.dandelion.core.DandelionException;
 import com.github.dandelion.core.asset.Asset;
 import com.github.dandelion.core.asset.AssetStack;
 import com.github.dandelion.core.asset.cache.AssetsCacheSystem;
-import com.github.dandelion.core.asset.web.AssetsServlet;
 import com.github.dandelion.core.asset.wrapper.AssetsLocationWrapper;
 import com.github.dandelion.core.config.Configuration;
-import com.github.dandelion.core.utils.DandelionUtils;
+import com.github.dandelion.core.DevMode;
 import com.github.dandelion.core.utils.RequestUtils;
-import com.github.dandelion.core.utils.UrlUtils;
+import com.github.dandelion.core.utils.ResourceUtils;
 import com.yahoo.platform.yui.compressor.CssCompressor;
 import com.yahoo.platform.yui.compressor.JavaScriptCompressor;
 import org.mozilla.javascript.EvaluatorException;
@@ -80,7 +79,7 @@ public class AssetCompressionProcessorEntry extends AssetProcessorEntry {
         this.jsDisableOptimizations = Boolean.TRUE.toString().equals(
                 Configuration.getProperty(COMPRESSION_JS_DISABLE_OPTIMIZATIONS, Boolean.toString(compressionEnabled)));
 
-        if(DandelionUtils.isDevModeEnabled()) {
+        if(DevMode.isDevModeEnabled()) {
             this.compressionEnabled = false;
         }
 
@@ -189,7 +188,7 @@ public class AssetCompressionProcessorEntry extends AssetProcessorEntry {
             AssetsLocationWrapper wrapper = wrappers.get(location.getKey());
             List<String> contents;
             if (wrapper == null) {
-                contents = Arrays.asList(UrlUtils.getUrlContent(location.getValue()));
+                contents = Arrays.asList(ResourceUtils.getContentFromUrl(location.getValue(), true));
             } else {
                 contents = wrapper.getContents(asset, request);
             }

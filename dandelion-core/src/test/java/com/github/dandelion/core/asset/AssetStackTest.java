@@ -29,7 +29,6 @@
  */
 package com.github.dandelion.core.asset;
 
-import com.github.dandelion.core.utils.DandelionUtils;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;

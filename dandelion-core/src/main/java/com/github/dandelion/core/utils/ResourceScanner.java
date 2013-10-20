@@ -39,13 +39,13 @@ import java.util.*;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
-import static com.github.dandelion.core.utils.DandelionUtils.devModeOverride;
+import static com.github.dandelion.core.DevMode.devModeOverride;
 import static java.lang.Thread.currentThread;
 
 /**
- * Scanner for resources in Dandelion Folder
+ * Scanner for resources in folder
  */
-public final class DandelionScanner {
+public final class ResourceScanner {
     static Map<String, Set<String>> resourcesSets = new HashMap<String, Set<String>>();
 
     /**

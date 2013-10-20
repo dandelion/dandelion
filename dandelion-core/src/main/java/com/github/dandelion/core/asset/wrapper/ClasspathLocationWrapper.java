@@ -54,6 +54,6 @@ public class ClasspathLocationWrapper extends CacheableLocationWrapper {
      */
     @Override
     protected String getContent(Asset asset, String location, Map<String, Object> parameters, HttpServletRequest request) {
-        return ResourceUtils.getFileContentFromClasspath(location);
+        return ResourceUtils.getFileContentFromClasspath(location, false);
     }
 }

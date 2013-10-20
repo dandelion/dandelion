@@ -37,7 +37,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.github.dandelion.core.utils.DandelionUtils.isDevModeEnabled;
+import static com.github.dandelion.core.DevMode.isDevModeEnabled;
 
 /**
  * Wrapper for "template" location
@@ -51,7 +51,7 @@ public class TemplateLocationWrapper extends CacheableLocationWrapper {
 
     private String getTemplateContent(String tplLocation) {
         if(isDevModeEnabled() || !cache.containsKey(tplLocation))
-            cache.put(tplLocation, ResourceUtils.getFileContentFromClasspath(tplLocation));
+            cache.put(tplLocation, ResourceUtils.getFileContentFromClasspath(tplLocation, false));
         return cache.get(tplLocation);
     }
 

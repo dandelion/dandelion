@@ -1,10 +1,8 @@
 package com.github.dandelion.core.utils;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Properties;
+import java.util.*;
 
-public class PropertyUtils {
+public class PropertiesUtils {
 
 	/**
      * Filter properties which begin with a given prefix.
@@ -20,5 +18,18 @@ public class PropertyUtils {
             }
         }
         return values;
+    }
+
+    public static Properties bundleToProperties(ResourceBundle bundle){
+        Properties properties = new Properties();
+
+        if(bundle != null){
+            Enumeration<String> keys = bundle.getKeys();
+            while (keys.hasMoreElements()) {
+                String key = keys.nextElement();
+                properties.put(key, bundle.getString(key));
+            }
+        }
+        return properties;
     }
 }

@@ -32,40 +32,22 @@ package com.github.dandelion.core.utils;
 import com.github.dandelion.core.DandelionException;
 
 import java.io.*;
+import java.net.URL;
 
 public final class ResourceUtils {
 
     private static final int DEFAULT_BUFFER_SIZE = 1024 * 4;
 
-    public static InputStream getFileFromWebapp(String pathToFile) {
-        try {
-            File file = new File(pathToFile);
-            return new FileInputStream(file);
-        } catch (FileNotFoundException e) {
-            throw DandelionException.wrap(e, ResourceError.FILE_PATH_DONT_EXISTS_IN_WEBAPP)
-                    .set("path", pathToFile);
-        }
-    }
-
     public static InputStream getFileFromClasspath(String pathToFile) {
         return Thread.currentThread().getContextClassLoader().getResourceAsStream(pathToFile);
     }
 
-    public static String getFileContentFromClasspath(String pathToFile) {
+    public static String getFileContentFromClasspath(String pathToFile, boolean neverFail) {
         try {
             InputStream in = getFileFromClasspath(pathToFile);
             return getContentFromInputStream(in);
         } catch (IOException e) {
-            throw DandelionException.wrap(e, ResourceError.CONTENT_CANT_BE_READ_FROM_INPUTSTREAM)
-                    .set("path", pathToFile);
-        }
-    }
-
-    public static String getFileContentFromWebapp(String pathToFile) {
-        try {
-            InputStream in = getFileFromWebapp(pathToFile);
-            return getContentFromInputStream(in);
-        } catch (IOException e) {
+            if(neverFail) return null;
             throw DandelionException.wrap(e, ResourceError.CONTENT_CANT_BE_READ_FROM_INPUTSTREAM)
                     .set("path", pathToFile);
         }
@@ -82,5 +64,16 @@ public final class ResourceUtils {
         }
 
         return sw.toString();
+    }
+
+    public static String getContentFromUrl(String url, boolean neverFail) {
+        try {
+            URL urlLocation = new URL(url);
+            return ResourceUtils.getContentFromInputStream(urlLocation.openStream());
+        } catch(IOException e) {
+            if(neverFail) return null;
+            throw DandelionException.wrap(e, ResourceError.CONTENT_CANT_BE_READ_FROM_URL)
+                    .set("url", url);
+        }
     }
 }

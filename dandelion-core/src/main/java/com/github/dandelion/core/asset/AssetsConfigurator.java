@@ -34,7 +34,7 @@ import com.github.dandelion.core.asset.loader.AssetsJsonLoader;
 import com.github.dandelion.core.asset.loader.AssetsLoader;
 import com.github.dandelion.core.asset.wrapper.AssetsLocationWrapper;
 import com.github.dandelion.core.config.Configuration;
-import com.github.dandelion.core.utils.PropertyUtils;
+import com.github.dandelion.core.utils.PropertiesUtils;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -100,7 +100,7 @@ public class AssetsConfigurator {
      */
     private List<AssetsLoader> extractAssetsLoaders(ClassLoader classLoader, Properties properties) {
         List<String> assetsLoaders = new ArrayList<String>();
-        assetsLoaders.addAll(PropertyUtils.propertyBeginWith("assets.loader.for.", properties));
+        assetsLoaders.addAll(PropertiesUtils.propertyBeginWith("assets.loader.for.", properties));
         assetsLoaders.addAll(notNull(setPropertyAsList(properties.getProperty("assets.loaders"), ",")));
         List<AssetsLoader> loaders = new ArrayList<AssetsLoader>();
         for(String loader:assetsLoaders) {

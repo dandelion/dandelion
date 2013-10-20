@@ -34,7 +34,7 @@ import com.github.dandelion.core.asset.wrapper.AssetsLocationWrapper;
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 
-import static com.github.dandelion.core.utils.DandelionUtils.devModeOverride;
+import static com.github.dandelion.core.DevMode.devModeOverride;
 
 public class AssetStack {
     static AssetsConfigurator assetsConfigurator;

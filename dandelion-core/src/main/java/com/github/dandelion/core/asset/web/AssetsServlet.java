@@ -40,7 +40,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-import static com.github.dandelion.core.utils.DandelionUtils.isDevModeEnabled;
+import static com.github.dandelion.core.DevMode.isDevModeEnabled;
 
 public abstract class AssetsServlet extends HttpServlet {
     public static final String DANDELION_ASSETS = "dandelionAssets";

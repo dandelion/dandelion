@@ -29,17 +29,14 @@
  */
 package com.github.dandelion.core.asset.processor;
 
+import com.github.dandelion.core.DevMode;
 import com.github.dandelion.core.asset.Asset;
 import com.github.dandelion.core.asset.AssetStack;
 import com.github.dandelion.core.asset.AssetType;
 import com.github.dandelion.core.asset.cache.AssetsCacheSystem;
-import com.github.dandelion.core.asset.web.AssetsServlet;
 import com.github.dandelion.core.asset.wrapper.AssetsLocationWrapper;
 import com.github.dandelion.core.config.Configuration;
-import com.github.dandelion.core.utils.DandelionUtils;
-import com.github.dandelion.core.utils.RequestUtils;
-import com.github.dandelion.core.utils.Sha1Utils;
-import com.github.dandelion.core.utils.UrlUtils;
+import com.github.dandelion.core.utils.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -60,7 +57,7 @@ public class AssetAggregationProcessorEntry extends AssetProcessorEntry {
         this.aggregationEnabled = Boolean.TRUE.toString().equals(
                 Configuration.getProperty(AGGREGATION_ENABLED_KEY, Boolean.toString(aggregationEnabled)));
 
-        if(DandelionUtils.isDevModeEnabled()) {
+        if(DevMode.isDevModeEnabled()) {
             this.aggregationEnabled = false;
         }
 
@@ -120,7 +117,7 @@ public class AssetAggregationProcessorEntry extends AssetProcessorEntry {
                 AssetsLocationWrapper wrapper = wrappers.get(location.getKey());
                 List<String> contents;
                 if (wrapper == null) {
-                    contents = Arrays.asList(UrlUtils.getUrlContent(location.getValue()));
+                    contents = Arrays.asList(ResourceUtils.getContentFromUrl(location.getValue(), true));
                 } else {
                     contents = wrapper.getContents(asset, request);
                 }
