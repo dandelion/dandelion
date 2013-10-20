@@ -59,6 +59,10 @@ public class AssetParameters {
         return parameters.get(groupId + "|" + asset.getName());
     }
 
+    public Map<String, Object> getParameters(String assetName, String groupId) {
+        return parameters.get(groupId + "|" + assetName);
+    }
+
     public void add(String assetName, String parameter, Object value, String groupId) {
         // group
         if (!groupIds.containsKey(assetName)) {
