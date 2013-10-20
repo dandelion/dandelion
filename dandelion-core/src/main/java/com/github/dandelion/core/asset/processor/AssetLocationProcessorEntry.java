@@ -38,8 +38,14 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 
 public class AssetLocationProcessorEntry extends AssetProcessorEntry {
+
     // Logger
     private static final Logger LOG = LoggerFactory.getLogger(AssetLocationProcessorEntry.class);
+
+    @Override
+    public String getTreatmentKey() {
+        return "location";
+    }
 
     @Override
     public List<Asset> process(List<Asset> assets, HttpServletRequest request) {

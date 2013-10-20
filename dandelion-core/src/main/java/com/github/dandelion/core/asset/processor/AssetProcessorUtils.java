@@ -29,9 +29,25 @@
  */
 package com.github.dandelion.core.asset.processor;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class AssetProcessorUtils {
+    // Logger
+    private static final Logger LOG = LoggerFactory.getLogger(AssetProcessorUtils.class);
+
     public static AssetProcessorEntry getAssetsProcessorStarterEntry() {
-        // TODO externalize configuration of processor entry
-        return new AssetLocationProcessorEntry();
+        AssetProcessorEntry location = new AssetLocationProcessorEntry();
+        LOG.info("Dandelion AssetsProcessor Entry '1' treat ", location.getTreatmentKey());
+
+        AssetProcessorEntry aggregation = new AssetAggregationProcessorEntry();
+        location.setNextEntry(aggregation);
+        LOG.info("Dandelion AssetsProcessor Entry '2' treat ", aggregation.getTreatmentKey());
+
+        AssetProcessorEntry compression = new AssetCompressionProcessorEntry();
+        aggregation.setNextEntry(compression);
+        LOG.info("Dandelion AssetsProcessor Entry '3' treat ", compression.getTreatmentKey());
+
+        return location;
     }
 }

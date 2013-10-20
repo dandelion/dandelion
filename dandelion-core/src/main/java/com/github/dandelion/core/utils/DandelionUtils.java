@@ -31,10 +31,10 @@ package com.github.dandelion.core.utils;
 
 public final class DandelionUtils {
     public final static String DANDELION_DEV_MODE = "dandelion.dev.mode";
-    private static boolean devMode;
+    private static boolean devMode = false;
 
     static {
-        devMode = Boolean.TRUE.toString().equals(System.getProperty(DANDELION_DEV_MODE));
+        devMode = Boolean.TRUE.toString().equals(System.getProperty(DANDELION_DEV_MODE, Boolean.toString(devMode)));
     }
 
     public static boolean isDevModeEnabled() {

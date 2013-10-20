@@ -36,11 +36,11 @@ import java.util.Properties;
 /**
  * <p>
  * Entry point for the whole Dandelion configuration.
- * 
+ *
  * <p>
  * The configuration is loaded only once using the configured instance of
  * {@link ConfigurationLoader}.
- * 
+ *
  * @since v0.0.3
  */
 public class Configuration {
@@ -58,6 +58,10 @@ public class Configuration {
         return getProperties().getProperty(key);
     }
 
+    public static String getProperty(String key, String defaultValue) {
+        return getProperties().getProperty(key, defaultValue);
+    }
+
 	/**
 	 * <p>
 	 * Load the Dandelion configuration using the following strategy:
@@ -70,10 +74,10 @@ public class Configuration {
 	 */
     synchronized private static void loadConfiguration() {
         if(configuration == null) {
-        	
+
         	ConfigurationLoader confLoader = DandelionConfigurator.getConfigurationLoader();
         	Locale locale = null;
-    		
+
     		// Retrieve the locale either from a configured LocaleResolver or using the default locale
         	// TODO the request must be accessible in some way here
 //    		if (request != null) {
@@ -82,7 +86,7 @@ public class Configuration {
 //    		else {
     			locale = Locale.getDefault();
 //    		}
-    		
+
     		configuration = confLoader.loadDefaultConfiguration();
     		configuration.putAll(confLoader.loadUserConfiguration(locale));
         }

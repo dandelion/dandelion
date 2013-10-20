@@ -29,17 +29,21 @@
  */
 package com.github.dandelion.core.asset;
 
+import com.github.dandelion.core.utils.DandelionUtils;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.springframework.mock.web.MockHttpServletRequest;
 
 import java.util.List;
 
 import static org.fest.assertions.Assertions.assertThat;
 
 public class AssetStackTest {
+    private static MockHttpServletRequest request;
 
     @BeforeClass
-    public static void set_up_class() {
+    public static void setup(){
+        request = new MockHttpServletRequest();
     }
 
     @Test
@@ -54,7 +58,7 @@ public class AssetStackTest {
 
     @Test
     public void should_be_the_remote_url_for_all_assets() {
-        List<Asset> assets = AssetStack.prepareAssetsFor(null, new String[]{"default", "detachedScope", "plugin1", "plugin2"}, new String[0]);
+        List<Asset> assets = AssetStack.prepareAssetsFor(request, new String[]{"default", "detachedScope", "plugin1", "plugin2"}, new String[0]);
         assertThat(assets).hasSize(6);
         for(Asset asset:assets) {
             assertThat(asset.getLocations().values()).contains("remoteURL");
@@ -78,7 +82,7 @@ public class AssetStackTest {
 
     @Test
     public void should_manage_unknown_location() {
-        List<Asset> assets = AssetStack.prepareAssetsFor(null, new String[]{"unknown_location"}, new String[0]);
+        List<Asset> assets = AssetStack.prepareAssetsFor(request, new String[]{"unknown_location"}, new String[0]);
         assertThat(assets).hasSize(2);
         for(Asset asset:assets) {
             assertThat(asset.getLocations().values()).hasSize(1).contains("URL");
@@ -87,7 +91,7 @@ public class AssetStackTest {
 
     @Test
     public void should_respect_locations_order() {
-        List<Asset> assets = AssetStack.prepareAssetsFor(null, new String[]{"locations_order"}, new String[0]);
+        List<Asset> assets = AssetStack.prepareAssetsFor(request, new String[]{"locations_order"}, new String[0]);
         assertThat(assets).hasSize(3);
         for(Asset asset:assets) {
             assertThat(asset.getLocations().values()).contains("otherURL");

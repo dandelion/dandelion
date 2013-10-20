@@ -61,15 +61,15 @@ public abstract class CacheableLocationWrapper implements AssetsLocationWrapper 
         AssetParameters params = AssetsRequestContext.get(request).getParameters();
 
         List<String> groupIds = params.getGroupIds(asset);
-        if(groupIds == null || groupIds.isEmpty()) {
+        if (groupIds == null || groupIds.isEmpty()) {
             groupIds = Arrays.asList(AssetParameters.GLOBAL_GROUP);
         }
 
-        for(String groupId:groupIds) {
+        for (String groupId : groupIds) {
             String cacheKey = AssetsCacheSystem.getCacheKey(context, groupId, location);
 
             Map<String, Object> parameters = params.getParameters(asset, groupId);
-            if(isDevModeEnabled() || !AssetsCacheSystem.checkCacheKey(cacheKey)) {
+            if (isDevModeEnabled() || !AssetsCacheSystem.checkCacheKey(cacheKey)) {
                 String content = getContent(asset, location, parameters, request);
                 AssetsCacheSystem.storeCacheContent(context, groupId, location, content);
             }
@@ -86,6 +86,28 @@ public abstract class CacheableLocationWrapper implements AssetsLocationWrapper 
         }
 
         return locations;
+    }
+
+    @Override
+    public List<String> getContents(Asset asset, HttpServletRequest request) {
+        String location = asset.getLocations().get(locationKey());
+        String context = RequestUtils.getCurrentUrl(request, true);
+        context = context.replaceAll("\\?", "_").replaceAll("&", "_");
+
+        List<String> contents = new ArrayList<String>();
+        AssetParameters params = AssetsRequestContext.get(request).getParameters();
+
+        List<String> groupIds = params.getGroupIds(asset);
+        if (groupIds == null || groupIds.isEmpty()) {
+            groupIds = Arrays.asList(AssetParameters.GLOBAL_GROUP);
+        }
+
+        for (String groupId : groupIds) {
+            String cacheKey = AssetsCacheSystem.getCacheKey(context, groupId, location);
+            String fileContent = AssetsCacheSystem.getCacheContent(cacheKey);
+            contents.add(fileContent);
+        }
+        return contents;
     }
 
     protected abstract String getContent(Asset asset, String location, Map<String, Object> parameters, HttpServletRequest request);

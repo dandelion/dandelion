@@ -35,14 +35,13 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.github.dandelion.core.constants.SystemConstants;
 import com.github.dandelion.core.i18n.StandardLocaleResolver;
 
 public class DandelionConfiguratorTest {
 
 	@Before
 	public void before(){
-		System.clearProperty(SystemConstants.DANDELION_CONFLOADER_CLASS);
+		System.clearProperty(ConfigurationLoader.DANDELION_CONFLOADER_CLASS);
 	}
 	
 	@Test
@@ -52,9 +51,9 @@ public class DandelionConfiguratorTest {
 	
 	@Test
 	public void should_use_another_configution_loader_using_system_property(){
-		System.setProperty(SystemConstants.DANDELION_CONFLOADER_CLASS, "com.github.dandelion.core.config.ConfigurationFakeLoader");
+		System.setProperty(ConfigurationLoader.DANDELION_CONFLOADER_CLASS, "com.github.dandelion.core.config.ConfigurationFakeLoader");
 		assertThat(DandelionConfigurator.getConfigurationLoader()).isInstanceOf(ConfigurationFakeLoader.class);
-		System.clearProperty(SystemConstants.DANDELION_CONFLOADER_CLASS);
+		System.clearProperty(ConfigurationLoader.DANDELION_CONFLOADER_CLASS);
 	}
 	
 	@Test

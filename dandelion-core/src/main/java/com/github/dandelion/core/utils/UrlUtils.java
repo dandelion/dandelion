@@ -27,26 +27,33 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.github.dandelion.core.asset.processor;
 
-import com.github.dandelion.core.asset.Asset;
+package com.github.dandelion.core.utils;
 
-import javax.servlet.http.HttpServletRequest;
-import java.util.List;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.URL;
 
-public abstract class AssetProcessorEntry {
-    private AssetProcessorEntry nextEntry;
+/**
+ * Utilities for URL
+ */
+public class UrlUtils {
+    public static String getUrlContent(String url) {
+        try {
+            URL urlLocation = new URL(url);
+            BufferedReader in = new BufferedReader(
+                    new InputStreamReader(urlLocation.openStream()));
 
-    public void setNextEntry(AssetProcessorEntry nextEntry) {
-        this.nextEntry = nextEntry;
+            StringBuilder content = new StringBuilder();
+            String inputLine;
+            while ((inputLine = in.readLine()) != null) {
+                content.append(inputLine);
+            }
+            in.close();
+            return content.toString();
+        } catch(IOException e) {
+            return null;
+        }
     }
-
-    public List<Asset> doProcess(List<Asset> assets, HttpServletRequest request) {
-        List<Asset> _assets = process(assets, request);
-        return nextEntry==null?_assets:nextEntry.doProcess(_assets, request);
-    }
-
-    public abstract List<Asset> process(List<Asset> assets, HttpServletRequest request);
-
-    public abstract String getTreatmentKey();
 }

@@ -27,26 +27,37 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 package com.github.dandelion.core.asset.processor;
 
-import com.github.dandelion.core.asset.Asset;
+import org.mozilla.javascript.ErrorReporter;
+import org.mozilla.javascript.EvaluatorException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import javax.servlet.http.HttpServletRequest;
-import java.util.List;
+public class YuiCompressorErrorReporter implements ErrorReporter {
 
-public abstract class AssetProcessorEntry {
-    private AssetProcessorEntry nextEntry;
+    // Logger
+    private static Logger logger = LoggerFactory.getLogger(YuiCompressorErrorReporter.class);
 
-    public void setNextEntry(AssetProcessorEntry nextEntry) {
-        this.nextEntry = nextEntry;
+    public void warning(String message, String sourceName, int line, String lineSource, int lineOffset) {
+        if (line < 0) {
+            logger.warn(message);
+        } else {
+            logger.warn("{}:{}:{}", line, lineOffset, message);
+        }
     }
 
-    public List<Asset> doProcess(List<Asset> assets, HttpServletRequest request) {
-        List<Asset> _assets = process(assets, request);
-        return nextEntry==null?_assets:nextEntry.doProcess(_assets, request);
+    public void error(String message, String sourceName, int line, String lineSource, int lineOffset) {
+        if (line < 0) {
+            logger.error(message);
+        } else {
+            logger.error("{}:{}:{}", line, lineOffset, message);
+        }
     }
 
-    public abstract List<Asset> process(List<Asset> assets, HttpServletRequest request);
-
-    public abstract String getTreatmentKey();
+    public EvaluatorException runtimeError(String message, String sourceName, int line, String lineSource, int lineOffset) {
+        error(message, sourceName, line, lineSource, lineOffset);
+        return new EvaluatorException(message);
+    }
 }

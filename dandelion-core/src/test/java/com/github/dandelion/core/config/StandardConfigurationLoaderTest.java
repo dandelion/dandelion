@@ -39,8 +39,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 
-import com.github.dandelion.core.constants.SystemConstants;
-
 public class StandardConfigurationLoaderTest {
 
 	private static MockHttpServletRequest request;
@@ -55,7 +53,7 @@ public class StandardConfigurationLoaderTest {
 	@Before
 	public void before() throws Exception {
 		loader.loadDefaultConfiguration();
-		System.clearProperty(SystemConstants.DANDELION_CONFIGURATION);
+		System.clearProperty(ConfigurationLoader.DANDELION_CONFIGURATION);
 	}
 	
 	@Test
@@ -69,12 +67,11 @@ public class StandardConfigurationLoaderTest {
 	@Test
 	public void should_load_user_properties_from_system_property() throws Exception {
 		String path = new File("src/test/resources/dandelion-test/configuration-loader/").getAbsolutePath();
-		System.setProperty(SystemConstants.DANDELION_CONFIGURATION, path);
+		System.setProperty(ConfigurationLoader.DANDELION_CONFIGURATION, path);
 		
 		Properties userProperties = loader.loadUserConfiguration(request.getLocale());
 		
-		assertThat(userProperties).isNotNull();
-		assertThat(userProperties).hasSize(1);
+		assertThat(userProperties).isNotNull().hasSize(1);
 		assertThat(userProperties.getProperty("assets.locations")).isEqualTo("other,remote,local");
 	}
 }

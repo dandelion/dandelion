@@ -144,12 +144,18 @@ public class Asset {
 
     @Override
     public boolean equals(Object o) {
-        return getAssetKey().equals(o);
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Asset asset = (Asset) o;
+        return !(name != null ? !name.equals(asset.name) : asset.name != null) && type == asset.type;
     }
 
     @Override
     public int hashCode() {
-        return getAssetKey().hashCode();
+        int result = name != null ? name.hashCode() : 0;
+        result = 31 * result + (type != null ? type.hashCode() : 0);
+        return result;
     }
 
     /**

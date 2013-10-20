@@ -31,8 +31,13 @@
 package com.github.dandelion.core.asset.wrapper;
 
 import com.github.dandelion.core.asset.Asset;
+import com.github.dandelion.core.utils.UrlUtils;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
 
@@ -49,5 +54,12 @@ public class WebappLocationWrapper implements AssetsLocationWrapper {
     public List<String> wrapLocations(Asset asset, HttpServletRequest request) {
         String location = asset.getLocations().get(locationKey());
         return Arrays.asList(request.getContextPath() + location);
+    }
+
+    @Override
+    public List<String> getContents(Asset asset, HttpServletRequest request) {
+        String location = asset.getLocations().get(locationKey());
+        String content = UrlUtils.getUrlContent(location);
+        return Arrays.asList(content);
     }
 }
