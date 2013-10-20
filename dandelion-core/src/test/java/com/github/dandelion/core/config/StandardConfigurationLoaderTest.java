@@ -53,7 +53,7 @@ public class StandardConfigurationLoaderTest {
 	@Before
 	public void before() throws Exception {
 		loader.loadDefaultConfiguration();
-		System.clearProperty(ConfigurationLoader.DANDELION_CONFIGURATION);
+		System.clearProperty(StandardConfigurationLoader.DANDELION_CONFIGURATION);
 	}
 	
 	@Test
@@ -67,7 +67,7 @@ public class StandardConfigurationLoaderTest {
 	@Test
 	public void should_load_user_properties_from_system_property() throws Exception {
 		String path = new File("src/test/resources/dandelion-test/configuration-loader/").getAbsolutePath();
-		System.setProperty(ConfigurationLoader.DANDELION_CONFIGURATION, path);
+		System.setProperty(StandardConfigurationLoader.DANDELION_CONFIGURATION, path);
 		
 		Properties userProperties = loader.loadUserConfiguration(request.getLocale());
 		

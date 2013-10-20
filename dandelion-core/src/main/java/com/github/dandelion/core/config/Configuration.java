@@ -87,8 +87,10 @@ public class Configuration {
     			locale = Locale.getDefault();
 //    		}
 
-    		configuration = confLoader.loadDefaultConfiguration();
-    		configuration.putAll(confLoader.loadUserConfiguration(locale));
+            Properties properties = new Properties();
+            properties.putAll(confLoader.loadDefaultConfiguration());
+            properties.putAll(confLoader.loadUserConfiguration(locale));
+            configuration = properties;
         }
     }
 }

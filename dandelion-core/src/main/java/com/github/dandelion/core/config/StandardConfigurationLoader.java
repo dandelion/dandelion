@@ -65,8 +65,15 @@ import com.github.dandelion.core.DandelionException;
  */
 public class StandardConfigurationLoader implements ConfigurationLoader {
 
-	// Logger
+    public static final String DANDELION_DEFAULT = "dandelion-default";
+    public static final String DANDELION_PROPERTIES = "properties";
+    public static final String DANDELION_OTHER = "dandelion";
+    public static final String DANDELION_FOLDER = "dandelion";
+    // Logger
 	private static Logger LOG = LoggerFactory.getLogger(StandardConfigurationLoader.class);
+
+    public final static String DANDELION_USER_PROPERTIES = "dandelion";
+    public final static String DANDELION_CONFIGURATION = "dandelion.configuration";
 
 	/**
 	 * {@inheritDoc}
@@ -83,17 +90,34 @@ public class StandardConfigurationLoader implements ConfigurationLoader {
 
 		try {
 			Reader reader;
+            Properties properties;
 
-			Set<String> resources = ResourceScanner.getResources("dandelion", "dandelion", "properties");
+            String defaultResource = ResourceScanner.getResource(DANDELION_FOLDER, DANDELION_DEFAULT + "." + DANDELION_PROPERTIES);
+            if(defaultResource != null) {
+                propertiesStream = Thread.currentThread().getContextClassLoader().getResourceAsStream(defaultResource);
+                reader = new InputStreamReader(propertiesStream, "UTF-8");
+                properties = new Properties();
+                properties.load(reader);
+                defaultProperties.putAll(properties);
+            }
+
+			Set<String> resources = ResourceScanner.getResources(DANDELION_FOLDER, DANDELION_OTHER, DANDELION_PROPERTIES);
 			for(String resource : resources) {
+                if((DANDELION_FOLDER + File.separator
+                        + DANDELION_DEFAULT + "." + DANDELION_PROPERTIES).equals(resource)) {
+                    continue;
+                }
+
 				propertiesStream = Thread.currentThread().getContextClassLoader()
 						.getResourceAsStream(resource);
 				reader = new InputStreamReader(propertiesStream, "UTF-8");
-				defaultProperties.load(reader);
+				properties = new Properties();
+                properties.load(reader);
+                defaultProperties.putAll(properties);
 			}
 		} catch (IOException e) {
 			throw DandelionException.wrap(e, ConfigurationError.DEFAULT_CONFIGURATION_LOADING)
-					.set("default name", DANDELION_DEFAULT_PROPERTIES);
+					.set("default name", DANDELION_DEFAULT + "." + DANDELION_PROPERTIES);
 		} finally {
 			if (propertiesStream != null) {
 				try {
@@ -119,9 +143,9 @@ public class StandardConfigurationLoader implements ConfigurationLoader {
 		ResourceBundle userBundle = null;
 
 		// First check if the resource bundle is externalized
-		if (StringUtils.isNotBlank(System.getProperty(ConfigurationLoader.DANDELION_CONFIGURATION))) {
+		if (StringUtils.isNotBlank(System.getProperty(DANDELION_CONFIGURATION))) {
 
-			String path = System.getProperty(ConfigurationLoader.DANDELION_CONFIGURATION);
+			String path = System.getProperty(DANDELION_CONFIGURATION);
 
 			try {
 				URL resourceURL = new File(path).toURI().toURL();

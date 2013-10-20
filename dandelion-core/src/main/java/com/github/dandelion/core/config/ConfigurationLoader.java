@@ -48,9 +48,6 @@ import com.github.dandelion.core.DandelionException;
  */
 public interface ConfigurationLoader {
 
-	public final static String DANDELION_DEFAULT_PROPERTIES = "dandelion/dandelion.properties";
-	public final static String DANDELION_USER_PROPERTIES = "dandelion";
-    public final static String DANDELION_CONFIGURATION = "dandelion.configuration";
     public final static String DANDELION_CONFLOADER_CLASS = "dandelion.confloader.class";
 
 	/**
