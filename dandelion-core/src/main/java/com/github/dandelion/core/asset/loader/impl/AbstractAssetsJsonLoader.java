@@ -27,26 +27,58 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.github.dandelion.core.asset.loader;
+package com.github.dandelion.core.asset.loader.impl;
 
 import com.github.dandelion.core.asset.AssetsComponent;
+import com.github.dandelion.core.asset.loader.spi.AssetsLoader;
+import com.github.dandelion.core.utils.ResourceScanner;
+import org.codehaus.jackson.JsonParser;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Collections;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 /**
- * No Operations for Assets Loader
+ * Assets Loader for JSON definition
  */
-public class AssetsNopLoader implements AssetsLoader {
-    // Logger
-    private static final Logger LOG = LoggerFactory.getLogger(AssetsNopLoader.class);
+public abstract class AbstractAssetsJsonLoader implements AssetsLoader {
+	private ObjectMapper mapper = new ObjectMapper();
 
 	/**
-	 * No Operations
+	 * Load assets from '${folder}/*.json' files by Classpath Scanning.
 	 */
 	public List<AssetsComponent> loadAssets() {
-        return Collections.emptyList();
+		mapper.configure(JsonParser.Feature.ALLOW_COMMENTS, true);
+        List<AssetsComponent> assetsComponentList = new ArrayList<AssetsComponent>();
+		try {
+            Set<String> resources = ResourceScanner.getResources(getFolder(), null, ".json");
+            ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+			for (String resource : resources) {
+                getLogger().debug("resources {}", resource);
+				InputStream configFileStream = classLoader.getResourceAsStream(resource);
+
+				AssetsComponent assetsComponent = mapper.readValue(configFileStream, AssetsComponent.class);
+
+                getLogger().debug("found {}", assetsComponent);
+                assetsComponentList.add(assetsComponent);
+			}
+		} catch (IOException e) {
+            getLogger().error(e.getMessage(), e);
+		}
+        return assetsComponentList;
 	}
+
+    protected abstract Logger getLogger();
+
+    public abstract String getFolder();
+
+    @Override
+    public String getType() {
+        return "json";
+    }
 }

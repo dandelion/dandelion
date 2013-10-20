@@ -32,7 +32,7 @@ package com.github.dandelion.fakedomain;
 import com.github.dandelion.core.asset.Asset;
 import com.github.dandelion.core.asset.AssetType;
 import com.github.dandelion.core.asset.AssetsComponent;
-import com.github.dandelion.core.asset.loader.AssetsLoader;
+import com.github.dandelion.core.asset.loader.spi.AssetsLoader;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -58,5 +58,10 @@ public class AssetsFakeLoader implements AssetsLoader {
                 new Asset("name2", "version2", AssetType.js, locations2)
             ))
         );
+    }
+
+    @Override
+    public String getType() {
+        return "fake";
     }
 }

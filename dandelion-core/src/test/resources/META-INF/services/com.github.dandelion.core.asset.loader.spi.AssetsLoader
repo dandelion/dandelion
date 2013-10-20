@@ -1,0 +1,2 @@
+com.github.dandelion.core.asset.loader.impl.DandelionAssetsJsonLoader
+com.github.dandelion.module.ModuleAssetsJsonLoader

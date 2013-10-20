@@ -30,11 +30,20 @@
 
 package com.github.dandelion.module;
 
-import com.github.dandelion.core.asset.loader.AssetsJsonLoader;
+import com.github.dandelion.core.asset.loader.impl.AbstractAssetsJsonLoader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-public class ModuleAssetsJsonLoader extends AssetsJsonLoader {
+public class ModuleAssetsJsonLoader extends AbstractAssetsJsonLoader {
+    // Logger
+    private static final Logger LOG = LoggerFactory.getLogger(ModuleAssetsJsonLoader.class);
+
     @Override
-    protected String getFolder() {
+    protected Logger getLogger() {
+        return LOG;
+    }
+    @Override
+    public String getFolder() {
         return "dandelion/module";
     }
 }

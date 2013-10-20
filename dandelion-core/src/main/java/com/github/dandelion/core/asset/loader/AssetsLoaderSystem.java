@@ -29,52 +29,49 @@
  */
 package com.github.dandelion.core.asset.loader;
 
-import com.github.dandelion.core.asset.AssetsComponent;
-import com.github.dandelion.core.utils.ResourceScanner;
-import org.codehaus.jackson.JsonParser;
-import org.codehaus.jackson.map.ObjectMapper;
+import com.github.dandelion.core.asset.Asset;
+import com.github.dandelion.core.asset.loader.spi.AssetsLoader;
+import com.github.dandelion.core.asset.processor.impl.AssetLocationProcessorEntry;
+import com.github.dandelion.core.asset.processor.spi.AssetProcessorEntry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
-import java.io.InputStream;
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-import java.util.Set;
+import java.util.ServiceLoader;
 
-/**
- * Assets Loader for JSON definition
- */
-public class AssetsJsonLoader implements AssetsLoader {
+public final class AssetsLoaderSystem {
     // Logger
-    private static final Logger LOG = LoggerFactory.getLogger(AssetsJsonLoader.class);
-	private ObjectMapper mapper = new ObjectMapper();
+    private static final Logger LOG = LoggerFactory.getLogger(AssetsLoaderSystem.class);
 
-	/**
-	 * Load assets from 'dandelion/*.json' files by Classpath Scanning.
-	 */
-	public List<AssetsComponent> loadAssets() {
-		mapper.configure(JsonParser.Feature.ALLOW_COMMENTS, true);
-        List<AssetsComponent> assetsComponentList = new ArrayList<AssetsComponent>();
-		try {
-            Set<String> resources = ResourceScanner.getResources(getFolder(), null, ".json");
-            ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-			for (String resource : resources) {
-                LOG.debug("resources {}", resource);
-				InputStream configFileStream = classLoader.getResourceAsStream(resource);
+    private static ServiceLoader<AssetsLoader> serviceLoader = ServiceLoader.load(AssetsLoader.class);
+    private static List<AssetsLoader> loaders;
 
-				AssetsComponent assetsComponent = mapper.readValue(configFileStream, AssetsComponent.class);
+    private AssetsLoaderSystem() {
+    }
 
-				LOG.debug("found {}", assetsComponent);
-                assetsComponentList.add(assetsComponent);
-			}
-		} catch (IOException e) {
-            LOG.error(e.getMessage(), e);
-		}
-        return assetsComponentList;
-	}
+    private static void initialize() {
+        if(loaders == null) {
+            initializeIfNeeded();
+        }
+    }
 
-    protected String getFolder() {
-        return "dandelion";
+    synchronized private static void initializeIfNeeded() {
+        if(loaders != null) return;
+
+        List<AssetsLoader> als = new ArrayList<AssetsLoader>();
+        for (AssetsLoader al : serviceLoader) {
+            als.add(al);
+            LOG.info("found AssetLoader for {} named {}", al.getType(), al.getClass().getSimpleName());
+        }
+
+        loaders = als;
+    }
+
+    public static List<AssetsLoader> getLoaders() {
+        initialize();
+        return loaders;
     }
 }

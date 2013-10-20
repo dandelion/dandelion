@@ -27,7 +27,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.github.dandelion.core.asset.loader;
+package com.github.dandelion.core.asset.loader.spi;
 
 import com.github.dandelion.core.asset.AssetsComponent;
 
@@ -38,4 +38,5 @@ import java.util.List;
  */
 public interface AssetsLoader {
     List<AssetsComponent> loadAssets();
+    String getType();
 }

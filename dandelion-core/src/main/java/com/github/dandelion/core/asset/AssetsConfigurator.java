@@ -30,8 +30,9 @@
 package com.github.dandelion.core.asset;
 
 import com.github.dandelion.core.DandelionException;
-import com.github.dandelion.core.asset.loader.AssetsJsonLoader;
-import com.github.dandelion.core.asset.loader.AssetsLoader;
+import com.github.dandelion.core.asset.loader.AssetsLoaderSystem;
+import com.github.dandelion.core.asset.loader.impl.AbstractAssetsJsonLoader;
+import com.github.dandelion.core.asset.loader.spi.AssetsLoader;
 import com.github.dandelion.core.asset.wrapper.AssetsLocationWrapperSystem;
 import com.github.dandelion.core.asset.wrapper.spi.AssetsLocationWrapper;
 import com.github.dandelion.core.config.Configuration;
@@ -51,7 +52,7 @@ import static com.github.dandelion.core.asset.AssetsStorage.*;
  *          <ul>
  *               <li>the {@link AssetsLoader}
  * found in 'dandelion/dandelion.properties' for the key 'assetsLoader'</li>
- *               <li>or {@link com.github.dandelion.core.asset.loader.AssetsJsonLoader} by default</li>
+ *               <li>or {@link com.github.dandelion.core.asset.loader.impl.AbstractAssetsJsonLoader} by default</li>
  *          </ul>
  *     </li>
  *     <li>assets.locations : type of access to assets content(remote [by default], local)</li>
@@ -82,86 +83,22 @@ public class AssetsConfigurator {
      * Initialization of Assets Configurator on application load
      */
     void initialize() {
-        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         Properties configuration = Configuration.getProperties();
 
         assetsLocations = setPropertyAsList(configuration.getProperty("assets.locations"), ",");
         excludedScopes = setPropertyAsList(configuration.getProperty("assets.excluded.scopes"), ",");
         excludedAssets = setPropertyAsList(configuration.getProperty("assets.excluded.assets"), ",");
-        assetsLoaders = extractAssetsLoaders(classLoader, configuration);
-        assetsLocationWrappers = extractAssetsLocationWrappers();
+
+        assetsLoaders = AssetsLoaderSystem.getLoaders();
+        assetsLocationWrappers = AssetsLocationWrapperSystem.getWrappersWithKey();
 
         processAssetsLoading(true);
-    }
-
-    /**
-     * @param classLoader class loader
-     * @param properties configuration properties
-     * @return instances of assets loader
-     */
-    private List<AssetsLoader> extractAssetsLoaders(ClassLoader classLoader, Properties properties) {
-        List<String> assetsLoaders = new ArrayList<String>();
-        assetsLoaders.addAll(PropertiesUtils.propertyBeginWith("assets.loader.for.", properties));
-        assetsLoaders.addAll(notNull(setPropertyAsList(properties.getProperty("assets.loaders"), ",")));
-        List<AssetsLoader> loaders = new ArrayList<AssetsLoader>();
-        for(String loader:assetsLoaders) {
-            AssetsLoader _loader = getAssetsLoader(classLoader, loader);
-            if(_loader != null) {
-                loaders.add(_loader);
-            }
-        }
-        return loaders.isEmpty()?null:loaders;
-    }
-
-    private List<String> notNull(List<String> values) {
-        return values!=null?values:new ArrayList<String>();
-    }
-
-    /**
-     * @param classLoader class loader
-     * @param assetsLoader assets loader class name
-     * @return instance of assets loader
-     */
-    private AssetsLoader getAssetsLoader(ClassLoader classLoader, String assetsLoader) {
-        if(assetsLoader != null) {
-            try {
-                Class<AssetsLoader> cal = (Class<AssetsLoader>) classLoader.loadClass(assetsLoader);
-                return cal.newInstance();
-            } catch (ClassCastException e) {
-                LOG.warn("the 'assetsLoader[{}]' must implements '{}'",
-                        assetsLoader, AssetsLoader.class.getCanonicalName());
-            } catch (InstantiationException e) {
-                LOG.warn("the 'assetsLoader[{}]' should authorize instantiation", assetsLoader);
-            } catch (IllegalAccessException e) {
-                LOG.warn("the 'assetsLoader[{}]' should authorize access from '{}'",
-                        assetsLoader, AssetsConfigurator.class.getCanonicalName());
-            } catch (ClassNotFoundException e) {
-                LOG.warn("the 'assetsLoader[{}]' must exists in the classpath", assetsLoader);
-            }
-        }
-        return null;
-    }
-
-    /**
-     * Load all wrappers found
-     * @return all wrappers accessible by locationKey
-     */
-    private Map<String, AssetsLocationWrapper> extractAssetsLocationWrappers() {
-        Map<String, AssetsLocationWrapper> wrappers = new HashMap<String, AssetsLocationWrapper>();
-        for(AssetsLocationWrapper wrapper: AssetsLocationWrapperSystem.getWrappers()) {
-            wrappers.put(wrapper.locationKey(), wrapper);
-        }
-        return wrappers;
     }
 
     /**
      * Set the default configuration when it's needed
      */
     void setDefaultsIfNeeded() {
-        if(assetsLoaders == null) {
-            assetsLoaders = new ArrayList<AssetsLoader>();
-            assetsLoaders.add(new AssetsJsonLoader());
-        }
         if(assetsLocations == null) {
             assetsLocations = setPropertyAsList("cdn,classpath", ",");
         }
@@ -170,9 +107,6 @@ public class AssetsConfigurator {
         }
         if(excludedAssets == null) {
             excludedAssets = new ArrayList<String>();
-        }
-        if(assetsLocationWrappers == null) {
-            assetsLocationWrappers = new HashMap<String, AssetsLocationWrapper>();
         }
     }
 
