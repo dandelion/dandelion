@@ -28,12 +28,13 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package com.github.dandelion.core.asset.processor;
+package com.github.dandelion.core.asset.processor.impl;
 
 import com.github.dandelion.core.DandelionException;
 import com.github.dandelion.core.asset.Asset;
 import com.github.dandelion.core.asset.AssetStack;
 import com.github.dandelion.core.asset.cache.AssetsCacheSystem;
+import com.github.dandelion.core.asset.processor.spi.AssetProcessorEntry;
 import com.github.dandelion.core.asset.wrapper.AssetsLocationWrapper;
 import com.github.dandelion.core.config.Configuration;
 import com.github.dandelion.core.DevMode;
@@ -94,6 +95,11 @@ public class AssetCompressionProcessorEntry extends AssetProcessorEntry {
     @Override
     public String getTreatmentKey() {
         return "compression";
+    }
+
+    @Override
+    public int getRank() {
+        return 2000;
     }
 
     @Override

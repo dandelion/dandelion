@@ -27,12 +27,14 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.github.dandelion.core.asset.processor;
+package com.github.dandelion.core.asset.processor.impl;
 
 import com.github.dandelion.core.asset.Asset;
 import com.github.dandelion.core.asset.AssetStack;
+import com.github.dandelion.core.asset.processor.spi.AssetProcessorEntry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
@@ -45,6 +47,11 @@ public class AssetLocationProcessorEntry extends AssetProcessorEntry {
     @Override
     public String getTreatmentKey() {
         return "location";
+    }
+
+    @Override
+    public int getRank() {
+        throw new NotImplementedException();
     }
 
     @Override

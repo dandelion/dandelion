@@ -27,27 +27,33 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.github.dandelion.core.asset.processor;
+package com.github.dandelion.core.asset.processor.spi;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.github.dandelion.core.asset.Asset;
 
-public class AssetProcessorUtils {
-    // Logger
-    private static final Logger LOG = LoggerFactory.getLogger(AssetProcessorUtils.class);
+import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
-    public static AssetProcessorEntry getAssetsProcessorStarterEntry() {
-        AssetProcessorEntry location = new AssetLocationProcessorEntry();
-        LOG.info("Dandelion AssetsProcessor Entry '1' treat ", location.getTreatmentKey());
+public abstract class AssetProcessorEntry implements Comparable<AssetProcessorEntry> {
+    private AssetProcessorEntry nextEntry;
 
-        AssetProcessorEntry aggregation = new AssetAggregationProcessorEntry();
-        location.setNextEntry(aggregation);
-        LOG.info("Dandelion AssetsProcessor Entry '2' treat ", aggregation.getTreatmentKey());
+    public abstract int getRank();
 
-        AssetProcessorEntry compression = new AssetCompressionProcessorEntry();
-        aggregation.setNextEntry(compression);
-        LOG.info("Dandelion AssetsProcessor Entry '3' treat ", compression.getTreatmentKey());
+    public void setNextEntry(AssetProcessorEntry nextEntry) {
+        this.nextEntry = nextEntry;
+    }
 
-        return location;
+    public List<Asset> doProcess(List<Asset> assets, HttpServletRequest request) {
+        List<Asset> _assets = process(assets, request);
+        return nextEntry==null?_assets:nextEntry.doProcess(_assets, request);
+    }
+
+    public abstract List<Asset> process(List<Asset> assets, HttpServletRequest request);
+
+    public abstract String getTreatmentKey();
+
+    @Override
+    public int compareTo(AssetProcessorEntry entry) {
+        return getRank() - entry.getRank();
     }
 }

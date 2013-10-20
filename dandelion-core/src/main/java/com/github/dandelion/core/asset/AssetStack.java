@@ -29,6 +29,7 @@
  */
 package com.github.dandelion.core.asset;
 
+import com.github.dandelion.core.asset.processor.AssetProcessor;
 import com.github.dandelion.core.asset.wrapper.AssetsLocationWrapper;
 
 import javax.servlet.http.HttpServletRequest;
@@ -39,7 +40,6 @@ import static com.github.dandelion.core.DevMode.devModeOverride;
 public class AssetStack {
     static AssetsConfigurator assetsConfigurator;
     static AssetsStorage assetsStorage;
-    static AssetProcessor assetProcessor;
 
     /**
      * Initialize Assets only if needed
@@ -50,9 +50,6 @@ public class AssetStack {
                 initializeStorageIfNeeded();
             }
             initializeConfiguratorIfNeeded();
-        }
-        if(devModeOverride(assetProcessor == null)) {
-            initializePreparedProcessorIfNeeded();
         }
     }
 
@@ -72,15 +69,6 @@ public class AssetStack {
     synchronized private static void initializeStorageIfNeeded() {
         if(devModeOverride(assetsStorage == null)) {
             assetsStorage = new AssetsStorage();
-        }
-    }
-
-    /**
-     * Initialize Prepared Assets Processor only if needed
-     */
-    synchronized private static void initializePreparedProcessorIfNeeded() {
-        if(devModeOverride(assetProcessor == null)) {
-            assetProcessor = new AssetProcessor();
         }
     }
 
@@ -127,7 +115,7 @@ public class AssetStack {
      */
     public static List<Asset> processAssets(List<Asset> assets, HttpServletRequest request) {
         initializeIfNeeded();
-        return assetProcessor.process(assets, request);
+        return AssetProcessor.process(assets, request);
     }
 
     /**
