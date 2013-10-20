@@ -30,7 +30,9 @@
 
 package com.github.dandelion.core.asset.cache;
 
+import com.github.dandelion.core.asset.AssetType;
 import com.github.dandelion.core.config.Configuration;
+import com.github.dandelion.core.utils.Sha1Utils;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -57,12 +59,12 @@ public class AssetsCacheSystem {
         }
     }
 
-    public static String getCacheKey(String context, String id, String resource) {
-        return context + "|" + id + "|" + resource;
+    public static String generateCacheKey(String context, String id, String resource, AssetType type) {
+        return Sha1Utils.generateSha1(context + "|" + id + "|" + resource, true) + "." + type.name();
     }
 
     public static String getCacheKeyFromRequest(HttpServletRequest request) {
-        return getCacheKey(request.getParameter("c"), request.getParameter("id"), request.getParameter("r"));
+        return request.getRequestURL().substring(request.getRequestURL().lastIndexOf("/") + 1);
     }
 
     public static boolean checkCacheKey(String cacheKey) {
@@ -75,8 +77,8 @@ public class AssetsCacheSystem {
         return assetsCache.getCacheContent(cacheKey);
     }
 
-    public static void storeCacheContent(String context, String groupId, String location, String content) {
+    public static void storeCacheContent(String context, String groupId, String location, AssetType type, String content) {
         initializeAssetsCache();
-        assetsCache.storeCacheContent(getCacheKey(context, groupId, location), content);
+        assetsCache.storeCacheContent(generateCacheKey(context, groupId, location, type), content);
     }
 }

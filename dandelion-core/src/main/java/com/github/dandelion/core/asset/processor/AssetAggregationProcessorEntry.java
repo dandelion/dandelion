@@ -38,14 +38,15 @@ import com.github.dandelion.core.asset.wrapper.AssetsLocationWrapper;
 import com.github.dandelion.core.config.Configuration;
 import com.github.dandelion.core.utils.DandelionUtils;
 import com.github.dandelion.core.utils.RequestUtils;
+import com.github.dandelion.core.utils.Sha1Utils;
 import com.github.dandelion.core.utils.UrlUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.*;
+
+import static com.github.dandelion.core.asset.web.AssetsServlet.DANDELION_ASSETS_URL;
 
 public class AssetAggregationProcessorEntry extends AssetProcessorEntry {
     // Logger
@@ -92,26 +93,25 @@ public class AssetAggregationProcessorEntry extends AssetProcessorEntry {
                 continue;
             }
 
-            String generatedAssetKey = generateAssetKey(typedAssets, type);
-            String key = AssetsCacheSystem.getCacheKey(context, AGGREGATION, generatedAssetKey);
+            String aggregationKey = generateAggregationKey(typedAssets);
+            String cacheKey = AssetsCacheSystem.generateCacheKey(context, AGGREGATION, aggregationKey, type);
 
-            if (!AssetsCacheSystem.checkCacheKey(key)) {
+            if (!AssetsCacheSystem.checkCacheKey(cacheKey)) {
                 LOG.debug("cache assets aggregation for type {}", type.name());
-                cacheAggregatedContent(request, context, typedAssets, generatedAssetKey);
+                cacheAggregatedContent(request, context, type, typedAssets, aggregationKey);
             }
 
-            String accessLocation = baseUrl + AssetsServlet.DANDELION_ASSETS_URL + generatedAssetKey
-                    + "?c=" + context + "&id=" + AGGREGATION + "&r=" + generatedAssetKey;
+            String accessLocation = baseUrl + DANDELION_ASSETS_URL + cacheKey;
 
             Map<String, String> locations = new HashMap<String, String>();
             locations.put(AGGREGATION, accessLocation);
 
-            aggregatedAssets.add(new Asset(generatedAssetKey, AGGREGATION, type, locations));
+            aggregatedAssets.add(new Asset(aggregationKey, AGGREGATION, type, locations));
         }
         return aggregatedAssets;
     }
 
-    private void cacheAggregatedContent(HttpServletRequest request, String context, List<Asset> typedAssets, String generatedAssetKey) {
+    private void cacheAggregatedContent(HttpServletRequest request, String context, AssetType type, List<Asset> typedAssets, String generatedAssetKey) {
         Map<String, AssetsLocationWrapper> wrappers = AssetStack.getAssetsLocationWrappers();
         StringBuilder aggregatedContent = new StringBuilder();
 
@@ -130,32 +130,15 @@ public class AssetAggregationProcessorEntry extends AssetProcessorEntry {
             }
         }
 
-        AssetsCacheSystem.storeCacheContent(context, AGGREGATION, generatedAssetKey, aggregatedContent.toString());
+        AssetsCacheSystem.storeCacheContent(context, AGGREGATION, generatedAssetKey, type, aggregatedContent.toString());
     }
 
-    private String generateAssetKey(List<Asset> assets, AssetType type) {
+    private String generateAggregationKey(List<Asset> assets) {
         StringBuilder key = new StringBuilder();
 
         for (Asset asset : assets) {
             key.append(asset.getAssetKey()).append("|");
         }
-
-        try {
-            return sha1(key.toString()) + "." + type.name();
-        } catch (NoSuchAlgorithmException e) {
-            return null;
-        }
-    }
-
-
-    private String sha1(String input) throws NoSuchAlgorithmException {
-        MessageDigest mDigest = MessageDigest.getInstance("SHA1");
-        byte[] result = mDigest.digest(input.getBytes());
-        StringBuilder sb = new StringBuilder();
-        for (byte aResult : result) {
-            sb.append(Integer.toString((aResult & 0xff) + 0x100, 16).substring(1));
-        }
-
-        return sb.toString();
+        return key.toString();
     }
 }

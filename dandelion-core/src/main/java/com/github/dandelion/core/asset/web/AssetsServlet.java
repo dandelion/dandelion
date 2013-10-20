@@ -60,8 +60,7 @@ public abstract class AssetsServlet extends HttpServlet {
         	throw new ServletException("The Dandelion assets should have been generated!");
         }
 
-        String resource = request.getParameter("r");
-        AssetType resourceType = AssetType.typeOfAsset(resource);
+        AssetType resourceType = AssetType.typeOfAsset(cacheKey);
         if (resourceType == null) {
         	return;
         }

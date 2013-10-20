@@ -53,6 +53,8 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.util.*;
 
+import static com.github.dandelion.core.asset.web.AssetsServlet.DANDELION_ASSETS_URL;
+
 public class AssetCompressionProcessorEntry extends AssetProcessorEntry {
     // Logger
     private static final Logger LOG = LoggerFactory.getLogger(AssetAggregationProcessorEntry.class);
@@ -62,6 +64,7 @@ public class AssetCompressionProcessorEntry extends AssetProcessorEntry {
     public static final String COMPRESSION_JS_MUNGE = "dandelion.compression.js.munge";
     public static final String COMPRESSION_JS_PRESERVE_SEMICOLONS = "dandelion.compression.js.preserveSemiColons";
     public static final String COMPRESSION_JS_DISABLE_OPTIMIZATIONS = "dandelion.compression.js.disableOptimizations";
+
     private boolean compressionEnabled = true;
     private boolean jsMunge = true;
     private boolean jsPreserveSemiColons = true;
@@ -106,15 +109,14 @@ public class AssetCompressionProcessorEntry extends AssetProcessorEntry {
         String baseUrl = RequestUtils.getBaseUrl(request);
         List<Asset> compressedAssets = new ArrayList<Asset>();
         for(Asset asset:assets) {
-            String cacheKey = AssetsCacheSystem.getCacheKey(context, COMPRESSION, asset.getAssetKey());
+            String cacheKey = AssetsCacheSystem.generateCacheKey(context, COMPRESSION, asset.getAssetKey(), asset.getType());
 
             if (!AssetsCacheSystem.checkCacheKey(cacheKey)) {
                 LOG.debug("cache assets compression for asset {}", asset.getAssetKey());
                 cacheCompressedContent(request, context, asset, cacheKey);
             }
 
-            String accessLocation = baseUrl + AssetsServlet.DANDELION_ASSETS_URL + asset.getAssetKey()
-                    + "?c=" + context + "&id=" + COMPRESSION + "&r=" + asset.getAssetKey();
+            String accessLocation = baseUrl + DANDELION_ASSETS_URL + cacheKey;
 
             Map<String, String> locations = new HashMap<String, String>();
             locations.put(COMPRESSION, accessLocation);
@@ -126,7 +128,7 @@ public class AssetCompressionProcessorEntry extends AssetProcessorEntry {
 
     private void cacheCompressedContent(HttpServletRequest request, String context, Asset asset, String cacheKey) {
         String content = compress(asset, request);
-        AssetsCacheSystem.storeCacheContent(context, COMPRESSION, cacheKey, content);
+        AssetsCacheSystem.storeCacheContent(context, COMPRESSION, asset.getAssetKey(), asset.getType(), content);
     }
 
     private String compress(Asset asset, HttpServletRequest request) {

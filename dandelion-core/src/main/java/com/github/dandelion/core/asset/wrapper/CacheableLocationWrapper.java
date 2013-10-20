@@ -43,6 +43,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import static com.github.dandelion.core.asset.web.AssetsServlet.DANDELION_ASSETS_URL;
 import static com.github.dandelion.core.utils.DandelionUtils.isDevModeEnabled;
 
 /**
@@ -69,21 +70,16 @@ public abstract class CacheableLocationWrapper implements AssetsLocationWrapper 
         }
 
         for (String groupId : groupIds) {
-            String cacheKey = AssetsCacheSystem.getCacheKey(context, groupId, location);
+            String cacheKey = AssetsCacheSystem.generateCacheKey(context, groupId, location, asset.getType());
 
             Map<String, Object> parameters = params.getParameters(asset, groupId);
             if (isDevModeEnabled() || !AssetsCacheSystem.checkCacheKey(cacheKey)) {
                 String content = getContent(asset, location, parameters, request);
-                AssetsCacheSystem.storeCacheContent(context, groupId, location, content);
+                AssetsCacheSystem.storeCacheContent(context, groupId, location, asset.getType(), content);
             }
 
             String baseUrl = RequestUtils.getBaseUrl(request);
-            String accessLocation = new StringBuilder(baseUrl)
-                    .append(AssetsServlet.DANDELION_ASSETS_URL)
-                    .append(asset.getAssetKey())
-                    .append("?c=").append(context)
-                    .append("&id=").append(groupId)
-                    .append("&r=").append(location).toString();
+            String accessLocation = baseUrl + DANDELION_ASSETS_URL + cacheKey;
 
             locations.add(accessLocation);
         }
@@ -109,7 +105,7 @@ public abstract class CacheableLocationWrapper implements AssetsLocationWrapper 
         }
 
         for (String groupId : groupIds) {
-            String cacheKey = AssetsCacheSystem.getCacheKey(context, groupId, location);
+            String cacheKey = AssetsCacheSystem.generateCacheKey(context, groupId, location, asset.getType());
             String fileContent = AssetsCacheSystem.getCacheContent(cacheKey);
             contents.add(fileContent);
         }
