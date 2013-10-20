@@ -4,9 +4,7 @@ import com.github.dandelion.core.asset.wrapper.spi.AssetsLocationWrapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.ServiceLoader;
+import java.util.*;
 
 public class AssetsLocationWrapperSystem {
     // Logger
@@ -41,4 +39,11 @@ public class AssetsLocationWrapperSystem {
         return wrappers;
     }
 
+    public static Map<String, AssetsLocationWrapper> getWrappersWithKey() {
+        Map<String, AssetsLocationWrapper> wrappers = new HashMap<String, AssetsLocationWrapper>();
+        for(AssetsLocationWrapper wrapper: getWrappers()) {
+            wrappers.put(wrapper.locationKey(), wrapper);
+        }
+        return wrappers;
+    }
 }
