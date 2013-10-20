@@ -29,7 +29,7 @@
  */
 package com.github.dandelion.core.asset;
 
-import com.github.dandelion.core.asset.processor.AssetProcessor;
+import com.github.dandelion.core.asset.processor.AssetProcessorSystem;
 import com.github.dandelion.core.asset.wrapper.spi.AssetsLocationWrapper;
 
 import javax.servlet.http.HttpServletRequest;
@@ -115,7 +115,7 @@ public class AssetStack {
      */
     public static List<Asset> processAssets(List<Asset> assets, HttpServletRequest request) {
         initializeIfNeeded();
-        return AssetProcessor.process(assets, request);
+        return AssetProcessorSystem.process(assets, request);
     }
 
     /**

@@ -41,24 +41,24 @@ import java.util.Collections;
 import java.util.List;
 import java.util.ServiceLoader;
 
-public final class AssetProcessor {
+public final class AssetProcessorSystem {
     // Logger
-    private static final Logger LOG = LoggerFactory.getLogger(AssetProcessor.class);
+    private static final Logger LOG = LoggerFactory.getLogger(AssetProcessorSystem.class);
 
     private static ServiceLoader<AssetProcessorEntry> loader = ServiceLoader.load(AssetProcessorEntry.class);
     private static List<AssetProcessorEntry> entries = new ArrayList<AssetProcessorEntry>();
     private static AssetProcessorEntry starter;
 
-    private AssetProcessor() {
+    private AssetProcessorSystem() {
     }
 
-    private static void initializeAssetsCache() {
+    private static void initialize() {
         if(starter == null) {
-            initializeAssetsCacheIfNeeded();
+            initializeIfNeeded();
         }
     }
 
-    synchronized private static void initializeAssetsCacheIfNeeded() {
+    synchronized private static void initializeIfNeeded() {
         if(starter != null) return;
 
         for (AssetProcessorEntry ape : loader) {
@@ -81,7 +81,7 @@ public final class AssetProcessor {
     }
 
     public static AssetProcessorEntry getStarter() {
-        initializeAssetsCache();
+        initialize();
         return starter;
     }
 
