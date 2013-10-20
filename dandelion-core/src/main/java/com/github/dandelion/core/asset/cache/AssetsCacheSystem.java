@@ -98,6 +98,7 @@ public class AssetsCacheSystem {
     }
 
     public static String getAssetsCacheName() {
+        initializeAssetsCache();
         return assetsCache.getAssetsCacheName();
     }
 }
