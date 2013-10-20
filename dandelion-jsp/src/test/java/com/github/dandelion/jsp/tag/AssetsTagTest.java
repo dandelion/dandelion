@@ -30,31 +30,53 @@
 
 package com.github.dandelion.jsp.tag;
 
+import java.io.File;
+
+import com.github.dandelion.core.config.ConfigurationLoader;
 import com.github.dandelion.jsp.PhantomJsTest;
+
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import static org.fest.assertions.Assertions.assertThat;
 
 public class AssetsTagTest extends PhantomJsTest {
-    @Test
-    public void assets_renderer() {
-        goTo("/assets_renderer.jsp");
-        assertThat(text("script")).hasSize(4);
-    }
-    @Test
-    public void assets_scopes() {
-        goTo("/assets_scopes.jsp");
-        assertThat(text("link")).hasSize(1);
-        assertThat(text("script")).hasSize(2);
-    }
-    @Test
-    public void assets_excludedScopes() {
-        goTo("/assets_excludedScopes.jsp");
-        assertThat(text("script")).hasSize(0);
-    }
-    @Test
-    public void assets_excludedAssets() {
-        goTo("/assets_excludedAssets.jsp");
-        assertThat(text("script")).hasSize(1);
-    }
+
+	@BeforeClass
+	public static void setup() {
+		String propertiesPath = new File("src/test/resources/dandelion/").getAbsolutePath();
+		System.setProperty(ConfigurationLoader.DANDELION_CONFIGURATION, propertiesPath);
+	}
+
+	@Test
+	public void assets_renderer() {
+		goTo("/assets_renderer.jsp");
+		System.out.println(driver.getPageSource());
+		assertThat(text("script")).hasSize(4);
+	}
+
+	@Test
+	public void assets_scopes() {
+		goTo("/assets_scopes.jsp");
+		assertThat(text("link")).hasSize(1);
+		assertThat(text("script")).hasSize(2);
+	}
+
+	@Test
+	public void assets_excludedScopes() {
+		goTo("/assets_excludedScopes.jsp");
+		assertThat(text("script")).hasSize(0);
+	}
+
+	@Test
+	public void assets_excludedAssets() {
+		goTo("/assets_excludedAssets.jsp");
+		assertThat(text("script")).hasSize(1);
+	}
+	
+	@AfterClass
+	public static void tearDown(){
+		System.clearProperty(ConfigurationLoader.DANDELION_CONFIGURATION);
+	}
 }

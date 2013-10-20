@@ -55,7 +55,7 @@ import java.io.File;
 public abstract class PhantomJsTest extends FluentAdapter {
     private static final Dimension DEFAULT_WINDOW_SIZE = new Dimension(1024, 768);
 
-    private static WebDriver driver;
+    protected static WebDriver driver;
     private static Server webServer;
 
     @BeforeClass
