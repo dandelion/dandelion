@@ -52,7 +52,6 @@ public class AssetsTagTest extends PhantomJsTest {
 	@Test
 	public void assets_renderer() {
 		goTo("/assets_renderer.jsp");
-		System.out.println(driver.getPageSource());
 		assertThat(text("script")).hasSize(4);
 	}
 
