@@ -30,11 +30,15 @@
 package com.github.dandelion.core.utils;
 
 import com.github.dandelion.core.DandelionException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.net.URL;
 
 public final class ResourceUtils {
+    // Logger
+    private static final Logger LOG = LoggerFactory.getLogger(ResourceUtils.class);
 
     private static final int DEFAULT_BUFFER_SIZE = 1024 * 4;
 
@@ -47,9 +51,13 @@ public final class ResourceUtils {
             InputStream in = getFileFromClasspath(pathToFile);
             return getContentFromInputStream(in);
         } catch (IOException e) {
-            if(neverFail) return null;
-            throw DandelionException.wrap(e, ResourceError.CONTENT_CANT_BE_READ_FROM_INPUTSTREAM)
+            DandelionException de = DandelionException.wrap(e, ResourceError.CONTENT_CANT_BE_READ_FROM_INPUTSTREAM)
                     .set("path", pathToFile);
+            if(neverFail) {
+                LOG.debug(de.getLocalizedMessage(), de);
+                return pathToFile;
+            }
+            throw de;
         }
     }
 
@@ -71,9 +79,13 @@ public final class ResourceUtils {
             URL urlLocation = new URL(url);
             return ResourceUtils.getContentFromInputStream(urlLocation.openStream());
         } catch(IOException e) {
-            if(neverFail) return null;
-            throw DandelionException.wrap(e, ResourceError.CONTENT_CANT_BE_READ_FROM_URL)
+            DandelionException de = DandelionException.wrap(e, ResourceError.CONTENT_CANT_BE_READ_FROM_URL)
                     .set("url", url);
+            if(neverFail) {
+                LOG.debug(de.getLocalizedMessage(), de);
+                return url;
+            }
+            throw de;
         }
     }
 }
