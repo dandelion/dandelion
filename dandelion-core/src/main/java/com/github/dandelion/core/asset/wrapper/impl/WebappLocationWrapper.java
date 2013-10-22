@@ -32,6 +32,7 @@ package com.github.dandelion.core.asset.wrapper.impl;
 
 import com.github.dandelion.core.asset.Asset;
 import com.github.dandelion.core.asset.wrapper.spi.AssetsLocationWrapper;
+import com.github.dandelion.core.utils.RequestUtils;
 import com.github.dandelion.core.utils.ResourceUtils;
 
 import javax.servlet.http.HttpServletRequest;
@@ -66,7 +67,7 @@ public class WebappLocationWrapper implements AssetsLocationWrapper {
     @Override
     public List<String> getContents(Asset asset, HttpServletRequest request) {
         String location = asset.getLocations().get(locationKey());
-        String content = ResourceUtils.getContentFromUrl(location, true);
+        String content = ResourceUtils.getContentFromUrl(RequestUtils.getBaseUrl(request) + "/" + location, true);
         return Arrays.asList(content);
     }
 }
