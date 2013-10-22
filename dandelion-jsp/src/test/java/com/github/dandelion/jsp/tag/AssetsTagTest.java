@@ -32,7 +32,7 @@ package com.github.dandelion.jsp.tag;
 
 import java.io.File;
 
-import com.github.dandelion.core.config.ConfigurationLoader;
+import com.github.dandelion.core.config.StandardConfigurationLoader;
 import com.github.dandelion.jsp.PhantomJsTest;
 
 import org.junit.AfterClass;
@@ -46,7 +46,7 @@ public class AssetsTagTest extends PhantomJsTest {
 	@BeforeClass
 	public static void setup() {
 		String propertiesPath = new File("src/test/resources/dandelion/").getAbsolutePath();
-		System.setProperty(ConfigurationLoader.DANDELION_CONFIGURATION, propertiesPath);
+		System.setProperty(StandardConfigurationLoader.DANDELION_CONFIGURATION, propertiesPath);
 	}
 
 	@Test
@@ -76,6 +76,6 @@ public class AssetsTagTest extends PhantomJsTest {
 	
 	@AfterClass
 	public static void tearDown(){
-		System.clearProperty(ConfigurationLoader.DANDELION_CONFIGURATION);
+		System.clearProperty(StandardConfigurationLoader.DANDELION_CONFIGURATION);
 	}
 }

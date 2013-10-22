@@ -94,7 +94,7 @@ public class AssetCompressionProcessorEntry extends AssetProcessorEntry {
 
     @Override
     public String getTreatmentKey() {
-        return "compression";
+        return COMPRESSION;
     }
 
     @Override

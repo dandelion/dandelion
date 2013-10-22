@@ -67,7 +67,7 @@ public class AssetAggregationProcessorEntry extends AssetProcessorEntry {
 
     @Override
     public String getTreatmentKey() {
-        return "aggregation";
+        return AGGREGATION;
     }
 
     @Override
