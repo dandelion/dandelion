@@ -293,4 +293,13 @@ public final class AssetsStorage {
             return asset.storagePosition - asset2.storagePosition;
         }
     };
+
+    public boolean haveAssets() {
+        for(AssetsScopeStorageUnit unit:storage.values()) {
+            if(!unit.assets.isEmpty()) {
+                return false;
+            }
+        }
+        return true;
+    }
 }

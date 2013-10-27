@@ -73,6 +73,14 @@ public class AssetStack {
     }
 
     /**
+     * Check if the Asset Stack is empty
+     * @return <code>true</code> if the stack is empty
+     */
+    public static boolean isEmpty() {
+        return assetsStorage.haveAssets();
+    }
+
+    /**
      * Get Configured Locations of Assets<br/>
      *
      * Configured by assets.locations in 'dandelion/*.properties'
@@ -128,7 +136,15 @@ public class AssetStack {
         return assetsStorage.assetsFor(scopes);
     }
 
-
+    /**
+     * Check if any asset is contains in some scopes
+     * @param scopes scopes of assets
+     * @param assetNameFilter exclude assets names
+     * @return <code>true</code> if any asset is found
+     */
+    public static boolean existsAssetsFor(String[] scopes, String[] assetNameFilter) {
+        return !excludeByName(assetsFor(scopes), assetNameFilter).isEmpty();
+    }
 
     /**
      * @param assets assets to filter
