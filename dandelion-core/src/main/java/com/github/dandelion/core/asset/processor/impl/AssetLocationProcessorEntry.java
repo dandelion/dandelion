@@ -39,6 +39,8 @@ import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 
+import static com.github.dandelion.core.DevMode.isDevModeEnabled;
+
 public class AssetLocationProcessorEntry extends AssetProcessorEntry {
 
     // Logger
@@ -100,15 +102,31 @@ public class AssetLocationProcessorEntry extends AssetProcessorEntry {
                 for(String wrapperUrl:wrappedUrls) {
                     Asset wrappedAsset = asset.clone(true);
                     wrappedAsset.getLocations().put(locationKey, wrapperUrl);
+                    if(isDevModeEnabled()) {
+                        debugAttributes(wrappedAsset, locationKey, false);
+                    }
                     _assets.add(wrappedAsset);
                 }
             } else {
                 Asset wrappedAsset = asset.clone(true);
                 wrappedAsset.getLocations().put(locationKey, asset.getLocations().get(locationKey));
+                if(isDevModeEnabled()) {
+                    debugAttributes(wrappedAsset, locationKey, false);
+                }
                 _assets.add(wrappedAsset);
             }
 
         }
         return _assets;
+    }
+
+    private void debugAttributes(Asset asset, String locationKey, Boolean wrapped) {
+        asset.addAttribute("name", asset.getName());
+        asset.addAttribute("type", asset.getType().name());
+        asset.addAttribute("version", asset.getVersion());
+        if(asset.getDom() != null)
+            asset.addAttribute("dom-position", asset.getDom().name());
+        asset.addAttribute("location-key", locationKey);
+        asset.addAttribute("location-wrap", wrapped.toString());
     }
 }
