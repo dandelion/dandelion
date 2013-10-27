@@ -80,6 +80,14 @@ public class AssetStackTest {
     }
 
     @Test
+    public void should_filter_assets_by_dom() {
+        List<Asset> assets = AssetStack.assetsFor("plugin1", "plugin2", "plugin1addon2", "plugin3addon");
+        assertThat(assets).hasSize(6);
+        assertThat(AssetStack.filterByDOMPosition(assets, AssetDOMPosition.head)).hasSize(2);
+        assertThat(AssetStack.filterByDOMPosition(assets, AssetDOMPosition.body)).hasSize(4);
+    }
+
+    @Test
     public void should_manage_unknown_location() {
         List<Asset> assets = AssetStack.prepareAssetsFor(request, new String[]{"unknown_location"}, new String[0]);
         assertThat(assets).hasSize(2);

@@ -51,13 +51,6 @@ public class AssetsComponent {
         this.assets = assets;
     }
 
-    public AssetsComponent(String scope, boolean override, List<Asset> assets) {
-        this.scope = scope;
-        this.override = override;
-        this.assets = assets;
-
-    }
-
     public String getScope() {
 		return scope;
 	}

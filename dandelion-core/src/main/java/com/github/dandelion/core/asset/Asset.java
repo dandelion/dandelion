@@ -47,6 +47,7 @@ import java.util.Map;
  *             <li>Local access (Classpath)</li>
  *         </ul>
  *     </li>
+ *     <li>Html Attributes (key/value)</li>
  * </ul>
  */
 public class Asset {

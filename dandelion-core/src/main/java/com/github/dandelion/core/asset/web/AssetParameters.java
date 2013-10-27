@@ -52,11 +52,15 @@ public class AssetParameters {
     }
 
     public List<String> getGroupIds(Asset asset) {
-        return groupIds.get(asset.getName());
+        return getGroupIds(asset.getName());
+    }
+
+    public List<String> getGroupIds(String assetName) {
+        return groupIds.get(assetName);
     }
 
     public Map<String, Object> getParameters(Asset asset, String groupId) {
-        return parameters.get(groupId + "|" + asset.getName());
+        return getParameters(asset.getName(), groupId);
     }
 
     public Map<String, Object> getParameters(String assetName, String groupId) {
@@ -68,7 +72,9 @@ public class AssetParameters {
         if (!groupIds.containsKey(assetName)) {
             groupIds.put(assetName, new ArrayList<String>());
         }
-        groupIds.get(assetName).add(groupId);
+        if(!groupIds.get(assetName).contains(groupId)) {
+            groupIds.get(assetName).add(groupId);
+        }
 
         // parameter/value
         String key = groupId + "|" + assetName;
