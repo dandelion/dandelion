@@ -29,7 +29,7 @@
  */
 package com.github.dandelion.extras.servlet2.asset.web;
 
-import com.github.dandelion.core.asset.web.AssetsServlet;
+import com.github.dandelion.core.asset.web.AssetServlet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,7 +38,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-public class AssetsServlet2 extends AssetsServlet {
+public class AssetsServlet2 extends AssetServlet {
     private static Logger LOG = LoggerFactory.getLogger(AssetsServlet2.class);
 
     @Override

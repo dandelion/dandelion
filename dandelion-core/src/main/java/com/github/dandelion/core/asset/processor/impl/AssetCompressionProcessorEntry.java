@@ -53,7 +53,7 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.util.*;
 
-import static com.github.dandelion.core.asset.web.AssetsServlet.DANDELION_ASSETS_URL;
+import static com.github.dandelion.core.asset.web.AssetServlet.DANDELION_ASSETS_URL;
 
 public class AssetCompressionProcessorEntry extends AssetProcessorEntry {
     // Logger

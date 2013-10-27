@@ -29,26 +29,29 @@
  */
 package com.github.dandelion.core.asset.web;
 
+import java.io.IOException;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
+/**
+ * <p>
+ * Servlet 3.x-compatible implementation of the @link {@link AssetServlet}.
+ */
+public class AssetServlet3 extends AssetServlet {
+	private static Logger LOG = LoggerFactory.getLogger(AssetServlet3.class);
 
-@WebServlet(name= AssetsServlet.DANDELION_ASSETS, urlPatterns={AssetsServlet.DANDELION_ASSETS_URL_PATTERN})
-public class AssetsServlet3 extends AssetsServlet {
-    private static Logger LOG = LoggerFactory.getLogger(AssetsServlet3.class);
+	@Override
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		super.doGet(request, response);
+	}
 
-    @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        super.doGet(request, response);
-    }
-
-    @Override
-    protected Logger getLogger() {
-        return LOG;
-    }
+	@Override
+	protected Logger getLogger() {
+		return LOG;
+	}
 }

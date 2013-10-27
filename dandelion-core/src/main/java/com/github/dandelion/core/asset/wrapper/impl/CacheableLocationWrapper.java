@@ -43,7 +43,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import static com.github.dandelion.core.asset.web.AssetsServlet.DANDELION_ASSETS_URL;
+import static com.github.dandelion.core.asset.web.AssetServlet.DANDELION_ASSETS_URL;
 import static com.github.dandelion.core.DevMode.isDevModeEnabled;
 
 /**

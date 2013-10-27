@@ -44,7 +44,7 @@ import org.slf4j.LoggerFactory;
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 
-import static com.github.dandelion.core.asset.web.AssetsServlet.DANDELION_ASSETS_URL;
+import static com.github.dandelion.core.asset.web.AssetServlet.DANDELION_ASSETS_URL;
 
 public class AssetAggregationProcessorEntry extends AssetProcessorEntry {
     // Logger
