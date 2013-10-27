@@ -103,7 +103,7 @@ public class AssetLocationProcessorEntry extends AssetProcessorEntry {
                     Asset wrappedAsset = asset.clone(true);
                     wrappedAsset.getLocations().put(locationKey, wrapperUrl);
                     if(isDevModeEnabled()) {
-                        debugAttributes(wrappedAsset, locationKey, false);
+                        debugAttributes(wrappedAsset, locationKey, true);
                     }
                     _assets.add(wrappedAsset);
                 }
