@@ -29,6 +29,8 @@
  */
 package com.github.dandelion.core.html;
 
+import java.util.Map;
+
 /**
  * Abstract superclass for all HTML tags.
  * 
@@ -50,6 +52,8 @@ public abstract class HtmlTag {
 	 * Plain old HTML <code>style</code> attribute.
 	 */
 	protected StringBuffer cssStyle;
+
+    protected Map<String, String> attributes;
 
 	/**
 	 * Render the tag in HTML code.
@@ -99,4 +103,22 @@ public abstract class HtmlTag {
             this.cssStyle.append(";");
         }
 	}
+
+    public void addAttributes(Map<String, String> attributes) {
+        this.attributes = attributes;
+    }
+
+    protected String attributesToHtml() {
+        StringBuilder html = new StringBuilder();
+        if(attributes != null) {
+            for(Map.Entry<String, String> attribute:attributes.entrySet()) {
+                html.append(" ");
+                html.append(attribute.getKey());
+                html.append("=\"");
+                html.append(attribute.getValue());
+                html.append("\"");
+            }
+        }
+        return html.toString();
+    }
 }

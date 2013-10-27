@@ -57,6 +57,7 @@ public class Asset {
     boolean async = false;
     boolean deferred = false;
     Map<String, String> locations;
+    Map<String, String> attributes;
     int storagePosition = -1;
 
     /**
@@ -133,6 +134,12 @@ public class Asset {
     public void setLocations(Map<String, String> locations) {
         this.locations = locations;
     }
+    public Map<String, String> getAttributes() {
+        return attributes;
+    }
+    public void setAttributes(Map<String, String> attributes) {
+        this.attributes = attributes;
+    }
 
     /**
      * Validate this asset
@@ -177,5 +184,13 @@ public class Asset {
     public Asset clone(boolean withoutLocations) {
         return new Asset(name, version, type, dom, async, deferred,
                 withoutLocations?new HashMap<String, String>():locations, storagePosition);
+    }
+
+    public void addAttribute(String attributeName, String attributeValue) {
+        if(attributes == null) {
+            attributes = new HashMap<String, String>();
+        }
+
+        attributes.put("data-ddl-asset-" + attributeName, attributeValue);
     }
 }

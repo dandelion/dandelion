@@ -71,9 +71,11 @@ public class AssetsRender {
             switch (asset.getType()) {
                 case css:
                     tag = new LinkTag(location);
+                    tag.addAttributes(asset.getAttributes());
                     break;
                 case js:
                     tag = new ScriptTag(location, asset.isAsync(), asset.isDeferred());
+                    tag.addAttributes(asset.getAttributes());
                     break;
             }
 

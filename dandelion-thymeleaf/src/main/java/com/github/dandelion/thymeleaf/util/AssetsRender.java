@@ -33,6 +33,7 @@ import com.github.dandelion.core.asset.Asset;
 import org.thymeleaf.dom.Element;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Render of Assets for Thymeleaf
@@ -49,6 +50,9 @@ public class AssetsRender {
                 Element link = new Element("link");
                 link.setAttribute("rel", "stylesheet");
                 link.setAttribute("href", location);
+                if(asset.getAttributes() != null) {
+                    renderAttribute(link, asset.getAttributes());
+                }
                 root.insertChild(root.numChildren(), link);
             }
         }
@@ -66,8 +70,17 @@ public class AssetsRender {
                 script.setAttribute("src", location);
                 if(asset.isAsync()) script.setAttribute("async", true, "async");
                 if(asset.isDeferred()) script.setAttribute("defer", true, "defer");
+                if(asset.getAttributes() != null) {
+                    renderAttribute(script, asset.getAttributes());
+                }
                 root.insertChild(root.numChildren(), script);
             }
+        }
+    }
+
+    private static void renderAttribute(Element e, Map<String, String> attributes) {
+        for(Map.Entry<String, String> attribute:attributes.entrySet()) {
+            e.setAttribute(attribute.getKey(), attribute.getValue());
         }
     }
 }

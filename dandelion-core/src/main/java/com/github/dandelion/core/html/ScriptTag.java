@@ -71,6 +71,8 @@ public class ScriptTag extends HtmlTag {
             if(async) html.append(" async");
             if(deferred) html.append(" defer");
 		}
+
+        html.append(attributesToHtml());
 		
 		html.append("></script>");
 		
