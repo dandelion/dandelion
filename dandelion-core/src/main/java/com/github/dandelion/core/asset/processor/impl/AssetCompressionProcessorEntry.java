@@ -114,26 +114,29 @@ public class AssetCompressionProcessorEntry extends AssetProcessorEntry {
         String baseUrl = RequestUtils.getBaseUrl(request);
         List<Asset> compressedAssets = new ArrayList<Asset>();
         for(Asset asset:assets) {
-            String cacheKey = AssetsCacheSystem.generateCacheKey(context, COMPRESSION, asset.getAssetKey(), asset.getType());
+            for(String location:asset.getLocations().values()) {
+                String cacheKey = AssetsCacheSystem.generateCacheKey(context, COMPRESSION, location, COMPRESSION, asset.getType());
 
-            if (!AssetsCacheSystem.checkCacheKey(cacheKey)) {
-                LOG.debug("cache assets compression for asset {}", asset.getAssetKey());
-                cacheCompressedContent(request, context, asset, cacheKey);
+                if (!AssetsCacheSystem.checkCacheKey(cacheKey)) {
+                    LOG.debug("cache assets compression for asset {}", asset.getAssetKey());
+                    cacheCompressedContent(request, context, location, asset, cacheKey);
+                }
+
+                String accessLocation = baseUrl + DANDELION_ASSETS_URL + cacheKey;
+
+                Map<String, String> locations = new HashMap<String, String>();
+                locations.put(COMPRESSION, accessLocation);
+
+                compressedAssets.add(new Asset(cacheKey, COMPRESSION, asset.getType(), locations));
+                LOG.debug("create a new asset with name {}, version {}, type {}, locations [{}={}]", cacheKey, COMPRESSION, asset.getType(), COMPRESSION, accessLocation);
             }
-
-            String accessLocation = baseUrl + DANDELION_ASSETS_URL + cacheKey;
-
-            Map<String, String> locations = new HashMap<String, String>();
-            locations.put(COMPRESSION, accessLocation);
-
-            compressedAssets.add(new Asset(cacheKey, COMPRESSION, asset.getType(), locations));
         }
         return compressedAssets;
     }
 
-    private void cacheCompressedContent(HttpServletRequest request, String context, Asset asset, String cacheKey) {
+    private void cacheCompressedContent(HttpServletRequest request, String context, String location, Asset asset, String cacheKey) {
         String content = compress(asset, request);
-        AssetsCacheSystem.storeCacheContent(context, COMPRESSION, asset.getAssetKey(), asset.getType(), content);
+        AssetsCacheSystem.storeCacheContent(context, COMPRESSION, location, COMPRESSION, asset.getType(), content);
     }
 
     private String compress(Asset asset, HttpServletRequest request) {

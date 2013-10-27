@@ -70,12 +70,12 @@ public abstract class CacheableLocationWrapper implements AssetsLocationWrapper 
         }
 
         for (String groupId : groupIds) {
-            String cacheKey = AssetsCacheSystem.generateCacheKey(context, groupId, location, asset.getType());
+            String cacheKey = AssetsCacheSystem.generateCacheKey(context, groupId, location, asset.getName(), asset.getType());
 
             Map<String, Object> parameters = params.getParameters(asset, groupId);
             if (isDevModeEnabled() || !AssetsCacheSystem.checkCacheKey(cacheKey)) {
                 String content = getContent(asset, location, parameters, request);
-                AssetsCacheSystem.storeCacheContent(context, groupId, location, asset.getType(), content);
+                AssetsCacheSystem.storeCacheContent(context, groupId, location, asset.getName(), asset.getType(), content);
             }
 
             String baseUrl = RequestUtils.getBaseUrl(request);

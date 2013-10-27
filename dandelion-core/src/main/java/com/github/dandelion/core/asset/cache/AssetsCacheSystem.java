@@ -74,8 +74,10 @@ public class AssetsCacheSystem {
         }
     }
 
-    public static String generateCacheKey(String context, String id, String resource, AssetType type) {
-        return Sha1Utils.generateSha1(context + "|" + id + "|" + resource, true) + "." + type.name();
+    public static String generateCacheKey(String context, String id, String location, String assetName, AssetType assetType) {
+        String generatedKey = Sha1Utils.generateSha1(context + "|" + id + "|" + location, true) + "-" + assetName + "." + assetType.name();
+        LOG.debug("generate SHA1 key {} from context {}, id {}, location {}, asset name {}, asset type {}.", generatedKey, context, id, location, assetName, assetType);
+        return generatedKey;
     }
 
     public static String getCacheKeyFromRequest(HttpServletRequest request) {
@@ -84,17 +86,21 @@ public class AssetsCacheSystem {
 
     public static boolean checkCacheKey(String cacheKey) {
         initializeAssetsCache();
+        LOG.debug("check cache for key {}", cacheKey);
         return assetsCache.checkCacheKey(cacheKey);
     }
 
     public static String getCacheContent(String cacheKey) {
         initializeAssetsCache();
+        LOG.debug("get content of key {}", cacheKey);
         return assetsCache.getCacheContent(cacheKey);
     }
 
-    public static void storeCacheContent(String context, String groupId, String location, AssetType type, String content) {
+    public static void storeCacheContent(String context, String groupId, String location, String resourceName, AssetType type, String content) {
         initializeAssetsCache();
-        assetsCache.storeCacheContent(generateCacheKey(context, groupId, location, type), content);
+        String generatedKey = generateCacheKey(context, groupId, location, resourceName, type);
+        LOG.debug("store in cache the key {} with content [{}]", generatedKey, content);
+        assetsCache.storeCacheContent(generatedKey, content);
     }
 
     public static String getAssetsCacheName() {

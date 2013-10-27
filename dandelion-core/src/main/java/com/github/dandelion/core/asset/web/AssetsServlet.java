@@ -62,10 +62,15 @@ public abstract class AssetsServlet extends HttpServlet {
 
         AssetType resourceType = AssetType.typeOfAsset(cacheKey);
         if (resourceType == null) {
+            getLogger().debug("unknown asset type from key {}", cacheKey);
         	return;
         }
 
         String fileContent = AssetsCacheSystem.getCacheContent(cacheKey);
+        if(fileContent == null) {
+            getLogger().debug("missing content from key {}", cacheKey);
+            return;
+        }
         response.setContentType(resourceType.getContentType());
         response.setHeader("Cache-Control", getCacheControl());
         response.getWriter().write(fileContent);

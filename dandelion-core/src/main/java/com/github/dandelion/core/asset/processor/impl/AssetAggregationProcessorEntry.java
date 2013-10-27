@@ -97,7 +97,7 @@ public class AssetAggregationProcessorEntry extends AssetProcessorEntry {
             }
 
             String aggregationKey = generateAggregationKey(typedAssets);
-            String cacheKey = AssetsCacheSystem.generateCacheKey(context, AGGREGATION, aggregationKey, type);
+            String cacheKey = AssetsCacheSystem.generateCacheKey(context, AGGREGATION, aggregationKey, AGGREGATION, type);
 
             if (!AssetsCacheSystem.checkCacheKey(cacheKey)) {
                 LOG.debug("cache assets aggregation for type {}", type.name());
@@ -110,6 +110,7 @@ public class AssetAggregationProcessorEntry extends AssetProcessorEntry {
             locations.put(AGGREGATION, accessLocation);
 
             aggregatedAssets.add(new Asset(aggregationKey, AGGREGATION, type, locations));
+            LOG.debug("create a new asset with name {}, version {}, type {}, locations [{}={}]", aggregationKey, AGGREGATION, type, AGGREGATION, accessLocation);
         }
         return aggregatedAssets;
     }
@@ -133,7 +134,7 @@ public class AssetAggregationProcessorEntry extends AssetProcessorEntry {
             }
         }
 
-        AssetsCacheSystem.storeCacheContent(context, AGGREGATION, generatedAssetKey, type, aggregatedContent.toString());
+        AssetsCacheSystem.storeCacheContent(context, AGGREGATION, generatedAssetKey, AGGREGATION, type, aggregatedContent.toString());
     }
 
     private String generateAggregationKey(List<Asset> assets) {
