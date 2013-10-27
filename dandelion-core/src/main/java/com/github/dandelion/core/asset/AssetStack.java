@@ -77,7 +77,7 @@ public class AssetStack {
      * @return <code>true</code> if the stack is empty
      */
     public static boolean isEmpty() {
-        return assetsStorage.haveAssets();
+        return assetsStorage.containsAnyAssets();
     }
 
     /**

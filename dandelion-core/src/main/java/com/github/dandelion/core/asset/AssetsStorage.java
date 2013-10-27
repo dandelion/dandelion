@@ -294,7 +294,11 @@ public final class AssetsStorage {
         }
     };
 
-    public boolean haveAssets() {
+    /**
+     * Check if the storage contains any assets
+     * @return <code>true</code> if one (or more) asset is store
+     */
+    public boolean containsAnyAssets() {
         for(AssetsScopeStorageUnit unit:storage.values()) {
             if(!unit.assets.isEmpty()) {
                 return false;
