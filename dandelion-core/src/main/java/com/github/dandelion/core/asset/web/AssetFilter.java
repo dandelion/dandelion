@@ -14,12 +14,14 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.github.dandelion.core.DevMode;
 import com.github.dandelion.core.asset.Asset;
 import com.github.dandelion.core.asset.AssetDOMPosition;
 import com.github.dandelion.core.asset.AssetStack;
 import com.github.dandelion.core.asset.AssetType;
 import com.github.dandelion.core.html.LinkTag;
 import com.github.dandelion.core.html.ScriptTag;
+import com.github.dandelion.core.utils.StringUtils;
 
 /**
  * Dandelion filter used to inject web resources at the right positions,
@@ -31,7 +33,19 @@ public class AssetFilter implements Filter {
 
 	@Override
 	public void init(FilterConfig filterConfig) throws ServletException {
-		// Nothing to do here
+		
+		// First check context parameters
+		String devMode = filterConfig.getServletContext().getInitParameter(DevMode.DANDELION_DEV_MODE);
+
+		// Then check filter parameters
+		if(StringUtils.isBlank(devMode)){
+			devMode = filterConfig.getInitParameter(DevMode.DANDELION_DEV_MODE);
+		}
+
+		// Apply the dev mode if it exists in the deployment descriptor
+		if(StringUtils.isNotBlank(devMode)){
+			DevMode.setDevMode(Boolean.parseBoolean(devMode));
+		}
 	}
 
 	public void doFilter(ServletRequest servletRequest, ServletResponse serlvetResponse, FilterChain filterChain)

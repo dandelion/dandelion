@@ -44,4 +44,9 @@ public final class DevMode {
     public static boolean devModeOverride(boolean realResult) {
         return isDevModeEnabled() || realResult;
     }
+    
+    public static void setDevMode(boolean devMode){
+    	DevMode.devMode = devMode;
+    }
+
 }
