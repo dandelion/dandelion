@@ -6,7 +6,7 @@ import java.io.PrintWriter;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
 
-class CharResponseWrapper extends HttpServletResponseWrapper {
+public class CharResponseWrapper extends HttpServletResponseWrapper {
 	private CharArrayWriter output;
 
 	public String toString() {

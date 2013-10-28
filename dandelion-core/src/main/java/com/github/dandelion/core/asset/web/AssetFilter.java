@@ -1,6 +1,5 @@
 package com.github.dandelion.core.asset.web;
 
-import java.io.CharArrayWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
@@ -14,6 +13,9 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.github.dandelion.core.DevMode;
 import com.github.dandelion.core.asset.Asset;
 import com.github.dandelion.core.asset.AssetDOMPosition;
@@ -24,68 +26,103 @@ import com.github.dandelion.core.html.ScriptTag;
 import com.github.dandelion.core.utils.StringUtils;
 
 /**
- * Dandelion filter used to inject web resources at the right positions,
- * depending on the content of the asset stack.
+ * <p>
+ * Dandelion filter used to inject web resources at the right positions in the
+ * HTML, depending on the content of the asset stack.
  * 
  * @since 0.3.0
  */
 public class AssetFilter implements Filter {
 
+	// Logger
+	private static Logger LOG = LoggerFactory.getLogger(AssetFilter.class);
+
 	@Override
 	public void init(FilterConfig filterConfig) throws ServletException {
-		
+
 		// First check context parameters
 		String devMode = filterConfig.getServletContext().getInitParameter(DevMode.DANDELION_DEV_MODE);
 
 		// Then check filter parameters
-		if(StringUtils.isBlank(devMode)){
+		if (StringUtils.isBlank(devMode)) {
 			devMode = filterConfig.getInitParameter(DevMode.DANDELION_DEV_MODE);
 		}
 
 		// Apply the dev mode if it exists in the deployment descriptor
-		if(StringUtils.isNotBlank(devMode)){
+		if (StringUtils.isNotBlank(devMode)) {
+			LOG.info("Dev mode configured in the AssetFilter: {}", Boolean.parseBoolean(devMode));
 			DevMode.setDevMode(Boolean.parseBoolean(devMode));
 		}
 	}
 
+	@Override
 	public void doFilter(ServletRequest servletRequest, ServletResponse serlvetResponse, FilterChain filterChain)
 			throws IOException, ServletException {
 
 		HttpServletRequest request = (HttpServletRequest) servletRequest;
 		HttpServletResponse response = (HttpServletResponse) serlvetResponse;
 
-		// Wrap the response to modify it later
-		CharResponseWrapper wrapper = new CharResponseWrapper(response);
-		filterChain.doFilter(request, wrapper);
-
-		PrintWriter out = response.getWriter();
-		if (!generateHtmlAssets(request, response, out, wrapper)) {
-			out.write(wrapper.toString());
+		// Only filter HTTP requests
+		if (!(servletRequest instanceof HttpServletRequest)) {
+			filterChain.doFilter(request, response);
+			return;
 		}
 
-		// out.flush();
-		out.close();
+		// Only filter requests that accept HTML
+		// TODO this header doesn't seem reliable. It must be improved
+		if (request.getHeader("accept") != null && request.getHeader("accept").contains("text/html")) {
+
+			PrintWriter out = response.getWriter();
+			CharResponseWrapper wrapper = new CharResponseWrapper(response);
+			filterChain.doFilter(request, wrapper);
+
+			String html = wrapper.toString();
+			AssetsRequestContext context = AssetsRequestContext.get(request);
+
+			if (isDandelionApplyable(context, wrapper)) {
+
+				List<Asset> assets = AssetStack.prepareAssetsFor(request, context.getScopes(true),
+						context.getExcludedAssets());
+
+				html = generateHeadAssets(assets, html);
+				html = generateBodyAssets(assets, html);
+
+				// Update the content length to new value
+				response.setContentLength(html.length());
+			}
+
+			out.write(html);
+			out.close();
+		}
+		// All other requests are not filtered
+		else {
+			filterChain.doFilter(request, response);
+		}
 	}
 
-	private boolean generateHtmlAssets(HttpServletRequest request, HttpServletResponse response, PrintWriter out,
-			CharResponseWrapper wrapper) throws IOException {
-		// not compatible with Assets generation
+	/**
+	 * Only update the response if:
+	 * <ul>
+	 * <li>the response to process is of type HTML (based on the content type)</li>
+	 * <li>the asset stack contains at least one asset</li>
+	 * </ul>
+	 * 
+	 * @param context
+	 *            The asset request context used for the current HTTP request.
+	 * @param wrapper
+	 *            The wrapper around the response to generate.
+	 * @return true if the response can be updated.
+	 */
+	private boolean isDandelionApplyable(AssetsRequestContext context, CharResponseWrapper wrapper) {
+
 		if (wrapper.getContentType() == null || !wrapper.getContentType().contains("text/html")) {
 			return false;
 		}
 
-		// get assets for generation
-		AssetsRequestContext context = AssetsRequestContext.get(request);
-		List<Asset> assets = AssetStack.prepareAssetsFor(request, context.getScopes(true), context.getExcludedAssets());
-		if (assets.isEmpty()) {
+		if (!AssetStack.existsAssetsFor(context.getScopes(false), context.getExcludedAssets())) {
 			return false;
 		}
 
-		// generation
-		String html = wrapper.toString();
-		html = generateHeadAssets(assets, html);
-		html = generateBodyAssets(assets, html);
-		printHtml(response, out, html);
 		return true;
 	}
 
@@ -121,13 +158,6 @@ public class AssetFilter implements Filter {
 			html = html.replace("</body>", htmlBody + "</body>");
 		}
 		return html;
-	}
-
-	private void printHtml(HttpServletResponse response, PrintWriter out, String html) throws IOException {
-		CharArrayWriter caw = new CharArrayWriter();
-		caw.write(html);
-		response.setContentLength(caw.toString().length());
-		out.write(caw.toString());
 	}
 
 	@Override

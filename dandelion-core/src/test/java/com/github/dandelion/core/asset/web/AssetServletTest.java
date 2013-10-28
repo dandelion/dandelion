@@ -1,22 +1,24 @@
 package com.github.dandelion.core.asset.web;
 
-import com.github.dandelion.core.asset.AssetType;
-import com.github.dandelion.core.asset.cache.AssetsCacheSystem;
+import static org.fest.assertions.Assertions.assertThat;
+
+import java.io.IOException;
+
+import javax.servlet.ServletException;
+
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
-import javax.servlet.ServletException;
-import java.io.IOException;
-
-import static org.fest.assertions.Assertions.assertThat;
+import com.github.dandelion.core.asset.AssetType;
+import com.github.dandelion.core.asset.cache.AssetsCacheSystem;
 
 public class AssetServletTest {
-    private AssetsServlet servlet = new AssetsServlet() {
+    private AssetServlet servlet = new AssetServlet() {
         // Logger
-        private final Logger LOG = LoggerFactory.getLogger(AssetsServlet.class);
+        private final Logger LOG = LoggerFactory.getLogger(AssetServlet.class);
 
         @Override
         protected Logger getLogger() {
