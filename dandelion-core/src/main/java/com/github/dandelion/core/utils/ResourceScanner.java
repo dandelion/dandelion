@@ -30,17 +30,21 @@
 
 package com.github.dandelion.core.utils;
 
+import static com.github.dandelion.core.DevMode.devModeOverride;
+import static java.lang.Thread.currentThread;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.JarURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.*;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
-
-import static com.github.dandelion.core.DevMode.devModeOverride;
-import static java.lang.Thread.currentThread;
 
 /**
  * Scanner for resources in folder
@@ -48,6 +52,8 @@ import static java.lang.Thread.currentThread;
 public final class ResourceScanner {
     static Map<String, Set<String>> resourcesSets = new HashMap<String, Set<String>>();
 
+    private static String mainFolder;
+    
     /**
      * Get the resource by this name in dandelion folder
      *
@@ -57,6 +63,7 @@ public final class ResourceScanner {
      * @throws IOException If I/O errors occur
      */
     public static String getResource(String folderPath, String nameCondition) throws IOException {
+    	mainFolder = folderPath;
         Set<String> resources = getResources(folderPath, nameCondition, null, null);
         if (resources.isEmpty()) return null;
         return resources.toArray(new String[1])[0];
@@ -86,54 +93,77 @@ public final class ResourceScanner {
      * @throws IOException If I/O errors occur
      */
     private static Set<String> getResources(String folderPath, String nameCondition, String prefixCondition, String suffixCondition) throws IOException {
-        // load resources only if needed
+        // Load resources only if needed
         if (devModeOverride(resourcesSets.get(folderPath) == null)) loadResources(folderPath);
-        // filter the loaded resources with conditions
-        return filterResources(folderPath, nameCondition, prefixCondition, suffixCondition);
+        
+        // Filter the loaded resources with conditions
+        Set<String> _filteredResources = new HashSet<String>();
+        for(String folder : resourcesSets.keySet()){
+        	_filteredResources.addAll(filterResources(folder, nameCondition, prefixCondition, suffixCondition));
+        }
+        return _filteredResources;
     }
 
-    /**
-     * Load resources in dandelion folder
-     *
-     * @param folderPath path of the resource folder
-     * @throws IOException If I/O errors occur
-     */
-    synchronized private static void loadResources(String folderPath) throws IOException {
-        if (!devModeOverride(resourcesSets.get(folderPath) == null)) return;
-        resourcesSets.put(folderPath, new HashSet<String>());
-        Enumeration<URL> resources = resourcesInFolder(folderPath);
-        if (!resources.hasMoreElements()) return;
-        while (resources.hasMoreElements()) {
-            URL resource = resources.nextElement();
-            // resources extraction with file protocol
-            extractResourcesOnFileSystem(folderPath, resource);
-            // or jar protocol
-            extractResourcesOnJarFile(folderPath, resource);
-        }
-    }
+	/**
+	 * Load resources in dandelion folder
+	 * 
+	 * @param folderPath
+	 *            path of the resource folder
+	 * @throws IOException
+	 *             If I/O errors occur
+	 */
+	synchronized private static void loadResources(String folderPath) throws IOException {
+		if (!devModeOverride(resourcesSets.get(folderPath) == null)) {
+			return;
+		}
+		
+		resourcesSets.put(folderPath, new HashSet<String>());
+		Enumeration<URL> resources = resourcesInFolder(folderPath);
+		if (!resources.hasMoreElements()) {
+			return;
+		}
+		
+		while (resources.hasMoreElements()) {
+			URL resource = resources.nextElement();
+			// resources extraction with file protocol
+			extractResourcesOnFileSystem(folderPath, resource);
+			// or jar protocol
+			extractResourcesOnJarFile(folderPath, resource);
+		}
+	}
 
     /**
      * Extract resources on file system
      *
      * @param folderPath path of the resource folder
      * @param resource resource url
+     * @throws IOException 
      */
-    private static void extractResourcesOnFileSystem(String folderPath, URL resource) {
-        if ("file".equals(resource.getProtocol())) {
-            String resourcePath = resource.getPath();
-            File folder = new File(resourcePath);
-            // dandelion folder need to be ... a folder
-            if (!folder.isDirectory()) return;
-            File[] files = folder.listFiles();
-            if(files!= null) {
-                for (File file : files) {
-                    if (file.canRead() && !file.isDirectory()) {
-                        resourcesSets.get(folderPath).add(folderPath + File.separator + file.getName());
-                    }
-                }
-            }
-        }
-    }
+	private static void extractResourcesOnFileSystem(String folderPath, URL resource) throws IOException {
+		if ("file".equals(resource.getProtocol())) {
+			String resourcePath = resource.getPath();
+			File folder = new File(resourcePath);
+			// dandelion folder need to be ... a folder
+			if (!folder.isDirectory()){
+				return;
+			}
+			
+			File[] files = folder.listFiles();
+			if (files != null) {
+				for (File file : files) {
+					if (file.canRead() && !file.isDirectory()) {
+						resourcesSets.get(folderPath).add(folderPath + File.separator + file.getName());
+					}
+					
+					if(file.canRead() && file.isDirectory()){
+						String directoryName = file.toString();
+						loadResources(directoryName.substring(directoryName.indexOf(mainFolder + File.separatorChar), directoryName.length()));
+					}
+					
+				}
+			}
+		}
+	}
 
     /**
      * Extract resources on jar file
