@@ -32,13 +32,13 @@ import com.github.dandelion.core.asset.web.AssetServlet;
  * @since 0.3.0
  */
 @Controller
-@RequestMapping(value = "/dandelion-assets", method = RequestMethod.GET)
+@RequestMapping(value = AssetServlet.DANDELION_ASSETS_URL, method = RequestMethod.GET)
 public class AssetController {
 
 	// Logger
 	private static final Logger LOG = LoggerFactory.getLogger(AssetController.class);
 
-	@RequestMapping(value = "/{assetKey}")
+	@RequestMapping(value = "{assetKey}")
 	public @ResponseBody
 	String renderAsset(@PathVariable(value = "assetKey") String assetKey, HttpServletResponse response,
 			HttpServletRequest request) throws IOException {
