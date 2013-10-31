@@ -67,7 +67,11 @@ public class AssetParameters {
         return parameters.get(groupId + "|" + assetName);
     }
 
-    public void add(String assetName, String parameter, Object value, String groupId) {
+    public Map<String, Object> getParameters(String assetName) {
+        return parameters.get(GLOBAL_GROUP + "|" + assetName);
+    }
+    
+    public void add(String assetName, String parameter, Object value, String groupId, boolean replaceIfExists) {
         // group
         if (!groupIds.containsKey(assetName)) {
             groupIds.put(assetName, new ArrayList<String>());
@@ -81,6 +85,12 @@ public class AssetParameters {
         if(!parameters.containsKey(key)) {
             parameters.put(key, new HashMap<String, Object>());
         }
-        parameters.get(key).put(parameter, value);
+        
+        if(!parameters.get(key).containsKey(parameter)){
+        	parameters.get(key).put(parameter, value);
+        }
+        else if(replaceIfExists){
+        	parameters.get(key).put(parameter, value);
+        }
     }
 }

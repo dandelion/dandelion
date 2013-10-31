@@ -175,7 +175,20 @@ public class AssetsRequestContext {
      * @return this context
      */
     public AssetsRequestContext addParameter(String assetName, String parameter, Object value) {
-        return addParameter(assetName, parameter, value, AssetParameters.GLOBAL_GROUP);
+        return addParameter(assetName, parameter, value, AssetParameters.GLOBAL_GROUP, false);
+    }
+    
+    /**
+     * Add a parameter value on a specific asset name in Global Group
+     *
+     * @param assetName asset name
+     * @param parameter parameter
+     * @param value value
+     * @param replaceIfExists
+     * @return this context
+     */
+    public AssetsRequestContext addParameter(String assetName, String parameter, Object value, boolean replaceIfExits) {
+        return addParameter(assetName, parameter, value, AssetParameters.GLOBAL_GROUP, replaceIfExits);
     }
 
     /**
@@ -189,7 +202,22 @@ public class AssetsRequestContext {
      */
     public AssetsRequestContext addParameter(String assetName, String parameter, Object value, String groupId) {
         if(groupId == null) groupId = AssetParameters.GLOBAL_GROUP;
-        parameters.add(assetName, parameter, value, groupId);
+        parameters.add(assetName, parameter, value, groupId, false);
+        return this;
+    }
+    
+    /**
+     * Add a parameter value on a specific asset name in a group
+     *
+     * @param assetName asset name
+     * @param parameter parameter
+     * @param value value
+     * @param groupId ID of the group of assets (can be null - aka global group)
+     * @return this context
+     */
+    public AssetsRequestContext addParameter(String assetName, String parameter, Object value, String groupId, boolean replaceIfExists) {
+        if(groupId == null) groupId = AssetParameters.GLOBAL_GROUP;
+        parameters.add(assetName, parameter, value, groupId, replaceIfExists);
         return this;
     }
 
