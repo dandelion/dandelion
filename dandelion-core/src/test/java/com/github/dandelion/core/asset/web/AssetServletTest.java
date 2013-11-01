@@ -32,8 +32,8 @@ public class AssetServletTest {
         MockHttpServletResponse response = new MockHttpServletResponse();
 
         String content = "CONTENT" + Math.random();
-        AssetsCacheSystem.storeCacheContent("should_retrieve_content_from_cache", "groupId", "location", "resourceName", AssetType.css, content);
-        request.setRequestURI("/test/" + AssetsCacheSystem.generateCacheKey("should_retrieve_content_from_cache", "groupId", "location", "resourceName", AssetType.css));
+        AssetsCacheSystem.storeCacheContent("should_retrieve_content_from_cache", "location", "resourceName", AssetType.css, content);
+        request.setRequestURI("/test/" + AssetsCacheSystem.generateCacheKey("should_retrieve_content_from_cache", "location", "resourceName", AssetType.css));
 
         servlet.doGet(request, response);
 
@@ -48,7 +48,7 @@ public class AssetServletTest {
         MockHttpServletRequest request = new MockHttpServletRequest();
         MockHttpServletResponse response = new MockHttpServletResponse();
 
-        request.setRequestURI("/test/" + AssetsCacheSystem.generateCacheKey("should_fail_to_retrieve_missing_content_from_cache", "groupId", "location", "resourceName", AssetType.css));
+        request.setRequestURI("/test/" + AssetsCacheSystem.generateCacheKey("should_fail_to_retrieve_missing_content_from_cache", "location", "resourceName", AssetType.css));
 
         servlet.doGet(request, response);
 
@@ -61,7 +61,7 @@ public class AssetServletTest {
         MockHttpServletRequest request = new MockHttpServletRequest();
         MockHttpServletResponse response = new MockHttpServletResponse();
 
-        request.setRequestURI("/test/" + AssetsCacheSystem.generateCacheKey("should_manage_unknown_type", "groupId", "location", "resourceName", AssetType.css) + System.currentTimeMillis());
+        request.setRequestURI("/test/" + AssetsCacheSystem.generateCacheKey("should_manage_unknown_type", "location", "resourceName", AssetType.css) + System.currentTimeMillis());
 
         servlet.doGet(request, response);
 

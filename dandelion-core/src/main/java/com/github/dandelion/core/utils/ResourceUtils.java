@@ -55,7 +55,7 @@ public final class ResourceUtils {
                     .set("path", pathToFile);
             if(neverFail) {
                 LOG.debug(de.getLocalizedMessage(), de);
-                return pathToFile;
+                return "";
             }
             throw de;
         }
@@ -83,7 +83,7 @@ public final class ResourceUtils {
                     .set("url", url);
             if(neverFail) {
                 LOG.debug(de.getLocalizedMessage(), de);
-                return url;
+                return "";
             }
             throw de;
         }

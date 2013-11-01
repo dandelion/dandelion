@@ -35,7 +35,7 @@ import com.github.dandelion.core.asset.Asset;
 import com.github.dandelion.core.asset.AssetStack;
 import com.github.dandelion.core.asset.cache.AssetsCacheSystem;
 import com.github.dandelion.core.asset.processor.spi.AssetProcessorEntry;
-import com.github.dandelion.core.asset.wrapper.spi.AssetsLocationWrapper;
+import com.github.dandelion.core.asset.wrapper.spi.AssetLocationWrapper;
 import com.github.dandelion.core.config.Configuration;
 import com.github.dandelion.core.DevMode;
 import com.github.dandelion.core.utils.RequestUtils;
@@ -57,7 +57,7 @@ import static com.github.dandelion.core.asset.web.AssetServlet.DANDELION_ASSETS_
 
 public class AssetCompressionProcessorEntry extends AssetProcessorEntry {
     // Logger
-    private static final Logger LOG = LoggerFactory.getLogger(AssetAggregationProcessorEntry.class);
+    private static final Logger LOG = LoggerFactory.getLogger(AssetCompressionProcessorEntry.class);
 
     public static final String COMPRESSION = "compression";
     public static final String COMPRESSION_ENABLED_KEY = "dandelion.compression.enabled";
@@ -115,7 +115,7 @@ public class AssetCompressionProcessorEntry extends AssetProcessorEntry {
         List<Asset> compressedAssets = new ArrayList<Asset>();
         for(Asset asset:assets) {
             for(String location:asset.getLocations().values()) {
-                String cacheKey = AssetsCacheSystem.generateCacheKey(context, COMPRESSION, location, COMPRESSION, asset.getType());
+                String cacheKey = AssetsCacheSystem.generateCacheKey(context, location, COMPRESSION, asset.getType());
 
                 if (!AssetsCacheSystem.checkCacheKey(cacheKey)) {
                     LOG.debug("cache assets compression for asset {}", asset.getAssetKey());
@@ -136,7 +136,7 @@ public class AssetCompressionProcessorEntry extends AssetProcessorEntry {
 
     private void cacheCompressedContent(HttpServletRequest request, String context, String location, Asset asset, String cacheKey) {
         String content = compress(asset, request);
-        AssetsCacheSystem.storeCacheContent(context, COMPRESSION, location, COMPRESSION, asset.getType(), content);
+        AssetsCacheSystem.storeCacheContent(context, location, COMPRESSION, asset.getType(), content);
     }
 
     private String compress(Asset asset, HttpServletRequest request) {
@@ -190,18 +190,18 @@ public class AssetCompressionProcessorEntry extends AssetProcessorEntry {
     }
 
     private String extractContent(Asset asset, HttpServletRequest request) {
-        Map<String, AssetsLocationWrapper> wrappers = AssetStack.getAssetsLocationWrappers();
+        Map<String, AssetLocationWrapper> wrappers = AssetStack.getAssetsLocationWrappers();
         StringBuilder groupContent = new StringBuilder();
 
         for (Map.Entry<String, String> location : asset.getLocations().entrySet()) {
-            AssetsLocationWrapper wrapper = wrappers.get(location.getKey());
-            List<String> contents;
-            if (wrapper == null) {
-                contents = Arrays.asList(ResourceUtils.getContentFromUrl(location.getValue(), true));
+            AssetLocationWrapper wrapper = wrappers.get(location.getKey());
+            String content;
+            if (wrapper != null) {
+                content = wrapper.getWrappedContent(asset, request);
             } else {
-                contents = wrapper.getContents(asset, request);
+                content = ResourceUtils.getContentFromUrl(location.getValue(), true);
             }
-            for (String content : contents) {
+            if(content != null) {
                 groupContent.append(content).append("\n");
             }
         }

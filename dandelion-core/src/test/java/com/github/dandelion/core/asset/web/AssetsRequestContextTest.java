@@ -4,7 +4,6 @@ import org.fest.assertions.MapAssert;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 
-import static com.github.dandelion.core.asset.web.AssetParameters.GLOBAL_GROUP;
 import static org.fest.assertions.Assertions.assertThat;
 
 public class AssetsRequestContextTest {
@@ -59,22 +58,13 @@ public class AssetsRequestContextTest {
     @Test
     public void should_store_parameters() {
         MockHttpServletRequest request = new MockHttpServletRequest();
-
         AssetsRequestContext context = AssetsRequestContext.get(request);
+
         context.addParameter("asset1", "param1", "value1");
         context.addParameter("asset1", "param2", "value2");
-        context.addParameter("asset2", "param1", "value1", "groupId1");
-        context.addParameter("asset2", "param1", "value2", "groupId2");
 
-        AssetParameters params = context.getParameters();
-        assertThat(params.getGroupIds("asset1")).hasSize(1).contains(GLOBAL_GROUP);
-        assertThat(params.getGroupIds("asset2")).hasSize(2).contains("groupId1", "groupId2");
-        assertThat(params.getParameters("asset1", GLOBAL_GROUP)).hasSize(2).includes(
+        assertThat(context.getParameters("asset1")).hasSize(2).includes(
                 MapAssert.entry("param1", "value1"), MapAssert.entry("param2", "value2"));
-        assertThat(params.getParameters("asset2", "groupId1"))
-                .hasSize(1).includes(MapAssert.entry("param1", "value1"));
-        assertThat(params.getParameters("asset2", "groupId2"))
-                .hasSize(1).includes(MapAssert.entry("param1", "value2"));
-        assertThat(params.getParameters("asset1", "unknown")).isNull();
+        assertThat(context.getParameterValue("asset1", "unknown")).isNull();
     }
 }

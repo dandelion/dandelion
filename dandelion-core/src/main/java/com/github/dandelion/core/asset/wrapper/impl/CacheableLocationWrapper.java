@@ -32,71 +32,53 @@ package com.github.dandelion.core.asset.wrapper.impl;
 
 import com.github.dandelion.core.asset.Asset;
 import com.github.dandelion.core.asset.cache.AssetsCacheSystem;
-import com.github.dandelion.core.asset.web.AssetParameters;
-import com.github.dandelion.core.asset.web.AssetsRequestContext;
-import com.github.dandelion.core.asset.wrapper.spi.AssetsLocationWrapper;
+import com.github.dandelion.core.asset.wrapper.spi.AssetLocationWrapper;
 import com.github.dandelion.core.utils.RequestUtils;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
 
+import static com.github.dandelion.core.asset.cache.AssetsCacheSystem.generateCacheKey;
+import static com.github.dandelion.core.asset.cache.AssetsCacheSystem.storeCacheContent;
 import static com.github.dandelion.core.asset.web.AssetServlet.DANDELION_ASSETS_URL;
 import static com.github.dandelion.core.DevMode.isDevModeEnabled;
+import static com.github.dandelion.core.asset.web.AssetsRequestContext.get;
 
 /**
  * Base for Wrapper with caching faculty
  */
-public abstract class CacheableLocationWrapper implements AssetsLocationWrapper {
+public abstract class CacheableLocationWrapper implements AssetLocationWrapper {
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public List<String> wrapLocations(Asset asset, HttpServletRequest request) {
+    public String wrapLocation(Asset asset, HttpServletRequest request) {
 
         String location = asset.getLocations().get(locationKey());
         String context = RequestUtils.getCurrentUrl(request, true);
         context = context.replaceAll("\\?", "_").replaceAll("&", "_");
 
-        List<String> locations = new ArrayList<String>();
-        AssetParameters params = AssetsRequestContext.get(request).getParameters();
+        String cacheKey = generateCacheKey(context, location, asset.getName(), asset.getType());
 
-        List<String> groupIds = params.getGroupIds(asset);
-        if (groupIds == null || groupIds.isEmpty()) {
-            groupIds = Arrays.asList(AssetParameters.GLOBAL_GROUP);
+        Map<String, Object> parameters = get(request).getParameters(asset.getName());
+        if (isDevModeEnabled() || !AssetsCacheSystem.checkCacheKey(cacheKey)) {
+            String content = getContent(asset, location, parameters, request);
+            storeCacheContent(context, location, asset.getName(), asset.getType(), content);
         }
 
-        for (String groupId : groupIds) {
-            String cacheKey = AssetsCacheSystem.generateCacheKey(context, groupId, location, asset.getName(), asset.getType());
-
-            Map<String, Object> parameters = params.getParameters(asset, groupId);
-            if (isDevModeEnabled() || !AssetsCacheSystem.checkCacheKey(cacheKey)) {
-                String content = getContent(asset, location, parameters, request);
-                AssetsCacheSystem.storeCacheContent(context, groupId, location, asset.getName(), asset.getType(), content);
-            }
-
-            String baseUrl = RequestUtils.getBaseUrl(request);
-            String accessLocation = baseUrl + DANDELION_ASSETS_URL + cacheKey;
-
-            locations.add(accessLocation);
-        }
-
-        return locations;
+        return RequestUtils.getBaseUrl(request) + DANDELION_ASSETS_URL + cacheKey;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public List<String> getContents(Asset asset, HttpServletRequest request) {
+    public String getWrappedContent(Asset asset, HttpServletRequest request) {
         String location = asset.getLocations().get(locationKey());
         String prefixCacheKey = RequestUtils.getBaseUrl(request) + DANDELION_ASSETS_URL;
         String cacheKey = location.replaceAll(prefixCacheKey, "");
-        String fileContent = AssetsCacheSystem.getCacheContent(cacheKey);
-        return Arrays.asList(fileContent);
+        return AssetsCacheSystem.getCacheContent(cacheKey);
     }
 
     protected abstract String getContent(Asset asset, String location, Map<String, Object> parameters, HttpServletRequest request);

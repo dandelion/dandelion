@@ -31,18 +31,16 @@
 package com.github.dandelion.core.asset.wrapper.impl;
 
 import com.github.dandelion.core.asset.Asset;
-import com.github.dandelion.core.asset.wrapper.spi.AssetsLocationWrapper;
+import com.github.dandelion.core.asset.wrapper.spi.AssetLocationWrapper;
 import com.github.dandelion.core.utils.RequestUtils;
 import com.github.dandelion.core.utils.ResourceUtils;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * Wrapper for "webapp" location
  */
-public class WebappLocationWrapper implements AssetsLocationWrapper {
+public class WebappLocationWrapper implements AssetLocationWrapper {
 
     /**
      * {@inheritDoc}
@@ -56,18 +54,17 @@ public class WebappLocationWrapper implements AssetsLocationWrapper {
      * {@inheritDoc}
      */
     @Override
-    public List<String> wrapLocations(Asset asset, HttpServletRequest request) {
+    public String wrapLocation(Asset asset, HttpServletRequest request) {
         String location = asset.getLocations().get(locationKey());
-        return Arrays.asList(request.getContextPath() + location);
+        return request.getContextPath() + location;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public List<String> getContents(Asset asset, HttpServletRequest request) {
+    public String getWrappedContent(Asset asset, HttpServletRequest request) {
         String location = asset.getLocations().get(locationKey());
-        String content = ResourceUtils.getContentFromUrl(RequestUtils.getBaseUrl(request) + "/" + location, true);
-        return Arrays.asList(content);
+        return ResourceUtils.getContentFromUrl(RequestUtils.getBaseUrl(request) + "/" + location, true);
     }
 }

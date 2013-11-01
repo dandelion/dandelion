@@ -31,12 +31,10 @@ package com.github.dandelion.core.asset;
 
 import com.github.dandelion.core.DandelionException;
 import com.github.dandelion.core.asset.loader.AssetsLoaderSystem;
-import com.github.dandelion.core.asset.loader.impl.AbstractAssetsJsonLoader;
 import com.github.dandelion.core.asset.loader.spi.AssetsLoader;
-import com.github.dandelion.core.asset.wrapper.AssetsLocationWrapperSystem;
-import com.github.dandelion.core.asset.wrapper.spi.AssetsLocationWrapper;
+import com.github.dandelion.core.asset.wrapper.AssetLocationWrapperSystem;
+import com.github.dandelion.core.asset.wrapper.spi.AssetLocationWrapper;
 import com.github.dandelion.core.config.Configuration;
-import com.github.dandelion.core.utils.PropertiesUtils;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -68,7 +66,7 @@ public class AssetsConfigurator {
     List<String> assetsLocations;
     List<String> excludedScopes;
     List<String> excludedAssets;
-    Map<String, AssetsLocationWrapper> assetsLocationWrappers;
+    Map<String, AssetLocationWrapper> assetsLocationWrappers;
 
     private Map<String, List<Asset>> assetsByScope = new HashMap<String, List<Asset>>();
     private Map<String, List<String>> scopesByParentScope = new HashMap<String, List<String>>();
@@ -90,7 +88,7 @@ public class AssetsConfigurator {
         excludedAssets = setPropertyAsList(configuration.getProperty("assets.excluded.assets"), ",");
 
         assetsLoaders = AssetsLoaderSystem.getLoaders();
-        assetsLocationWrappers = AssetsLocationWrapperSystem.getWrappersWithKey();
+        assetsLocationWrappers = AssetLocationWrapperSystem.getWrappersWithKey();
 
         processAssetsLoading(true);
     }

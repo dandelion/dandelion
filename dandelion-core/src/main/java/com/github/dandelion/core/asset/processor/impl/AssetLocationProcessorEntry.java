@@ -34,7 +34,6 @@ import com.github.dandelion.core.asset.AssetStack;
 import com.github.dandelion.core.asset.processor.spi.AssetProcessorEntry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
@@ -53,7 +52,7 @@ public class AssetLocationProcessorEntry extends AssetProcessorEntry {
 
     @Override
     public int getRank() {
-        throw new NotImplementedException();
+        return 0;
     }
 
     @Override
@@ -96,25 +95,25 @@ public class AssetLocationProcessorEntry extends AssetProcessorEntry {
             }
 
             // Otherwise check for wrapper
+            String location;
             if(AssetStack.getAssetsLocationWrappers().containsKey(locationKey)) {
                 LOG.debug("use location wrapper for {} on {}.", locationKey, asset);
-                List<String> wrappedUrls = AssetStack.getAssetsLocationWrappers().get(locationKey).wrapLocations(asset, request);
-                for(String wrapperUrl:wrappedUrls) {
-                    Asset wrappedAsset = asset.clone(true);
-                    wrappedAsset.getLocations().put(locationKey, wrapperUrl);
-                    if(isDevModeEnabled()) {
-                        debugAttributes(wrappedAsset, locationKey, true);
-                    }
-                    _assets.add(wrappedAsset);
-                }
+                location = AssetStack.getAssetsLocationWrappers().get(locationKey).wrapLocation(asset, request);
             } else {
-                Asset wrappedAsset = asset.clone(true);
-                wrappedAsset.getLocations().put(locationKey, asset.getLocations().get(locationKey));
-                if(isDevModeEnabled()) {
-                    debugAttributes(wrappedAsset, locationKey, false);
-                }
-                _assets.add(wrappedAsset);
+                location = asset.getLocations().get(locationKey);
             }
+
+            if(location == null) {
+                LOG.warn("No location found for {} on {}", locationKey, asset.toString());
+                continue;
+            }
+
+            Asset wrappedAsset = asset.clone(true);
+            wrappedAsset.getLocations().put(locationKey, location);
+            if(isDevModeEnabled()) {
+                debugAttributes(wrappedAsset, locationKey, false);
+            }
+            _assets.add(wrappedAsset);
 
         }
         return _assets;

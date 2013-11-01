@@ -74,14 +74,16 @@ public class AssetsCacheSystem {
         }
     }
 
-    public static String generateCacheKey(String context, String id, String location, String assetName, AssetType assetType) {
-        String generatedKey = Sha1Utils.generateSha1(context + "|" + id + "|" + location, true) + "-" + assetName + "." + assetType.name();
-        LOG.debug("generate SHA1 key {} from context {}, id {}, location {}, asset name {}, asset type {}.", generatedKey, context, id, location, assetName, assetType);
+    public static String generateCacheKey(String context, String location, String assetName, AssetType assetType) {
+        String generatedKey = Sha1Utils.generateSha1(context + "|" + location, true) + "-" + assetName + "." + assetType.name();
+        LOG.debug("generate SHA1 key {} from context {}, location {}, asset name {}, asset type {}.", generatedKey, context, location, assetName, assetType);
         return generatedKey;
     }
 
     public static String getCacheKeyFromRequest(HttpServletRequest request) {
-        return request.getRequestURL().substring(request.getRequestURL().lastIndexOf("/") + 1);
+        String cacheKey = request.getRequestURL().substring(request.getRequestURL().lastIndexOf("/") + 1);
+        LOG.debug("cacheKey from request = {}", cacheKey);
+        return cacheKey;
     }
 
     public static boolean checkCacheKey(String cacheKey) {
@@ -96,9 +98,9 @@ public class AssetsCacheSystem {
         return assetsCache.getCacheContent(cacheKey);
     }
 
-    public static void storeCacheContent(String context, String groupId, String location, String resourceName, AssetType type, String content) {
+    public static void storeCacheContent(String context, String location, String resourceName, AssetType type, String content) {
         initializeAssetsCache();
-        String generatedKey = generateCacheKey(context, groupId, location, resourceName, type);
+        String generatedKey = generateCacheKey(context, location, resourceName, type);
         LOG.debug("store in cache the key {} with content [{}]", generatedKey, content);
         assetsCache.storeCacheContent(generatedKey, content);
     }

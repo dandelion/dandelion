@@ -30,7 +30,7 @@
 package com.github.dandelion.core.asset;
 
 import com.github.dandelion.core.asset.processor.AssetProcessorSystem;
-import com.github.dandelion.core.asset.wrapper.spi.AssetsLocationWrapper;
+import com.github.dandelion.core.asset.wrapper.spi.AssetLocationWrapper;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
@@ -77,7 +77,7 @@ public class AssetStack {
      * @return <code>true</code> if the stack is empty
      */
     public static boolean isEmpty() {
-        return assetsStorage.containsAnyAssets();
+        return assetsStorage.containsAnyAsset();
     }
 
     /**
@@ -99,7 +99,7 @@ public class AssetStack {
      *
      * @return wrappers for locations of Assets
      */
-    public static Map<String, AssetsLocationWrapper> getAssetsLocationWrappers() {
+    public static Map<String, AssetLocationWrapper> getAssetsLocationWrappers() {
         initializeIfNeeded();
         return assetsConfigurator.assetsLocationWrappers;
     }

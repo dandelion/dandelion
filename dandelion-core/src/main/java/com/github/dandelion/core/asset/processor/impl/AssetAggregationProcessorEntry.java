@@ -33,9 +33,8 @@ import com.github.dandelion.core.DevMode;
 import com.github.dandelion.core.asset.Asset;
 import com.github.dandelion.core.asset.AssetStack;
 import com.github.dandelion.core.asset.AssetType;
-import com.github.dandelion.core.asset.cache.AssetsCacheSystem;
 import com.github.dandelion.core.asset.processor.spi.AssetProcessorEntry;
-import com.github.dandelion.core.asset.wrapper.spi.AssetsLocationWrapper;
+import com.github.dandelion.core.asset.wrapper.spi.AssetLocationWrapper;
 import com.github.dandelion.core.config.Configuration;
 import com.github.dandelion.core.utils.*;
 import org.slf4j.Logger;
@@ -44,6 +43,7 @@ import org.slf4j.LoggerFactory;
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 
+import static com.github.dandelion.core.asset.cache.AssetsCacheSystem.*;
 import static com.github.dandelion.core.asset.web.AssetServlet.DANDELION_ASSETS_URL;
 
 public class AssetAggregationProcessorEntry extends AssetProcessorEntry {
@@ -97,9 +97,9 @@ public class AssetAggregationProcessorEntry extends AssetProcessorEntry {
             }
 
             String aggregationKey = generateAggregationKey(typedAssets);
-            String cacheKey = AssetsCacheSystem.generateCacheKey(context, AGGREGATION, aggregationKey, AGGREGATION, type);
+            String cacheKey = generateCacheKey(context, aggregationKey, AGGREGATION, type);
 
-            if (!AssetsCacheSystem.checkCacheKey(cacheKey)) {
+            if (!checkCacheKey(cacheKey)) {
                 LOG.debug("cache assets aggregation for type {}", type.name());
                 cacheAggregatedContent(request, context, type, typedAssets, aggregationKey);
             }
@@ -116,25 +116,25 @@ public class AssetAggregationProcessorEntry extends AssetProcessorEntry {
     }
 
     private void cacheAggregatedContent(HttpServletRequest request, String context, AssetType type, List<Asset> typedAssets, String generatedAssetKey) {
-        Map<String, AssetsLocationWrapper> wrappers = AssetStack.getAssetsLocationWrappers();
+        Map<String, AssetLocationWrapper> wrappers = AssetStack.getAssetsLocationWrappers();
         StringBuilder aggregatedContent = new StringBuilder();
 
         for (Asset asset : typedAssets) {
             for (Map.Entry<String, String> location : asset.getLocations().entrySet()) {
-                AssetsLocationWrapper wrapper = wrappers.get(location.getKey());
-                List<String> contents;
-                if (wrapper == null) {
-                    contents = Arrays.asList(ResourceUtils.getContentFromUrl(location.getValue(), true));
+                AssetLocationWrapper wrapper = wrappers.get(location.getKey());
+                String content;
+                if (wrapper != null) {
+                    content = wrapper.getWrappedContent(asset, request);
                 } else {
-                    contents = wrapper.getContents(asset, request);
+                    content = ResourceUtils.getContentFromUrl(location.getValue(), true);
                 }
-                for (String content : contents) {
+                if(content != null) {
                     aggregatedContent.append(content).append("\n");
                 }
             }
         }
 
-        AssetsCacheSystem.storeCacheContent(context, AGGREGATION, generatedAssetKey, AGGREGATION, type, aggregatedContent.toString());
+        storeCacheContent(context, generatedAssetKey, AGGREGATION, type, aggregatedContent.toString());
     }
 
     private String generateAggregationKey(List<Asset> assets) {

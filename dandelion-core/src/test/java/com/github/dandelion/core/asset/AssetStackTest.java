@@ -46,6 +46,11 @@ public class AssetStackTest {
     }
 
     @Test
+    public void should_contains_assets() {
+        assertThat(AssetStack.isEmpty()).isFalse();
+    }
+
+    @Test
     public void should_load_default_json() {
         assertThat(AssetStack.assetsFor()).hasSize(1);
     }
@@ -62,6 +67,11 @@ public class AssetStackTest {
         for(Asset asset:assets) {
             assertThat(asset.getLocations().values()).contains("remoteURL");
         }
+    }
+
+    @Test
+    public void should_contains_assets_for_scope() {
+        assertThat(AssetStack.existsAssetsFor(new String[] {"plugin1", "plugin2", "plugin1addon2", "plugin3addon"}, new String[0])).isTrue();
     }
 
     @Test

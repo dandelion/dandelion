@@ -31,9 +31,7 @@
 package com.github.dandelion.core.asset.web;
 
 import javax.servlet.ServletRequest;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 /**
  * Request Context used to store all needed assets by scopes during the pages processing
@@ -43,13 +41,14 @@ public class AssetsRequestContext {
     private boolean alreadyRendered;
     private List<String> excludedScopes;
     private List<String> excludedAssets;
-    private AssetParameters parameters;
+    //private AssetParameters parameters;
+    private Map<String, Map<String, Object>> parameters;
 
     private AssetsRequestContext() {
         this.scopes = new ArrayList<String>();
         this.excludedScopes = new ArrayList<String>();
         this.excludedAssets = new ArrayList<String>();
-        this.parameters = new AssetParameters();
+        this.parameters = new HashMap<String, Map<String, Object>>();
     }
 
     /**
@@ -167,7 +166,7 @@ public class AssetsRequestContext {
     }
 
     /**
-     * Add a parameter value on a specific asset name in Global Group
+     * Add a parameter value on a specific asset name
      *
      * @param assetName asset name
      * @param parameter parameter
@@ -175,56 +174,56 @@ public class AssetsRequestContext {
      * @return this context
      */
     public AssetsRequestContext addParameter(String assetName, String parameter, Object value) {
-        return addParameter(assetName, parameter, value, AssetParameters.GLOBAL_GROUP, false);
+        return addParameter(assetName, parameter, value, false);
     }
     
     /**
-     * Add a parameter value on a specific asset name in Global Group
+     * Add a parameter value on a specific asset name
      *
      * @param assetName asset name
      * @param parameter parameter
      * @param value value
-     * @param replaceIfExists
+     * @param replaceIfExists replace the parameter if he exists already
      * @return this context
      */
-    public AssetsRequestContext addParameter(String assetName, String parameter, Object value, boolean replaceIfExits) {
-        return addParameter(assetName, parameter, value, AssetParameters.GLOBAL_GROUP, replaceIfExits);
-    }
+    public AssetsRequestContext addParameter(String assetName, String parameter, Object value, boolean replaceIfExists) {
+        if(!parameters.containsKey(assetName)) {
+            parameters.put(assetName, new HashMap<String, Object>());
+        }
 
-    /**
-     * Add a parameter value on a specific asset name in a group
-     *
-     * @param assetName asset name
-     * @param parameter parameter
-     * @param value value
-     * @param groupId ID of the group of assets (can be null - aka global group)
-     * @return this context
-     */
-    public AssetsRequestContext addParameter(String assetName, String parameter, Object value, String groupId) {
-        if(groupId == null) groupId = AssetParameters.GLOBAL_GROUP;
-        parameters.add(assetName, parameter, value, groupId, false);
-        return this;
-    }
-    
-    /**
-     * Add a parameter value on a specific asset name in a group
-     *
-     * @param assetName asset name
-     * @param parameter parameter
-     * @param value value
-     * @param groupId ID of the group of assets (can be null - aka global group)
-     * @return this context
-     */
-    public AssetsRequestContext addParameter(String assetName, String parameter, Object value, String groupId, boolean replaceIfExists) {
-        if(groupId == null) groupId = AssetParameters.GLOBAL_GROUP;
-        parameters.add(assetName, parameter, value, groupId, replaceIfExists);
+        if(!parameters.get(assetName).containsKey(parameter)){
+            parameters.get(assetName).put(parameter, value);
+        } else if(replaceIfExists) {
+            parameters.get(assetName).put(parameter, value);
+        }
         return this;
     }
 
     /**
-     * @return the parameter/value from template asset names.
+     * Get the parameters for a asset name
+     * @param assetName asset name
+     * @return the parameter of the asset name, or empty map
      */
-    public AssetParameters getParameters() {
-        return parameters;
+    public Map<String, Object> getParameters(String assetName) {
+        if(!parameters.containsKey(assetName)) {
+            return Collections.emptyMap();
+        }
+        return parameters.get(assetName);
+    }
+
+    /**
+     * Get the value of the parameter for the asset name
+     * @param assetName asset name
+     * @param parameter parameter
+     * @param <T> type of the value (aka TypeOfValue value = context.getParameterValue(...) )
+     * @return the value of the parameter, or <code>null</code> value
+     */
+    @SuppressWarnings("unchecked")
+    public <T> T getParameterValue(String assetName, String parameter) {
+        Map<String, Object> values = getParameters(assetName);
+        if(!values.containsKey(parameter)) {
+            return null;
+        }
+        return (T) values.get(parameter);
     }
 }
