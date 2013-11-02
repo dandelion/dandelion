@@ -30,6 +30,9 @@
 
 package com.github.dandelion.core.asset.web;
 
+import com.github.dandelion.core.asset.web.data.AssetName;
+import com.github.dandelion.core.asset.web.data.AssetScope;
+
 import javax.servlet.ServletRequest;
 import java.util.*;
 
@@ -41,7 +44,6 @@ public class AssetsRequestContext {
     private boolean alreadyRendered;
     private List<String> excludedScopes;
     private List<String> excludedAssets;
-    //private AssetParameters parameters;
     private Map<String, Map<String, Object>> parameters;
 
     private AssetsRequestContext() {
@@ -86,22 +88,130 @@ public class AssetsRequestContext {
     }
 
     /**
-     * Fluent exclude for assets
-     * @param assets scopes (separated by comma)
+     * Fluent exclude for scopes
+     * @param scopes scopes
      * @return this context
      */
-    public AssetsRequestContext excludeAssets(String assets) {
-        if(assets == null) return this;
-        return excludeAssets(assets.split(","));
+    private AssetsRequestContext excludeScopes(AssetScope... scopes) {
+        for(AssetScope scope:scopes) {
+            excludeScope(scope);
+        }
+        return this;
     }
 
     /**
-     * Fluent exclude for assets
-     * @param assets scopes
+     * Fluent exclude for scopes (as Object with toString())
+     * @param scopes scopes
      * @return this context
      */
-    private AssetsRequestContext excludeAssets(String... assets) {
-        this.excludedAssets.addAll(Arrays.asList(assets));
+    private AssetsRequestContext excludeScopes(Object... scopes) {
+        for(Object scope:scopes) {
+            excludeScope(scope);
+        }
+        return this;
+    }
+
+    /**
+     * Fluent exclude for scope
+     * @param scope scope
+     * @return this context
+     */
+    private AssetsRequestContext excludeScope(String scope) {
+        this.excludedScopes.add(scope);
+        return this;
+    }
+
+    /**
+     * Fluent exclude for scope
+     * @param scope scope
+     * @return this context
+     */
+    private AssetsRequestContext excludeScope(AssetScope scope) {
+        this.excludedScopes.add(scope.toString());
+        return this;
+    }
+
+    /**
+     * Fluent exclude for scope (as Object with toString())
+     * @param scope scope
+     * @return this context
+     */
+    private AssetsRequestContext excludeScope(Object scope) {
+        this.excludedScopes.add(scope.toString());
+        return this;
+    }
+
+    /**
+     * Fluent exclude for asset names
+     * @param assetNames asset names (separated by comma)
+     * @return this context
+     */
+    public AssetsRequestContext excludeAssets(String assetNames) {
+        if(assetNames == null) return this;
+        return excludeAssets(assetNames.split(","));
+    }
+
+    /**
+     * Fluent exclude for asset names
+     * @param assetNames asset names
+     * @return this context
+     */
+    private AssetsRequestContext excludeAssets(String... assetNames) {
+        this.excludedAssets.addAll(Arrays.asList(assetNames));
+        return this;
+    }
+
+    /**
+     * Fluent exclude for asset names
+     * @param assetNames asset names
+     * @return this context
+     */
+    private AssetsRequestContext excludeAssets(AssetName... assetNames) {
+        for(Object asset:assetNames) {
+            excludeAsset(asset);
+        }
+        return this;
+    }
+
+    /**
+     * Fluent exclude for asset names (as Object with toString())
+     * @param assetNames asset names
+     * @return this context
+     */
+    private AssetsRequestContext excludeAssets(Object... assetNames) {
+        for(Object asset:assetNames) {
+            excludeAsset(asset);
+        }
+        return this;
+    }
+
+    /**
+     * Fluent exclude for asset name
+     * @param assetName asset name
+     * @return this context
+     */
+    private AssetsRequestContext excludeAsset(String assetName) {
+        this.excludedAssets.add(assetName);
+        return this;
+    }
+
+    /**
+     * Fluent exclude for asset name
+     * @param assetName asset name
+     * @return this context
+     */
+    private AssetsRequestContext excludeAsset(AssetName assetName) {
+        this.excludedAssets.add(assetName.toString());
+        return this;
+    }
+
+    /**
+     * Fluent exclude for asset name (as Object with toString())
+     * @param assetName asset name
+     * @return this context
+     */
+    private AssetsRequestContext excludeAsset(Object assetName) {
+        this.excludedAssets.add(assetName.toString());
         return this;
     }
 
@@ -126,12 +236,67 @@ public class AssetsRequestContext {
     }
 
     /**
+     * Fluent adder for scopes
+     * @param scopes scopes
+     * @return this context
+     */
+    public AssetsRequestContext addScopes(AssetScope ... scopes) {
+        for(AssetScope scope:scopes) {
+            addScope(scope);
+        }
+        return this;
+    }
+
+    /**
+     * Fluent adder for scopes (as Object with toString())
+     * @param scopes scopes
+     * @return this context
+     */
+    public AssetsRequestContext addScopes(Object ... scopes) {
+        for(Object scope:scopes) {
+            addScope(scope);
+        }
+        return this;
+    }
+
+    /**
+     * Fluent adder for scope
+     * @param scope scope
+     * @return this context
+     */
+    public AssetsRequestContext addScope(String scope) {
+        this.scopes.add(scope);
+        return this;
+    }
+
+    /**
+     * Fluent adder for scope
+     * @param scope scope
+     * @return this context
+     */
+    public AssetsRequestContext addScope(AssetScope scope) {
+        addScope(scope.toString());
+        return this;
+    }
+
+    /**
+     * Fluent adder for scope (as Object with toString())
+     * @param scope scope
+     * @return this context
+     */
+    public AssetsRequestContext addScope(Object scope) {
+        addScope(scope.toString());
+        return this;
+    }
+
+    /**
      * @return all stored scopes in this context
      */
     public String[] getScopes(boolean withoutExcludedScopes) {
         List<String> _scopes = new ArrayList<String>(scopes);
-        if(withoutExcludedScopes)
+        if(withoutExcludedScopes) {
             _scopes.removeAll(excludedScopes);
+        }
         return _scopes.toArray(new String[_scopes.size()]);
     }
 
@@ -143,14 +308,14 @@ public class AssetsRequestContext {
     }
 
     /**
-     * @return all assets to remove
+     * @return all asset names to remove
      */
     public String[] getExcludedAssets() {
         return excludedAssets.toArray(new String[excludedAssets.size()]);
     }
 
     /**
-     * @return <code>true</code> if this context his already rendered in the reponse
+     * @return <code>true</code> if this context his already rendered in the response
      */
     public boolean isAlreadyRendered() {
         return alreadyRendered;
@@ -176,6 +341,30 @@ public class AssetsRequestContext {
     public AssetsRequestContext addParameter(String assetName, String parameter, Object value) {
         return addParameter(assetName, parameter, value, false);
     }
+
+    /**
+     * Add a parameter value on a specific asset name
+     *
+     * @param assetName asset name
+     * @param parameter parameter
+     * @param value value
+     * @return this context
+     */
+    public AssetsRequestContext addParameter(AssetName assetName, String parameter, Object value) {
+        return addParameter(assetName.toString(), parameter, value, false);
+    }
+
+    /**
+     * Add a parameter value on a specific asset name (as Object with toString())
+     *
+     * @param assetName asset name
+     * @param parameter parameter
+     * @param value value
+     * @return this context
+     */
+    public AssetsRequestContext addParameter(Object assetName, String parameter, Object value) {
+        return addParameter(assetName.toString(), parameter, value, false);
+    }
     
     /**
      * Add a parameter value on a specific asset name
@@ -200,6 +389,32 @@ public class AssetsRequestContext {
     }
 
     /**
+     * Add a parameter value on a specific asset name
+     *
+     * @param assetName asset name
+     * @param parameter parameter
+     * @param value value
+     * @param replaceIfExists replace the parameter if he exists already
+     * @return this context
+     */
+    public AssetsRequestContext addParameter(AssetName assetName, String parameter, Object value, boolean replaceIfExists) {
+        return addParameter(assetName.toString(), parameter, value, replaceIfExists);
+    }
+
+    /**
+     * Add a parameter value on a specific asset name (as Object with toString())
+     *
+     * @param assetName asset name
+     * @param parameter parameter
+     * @param value value
+     * @param replaceIfExists replace the parameter if he exists already
+     * @return this context
+     */
+    public AssetsRequestContext addParameter(Object assetName, String parameter, Object value, boolean replaceIfExists) {
+        return addParameter(assetName.toString(), parameter, value, replaceIfExists);
+    }
+
+    /**
      * Get the parameters for a asset name
      * @param assetName asset name
      * @return the parameter of the asset name, or empty map
@@ -209,6 +424,24 @@ public class AssetsRequestContext {
             return Collections.emptyMap();
         }
         return parameters.get(assetName);
+    }
+
+    /**
+     * Get the parameters for a asset name
+     * @param assetName asset name
+     * @return the parameter of the asset name, or empty map
+     */
+    public Map<String, Object> getParameters(AssetName assetName) {
+        return getParameters(assetName.toString());
+    }
+
+    /**
+     * Get the parameters for a asset name (as Object with toString())
+     * @param assetName asset name
+     * @return the parameter of the asset name, or empty map
+     */
+    public Map<String, Object> getParameters(Object assetName) {
+        return getParameters(assetName.toString());
     }
 
     /**
@@ -225,5 +458,29 @@ public class AssetsRequestContext {
             return null;
         }
         return (T) values.get(parameter);
+    }
+
+    /**
+     * Get the value of the parameter for the asset name
+     * @param assetName asset name
+     * @param parameter parameter
+     * @param <T> type of the value (aka TypeOfValue value = context.getParameterValue(...) )
+     * @return the value of the parameter, or <code>null</code> value
+     */
+    @SuppressWarnings("unchecked")
+    public <T> T getParameterValue(AssetName assetName, String parameter) {
+        return getParameterValue(assetName.toString(), parameter);
+    }
+
+    /**
+     * Get the value of the parameter for the asset name (as Object with toString())
+     * @param assetName asset name
+     * @param parameter parameter
+     * @param <T> type of the value (aka TypeOfValue value = context.getParameterValue(...) )
+     * @return the value of the parameter, or <code>null</code> value
+     */
+    @SuppressWarnings("unchecked")
+    public <T> T getParameterValue(Object assetName, String parameter) {
+        return getParameterValue(assetName.toString(), parameter);
     }
 }
