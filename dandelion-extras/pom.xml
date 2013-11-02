@@ -10,7 +10,8 @@
     <packaging>pom</packaging>
     <name>Dandelion :: Extras</name>
     <modules>
-        <module>dandelion-servlet2</module>
         <module>dandelion-webjars</module>
+        <module>dandelion-spring3</module>
+        <module>dandelion-servlet3</module>
     </modules>
 </project>

@@ -44,20 +44,19 @@ import org.slf4j.Logger;
 import com.github.dandelion.core.asset.AssetType;
 import com.github.dandelion.core.asset.cache.AssetsCacheSystem;
 import com.github.dandelion.core.config.Configuration;
+import org.slf4j.LoggerFactory;
 
 /**
- * <p>
- * Abstract implementation for all Dandelion servlets (of any versions of the
- * Servlet API version).
- * 
- * <p>
  * The servlet intercepts the request and renders the appropriate web resource
  * stored in the configured cache system.
  */
-public abstract class AssetServlet extends HttpServlet {
+public class AssetServlet extends HttpServlet {
+    private static Logger LOG = LoggerFactory.getLogger(AssetServlet.class);
+
 	public static final String DANDELION_ASSETS = "dandelionAssets";
 	public static final String DANDELION_ASSETS_URL = "/dandelion-assets/";
 	public static final String DANDELION_ASSETS_URL_PATTERN = "/dandelion-assets/*";
+
 	private static final String CACHE_CONTROL = "assets.servlet.cache.control";
 	public static final String DEFAULT_CACHE_CONTROL = "no-cache";
 	private String cacheControl;
@@ -91,7 +90,9 @@ public abstract class AssetServlet extends HttpServlet {
 		writer.close();
 	}
 
-	protected abstract Logger getLogger();
+	protected Logger getLogger() {
+        return LOG;
+    }
 
 	public String getCacheControl() {
 		if (cacheControl == null) {

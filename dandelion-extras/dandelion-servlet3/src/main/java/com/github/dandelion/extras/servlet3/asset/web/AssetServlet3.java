@@ -27,31 +27,33 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.github.dandelion.core.asset.web;
+package com.github.dandelion.extras.servlet3.asset.web;
 
-import java.io.IOException;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import com.github.dandelion.core.asset.web.AssetServlet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+
 /**
  * <p>
- * Servlet 3.x-compatible implementation of the @link {@link AssetServlet}.
+ * Servlet 3.x-compatible implementation of the @link {@link com.github.dandelion.core.asset.web.AssetServlet}.
  */
+@WebServlet(name= AssetServlet.DANDELION_ASSETS, urlPatterns={AssetServlet.DANDELION_ASSETS_URL_PATTERN})
 public class AssetServlet3 extends AssetServlet {
-	private static Logger LOG = LoggerFactory.getLogger(AssetServlet3.class);
+    private static Logger LOG = LoggerFactory.getLogger(AssetServlet3.class);
 
-	@Override
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		super.doGet(request, response);
-	}
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        super.doGet(request, response);
+    }
 
-	@Override
-	protected Logger getLogger() {
-		return LOG;
-	}
+    @Override
+    protected Logger getLogger() {
+        return LOG;
+    }
 }

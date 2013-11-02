@@ -16,15 +16,7 @@ import com.github.dandelion.core.asset.AssetType;
 import com.github.dandelion.core.asset.cache.AssetsCacheSystem;
 
 public class AssetServletTest {
-    private AssetServlet servlet = new AssetServlet() {
-        // Logger
-        private final Logger LOG = LoggerFactory.getLogger(AssetServlet.class);
-
-        @Override
-        protected Logger getLogger() {
-            return LOG;
-        }
-    };
+    private AssetServlet servlet = new AssetServlet();
 
     @Test
     public void should_retrieve_content_from_cache() throws ServletException, IOException {
