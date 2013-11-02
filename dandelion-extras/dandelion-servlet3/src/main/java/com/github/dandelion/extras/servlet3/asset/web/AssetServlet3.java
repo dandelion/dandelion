@@ -41,7 +41,7 @@ import java.io.IOException;
 
 /**
  * <p>
- * Servlet 3.x-compatible implementation of the @link {@link com.github.dandelion.core.asset.web.AssetServlet}.
+ * Servlet 3.x-compatible implementation of the {@link com.github.dandelion.core.asset.web.AssetServlet}.
  */
 @WebServlet(name= AssetServlet.DANDELION_ASSETS, urlPatterns={AssetServlet.DANDELION_ASSETS_URL_PATTERN})
 public class AssetServlet3 extends AssetServlet {
