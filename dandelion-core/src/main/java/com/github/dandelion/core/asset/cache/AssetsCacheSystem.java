@@ -80,12 +80,6 @@ public class AssetsCacheSystem {
         return generatedKey;
     }
 
-    public static String getCacheKeyFromRequest(HttpServletRequest request) {
-        String cacheKey = request.getRequestURL().substring(request.getRequestURL().lastIndexOf("/") + 1);
-        LOG.debug("cacheKey from request = {}", cacheKey);
-        return cacheKey;
-    }
-
     public static boolean checkCacheKey(String cacheKey) {
         initializeAssetsCache();
         LOG.debug("check cache for key {}", cacheKey);

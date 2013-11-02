@@ -65,32 +65,36 @@ public class AssetServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		getLogger().debug("Dandelion Asset servlet captured GET request {}", request.getRequestURI());
 
-		String cacheKey = AssetsCacheSystem.getCacheKeyFromRequest(request);
+		String assetKey = request.getRequestURL().substring(request.getRequestURL().lastIndexOf("/") + 1);
+        String content = getAssetContent(response, assetKey);
+        setUpCacheControl(response);
 
-		if (isDevModeEnabled() && !AssetsCacheSystem.checkCacheKey(cacheKey)) {
-			throw new ServletException("The Dandelion assets should have been generated!");
-		}
-
-		AssetType resourceType = AssetType.typeOfAsset(cacheKey);
-		if (resourceType == null) {
-			getLogger().debug("unknown asset type from key {}", cacheKey);
-			return;
-		}
-
-		String fileContent = AssetsCacheSystem.getCacheContent(cacheKey);
-		if (fileContent == null) {
-			getLogger().debug("missing content from key {}", cacheKey);
-			return;
-		}
-		response.setContentType(resourceType.getContentType());
-		response.setHeader("Cache-Control", getCacheControl());
-		
-		PrintWriter writer = response.getWriter();
-		writer.write(fileContent);
+        PrintWriter writer = response.getWriter();
+		writer.write(content);
 		writer.close();
 	}
 
-	protected Logger getLogger() {
+    protected void setUpCacheControl(HttpServletResponse response) {
+        response.setHeader("Cache-Control", getCacheControl());
+    }
+
+    protected String getAssetContent(HttpServletResponse response, String assetKey) {
+        String content = "";
+        AssetType resourceType = AssetType.typeOfAsset(assetKey);
+        if (resourceType != null) {
+            response.setContentType(resourceType.getContentType());
+            content = AssetsCacheSystem.getCacheContent(assetKey);
+            if (content == null) {
+                getLogger().debug("missing content from key {}", assetKey);
+            }
+        } else {
+            response.setContentType("text/plain");
+            getLogger().debug("unknown asset type from key {}", assetKey);
+        }
+        return content;
+    }
+
+    protected Logger getLogger() {
         return LOG;
     }
 

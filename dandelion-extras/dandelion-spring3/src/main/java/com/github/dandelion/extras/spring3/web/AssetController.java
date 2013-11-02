@@ -1,6 +1,7 @@
 package com.github.dandelion.extras.spring3.web;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -33,33 +34,19 @@ import com.github.dandelion.core.asset.web.AssetServlet;
  */
 @Controller
 @RequestMapping(value = AssetServlet.DANDELION_ASSETS_URL, method = RequestMethod.GET)
-public class AssetController {
-
+public class AssetController extends AssetServlet {
 	// Logger
 	private static final Logger LOG = LoggerFactory.getLogger(AssetController.class);
 
 	@RequestMapping(value = "{assetKey}")
 	public @ResponseBody
-	String renderAsset(@PathVariable(value = "assetKey") String assetKey, HttpServletResponse response,
-			HttpServletRequest request) throws IOException {
-
-		String cacheKey = AssetsCacheSystem.getCacheKeyFromRequest(request);
-
-		AssetType resourceType = AssetType.typeOfAsset(cacheKey);
-		if (resourceType == null) {
-			LOG.debug("Unknown asset type from key {}", cacheKey);
-			return null;
-		}
-
-		String fileContent = AssetsCacheSystem.getCacheContent(cacheKey);
-		if (fileContent == null) {
-			LOG.debug("Missing content from key {}", cacheKey);
-			return null;
-		}
-
-		response.setContentType(resourceType.getContentType());
-		response.setHeader("Cache-Control", "no-cache");
-
-		return fileContent;
+    String renderAsset(@PathVariable(value = "assetKey") String assetKey, HttpServletResponse response) throws IOException {
+        setUpCacheControl(response);
+		return getAssetContent(response, assetKey);
 	}
+
+    @Override
+    protected Logger getLogger() {
+        return LOG;
+    }
 }
