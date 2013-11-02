@@ -141,6 +141,8 @@ public final class AssetsStorage {
     }
 
     private AssetsScopeStorageUnit getOrCreateStorageUnit(Asset asset, String scope, String parentScope) {
+        scope = scope.toLowerCase();
+        parentScope = parentScope.toLowerCase();
         AssetsScopeStorageUnit scopeUnit;
         if (storage.containsKey(scope)) {
             AssetsScopeStorageUnit storedScopeUnit = storage.get(scope);
@@ -246,7 +248,7 @@ public final class AssetsStorage {
         Map<String, Asset> assetsMap = new HashMap<String, Asset>();
         for (String scope : scopes) {
             Map<String, Asset> scopedAssetsMap = new HashMap<String, Asset>();
-            AssetsScopeStorageUnit assetScope = storage.get(scope);
+            AssetsScopeStorageUnit assetScope = storage.get(scope.toLowerCase());
             if (assetScope != null) {
                 for (Asset asset : assetScope.assets) {
                     String key = asset.getAssetKey() + "_" + assetScope.rootParentScope;

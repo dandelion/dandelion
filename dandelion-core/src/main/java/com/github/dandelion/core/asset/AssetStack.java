@@ -153,9 +153,12 @@ public class AssetStack {
      */
     public static List<Asset> excludeByName(List<Asset> assets, String... filters) {
         List<Asset> _assets = new ArrayList<Asset>();
-        List<String> _filters = new ArrayList<String>(Arrays.asList(filters));
+        List<String> _filters = new ArrayList<String>();
+        for(String filter:filters) {
+            _filters.add(filter.toLowerCase());
+        }
         for(Asset _asset:assets) {
-            if(!_filters.contains(_asset.getName())) {
+            if(!_filters.contains(_asset.getName().toLowerCase())) {
                 _assets.add(_asset);
             }
         }
