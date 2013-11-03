@@ -29,17 +29,17 @@
  */
 package com.github.dandelion.fakedomain;
 
-import com.github.dandelion.core.asset.Asset;
-import com.github.dandelion.core.asset.AssetType;
-import com.github.dandelion.core.asset.AssetsComponent;
-import com.github.dandelion.core.asset.loader.spi.AssetsLoader;
+import static org.fest.util.Collections.list;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.fest.util.Collections.list;
+import com.github.dandelion.core.asset.Asset;
+import com.github.dandelion.core.asset.AssetType;
+import com.github.dandelion.core.asset.AssetsComponent;
+import com.github.dandelion.core.asset.loader.spi.AssetsLoader;
 
 public class AssetsFakeLoader implements AssetsLoader {
     @Override

@@ -43,11 +43,14 @@ import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.Set;
 
-import com.github.dandelion.core.utils.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.github.dandelion.core.DandelionException;
+import com.github.dandelion.core.utils.PropertiesUtils;
+import com.github.dandelion.core.utils.ResourceScanner;
+import com.github.dandelion.core.utils.StringUtils;
+import com.github.dandelion.core.utils.UTF8Control;
 
 /**
  * <p>
@@ -136,7 +139,7 @@ public class StandardConfigurationLoader implements ConfigurationLoader {
 	/**
 	 * {@inheritDoc}
 	 */
-	public Properties loadUserConfiguration(Locale locale) {
+	public Properties loadUserConfiguration() {
 
 		LOG.debug("Loading user configuration...");
 		
@@ -150,7 +153,7 @@ public class StandardConfigurationLoader implements ConfigurationLoader {
 			try {
 				URL resourceURL = new File(path).toURI().toURL();
 				URLClassLoader urlLoader = new URLClassLoader(new URL[] { resourceURL });
-				userBundle = ResourceBundle.getBundle(DANDELION_USER_PROPERTIES, locale, urlLoader, new UTF8Control());
+				userBundle = ResourceBundle.getBundle(DANDELION_USER_PROPERTIES, Locale.getDefault(), urlLoader, new UTF8Control());
 				LOG.debug("User configuration loaded");
 			} catch (MalformedURLException e) {
 				LOG.warn("Wrong path to the externalized bundle", e);
@@ -164,13 +167,13 @@ public class StandardConfigurationLoader implements ConfigurationLoader {
 		if (userBundle == null) {
 			try {
 				// The user bundle is read using UTF-8
-				userBundle = ResourceBundle.getBundle(DANDELION_USER_PROPERTIES, locale, new UTF8Control());
+				userBundle = ResourceBundle.getBundle(DANDELION_USER_PROPERTIES, Locale.getDefault(), new UTF8Control());
 				LOG.debug("User configuration loaded");
 			} catch (MissingResourceException e) {
 				// if no resource bundle is found, try using the context
 				// classloader
 				try {
-					userBundle = ResourceBundle.getBundle(DANDELION_USER_PROPERTIES, locale, Thread.currentThread()
+					userBundle = ResourceBundle.getBundle(DANDELION_USER_PROPERTIES, Locale.getDefault(), Thread.currentThread()
 							.getContextClassLoader(), new UTF8Control());
 					LOG.debug("User configuration loaded");
 				} catch (MissingResourceException mre) {

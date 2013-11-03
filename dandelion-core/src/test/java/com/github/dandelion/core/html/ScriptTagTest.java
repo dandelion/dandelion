@@ -30,9 +30,9 @@
 
 package com.github.dandelion.core.html;
 
-import org.junit.Test;
-
 import static org.fest.assertions.Assertions.assertThat;
+
+import org.junit.Test;
 
 public class ScriptTagTest {
 

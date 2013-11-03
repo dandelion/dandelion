@@ -35,8 +35,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.github.dandelion.core.i18n.StandardLocaleResolver;
-
 public class DandelionConfiguratorTest {
 
 	@Before
@@ -54,11 +52,6 @@ public class DandelionConfiguratorTest {
 		System.setProperty(ConfigurationLoader.DANDELION_CONFLOADER_CLASS, "com.github.dandelion.core.config.ConfigurationFakeLoader");
 		assertThat(DandelionConfigurator.getConfigurationLoader()).isInstanceOf(ConfigurationFakeLoader.class);
 		System.clearProperty(ConfigurationLoader.DANDELION_CONFLOADER_CLASS);
-	}
-	
-	@Test
-	public void should_return_StandardLocaleResolver_from_default_configuration(){
-		assertThat(DandelionConfigurator.getLocaleResolver()).isInstanceOf(StandardLocaleResolver.class);
 	}
 	
 	@After

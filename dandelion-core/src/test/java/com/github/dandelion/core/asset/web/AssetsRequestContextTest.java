@@ -1,10 +1,10 @@
 package com.github.dandelion.core.asset.web;
 
+import static org.fest.assertions.Assertions.assertThat;
+
 import org.fest.assertions.MapAssert;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
-
-import static org.fest.assertions.Assertions.assertThat;
 
 public class AssetsRequestContextTest {
 

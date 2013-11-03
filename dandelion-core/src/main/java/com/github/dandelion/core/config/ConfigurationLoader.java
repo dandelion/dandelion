@@ -29,7 +29,6 @@
  */
 package com.github.dandelion.core.config;
 
-import java.util.Locale;
 import java.util.Properties;
 
 import com.github.dandelion.core.DandelionException;
@@ -48,7 +47,7 @@ import com.github.dandelion.core.DandelionException;
  */
 public interface ConfigurationLoader {
 
-    public final static String DANDELION_CONFLOADER_CLASS = "dandelion.confloader.class";
+	public final static String DANDELION_CONFLOADER_CLASS = "dandelion.confloader.class";
 
 	/**
 	 * <p>
@@ -67,14 +66,12 @@ public interface ConfigurationLoader {
 
 	/**
 	 * <p>
-	 * Load the user configuration which can be localized thanks to the given
-	 * locale.
+	 * Load the user configuration which can be used to override the default
+	 * one.
 	 * <p>
 	 * Once the bundle loaded, it is converted into Properties.
 	 * 
-	 * @param locale
-	 *            The current locale used to load the right properties file.
 	 * @return the ResourceBundle containing the user configuration.
 	 */
-	public Properties loadUserConfiguration(Locale locale);
+	public Properties loadUserConfiguration();
 }

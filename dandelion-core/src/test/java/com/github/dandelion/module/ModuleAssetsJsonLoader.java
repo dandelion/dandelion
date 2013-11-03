@@ -30,9 +30,10 @@
 
 package com.github.dandelion.module;
 
-import com.github.dandelion.core.asset.loader.impl.AbstractAssetsJsonLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.github.dandelion.core.asset.loader.impl.AbstractAssetsJsonLoader;
 
 public class ModuleAssetsJsonLoader extends AbstractAssetsJsonLoader {
     // Logger

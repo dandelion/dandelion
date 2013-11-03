@@ -29,11 +29,11 @@
  */
 package com.github.dandelion.core;
 
-import org.hamcrest.BaseMatcher;
-import org.hamcrest.Description;
-
 import java.util.HashMap;
 import java.util.Map;
+
+import org.hamcrest.BaseMatcher;
+import org.hamcrest.Description;
 
 /**
  * Matcher for test {@link DandelionException}

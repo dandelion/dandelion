@@ -29,16 +29,9 @@
  */
 package com.github.dandelion.core.config;
 
-import java.util.Locale;
-import java.util.MissingResourceException;
-import java.util.Properties;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.github.dandelion.core.DandelionException;
-import com.github.dandelion.core.i18n.LocaleResolver;
-import com.github.dandelion.core.i18n.StandardLocaleResolver;
 import com.github.dandelion.core.utils.ClassUtils;
 import com.github.dandelion.core.utils.StringUtils;
 
@@ -48,10 +41,8 @@ import com.github.dandelion.core.utils.StringUtils;
  * charge of the configuration loading, instantiate them and cache them.
  * 
  * <ul>
- * <li>The locale resolver, in charge of retrieving the current locale from
- * which the configuration will be loaded</li>
  * <li>The configuration loader, in charge of loading default and user
- * properties and resolve configurations groups</li>
+ * properties</li>
  * </ul>
  * <p>
  * 
@@ -66,70 +57,6 @@ public class DandelionConfigurator {
 	private static Logger LOG = LoggerFactory.getLogger(DandelionConfigurator.class);
 
 	private static ConfigurationLoader configurationLoader;
-	private static LocaleResolver localeResolver;
-
-	/**
-	 * Return a uniq implementation of {@link LocaleResolver} using the
-	 * following strategy:
-	 * 
-	 * <ol>
-	 * <li>First, check if the <code>i18n.locale.resolver</code> has been
-	 * defined in any of the user properties files. If so, tries to instantiate
-	 * the class.</li>
-	 * <li>If no specific LocaleResolver is defined in user properties, the
-	 * default will be used</li>
-	 * </ol>
-	 * 
-	 * @return an implementation {@link LocaleResolver}.
-	 */
-	@SuppressWarnings("unchecked")
-	public static LocaleResolver getLocaleResolver() {
-		Properties userProperties;
-		String className = null;
-		ConfigurationLoader configurationLoader = getConfigurationLoader();
-
-		if (localeResolver == null) {
-
-			try {
-				userProperties = configurationLoader.loadUserConfiguration(Locale.getDefault());
-
-				if (userProperties != null) {
-					try {
-						className = userProperties.getProperty("i18n.locale.resolver");
-					} catch (MissingResourceException e) {
-						LOG.debug("No custom LocaleResolver has been configured. Using default one.");
-					}
-				}
-
-				if (className == null) {
-					Properties defaultProperties = configurationLoader.loadDefaultConfiguration();
-					className = defaultProperties.getProperty("i18n.locale.resolver");
-				}
-
-				if (StringUtils.isNotBlank(className)) {
-					Class<LocaleResolver> classProperty = (Class<LocaleResolver>) ClassUtils.getClass(className);
-					localeResolver = (LocaleResolver) ClassUtils.getNewInstance(classProperty);
-				}
-
-				if (localeResolver == null) {
-					localeResolver = new StandardLocaleResolver();
-				}
-			} catch (ClassNotFoundException cnf) {
-				LOG.error("Unable to retrieve the LocaleResolver using the class {}", className, cnf);
-				throw DandelionException.wrap(cnf, ConfigurationError.LOCALE_RESOLVER_CLASS_NOT_FOUND).set("class",
-						className);
-			} catch (IllegalAccessException ia) {
-				LOG.error("Unable to instanciate the LocaleResolver using the class {}", className, ia);
-				throw DandelionException.wrap(ia, ConfigurationError.LOCALE_RESOLVER_CLASS_INSTANCIATION).set("class",
-						className);
-			} catch (InstantiationException e) {
-				LOG.error("Unable to instanciate the LocaleResolver using the class {}", className, e);
-				throw DandelionException.wrap(e, ConfigurationError.LOCALE_RESOLVER_CLASS_INSTANCIATION).set("class",
-						className);
-			}
-		}
-		return localeResolver;
-	}
 
 	/**
 	 * <p>
@@ -172,6 +99,5 @@ public class DandelionConfigurator {
 
 	static void clear() {
 		configurationLoader = null;
-		localeResolver = null;
 	}
 }

@@ -29,8 +29,13 @@
  */
 package com.github.dandelion.core.asset;
 
-import com.github.dandelion.core.DandelionException;
-import com.github.dandelion.core.DandelionExceptionMatcher;
+import static org.fest.assertions.Assertions.assertThat;
+import static org.fest.util.Collections.list;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.fest.assertions.MapAssert;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -38,12 +43,8 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import static org.fest.assertions.Assertions.assertThat;
-import static org.fest.util.Collections.list;
+import com.github.dandelion.core.DandelionException;
+import com.github.dandelion.core.DandelionExceptionMatcher;
 
 public class AssetsStorageTest {
     @Rule

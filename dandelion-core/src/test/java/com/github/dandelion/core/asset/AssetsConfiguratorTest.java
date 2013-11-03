@@ -29,17 +29,18 @@
  */
 package com.github.dandelion.core.asset;
 
-import com.github.dandelion.core.asset.loader.spi.AssetsLoader;
-import com.github.dandelion.fakedomain.AssetsFakeLoader;
-import org.junit.BeforeClass;
-import org.junit.Test;
-
-import java.util.ArrayList;
-
 import static com.github.dandelion.core.asset.AssetDOMPosition.body;
 import static com.github.dandelion.core.asset.AssetDOMPosition.head;
 import static org.fest.assertions.Assertions.assertThat;
 import static org.fest.util.Collections.list;
+
+import java.util.ArrayList;
+
+import org.junit.BeforeClass;
+import org.junit.Test;
+
+import com.github.dandelion.core.asset.loader.spi.AssetsLoader;
+import com.github.dandelion.fakedomain.AssetsFakeLoader;
 
 public class AssetsConfiguratorTest {
     static AssetsConfigurator assetsConfigurator;

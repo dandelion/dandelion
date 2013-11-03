@@ -30,7 +30,6 @@
 
 package com.github.dandelion.core.config;
 
-import java.util.Locale;
 import java.util.Properties;
 
 /**
@@ -76,10 +75,9 @@ public class Configuration {
         if(configuration == null) {
 
         	ConfigurationLoader confLoader = DandelionConfigurator.getConfigurationLoader();
-        	Locale locale = Locale.getDefault();
             Properties properties = new Properties();
             properties.putAll(confLoader.loadDefaultConfiguration());
-            properties.putAll(confLoader.loadUserConfiguration(locale));
+            properties.putAll(confLoader.loadUserConfiguration());
             configuration = properties;
         }
     }

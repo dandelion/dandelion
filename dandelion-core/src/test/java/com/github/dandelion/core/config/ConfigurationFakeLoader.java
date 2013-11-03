@@ -29,7 +29,6 @@
  */
 package com.github.dandelion.core.config;
 
-import java.util.Locale;
 import java.util.Properties;
 
 import com.github.dandelion.core.DandelionException;
@@ -41,8 +40,7 @@ public class ConfigurationFakeLoader implements ConfigurationLoader {
 		return null;
 	}
 
-	@Override
-	public Properties loadUserConfiguration(Locale locale) {
+	public Properties loadUserConfiguration() {
 		return null;
 	}
 }

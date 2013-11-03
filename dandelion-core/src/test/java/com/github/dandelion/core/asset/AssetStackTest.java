@@ -29,13 +29,13 @@
  */
 package com.github.dandelion.core.asset;
 
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.springframework.mock.web.MockHttpServletRequest;
+import static org.fest.assertions.Assertions.assertThat;
 
 import java.util.List;
 
-import static org.fest.assertions.Assertions.assertThat;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.springframework.mock.web.MockHttpServletRequest;
 
 public class AssetStackTest {
     private static MockHttpServletRequest request;
