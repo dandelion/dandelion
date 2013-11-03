@@ -117,13 +117,27 @@ public class AssetsConfigurator {
         for(AssetsLoader assetsLoader:assetsLoaders) {
             prepareAssetsLoading(assetsLoader.loadAssets());
         }
-        
+
+        repairOrphanParentScope();
         overrideAssetsByScope();
 
         storeAssetsFromScope(ROOT_SCOPE, true);
         storeAssetsFromScope(DETACHED_PARENT_SCOPE, true);
 
         clearAllAssetsProcessElements();
+    }
+
+    private void repairOrphanParentScope() {
+        List<String> orphans = new ArrayList<String>();
+        for(String parentScope:parentScopesByScope.values()) {
+            if (!parentScopesByScope.containsKey(parentScope)) {
+                orphans.add(parentScope);
+            }
+        }
+        for(String orphan:orphans) {
+            parentScopesByScope.put(orphan, ROOT_SCOPE);
+            scopesByParentScope.get(ROOT_SCOPE).add(orphan);
+        }
     }
 
     /**
