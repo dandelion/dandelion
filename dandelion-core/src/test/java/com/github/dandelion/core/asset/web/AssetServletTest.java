@@ -36,7 +36,7 @@ public class AssetServletTest {
 
 
     @Test
-    public void should_fail_to_retrieve_missing_content_from_cache() throws ServletException, IOException {
+    public void should_never_fail_to_retrieve_missing_content_from_cache() throws ServletException, IOException {
         MockHttpServletRequest request = new MockHttpServletRequest();
         MockHttpServletResponse response = new MockHttpServletResponse();
 
@@ -44,7 +44,7 @@ public class AssetServletTest {
 
         servlet.doGet(request, response);
 
-        assertThat(response.getContentAsString()).isEmpty();
+        assertThat(response.getContentAsString()).isEqualTo("");
     }
 
 

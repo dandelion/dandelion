@@ -39,8 +39,6 @@ import java.util.Map;
  *     <li>Version of asset</li>
  *     <li>Type of asset</li>
  *     <li>DOM positionning</li>
- *     <li>Asynchron (Only for script)</li>
- *     <li>Deferred (Only for script)</li>
  *     <li>Possible locations of assets like:
  *         <ul>
  *             <li>Remote access (aka CDN, Static Content Server, Any url)</li>
@@ -48,6 +46,7 @@ import java.util.Map;
  *         </ul>
  *     </li>
  *     <li>Html Attributes (key/value)</li>
+ *     <li>Html Attributes (only name)</li>
  * </ul>
  */
 public class Asset {
@@ -55,10 +54,9 @@ public class Asset {
 	String version;
 	AssetType type;
     AssetDOMPosition dom;
-    boolean async = false;
-    boolean deferred = false;
     Map<String, String> locations;
     Map<String, String> attributes;
+    String[] attributesOnlyName;
     int storagePosition = -1;
 
     /**
@@ -81,14 +79,11 @@ public class Asset {
         this.locations = locations;
     }
 
-    protected Asset(String name, String version, AssetType type, AssetDOMPosition dom,
-                    boolean async, boolean deferred, Map<String, String> locations, int storagePosition) {
+    protected Asset(String name, String version, AssetType type, AssetDOMPosition dom, Map<String, String> locations, int storagePosition) {
         this.name = name;
         this.version = version;
         this.type = type;
         this.dom = dom;
-        this.async = async;
-        this.deferred = deferred;
         this.locations = locations;
         this.storagePosition = storagePosition;
     }
@@ -117,18 +112,6 @@ public class Asset {
     public void setDom(AssetDOMPosition dom) {
         this.dom = dom;
     }
-    public boolean isAsync() {
-        return async;
-    }
-    public void setAsync(boolean async) {
-        this.async = async;
-    }
-    public boolean isDeferred() {
-        return deferred;
-    }
-    public void setDeferred(boolean deferred) {
-        this.deferred = deferred;
-    }
     public Map<String, String> getLocations() {
         return locations;
     }
@@ -140,6 +123,12 @@ public class Asset {
     }
     public void setAttributes(Map<String, String> attributes) {
         this.attributes = attributes;
+    }
+    public String[] getAttributesOnlyName() {
+        return attributesOnlyName;
+    }
+    public void setAttributesOnlyName(String[] attributesOnlyName) {
+        this.attributesOnlyName = attributesOnlyName;
     }
 
     /**
@@ -173,8 +162,6 @@ public class Asset {
 	public String toString() {
 		return "Asset [name=" + name + ", version=" + version + ", type=" + type
                 + (dom!=null?", dom=" + dom:"")
-                + (async?", async=" + async:"")
-                + (deferred?", deferred=" + deferred:"")
                 + ", locations=[" + locations + "]";
 	}
 
@@ -183,8 +170,7 @@ public class Asset {
     }
 
     public Asset clone(boolean withoutLocations) {
-        return new Asset(name, version, type, dom, async, deferred,
-                withoutLocations?new HashMap<String, String>():locations, storagePosition);
+        return new Asset(name, version, type, dom, withoutLocations?new HashMap<String, String>():locations, storagePosition);
     }
 
     public void addAttribute(String attributeName, String attributeValue) {

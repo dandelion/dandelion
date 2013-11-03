@@ -73,6 +73,7 @@ public class ScriptTag extends HtmlTag {
 		}
 
         html.append(attributesToHtml());
+        html.append(attributesOnlyNameToHtml());
 		
 		html.append("></script>");
 		

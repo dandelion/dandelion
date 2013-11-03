@@ -75,6 +75,7 @@ public class LinkTag extends HtmlTag {
 		}
 
         html.append(attributesToHtml());
+        html.append(attributesOnlyNameToHtml());
 		
 		html.append("/>");
 		

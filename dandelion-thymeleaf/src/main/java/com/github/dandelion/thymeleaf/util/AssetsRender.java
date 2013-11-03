@@ -51,7 +51,7 @@ public class AssetsRender {
                 link.setAttribute("rel", "stylesheet");
                 link.setAttribute("href", location);
                 if(asset.getAttributes() != null) {
-                    renderAttribute(link, asset.getAttributes());
+                    renderAttributes(link, asset.getAttributes());
                 }
                 root.insertChild(root.numChildren(), link);
             }
@@ -68,17 +68,24 @@ public class AssetsRender {
             for(String location:asset.getLocations().values()) {
                 Element script = new Element("script");
                 script.setAttribute("src", location);
-                if(asset.isAsync()) script.setAttribute("async", true, "async");
-                if(asset.isDeferred()) script.setAttribute("defer", true, "defer");
+                if(asset.getAttributesOnlyName() != null) {
+                    renderAttributesOnlyName(script, asset.getAttributesOnlyName());
+                }
                 if(asset.getAttributes() != null) {
-                    renderAttribute(script, asset.getAttributes());
+                    renderAttributes(script, asset.getAttributes());
                 }
                 root.insertChild(root.numChildren(), script);
             }
         }
     }
 
-    private static void renderAttribute(Element e, Map<String, String> attributes) {
+    private static void renderAttributesOnlyName(Element e, String... attributesOnlyName) {
+        for(String attribute:attributesOnlyName) {
+            e.setAttribute(attribute, true, null);
+        }
+    }
+
+    private static void renderAttributes(Element e, Map<String, String> attributes) {
         for(Map.Entry<String, String> attribute:attributes.entrySet()) {
             e.setAttribute(attribute.getKey(), attribute.getValue());
         }

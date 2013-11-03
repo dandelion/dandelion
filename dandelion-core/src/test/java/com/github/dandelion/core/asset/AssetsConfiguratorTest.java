@@ -63,10 +63,6 @@ public class AssetsConfiguratorTest {
         assertThat(assetsConfigurator.assetsStorage.assetsFor("plugin1addon", "plugin2")).hasSize(6);
         assertThat(assetsConfigurator.assetsStorage.assetsFor("plugin4")).hasSize(3)
                 .onProperty("dom").containsSequence(head, null, body);
-        assertThat(assetsConfigurator.assetsStorage.assetsFor("plugin5")).hasSize(3)
-                .onProperty("async").containsSequence(true, false, true);
-        assertThat(assetsConfigurator.assetsStorage.assetsFor("plugin5"))
-                .onProperty("deferred").containsSequence(false, true, true);
     }
 
     @Test

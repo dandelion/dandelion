@@ -59,17 +59,21 @@ public abstract class AbstractAssetsJsonLoader implements AssetsLoader {
             Set<String> resources = ResourceScanner.getResources(getFolder(), null, ".json");
             ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
 			for (String resource : resources) {
-                getLogger().debug("resources {}", resource);
-				InputStream configFileStream = classLoader.getResourceAsStream(resource);
+                try {
+                    getLogger().debug("resources {}", resource);
+                    InputStream configFileStream = classLoader.getResourceAsStream(resource);
 
-				AssetsComponent assetsComponent = mapper.readValue(configFileStream, AssetsComponent.class);
+                    AssetsComponent assetsComponent = mapper.readValue(configFileStream, AssetsComponent.class);
 
-                getLogger().debug("found {}", assetsComponent);
-                assetsComponentList.add(assetsComponent);
+                    getLogger().debug("found {}", assetsComponent);
+                    assetsComponentList.add(assetsComponent);
+                } catch (IOException e) {
+                    getLogger().error(e.getMessage(), e);
+                }
 			}
-		} catch (IOException e) {
+        } catch (IOException e) {
             getLogger().error(e.getMessage(), e);
-		}
+        }
         return assetsComponentList;
 	}
 

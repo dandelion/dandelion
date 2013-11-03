@@ -54,8 +54,9 @@ public abstract class HtmlTag {
 	protected StringBuffer cssStyle;
 
     protected Map<String, String> attributes;
+    private String[] attributesOnlyName;
 
-	/**
+    /**
 	 * Render the tag in HTML code.
 	 * 
 	 * @return the HTML code corresponding to the tag.
@@ -108,6 +109,10 @@ public abstract class HtmlTag {
         this.attributes = attributes;
     }
 
+    public void addAttributesOnlyName(String... attributesOnlyName) {
+        this.attributesOnlyName = attributesOnlyName;
+    }
+
     protected String attributesToHtml() {
         StringBuilder html = new StringBuilder();
         if(attributes != null) {
@@ -117,6 +122,17 @@ public abstract class HtmlTag {
                 html.append("=\"");
                 html.append(attribute.getValue());
                 html.append("\"");
+            }
+        }
+        return html.toString();
+    }
+
+    public String attributesOnlyNameToHtml() {
+        StringBuilder html = new StringBuilder();
+        if(attributesOnlyName != null) {
+            for(String attribute:attributesOnlyName) {
+                html.append(" ");
+                html.append(attribute);
             }
         }
         return html.toString();

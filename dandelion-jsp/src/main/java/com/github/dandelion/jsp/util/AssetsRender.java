@@ -67,20 +67,24 @@ public class AssetsRender {
     private static void render(Asset asset, PageContext pageContext) throws IOException {
 
         for(String location:asset.getLocations().values()) {
-            HtmlTag tag = null;
+            HtmlTag tag;
             switch (asset.getType()) {
                 case css:
                     tag = new LinkTag(location);
-                    tag.addAttributes(asset.getAttributes());
                     break;
                 case js:
-                    tag = new ScriptTag(location, asset.isAsync(), asset.isDeferred());
-                    tag.addAttributes(asset.getAttributes());
+                    tag = new ScriptTag(location);
                     break;
+                default:
+                    tag = null;
             }
+            if(tag != null) {
+                tag.addAttributesOnlyName(asset.getAttributesOnlyName());
+                tag.addAttributes(asset.getAttributes());
 
-            // Output the Html tag
-            pageContext.getOut().println(tag.toHtml());
+                // Output the Html tag
+                pageContext.getOut().println(tag.toHtml());
+            }
         }
     }
 

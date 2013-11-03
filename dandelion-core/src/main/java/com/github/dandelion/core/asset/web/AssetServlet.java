@@ -86,6 +86,7 @@ public class AssetServlet extends HttpServlet {
             content = AssetsCacheSystem.getCacheContent(assetKey);
             if (content == null) {
                 getLogger().debug("missing content from key {}", assetKey);
+                content = "";
             }
         } else {
             response.setContentType("text/plain");
