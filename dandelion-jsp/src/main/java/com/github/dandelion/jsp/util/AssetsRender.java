@@ -33,6 +33,7 @@ package com.github.dandelion.jsp.util;
 import com.github.dandelion.core.asset.Asset;
 import com.github.dandelion.core.asset.AssetStack;
 import com.github.dandelion.core.asset.AssetType;
+import com.github.dandelion.core.asset.web.HtmlUtil;
 import com.github.dandelion.core.html.HtmlTag;
 import com.github.dandelion.core.html.LinkTag;
 import com.github.dandelion.core.html.ScriptTag;
@@ -67,21 +68,8 @@ public class AssetsRender {
     private static void render(Asset asset, PageContext pageContext) throws IOException {
 
         for(String location:asset.getLocations().values()) {
-            HtmlTag tag;
-            switch (asset.getType()) {
-                case css:
-                    tag = new LinkTag(location);
-                    break;
-                case js:
-                    tag = new ScriptTag(location);
-                    break;
-                default:
-                    tag = null;
-            }
+            HtmlTag tag = HtmlUtil.transformAsset(asset, location);
             if(tag != null) {
-                tag.addAttributesOnlyName(asset.getAttributesOnlyName());
-                tag.addAttributes(asset.getAttributes());
-
                 // Output the Html tag
                 pageContext.getOut().println(tag.toHtml());
             }

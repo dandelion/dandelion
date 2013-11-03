@@ -28,59 +28,33 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package com.github.dandelion.core.config;
+package com.github.dandelion.core.asset.web;
 
-import java.util.Locale;
-import java.util.Properties;
+import com.github.dandelion.core.asset.Asset;
+import com.github.dandelion.core.html.HtmlTag;
+import com.github.dandelion.core.html.LinkTag;
+import com.github.dandelion.core.html.ScriptTag;
 
 /**
- * <p>
- * Entry point for the whole Dandelion configuration.
- *
- * <p>
- * The configuration is loaded only once using the configured instance of
- * {@link ConfigurationLoader}.
- *
- * @since v0.0.3
+ * Utilities on Html tags creation
  */
-public class Configuration {
-
-	static Properties configuration;
-
-    public static Properties getProperties() {
-        if(configuration == null) {
-            loadConfiguration();
+public class HtmlUtil {
+    public static HtmlTag transformAsset(Asset asset, String location) {
+        HtmlTag tag;
+        switch (asset.getType()) {
+            case css:
+                tag = new LinkTag(location);
+                break;
+            case js:
+                tag = new ScriptTag(location);
+                break;
+            default:
+                tag = null;
         }
-        return configuration;
-    }
-
-    public static String getProperty(String key) {
-        return getProperties().getProperty(key);
-    }
-
-    public static String getProperty(String key, String defaultValue) {
-        return getProperties().getProperty(key, defaultValue);
-    }
-
-	/**
-	 * <p>
-	 * Load the Dandelion configuration using the following strategy:
-	 * <ul>
-	 * <li>All default properties files are loaded (dandelion, webanalytics,
-	 * ...)</li>
-	 * <li>If it exists, the user properties are loaded using the bundle
-	 * mechanism and override the default configuration</li>
-	 * </ul>
-	 */
-    synchronized private static void loadConfiguration() {
-        if(configuration == null) {
-
-        	ConfigurationLoader confLoader = DandelionConfigurator.getConfigurationLoader();
-        	Locale locale = Locale.getDefault();
-            Properties properties = new Properties();
-            properties.putAll(confLoader.loadDefaultConfiguration());
-            properties.putAll(confLoader.loadUserConfiguration(locale));
-            configuration = properties;
+        if(tag != null) {
+            tag.addAttributesOnlyName(asset.getAttributesOnlyName());
+            tag.addAttributes(asset.getAttributes());
         }
+        return tag;
     }
 }

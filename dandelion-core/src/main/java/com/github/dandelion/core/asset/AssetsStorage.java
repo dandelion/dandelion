@@ -150,14 +150,12 @@ public final class AssetsStorage {
             try {
                 checkAssetAlreadyExists(asset, storedScopeUnit);
             } catch (DandelionException e) {
-                // TODO this code isn't in the right place
                 Asset originalAsset = storedScopeUnit.assets.get(
                         storedScopeUnit.assets.indexOf(asset)
                 );
                 checkAssetsLocationAlreadyExists(asset, originalAsset, e);
                 // merge the asset locations to the original asset
                 originalAsset.getLocations().putAll(asset.getLocations());
-                // TODO add an DandelionException here
                 return null;
             }
             scopeUnit = storedScopeUnit;

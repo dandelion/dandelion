@@ -13,6 +13,7 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.github.dandelion.core.html.HtmlTag;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -114,17 +115,9 @@ public class AssetFilter implements Filter {
 	 * @return true if the response can be updated.
 	 */
 	private boolean isDandelionApplyable(AssetsRequestContext context, CharResponseWrapper wrapper) {
-
-		if (wrapper.getContentType() == null || !wrapper.getContentType().contains("text/html")) {
-			return false;
-		}
-
-		if (!AssetStack.existsAssetsFor(context.getScopes(false), context.getExcludedAssets())) {
-			return false;
-		}
-
-		return true;
-	}
+        return !(wrapper.getContentType() == null || !wrapper.getContentType().contains("text/html"))
+                && AssetStack.existsAssetsFor(context.getScopes(false), context.getExcludedAssets());
+    }
 
 	private String generateHeadAssets(List<Asset> assets, String html) {
 		List<Asset> assetsHead = AssetStack.filterByDOMPosition(assets, AssetDOMPosition.head);
@@ -133,7 +126,8 @@ public class AssetFilter implements Filter {
 			for (AssetType type : AssetType.values()) {
 				for (Asset assetHead : AssetStack.filterByType(assetsHead, type)) {
 					for (String location : assetHead.getLocations().values()) {
-						htmlHead.append(new LinkTag(location).toHtml());
+                        HtmlTag tag = HtmlUtil.transformAsset(assetHead, location);
+						htmlHead.append(tag.toHtml());
 						htmlHead.append("\n");
 					}
 				}
@@ -150,7 +144,8 @@ public class AssetFilter implements Filter {
 			for (AssetType type : AssetType.values()) {
 				for (Asset assetBody : AssetStack.filterByType(assetsBody, type)) {
 					for (String location : assetBody.getLocations().values()) {
-						htmlBody.append(new ScriptTag(location, assetBody.isAsync(), assetBody.isDeferred()).toHtml());
+                        HtmlTag tag = HtmlUtil.transformAsset(assetBody, location);
+                        htmlBody.append(tag.toHtml());
 						htmlBody.append("\n");
 					}
 				}
