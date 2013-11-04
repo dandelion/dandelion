@@ -6,6 +6,7 @@ import java.io.PrintWriter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.github.dandelion.core.asset.web.HtmlUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -34,19 +35,13 @@ import com.github.dandelion.core.asset.web.AssetServlet;
  */
 @Controller
 @RequestMapping(value = AssetServlet.DANDELION_ASSETS_URL, method = RequestMethod.GET)
-public class AssetController extends AssetServlet {
-	// Logger
-	private static final Logger LOG = LoggerFactory.getLogger(AssetController.class);
-
+public class AssetController {
 	@RequestMapping(value = "{assetKey}")
 	public @ResponseBody
     String renderAsset(@PathVariable(value = "assetKey") String assetKey, HttpServletResponse response) throws IOException {
-        setUpCacheControl(response);
-		return getAssetContent(response, assetKey);
+        String[] content = HtmlUtil.getAssetContent(response, assetKey);
+        response.setHeader("Cache-Control", HtmlUtil.getCacheControl());
+        response.setContentType(content[1]);
+		return content[0];
 	}
-
-    @Override
-    protected Logger getLogger() {
-        return LOG;
-    }
 }

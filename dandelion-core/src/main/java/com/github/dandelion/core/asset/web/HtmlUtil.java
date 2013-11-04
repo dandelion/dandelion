@@ -31,14 +31,48 @@
 package com.github.dandelion.core.asset.web;
 
 import com.github.dandelion.core.asset.Asset;
+import com.github.dandelion.core.asset.AssetType;
+import com.github.dandelion.core.asset.cache.AssetsCacheSystem;
+import com.github.dandelion.core.config.Configuration;
 import com.github.dandelion.core.html.HtmlTag;
 import com.github.dandelion.core.html.LinkTag;
 import com.github.dandelion.core.html.ScriptTag;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.servlet.http.HttpServletResponse;
+
+import static com.github.dandelion.core.DevMode.isDevModeEnabled;
 
 /**
  * Utilities on Html tags creation
  */
 public class HtmlUtil {
+    private static Logger LOG = LoggerFactory.getLogger(HtmlUtil.class);
+
+    public static final String DEFAULT_CACHE_CONTROL = "no-cache";
+    private static final String CACHE_CONTROL = "assets.servlet.cache.control";
+    private static String cacheControl;
+
+    synchronized private static void initializeCacheControl() {
+        if (cacheControl != null) {
+            return;
+        }
+
+        String _cacheControl = Configuration.getProperty(CACHE_CONTROL);
+        if (isDevModeEnabled() || _cacheControl == null || _cacheControl.isEmpty()) {
+            _cacheControl = DEFAULT_CACHE_CONTROL;
+        }
+        cacheControl = _cacheControl;
+    }
+
+    public static String getCacheControl() {
+        if (cacheControl == null) {
+            initializeCacheControl();
+        }
+        return cacheControl;
+    }
+
     public static HtmlTag transformAsset(Asset asset, String location) {
         HtmlTag tag;
         switch (asset.getType()) {
@@ -56,5 +90,23 @@ public class HtmlUtil {
             tag.addAttributes(asset.getAttributes());
         }
         return tag;
+    }
+
+    public static String[] getAssetContent(HttpServletResponse response, String assetKey) {
+        String[] content = new String[2];
+        AssetType resourceType = AssetType.typeOfAsset(assetKey);
+        if (resourceType != null) {
+            content[0] = AssetsCacheSystem.getCacheContent(assetKey);
+            if (content[0] == null) {
+                LOG.debug("missing content from key {}", assetKey);
+                content[0] = "";
+            }
+            content[1] = resourceType.getContentType();
+        } else {
+            content[0] = "";
+            content[1] = "text/plain";
+            LOG.debug("unknown asset type from key {}", assetKey);
+        }
+        return content;
     }
 }

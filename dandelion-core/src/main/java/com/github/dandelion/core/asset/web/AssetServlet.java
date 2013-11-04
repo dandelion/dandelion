@@ -57,64 +57,22 @@ public class AssetServlet extends HttpServlet {
 	public static final String DANDELION_ASSETS_URL = "/dandelion-assets/";
 	public static final String DANDELION_ASSETS_URL_PATTERN = "/dandelion-assets/*";
 
-	private static final String CACHE_CONTROL = "assets.servlet.cache.control";
-	public static final String DEFAULT_CACHE_CONTROL = "no-cache";
-	private String cacheControl;
-
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		getLogger().debug("Dandelion Asset servlet captured GET request {}", request.getRequestURI());
 
 		String assetKey = request.getRequestURL().substring(request.getRequestURL().lastIndexOf("/") + 1);
-        String content = getAssetContent(response, assetKey);
-        setUpCacheControl(response);
+        String[] content = HtmlUtil.getAssetContent(response, assetKey);
+
+        response.setHeader("Cache-Control", HtmlUtil.getCacheControl());
+        response.setContentType(content[1]);
 
         PrintWriter writer = response.getWriter();
-		writer.write(content);
+		writer.write(content[0]);
 		writer.close();
 	}
-
-    protected void setUpCacheControl(HttpServletResponse response) {
-        response.setHeader("Cache-Control", getCacheControl());
-    }
-
-    protected String getAssetContent(HttpServletResponse response, String assetKey) {
-        String content = "";
-        AssetType resourceType = AssetType.typeOfAsset(assetKey);
-        if (resourceType != null) {
-            response.setContentType(resourceType.getContentType());
-            content = AssetsCacheSystem.getCacheContent(assetKey);
-            if (content == null) {
-                getLogger().debug("missing content from key {}", assetKey);
-                content = "";
-            }
-        } else {
-            response.setContentType("text/plain");
-            getLogger().debug("unknown asset type from key {}", assetKey);
-        }
-        return content;
-    }
 
     protected Logger getLogger() {
         return LOG;
     }
-
-	public String getCacheControl() {
-		if (cacheControl == null) {
-			initializeCacheControl();
-		}
-		return cacheControl;
-	}
-
-	synchronized private void initializeCacheControl() {
-		if (cacheControl != null) {
-			return;
-		}
-
-		String _cacheControl = Configuration.getProperty(CACHE_CONTROL);
-		if (isDevModeEnabled() || _cacheControl == null || _cacheControl.isEmpty()) {
-			_cacheControl = DEFAULT_CACHE_CONTROL;
-		}
-		cacheControl = _cacheControl;
-	}
 }
