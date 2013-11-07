@@ -37,7 +37,7 @@ import com.github.dandelion.core.asset.web.AssetServlet;
 @Controller
 @RequestMapping(value = AssetServlet.DANDELION_ASSETS_URL, method = RequestMethod.GET)
 public class AssetController {
-	@RequestMapping(value = "{assetKey}")
+	@RequestMapping(value = "{assetKey:.+}")
 	public @ResponseBody
     String renderAsset(@PathVariable String assetKey, HttpServletResponse response) throws IOException {
         AssetContent assetContent = HtmlUtil.getAssetContent(assetKey);
