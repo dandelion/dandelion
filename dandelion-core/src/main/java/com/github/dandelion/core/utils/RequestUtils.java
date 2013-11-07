@@ -70,6 +70,9 @@ public final class RequestUtils {
      * @return the base URL of the current request.
      */
     public static String getBaseUrl(HttpServletRequest request) {
+        if(request.getRequestURI().equals("/") || request.getRequestURI().equals("")) {
+            return request.getRequestURL().toString();
+        }
         return request.getRequestURL().toString().replace(request.getRequestURI(), request.getContextPath());
     }
 }

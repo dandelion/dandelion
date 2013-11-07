@@ -65,6 +65,7 @@ public class WebappLocationWrapper implements AssetLocationWrapper {
     @Override
     public String getWrappedContent(Asset asset, HttpServletRequest request) {
         String location = asset.getLocations().get(locationKey());
-        return ResourceUtils.getContentFromUrl(RequestUtils.getBaseUrl(request) + "/" + location, true);
+        String base = RequestUtils.getBaseUrl(request);
+        return ResourceUtils.getContentFromUrl( (base.endsWith("/")?base:base+"/") + location, true);
     }
 }
