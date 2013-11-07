@@ -57,11 +57,10 @@ public class AssetFilter implements Filter {
         if (isHtmlApplyable(request)) {
             LOG.debug("AssetFilter apply on this request {}", request.getRequestURL().toString());
 
-            PrintWriter out = response.getWriter();
-			CharResponseWrapper wrapper = new CharResponseWrapper(response);
+			AssetFilterResponseWrapper wrapper = new AssetFilterResponseWrapper(response);
 			filterChain.doFilter(request, wrapper);
 
-			String html = wrapper.toString();
+			String html = new String(wrapper.getDataStream());
 			AssetsRequestContext context = AssetsRequestContext.get(request);
 
 			if (isDandelionApplyable(context, wrapper)) {
@@ -74,11 +73,11 @@ public class AssetFilter implements Filter {
 				html = generateBodyAssets(assets, html);
 
                 // Update the content length to new value
-                response.setContentLength(html.getBytes().length);
+                response.addIntHeader("Content-Length", html.getBytes().length);
 			}
 
-			out.write(html);
-			out.close();
+            response.getWriter().println(html);
+            response.getWriter().close();
 		}
 		// All other requests are not filtered
 		else {
@@ -105,7 +104,7 @@ public class AssetFilter implements Filter {
 	 *            The wrapper around the response to generate.
 	 * @return true if the response can be updated.
 	 */
-	private boolean isDandelionApplyable(AssetsRequestContext context, CharResponseWrapper wrapper) {
+	private boolean isDandelionApplyable(AssetsRequestContext context, AssetFilterResponseWrapper wrapper) {
         if (wrapper.getContentType() == null || !wrapper.getContentType().contains("text/html")) {
             return false;
         } else if (!AssetStack.existsAssetsFor(context.getScopes(false), context.getExcludedAssets())) {
