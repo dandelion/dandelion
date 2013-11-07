@@ -17,12 +17,10 @@ import com.github.dandelion.core.html.HtmlTag;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.github.dandelion.core.DevMode;
 import com.github.dandelion.core.asset.Asset;
 import com.github.dandelion.core.asset.AssetDOMPosition;
 import com.github.dandelion.core.asset.AssetStack;
 import com.github.dandelion.core.asset.AssetType;
-import com.github.dandelion.core.utils.StringUtils;
 
 /**
  * <p>
@@ -38,40 +36,28 @@ public class AssetFilter implements Filter {
 
 	@Override
 	public void init(FilterConfig filterConfig) throws ServletException {
-
-		// First check context parameters
-		String devMode = filterConfig.getServletContext().getInitParameter(DevMode.DANDELION_DEV_MODE);
-
-		// Then check filter parameters
-		if (StringUtils.isBlank(devMode)) {
-			devMode = filterConfig.getInitParameter(DevMode.DANDELION_DEV_MODE);
-		}
-
-		// Apply the dev mode if it exists in the deployment descriptor
-		if (StringUtils.isNotBlank(devMode)) {
-			LOG.info("Dev mode configured in the AssetFilter: {}", Boolean.parseBoolean(devMode));
-			DevMode.setDevMode(Boolean.parseBoolean(devMode));
-		}
+        LOG.info("initialize the Dandelion AssetFilter");
 	}
 
 	@Override
 	public void doFilter(ServletRequest servletRequest, ServletResponse serlvetResponse, FilterChain filterChain)
 			throws IOException, ServletException {
 
-		HttpServletRequest request = (HttpServletRequest) servletRequest;
-		HttpServletResponse response = (HttpServletResponse) serlvetResponse;
-
 		// Only filter HTTP requests
 		if (!(servletRequest instanceof HttpServletRequest)) {
-			filterChain.doFilter(request, response);
+            LOG.debug("AssetFilter apply only on HTTP request");
+			filterChain.doFilter(servletRequest, serlvetResponse);
 			return;
 		}
 
-		// Only filter requests that accept HTML
-		// TODO this header doesn't seem reliable. It must be improved
-		if (request.getHeader("accept") != null && request.getHeader("accept").contains("text/html")) {
+        HttpServletRequest request = (HttpServletRequest) servletRequest;
+        HttpServletResponse response = (HttpServletResponse) serlvetResponse;
 
-			PrintWriter out = response.getWriter();
+		// Only filter requests that accept HTML
+        if (isHtmlApplyable(request)) {
+            LOG.debug("AssetFilter apply on this request {}", request.getRequestURL().toString());
+
+            PrintWriter out = response.getWriter();
 			CharResponseWrapper wrapper = new CharResponseWrapper(response);
 			filterChain.doFilter(request, wrapper);
 
@@ -79,6 +65,7 @@ public class AssetFilter implements Filter {
 			AssetsRequestContext context = AssetsRequestContext.get(request);
 
 			if (isDandelionApplyable(context, wrapper)) {
+                LOG.debug("Dandelion Assets Generation apply on this request {}", request.getRequestURL().toString());
 
 				List<Asset> assets = AssetStack.prepareAssetsFor(request, context.getScopes(true),
 						context.getExcludedAssets());
@@ -86,8 +73,8 @@ public class AssetFilter implements Filter {
 				html = generateHeadAssets(assets, html);
 				html = generateBodyAssets(assets, html);
 
-				// Update the content length to new value
-				response.setContentLength(html.length());
+                // Update the content length to new value
+                response.setContentLength(html.getBytes().length);
 			}
 
 			out.write(html);
@@ -95,11 +82,17 @@ public class AssetFilter implements Filter {
 		}
 		// All other requests are not filtered
 		else {
+            LOG.debug("AssetFilter apply only on content type 'text/html' on this request {}", request.getRequestURL().toString());
 			filterChain.doFilter(request, response);
 		}
 	}
 
-	/**
+    private boolean isHtmlApplyable(HttpServletRequest request) {
+        // TODO this header doesn't seem reliable. It must be improved
+        return request.getHeader("accept") != null && request.getHeader("accept").contains("text/html");
+    }
+
+    /**
 	 * Only update the response if:
 	 * <ul>
 	 * <li>the response to process is of type HTML (based on the content type)</li>
@@ -113,8 +106,12 @@ public class AssetFilter implements Filter {
 	 * @return true if the response can be updated.
 	 */
 	private boolean isDandelionApplyable(AssetsRequestContext context, CharResponseWrapper wrapper) {
-        return !(wrapper.getContentType() == null || !wrapper.getContentType().contains("text/html"))
-                && AssetStack.existsAssetsFor(context.getScopes(false), context.getExcludedAssets());
+        if (wrapper.getContentType() == null || !wrapper.getContentType().contains("text/html")) {
+            return false;
+        } else if (!AssetStack.existsAssetsFor(context.getScopes(false), context.getExcludedAssets())) {
+            return false;
+        }
+        return true;
     }
 
 	private String generateHeadAssets(List<Asset> assets, String html) {
