@@ -10,6 +10,10 @@ import com.github.dandelion.core.asset.web.HtmlUtil;
 import com.github.dandelion.core.asset.web.data.AssetContent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -38,11 +42,12 @@ import com.github.dandelion.core.asset.web.AssetServlet;
 @RequestMapping(value = AssetServlet.DANDELION_ASSETS_URL, method = RequestMethod.GET)
 public class AssetController {
 	@RequestMapping(value = "{assetKey:.+}")
-	public @ResponseBody
-    String renderAsset(@PathVariable String assetKey, HttpServletResponse response) throws IOException {
+	public ResponseEntity<String> renderAsset(@PathVariable String assetKey, HttpServletResponse response) throws IOException {
         AssetContent assetContent = HtmlUtil.getAssetContent(assetKey);
-        response.setHeader("Cache-Control", HtmlUtil.getCacheControl());
-        response.setContentType(assetContent.getContentType());
-		return assetContent.getContent();
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.parseMediaType(assetContent.getContentType()));
+        headers.setCacheControl(HtmlUtil.getCacheControl());
+        headers.setContentLength(assetContent.getContent().getBytes().length);
+		return new ResponseEntity<String>(assetContent.getContent(), headers, HttpStatus.OK);
 	}
 }
