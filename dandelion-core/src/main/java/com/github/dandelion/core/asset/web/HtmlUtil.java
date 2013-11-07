@@ -33,6 +33,7 @@ package com.github.dandelion.core.asset.web;
 import com.github.dandelion.core.asset.Asset;
 import com.github.dandelion.core.asset.AssetType;
 import com.github.dandelion.core.asset.cache.AssetsCacheSystem;
+import com.github.dandelion.core.asset.web.data.AssetContent;
 import com.github.dandelion.core.config.Configuration;
 import com.github.dandelion.core.html.HtmlTag;
 import com.github.dandelion.core.html.LinkTag;
@@ -92,21 +93,22 @@ public class HtmlUtil {
         return tag;
     }
 
-    public static String[] getAssetContent(HttpServletResponse response, String assetKey) {
-        String[] content = new String[2];
+    public static AssetContent getAssetContent(String assetKey) {
+        String content = "";
+        String contentType = null;
         AssetType resourceType = AssetType.typeOfAsset(assetKey);
         if (resourceType != null) {
-            content[0] = AssetsCacheSystem.getCacheContent(assetKey);
-            if (content[0] == null) {
+            content = AssetsCacheSystem.getCacheContent(assetKey);
+            if (content == null) {
                 LOG.debug("missing content from key {}", assetKey);
-                content[0] = "";
+                content = "";
             }
-            content[1] = resourceType.getContentType();
+            contentType = resourceType.getContentType();
         } else {
-            content[0] = "";
-            content[1] = "text/plain";
+            content = "";
+            contentType = "text/plain";
             LOG.debug("unknown asset type from key {}", assetKey);
         }
-        return content;
+        return new AssetContent(content, contentType);
     }
 }

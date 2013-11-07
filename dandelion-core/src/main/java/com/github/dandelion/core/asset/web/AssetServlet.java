@@ -39,6 +39,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.github.dandelion.core.asset.web.data.AssetContent;
 import org.slf4j.Logger;
 
 import com.github.dandelion.core.asset.AssetType;
@@ -62,13 +63,13 @@ public class AssetServlet extends HttpServlet {
 		getLogger().debug("Dandelion Asset servlet captured GET request {}", request.getRequestURI());
 
 		String assetKey = request.getRequestURL().substring(request.getRequestURL().lastIndexOf("/") + 1);
-        String[] content = HtmlUtil.getAssetContent(response, assetKey);
+        AssetContent assetContent = HtmlUtil.getAssetContent(assetKey);
 
         response.setHeader("Cache-Control", HtmlUtil.getCacheControl());
-        response.setContentType(content[1]);
+        response.setContentType(assetContent.getContentType());
 
         PrintWriter writer = response.getWriter();
-		writer.write(content[0]);
+		writer.write(assetContent.getContent());
 		writer.close();
 	}
 

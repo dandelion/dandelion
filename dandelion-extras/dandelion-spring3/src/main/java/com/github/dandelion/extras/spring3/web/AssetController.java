@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.github.dandelion.core.asset.web.HtmlUtil;
+import com.github.dandelion.core.asset.web.data.AssetContent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -38,10 +39,10 @@ import com.github.dandelion.core.asset.web.AssetServlet;
 public class AssetController {
 	@RequestMapping(value = "{assetKey}")
 	public @ResponseBody
-    String renderAsset(@PathVariable(value = "assetKey") String assetKey, HttpServletResponse response) throws IOException {
-        String[] content = HtmlUtil.getAssetContent(response, assetKey);
+    String renderAsset(@PathVariable String assetKey, HttpServletResponse response) throws IOException {
+        AssetContent assetContent = HtmlUtil.getAssetContent(assetKey);
         response.setHeader("Cache-Control", HtmlUtil.getCacheControl());
-        response.setContentType(content[1]);
-		return content[0];
+        response.setContentType(assetContent.getContentType());
+		return assetContent.getContent();
 	}
 }
