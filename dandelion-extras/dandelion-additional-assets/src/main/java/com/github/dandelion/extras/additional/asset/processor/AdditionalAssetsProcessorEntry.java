@@ -73,6 +73,10 @@ public class AdditionalAssetsProcessorEntry extends AssetProcessorEntry {
 
     @Override
     public List<Asset> process(List<Asset> assets, HttpServletRequest request) {
+        if(!additionalAssetsEnabled) {
+            return assets;
+        }
+
         List<Asset> processedAssets = new ArrayList<Asset>();
         for(Asset asset:assets) {
             if(asset.getLocations().size() == 1 && asset.getLocations().containsKey(getTreatmentKey())) {
