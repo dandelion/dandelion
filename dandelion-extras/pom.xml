@@ -13,5 +13,6 @@
         <module>dandelion-webjars</module>
         <module>dandelion-spring3</module>
         <module>dandelion-servlet3</module>
+        <module>dandelion-additional-assets</module>
     </modules>
 </project>
