@@ -60,7 +60,7 @@ public class AssetFilter implements Filter {
 			AssetFilterResponseWrapper wrapper = new AssetFilterResponseWrapper(response);
 			filterChain.doFilter(request, wrapper);
 
-			String html = new String(wrapper.getDataStream());
+			String html = wrapper.getWrappedContent();
 			AssetsRequestContext context = AssetsRequestContext.get(request);
 
 			if (isDandelionApplyable(context, wrapper)) {
@@ -73,7 +73,7 @@ public class AssetFilter implements Filter {
 				html = generateBodyAssets(assets, html);
 
                 // Update the content length to new value
-                response.addIntHeader("Content-Length", html.getBytes().length);
+                response.setIntHeader("Content-Length", html.getBytes().length);
 			}
 
             response.getWriter().println(html);

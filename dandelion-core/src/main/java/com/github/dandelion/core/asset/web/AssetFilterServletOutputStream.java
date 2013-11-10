@@ -36,25 +36,15 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 public class AssetFilterServletOutputStream extends ServletOutputStream {
+    private StringBuffer originalOutput = new StringBuffer();
 
-    DataOutputStream output;
-    public AssetFilterServletOutputStream(OutputStream output) {
-        this.output = new DataOutputStream(output);
+    @Override
+    public String toString() {
+        return this.originalOutput.toString();
     }
 
     @Override
     public void write(int arg0) throws IOException {
-        output.write(arg0);
+        originalOutput.append((char) arg0);
     }
-
-    @Override
-    public void write(byte[] arg0, int arg1, int arg2) throws IOException {
-        output.write(arg0, arg1, arg2);
-    }
-
-    @Override
-    public void write(byte[] arg0) throws IOException {
-        output.write(arg0);
-    }
-
 }

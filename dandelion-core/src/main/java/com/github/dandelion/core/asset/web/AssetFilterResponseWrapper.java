@@ -10,34 +10,45 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
 
 public class AssetFilterResponseWrapper extends HttpServletResponseWrapper {
-    ByteArrayOutputStream output;
-    AssetFilterServletOutputStream filterOutput;
-    PrintWriter pw;
+    protected AssetFilterServletOutputStream stream;
+    protected PrintWriter writer = null;
 
     public AssetFilterResponseWrapper(HttpServletResponse response) {
         super(response);
-        output = new ByteArrayOutputStream();
     }
-    @Override
+
+    public AssetFilterServletOutputStream createOutputStream() throws IOException {
+        return new AssetFilterServletOutputStream();
+    }
+
     public ServletOutputStream getOutputStream() throws IOException {
-        if (filterOutput==null){
-            filterOutput = new AssetFilterServletOutputStream(output);
+        if (writer != null) {
+            throw new IllegalStateException("getWriter() has already been called for this response");
         }
-        return filterOutput;
+
+        if (stream == null) {
+            stream = createOutputStream();
+        }
+
+        return stream;
     }
 
-    @Override
     public PrintWriter getWriter() throws IOException {
-        if (filterOutput==null){
-            filterOutput = new AssetFilterServletOutputStream(output);
+        if (writer != null) {
+            return writer;
         }
-        if(pw==null){
-            pw = new PrintWriter(filterOutput, true);
+
+        if (stream != null) {
+            throw new IllegalStateException("getOutputStream() has already been called for this response");
         }
-        return pw;
+
+        stream = createOutputStream();
+        writer = new PrintWriter(stream);
+
+        return writer;
     }
 
-    public byte[] getDataStream(){
-        return output.toByteArray();
+    public String getWrappedContent() {
+        return stream.toString();
     }
 }
