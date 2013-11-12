@@ -30,42 +30,19 @@
 
 package com.github.dandelion.core.asset.wrapper.impl;
 
-import com.github.dandelion.core.asset.Asset;
-import com.github.dandelion.core.asset.wrapper.spi.AssetLocationWrapper;
-import com.github.dandelion.core.utils.RequestUtils;
-import com.github.dandelion.core.utils.ResourceUtils;
+import org.junit.Test;
 
-import javax.servlet.http.HttpServletRequest;
+public class AggregationLocationWrapperTest {
+    AggregationLocationWrapper wrapper = new AggregationLocationWrapper();
 
-/**
- * Wrapper for "webapp" location
- */
-public class WebappLocationWrapper implements AssetLocationWrapper {
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String locationKey() {
-        return "webapp";
+    @Test(expected = IllegalStateException.class)
+    public void should_cant_wrap_aggregation_location() {
+        wrapper.wrapLocation(null, null);
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String wrapLocation(Asset asset, HttpServletRequest request) {
-        String location = asset.getLocations().get(locationKey());
-        String base = RequestUtils.getBaseUrl(request);
-        return (base.endsWith("/")?base:base+"/") + location;
+    @Test(expected = IllegalStateException.class)
+    public void should_cant_get_content_for_caching() {
+        wrapper.getContent(null, null, null, null);
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String getWrappedContent(Asset asset, HttpServletRequest request) {
-        String location = asset.getLocations().get(locationKey());
-        return ResourceUtils.getContentFromUrl(location, true);
-    }
 }

@@ -30,42 +30,37 @@
 
 package com.github.dandelion.core.asset.wrapper.impl;
 
+import com.github.dandelion.core.DevMode;
 import com.github.dandelion.core.asset.Asset;
-import com.github.dandelion.core.asset.wrapper.spi.AssetLocationWrapper;
-import com.github.dandelion.core.utils.RequestUtils;
-import com.github.dandelion.core.utils.ResourceUtils;
+import com.github.dandelion.core.asset.AssetType;
+import com.github.dandelion.core.asset.web.AssetsRequestContext;
+import org.junit.Test;
+import org.springframework.mock.web.MockHttpServletRequest;
 
 import javax.servlet.http.HttpServletRequest;
 
-/**
- * Wrapper for "webapp" location
- */
-public class WebappLocationWrapper implements AssetLocationWrapper {
+import static java.util.Collections.singletonMap;
+import static org.fest.assertions.Assertions.assertThat;
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String locationKey() {
-        return "webapp";
-    }
+public class TemplateLocationWrapperTest {
+    TemplateLocationWrapper wrapper = new TemplateLocationWrapper();
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String wrapLocation(Asset asset, HttpServletRequest request) {
-        String location = asset.getLocations().get(locationKey());
-        String base = RequestUtils.getBaseUrl(request);
-        return (base.endsWith("/")?base:base+"/") + location;
-    }
+    @Test
+    public void should_can_wrap_location_and_get_it() {
+        System.setProperty(DevMode.DANDELION_DEV_MODE, "false");
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String getWrappedContent(Asset asset, HttpServletRequest request) {
-        String location = asset.getLocations().get(locationKey());
-        return ResourceUtils.getContentFromUrl(location, true);
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setRequestURI("/context/page.html");
+        request.setContextPath("/context");
+
+        AssetsRequestContext.get(request).addParameter("asset-template", "/* content */", "/* content param */");
+
+        Asset asset = new Asset("asset-template", "1.0", AssetType.js, singletonMap(wrapper.locationKey(), "com/github/dandelion/core/asset/wrapper/impl/asset.js"));
+        String location = wrapper.wrapLocation(asset, request);
+        assertThat(location).isEqualTo("http://localhost:80/context/dandelion-assets/f9d126fdc5489f63a5ae1eae859a6ef030948539-asset-template.js");
+
+        asset = new Asset("asset-template", "1.0", AssetType.js, singletonMap(wrapper.locationKey(), location));
+        String content = wrapper.getWrappedContent(asset, request);
+        assertThat(content).isEqualTo("/* content param */");
     }
 }

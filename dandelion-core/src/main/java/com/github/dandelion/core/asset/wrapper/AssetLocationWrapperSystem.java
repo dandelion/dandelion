@@ -6,15 +6,12 @@ import org.slf4j.LoggerFactory;
 
 import java.util.*;
 
-public class AssetLocationWrapperSystem {
+public final class AssetLocationWrapperSystem {
     // Logger
     private static final Logger LOG = LoggerFactory.getLogger(AssetLocationWrapperSystem.class);
 
     private static ServiceLoader<AssetLocationWrapper> loader = ServiceLoader.load(AssetLocationWrapper.class);
     private static List<AssetLocationWrapper> wrappers;
-
-    private AssetLocationWrapperSystem() {
-    }
 
     private static void initialize() {
         if(wrappers == null) {

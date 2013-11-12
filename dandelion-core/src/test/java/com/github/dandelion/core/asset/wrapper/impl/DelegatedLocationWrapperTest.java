@@ -31,41 +31,38 @@
 package com.github.dandelion.core.asset.wrapper.impl;
 
 import com.github.dandelion.core.asset.Asset;
-import com.github.dandelion.core.asset.wrapper.spi.AssetLocationWrapper;
-import com.github.dandelion.core.utils.RequestUtils;
-import com.github.dandelion.core.utils.ResourceUtils;
+import com.github.dandelion.core.asset.AssetType;
+import com.github.dandelion.core.asset.web.AssetsRequestContext;
+import org.junit.Test;
+import org.springframework.mock.web.MockHttpServletRequest;
 
 import javax.servlet.http.HttpServletRequest;
 
-/**
- * Wrapper for "webapp" location
- */
-public class WebappLocationWrapper implements AssetLocationWrapper {
+import static java.util.Collections.singletonMap;
+import static org.fest.assertions.Assertions.assertThat;
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String locationKey() {
-        return "webapp";
-    }
+public class DelegatedLocationWrapperTest {
+    DelegatedLocationWrapper wrapper = new DelegatedLocationWrapper();
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String wrapLocation(Asset asset, HttpServletRequest request) {
-        String location = asset.getLocations().get(locationKey());
-        String base = RequestUtils.getBaseUrl(request);
-        return (base.endsWith("/")?base:base+"/") + location;
-    }
+    @Test
+    public void should_can_wrap_location_and_get_it() {
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        request.setRequestURI("/context/page.html");
+        request.setContextPath("/context");
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String getWrappedContent(Asset asset, HttpServletRequest request) {
-        String location = asset.getLocations().get(locationKey());
-        return ResourceUtils.getContentFromUrl(location, true);
+        AssetsRequestContext.get(request).addParameter("asset-delegated", DelegatedLocationWrapper.DELEGATED_CONTENT_PARAM, new DelegatedContent() {
+            @Override
+            public String getContent(HttpServletRequest request) {
+                return "/* content */";
+            }
+        });
+
+        Asset asset = new Asset("asset-delegated", "1.0", AssetType.js, singletonMap(wrapper.locationKey(), "asset.js"));
+        String location = wrapper.wrapLocation(asset, request);
+        assertThat(location).isEqualTo("http://localhost:80/context/dandelion-assets/0cf3fbac07aa31f38153ba45eca0c943d627ba8b-asset-delegated.js");
+
+        asset = new Asset("asset-delegated", "1.0", AssetType.js, singletonMap(wrapper.locationKey(), location));
+        String content = wrapper.getWrappedContent(asset, request);
+        assertThat(content).isEqualTo("/* content */");
     }
 }
