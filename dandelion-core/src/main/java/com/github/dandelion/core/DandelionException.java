@@ -100,6 +100,7 @@ public class DandelionException extends RuntimeException {
      * @param <T> type of this value
      * @return the casted value
      */
+    @SuppressWarnings("unchecked")
     public <T> T get(String field) {
         return (T) parameters.get(field);
     }
@@ -131,7 +132,7 @@ public class DandelionException extends RuntimeException {
             return null;
         }
         String key = createBundleKey(errorCode);
-        ResourceBundle bundle = ResourceBundle.getBundle("com.github.dandelion.core.api.exceptions");
+        ResourceBundle bundle = ResourceBundle.getBundle("com.github.dandelion.core.exceptions");
         return MessageFormat.format(bundle.getString(key), parameters.values());
     }
 }
