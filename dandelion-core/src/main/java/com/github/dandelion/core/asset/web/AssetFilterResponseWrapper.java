@@ -10,45 +10,32 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
 
 public class AssetFilterResponseWrapper extends HttpServletResponseWrapper {
-    protected AssetFilterServletOutputStream stream;
-    protected PrintWriter writer = null;
+    protected PrintWriter printWriter = null;
+    protected CharArrayWriter writer = null;
 
     public AssetFilterResponseWrapper(HttpServletResponse response) {
         super(response);
     }
 
-    public AssetFilterServletOutputStream createOutputStream() throws IOException {
-        return new AssetFilterServletOutputStream();
-    }
-
+    @Override
     public ServletOutputStream getOutputStream() throws IOException {
-        if (writer != null) {
-            throw new IllegalStateException("getWriter() has already been called for this response");
-        }
-
-        if (stream == null) {
-            stream = createOutputStream();
-        }
-
-        return stream;
+        throw new IllegalStateException("getWriter() has already been called for this response");
     }
 
+    @Override
     public PrintWriter getWriter() throws IOException {
-        if (writer != null) {
-            return writer;
+        if (writer == null) {
+            writer = new CharArrayWriter();
         }
 
-        if (stream != null) {
-            throw new IllegalStateException("getOutputStream() has already been called for this response");
+        if (printWriter == null) {
+            printWriter = new PrintWriter(writer);
         }
 
-        stream = createOutputStream();
-        writer = new PrintWriter(stream);
-
-        return writer;
+        return printWriter;
     }
 
     public String getWrappedContent() {
-        return stream.toString();
+        return writer.toString();
     }
 }
