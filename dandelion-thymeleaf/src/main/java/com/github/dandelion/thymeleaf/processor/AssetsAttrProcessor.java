@@ -33,7 +33,6 @@ import com.github.dandelion.core.asset.web.AssetsRequestContext;
 import com.github.dandelion.thymeleaf.dialect.AssetsAttributeName;
 import com.github.dandelion.thymeleaf.dialect.DandelionDialect;
 import com.github.dandelion.thymeleaf.util.ArgumentsUtil;
-import com.github.dandelion.thymeleaf.util.AssetsFinalizerProcessorUtil;
 import com.github.dandelion.thymeleaf.util.AttributesUtil;
 import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.Element;
@@ -60,30 +59,19 @@ public class AssetsAttrProcessor extends DandelionAttrProcessor {
      */
     @Override
     protected ProcessorResult doProcessAttribute(Arguments arguments, Element element, String attributeName) {
-        String strippedAttributeName
-                = AttributesUtil.stripPrefix(attributeName, DandelionDialect.DIALECT_PREFIX);
-        AssetsAttributeName assetsAttributeName
-                = (AssetsAttributeName) AttributesUtil.find(strippedAttributeName, AssetsAttributeName.values());
+        String strippedAttributeName = AttributesUtil.stripPrefix(attributeName, DandelionDialect.DIALECT_PREFIX);
+        AssetsAttributeName assetsAttributeName = (AssetsAttributeName) AttributesUtil.find(strippedAttributeName, AssetsAttributeName.values());
         HttpServletRequest request = ArgumentsUtil.getWebContext(arguments).getHttpServletRequest();
-        AssetsRequestContext context
-                = AssetsRequestContext.get(request);
+        AssetsRequestContext context = AssetsRequestContext.get(request);
         switch (assetsAttributeName) {
-            case STACK:
-                AssetsFinalizerProcessorUtil.initialize(arguments, DandelionDialect.DIALECT_PREFIX);
             case SCOPES:
                 context.addScopes(element.getAttributeValue(attributeName));
-                AssetsFinalizerProcessorUtil.initialize(arguments, DandelionDialect.DIALECT_PREFIX);
                 break;
             case EXCLUDED_SCOPES:
                 context.excludeScopes(element.getAttributeValue(attributeName));
-                AssetsFinalizerProcessorUtil.initialize(arguments, DandelionDialect.DIALECT_PREFIX);
                 break;
             case EXCLUDED_ASSETS:
                 context.excludeAssets(element.getAttributeValue(attributeName));
-                AssetsFinalizerProcessorUtil.initialize(arguments, DandelionDialect.DIALECT_PREFIX);
-                break;
-            case FINALIZER:
-                AssetsFinalizerProcessorUtil.treat(context, arguments, request, element);
                 break;
         }
 

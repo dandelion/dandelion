@@ -50,12 +50,6 @@ public class AssetsTagTest extends PhantomJsTest {
 	}
 
 	@Test
-	public void assets_renderer() {
-		goTo("/assets_renderer.jsp");
-		assertThat(text("script")).hasSize(4);
-	}
-
-	@Test
 	public void assets_scopes() {
 		goTo("/assets_scopes.jsp");
 		assertThat(text("link")).hasSize(1);

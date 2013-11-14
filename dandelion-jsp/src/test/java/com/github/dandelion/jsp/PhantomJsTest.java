@@ -30,10 +30,12 @@
 
 package com.github.dandelion.jsp;
 
+import com.github.dandelion.core.asset.web.AssetFilter;
 import com.github.dandelion.core.asset.web.AssetServlet;
 import org.apache.jasper.servlet.JspServlet;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.nio.SelectChannelConnector;
+import org.eclipse.jetty.servlet.FilterHolder;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.fluentlenium.core.FluentAdapter;
@@ -68,15 +70,16 @@ public abstract class PhantomJsTest extends FluentAdapter {
         connector.setHost("127.0.0.1");
         connector.setPort(9090);
         webServer.addConnector(connector);
+
         final ServletContextHandler context =
                 new ServletContextHandler(ServletContextHandler.SESSIONS);
-
         String webAppResources = classLoader.getResource("webapp").toExternalForm();
         context.setContextPath("/");
         context.setResourceBase(webAppResources);
         context.setClassLoader(classLoader);
 
         context.addServlet(new ServletHolder(new AssetServlet()), AssetServlet.DANDELION_ASSETS_URL_PATTERN);
+        context.addFilter(new FilterHolder(new AssetFilter()), "/*", 0);
 
         ServletHolder jsp = context.addServlet(JspServlet.class, "*.jsp");
         jsp.setInitParameter("classpath", context.getClassPath());

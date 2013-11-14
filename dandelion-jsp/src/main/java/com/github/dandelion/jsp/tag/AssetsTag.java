@@ -30,17 +30,10 @@
 
 package com.github.dandelion.jsp.tag;
 
-import com.github.dandelion.core.asset.Asset;
-import com.github.dandelion.core.asset.AssetStack;
 import com.github.dandelion.core.asset.web.AssetsRequestContext;
-import com.github.dandelion.jsp.util.AssetsRender;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.TagSupport;
-import java.util.List;
 
 /**
  * <p>
@@ -55,34 +48,16 @@ import java.util.List;
  * </pre>
  */
 public class AssetsTag extends TagSupport {
-	private static final Logger LOG = LoggerFactory.getLogger(AssetsTag.class);
-
 	private String scopes;
     private String excludedScopes;
     private String excludedAssets;
-    private boolean renderer = true;
 
 	public int doEndTag() throws JspException {
-        AssetsRequestContext context = AssetsRequestContext
+        AssetsRequestContext
                 .get(pageContext.getRequest())
                 .addScopes(getScopes())
                 .excludeScopes(getExcludedScopes())
                 .excludeAssets(getExcludedAssets());
-        
-        if(isRender()) {
-            if(context.isAlreadyRendered()) {
-                LOG.warn("This page has multiple 'assets' tags, only one is needed for the asset rendering");
-                LOG.warn("Please consider to set the 'renderer' attribute to 'false' on all previous 'assets' tags");
-            }
-
-            List<Asset> assets = AssetStack.prepareAssetsFor((HttpServletRequest) pageContext.getRequest(), context.getScopes(true), context.getExcludedAssets());
-
-            AssetsRender.render(assets, pageContext);
-            context.hasBeenRendered();
-        } else {
-            LOG.debug("The renderer of assets is inactive for this time");
-        }
-
 		return EVAL_PAGE;
 	}
 
@@ -108,13 +83,5 @@ public class AssetsTag extends TagSupport {
 
     public void setExcludedAssets(String excludedAssets) {
         this.excludedAssets = excludedAssets;
-    }
-
-    public boolean isRender() {
-        return renderer;
-    }
-
-    public void setRender(boolean renderer) {
-        this.renderer = renderer;
     }
 }

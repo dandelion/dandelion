@@ -32,16 +32,12 @@ package com.github.dandelion.thymeleaf.dialect;
 import com.github.dandelion.thymeleaf.util.AttributeName;
 
 public enum AssetsAttributeName implements AttributeName {
-    /** Enable assets stack */
-    STACK("assets-stack"),
     /** Add scopes to the page */
     SCOPES("assets-scopes"),
     /** Exclude scopes from the page */
     EXCLUDED_SCOPES("assets-excludedScopes"),
     /** Exclude Assets from the page */
-    EXCLUDED_ASSETS("assets-excludedAssets"),
-    /** Internal Use to finalize 'assets' in the page */
-    FINALIZER("assets-finalizer");
+    EXCLUDED_ASSETS("assets-excludedAssets");
 
     private String attribute;
 
