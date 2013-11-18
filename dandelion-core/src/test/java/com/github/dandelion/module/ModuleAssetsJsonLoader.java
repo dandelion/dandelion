@@ -45,6 +45,6 @@ public class ModuleAssetsJsonLoader extends AbstractAssetsJsonLoader {
     }
     @Override
     public String getFolder() {
-        return "dandelion/module";
+        return "module";
     }
 }
