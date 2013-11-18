@@ -118,7 +118,7 @@ public class AssetsConfigurator {
             prepareAssetsLoading(assetsLoader.loadAssets());
         }
 
-        //repairOrphanParentScope();
+        repairOrphanParentScope();
         overrideAssetsByScope();
 
         storeAssetsFromScope(ROOT_SCOPE, null);

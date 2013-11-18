@@ -84,16 +84,16 @@ public class AssetStackTest {
     @Test
     public void should_filter_assets_by_type() {
         List<Asset> assets = AssetStack.assetsFor("plugin1", "plugin2", "plugin1addon2", "plugin3addon");
-        assertThat(assets).hasSize(6);
-        assertThat(AssetStack.filterByType(assets, AssetType.css)).hasSize(2);
+        assertThat(assets).hasSize(7);
+        assertThat(AssetStack.filterByType(assets, AssetType.css)).hasSize(3);
         assertThat(AssetStack.filterByType(assets, AssetType.js)).hasSize(4);
     }
 
     @Test
     public void should_filter_assets_by_dom() {
         List<Asset> assets = AssetStack.assetsFor("plugin1", "plugin2", "plugin1addon2", "plugin3addon");
-        assertThat(assets).hasSize(6);
-        assertThat(AssetStack.filterByDOMPosition(assets, AssetDOMPosition.head)).hasSize(2);
+        assertThat(assets).hasSize(7);
+        assertThat(AssetStack.filterByDOMPosition(assets, AssetDOMPosition.head)).hasSize(3);
         assertThat(AssetStack.filterByDOMPosition(assets, AssetDOMPosition.body)).hasSize(4);
     }
 
