@@ -253,8 +253,9 @@ public final class AssetsStorage {
                     scopedAssetsMap.put(key, Asset.class.cast(asset.clone(false)));
                 }
 
-                Map<String, Asset> parentAssets = assetsMapFor(assetScope.parentScope);
-                mergeAssets(scopedAssetsMap, parentAssets);
+                if(!MASTER_SCOPE.equalsIgnoreCase(assetScope.parentScope)) {
+                    mergeAssets(scopedAssetsMap, assetsMapFor(assetScope.parentScope));
+                }
                 mergeAssets(assetsMap, scopedAssetsMap);
             }
         }
@@ -270,13 +271,21 @@ public final class AssetsStorage {
         for (Map.Entry<String, Asset> other : others.entrySet()) {
             if (container.containsKey(other.getKey())) {
                 Asset asset = container.get(other.getKey());
-                asset.storagePosition = other.getValue().storagePosition;
+                int smallestValue = asset.storagePosition<other.getValue().storagePosition
+                        ?asset.storagePosition:other.getValue().storagePosition;
                 if (asset.getVersion().equalsIgnoreCase(other.getValue().getVersion())) {
+                    asset.storagePosition = smallestValue;
                     for (Map.Entry<String, String> location : other.getValue().getLocations().entrySet()) {
                         if (!asset.getLocations().containsKey(location.getKey())) {
                             asset.getLocations().put(location.getKey(), location.getValue());
                         }
                     }
+                } else if(smallestValue == asset.storagePosition) {
+                    Asset _asset = other.getValue();
+                    _asset.storagePosition = asset.storagePosition;
+                    container.put(other.getKey(), _asset);
+                } else if (smallestValue == other.getValue().storagePosition) {
+                    asset.storagePosition = smallestValue;
                 }
             } else {
                 container.put(other.getKey(), other.getValue());

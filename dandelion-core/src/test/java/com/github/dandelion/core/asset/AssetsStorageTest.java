@@ -204,7 +204,8 @@ public class AssetsStorageTest {
 
     @Test
     public void should_manage_priorities() {
-        Asset assetPriority = new Asset("name", "version2", AssetType.js, locations);
+        Asset assetPriority = asset.clone(false);
+        assetPriority.setVersion("versionAssetPriority");
 
         assetsStorage.store(asset);
         assetsStorage.store(asset4);
