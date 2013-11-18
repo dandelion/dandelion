@@ -1,0 +1,14 @@
+{
+    "scope": "scope_base",
+    "parent": "none",
+    "assets": [
+        {
+            "name": "asset",
+            "version": "scope_base",
+            "type": "js",
+            "locations": {
+                "cdn": "http://cdn.url/"
+            }
+        }
+    ]
+}

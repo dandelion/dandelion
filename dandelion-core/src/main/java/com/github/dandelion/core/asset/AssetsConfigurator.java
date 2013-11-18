@@ -121,8 +121,8 @@ public class AssetsConfigurator {
         //repairOrphanParentScope();
         overrideAssetsByScope();
 
-        storeAssetsFromScope(ROOT_SCOPE, true);
-        storeAssetsFromScope(DETACHED_PARENT_SCOPE, true);
+        storeAssetsFromScope(ROOT_SCOPE, null);
+        storeAssetsFromScope(DETACHED_PARENT_SCOPE, null);
 
         clearAllAssetsProcessElements();
     }
@@ -189,21 +189,23 @@ public class AssetsConfigurator {
      * Store assets from scope
      *
      * @param scope scope to store
-     * @param recursiveMode <code>true</code> to activate recursive mode for scope/parent scope
      */
-    private void storeAssetsFromScope(String scope, boolean recursiveMode) {
+    private void storeAssetsFromScope(String scope, String parentScope) {
         if(assetsByScope.containsKey(scope)) {
             List<Asset> _assets = assetsByScope.get(scope);
-            for(Asset _asset:_assets) {
-                storeAsset(_asset, scope, parentScopesByScope.get(scope));
+            if(_assets.isEmpty() && parentScope != null) {
+                assetsStorage.store(null, scope, parentScope);
+            } else {
+                for(Asset _asset:_assets) {
+                    storeAsset(_asset, scope, parentScopesByScope.get(scope));
+                }
             }
         }
-        if(recursiveMode) {
-            if(scopesByParentScope.containsKey(scope)) {
-                List<String> _scopes = scopesByParentScope.get(scope);
-                for(String _scope:_scopes) {
-                    storeAssetsFromScope(_scope, true);
-                }
+
+        if(scopesByParentScope.containsKey(scope)) {
+            List<String> _scopes = scopesByParentScope.get(scope);
+            for(String _scope:_scopes) {
+                storeAssetsFromScope(_scope, scope);
             }
         }
     }

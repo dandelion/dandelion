@@ -35,6 +35,7 @@ import static org.fest.assertions.Assertions.assertThat;
 import static org.fest.util.Collections.list;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -69,6 +70,12 @@ public class AssetsConfiguratorTest {
     @Test
     public void should_load_the_assets_locations() {
         assertThat(assetsConfigurator.assetsLocations).containsSequence("other", "remote", "local");
+    }
+
+    @Test
+    public void should_manage_asset_with_empty_parent_scope() {
+        List<Asset> assets = assetsConfigurator.assetsStorage.assetsFor("scope_base", "empty_scope_as_parent");
+        assertThat(assets).hasSize(1).onProperty("version").containsOnly("empty_scope_as_parent");
     }
 
     @Test
