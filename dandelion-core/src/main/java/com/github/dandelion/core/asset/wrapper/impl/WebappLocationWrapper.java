@@ -57,7 +57,14 @@ public class WebappLocationWrapper implements AssetLocationWrapper {
     public String wrapLocation(Asset asset, HttpServletRequest request) {
         String location = asset.getLocations().get(locationKey());
         String base = RequestUtils.getBaseUrl(request);
-        return (base.endsWith("/")?base:base+"/") + location;
+        boolean pathLocation = location.startsWith("/");
+        boolean pathBase = base.endsWith("/");
+        if(pathLocation && pathBase) {
+            location = location.substring(1);
+        } else if(!pathLocation && !pathBase) {
+            location = "/" + location;
+        }
+        return base + location;
     }
 
     /**
