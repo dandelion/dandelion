@@ -134,9 +134,14 @@ public class AssetsConfigurator {
                 orphans.add(parentScope);
             }
         }
-        for(String orphan:orphans) {
-            parentScopesByScope.put(orphan, ROOT_SCOPE);
-            scopesByParentScope.get(ROOT_SCOPE).add(orphan);
+        if(!orphans.isEmpty()) {
+            if(!scopesByParentScope.containsKey(ROOT_SCOPE)) {
+                scopesByParentScope.put(ROOT_SCOPE, new ArrayList<String>());
+            }
+            for(String orphan:orphans) {
+                parentScopesByScope.put(orphan, ROOT_SCOPE);
+                scopesByParentScope.get(ROOT_SCOPE).add(orphan);
+            }
         }
     }
 
