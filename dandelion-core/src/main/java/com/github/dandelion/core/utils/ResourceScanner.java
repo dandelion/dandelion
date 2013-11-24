@@ -157,7 +157,11 @@ public final class ResourceScanner {
 					
 					if(file.canRead() && file.isDirectory()){
 						String directoryName = file.toString();
-						loadResources(directoryName.substring(directoryName.indexOf(mainFolder + File.separatorChar), directoryName.length()));
+                        if(!"".equalsIgnoreCase(mainFolder)) {
+						    loadResources(directoryName.substring(directoryName.indexOf(mainFolder + File.separatorChar), directoryName.length()));
+                        } else {
+                            loadResources(directoryName);
+                        }
 					}
 					
 				}
