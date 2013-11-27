@@ -130,7 +130,7 @@ public class AssetsConfigurator {
     private void repairOrphanParentScope() {
         List<String> orphans = new ArrayList<String>();
         for(String parentScope:parentScopesByScope.values()) {
-            if (!parentScopesByScope.containsKey(parentScope)) {
+            if (!ROOT_SCOPE.equalsIgnoreCase(parentScope) && !parentScopesByScope.containsKey(parentScope)) {
                 orphans.add(parentScope);
             }
         }
@@ -227,6 +227,7 @@ public class AssetsConfigurator {
         try {
             assetsStorage.store(asset, scope, parentScope);
         } catch (DandelionException e) {
+            e.printStackTrace();
             LOG.debug(e.getLocalizedMessage());
             if(e.getErrorCode() == AssetsStorageError.UNDEFINED_PARENT_SCOPE) {
                 LOG.debug("To avoid any configuration problem, a scope '{}' with no assets is created", parentScope);
