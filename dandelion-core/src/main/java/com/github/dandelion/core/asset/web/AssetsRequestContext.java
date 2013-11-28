@@ -32,6 +32,7 @@ package com.github.dandelion.core.asset.web;
 
 import com.github.dandelion.core.asset.web.data.AssetName;
 import com.github.dandelion.core.asset.web.data.AssetScope;
+import com.github.dandelion.core.config.Configuration;
 
 import javax.servlet.ServletRequest;
 import java.util.*;
@@ -62,6 +63,7 @@ public class AssetsRequestContext {
         Object attribute = servletRequest.getAttribute(AssetsRequestContext.class.getCanonicalName());
         if(attribute == null || !(attribute instanceof AssetsRequestContext)) {
             attribute = new AssetsRequestContext();
+            ((AssetsRequestContext) attribute).addScopes(Configuration.getProperties().getProperty("assets.included.scopes"));
             servletRequest.setAttribute(AssetsRequestContext.class.getCanonicalName(), attribute);
         }
         return AssetsRequestContext.class.cast(attribute);
