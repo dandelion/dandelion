@@ -128,9 +128,11 @@ public class AssetsConfigurator {
     }
 
     private void repairOrphanParentScope() {
-        List<String> orphans = new ArrayList<String>();
+        Set<String> orphans = new HashSet<String>();
         for(String parentScope:parentScopesByScope.values()) {
-            if (!ROOT_SCOPE.equalsIgnoreCase(parentScope) && !parentScopesByScope.containsKey(parentScope)) {
+            if (!ROOT_SCOPE.equalsIgnoreCase(parentScope)
+                    && !DETACHED_PARENT_SCOPE.equalsIgnoreCase(parentScope)
+                    && !parentScopesByScope.containsKey(parentScope)) {
                 orphans.add(parentScope);
             }
         }
