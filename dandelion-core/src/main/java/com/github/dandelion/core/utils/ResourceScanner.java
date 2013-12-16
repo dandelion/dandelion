@@ -38,6 +38,7 @@ import java.io.IOException;
 import java.net.JarURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
+import java.net.URLDecoder;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -125,6 +126,7 @@ public final class ResourceScanner {
 		
 		while (resources.hasMoreElements()) {
 			URL resource = resources.nextElement();
+			
 			// resources extraction with file protocol
 			extractResourcesOnFileSystem(folderPath, resource);
 			// or jar protocol
@@ -141,7 +143,7 @@ public final class ResourceScanner {
      */
 	private static void extractResourcesOnFileSystem(String folderPath, URL resource) throws IOException {
 		if ("file".equals(resource.getProtocol())) {
-			String resourcePath = resource.getPath();
+			String resourcePath = URLDecoder.decode(resource.getPath(), "UTF-8");
 			File folder = new File(resourcePath);
 			// dandelion folder need to be ... a folder
 			if (!folder.isDirectory()){
