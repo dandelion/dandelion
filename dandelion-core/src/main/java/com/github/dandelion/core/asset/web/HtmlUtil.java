@@ -30,6 +30,11 @@
 
 package com.github.dandelion.core.asset.web;
 
+import static com.github.dandelion.core.DevMode.isDevModeEnabled;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.github.dandelion.core.asset.Asset;
 import com.github.dandelion.core.asset.AssetType;
 import com.github.dandelion.core.asset.cache.AssetsCacheSystem;
@@ -38,12 +43,6 @@ import com.github.dandelion.core.config.Configuration;
 import com.github.dandelion.core.html.HtmlTag;
 import com.github.dandelion.core.html.LinkTag;
 import com.github.dandelion.core.html.ScriptTag;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.servlet.http.HttpServletResponse;
-
-import static com.github.dandelion.core.DevMode.isDevModeEnabled;
 
 /**
  * Utilities on Html tags creation

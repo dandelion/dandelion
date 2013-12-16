@@ -29,8 +29,6 @@
  */
 package com.github.dandelion.core.asset.web;
 
-import static com.github.dandelion.core.DevMode.isDevModeEnabled;
-
 import java.io.IOException;
 import java.io.PrintWriter;
 
@@ -39,13 +37,10 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.github.dandelion.core.asset.web.data.AssetContent;
 import org.slf4j.Logger;
-
-import com.github.dandelion.core.asset.AssetType;
-import com.github.dandelion.core.asset.cache.AssetsCacheSystem;
-import com.github.dandelion.core.config.Configuration;
 import org.slf4j.LoggerFactory;
+
+import com.github.dandelion.core.asset.web.data.AssetContent;
 
 /**
  * The servlet intercepts the request and renders the appropriate web resource

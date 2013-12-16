@@ -30,12 +30,19 @@
 
 package com.github.dandelion.core.asset.web;
 
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.ServletRequest;
+
 import com.github.dandelion.core.asset.web.data.AssetName;
 import com.github.dandelion.core.asset.web.data.AssetScope;
 import com.github.dandelion.core.config.Configuration;
-
-import javax.servlet.ServletRequest;
-import java.util.*;
 
 /**
  * Request Context used to store all needed assets by scopes during the pages processing

@@ -1,6 +1,5 @@
 package com.github.dandelion.core.asset.web;
 
-import java.io.ByteArrayOutputStream;
 import java.io.CharArrayWriter;
 import java.io.IOException;
 import java.io.PrintWriter;

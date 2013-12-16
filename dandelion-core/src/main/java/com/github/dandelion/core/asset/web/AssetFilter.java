@@ -1,7 +1,6 @@
 package com.github.dandelion.core.asset.web;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.List;
 
 import javax.servlet.Filter;
@@ -13,7 +12,6 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.github.dandelion.core.html.HtmlTag;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,6 +19,7 @@ import com.github.dandelion.core.asset.Asset;
 import com.github.dandelion.core.asset.AssetDOMPosition;
 import com.github.dandelion.core.asset.AssetStack;
 import com.github.dandelion.core.asset.AssetType;
+import com.github.dandelion.core.html.HtmlTag;
 
 /**
  * <p>
@@ -34,6 +33,8 @@ public class AssetFilter implements Filter {
 	// Logger
 	private static Logger LOG = LoggerFactory.getLogger(AssetFilter.class);
 
+	public static final String DANDELION_ASSET_FILTER_STATE = "dandelionAssetFilterState";
+	
 	@Override
 	public void init(FilterConfig filterConfig) throws ServletException {
         LOG.info("initialize the Dandelion AssetFilter");
@@ -54,7 +55,7 @@ public class AssetFilter implements Filter {
         HttpServletResponse response = (HttpServletResponse) serlvetResponse;
 
 		// Only filter requests that accept HTML
-        if (isHtmlApplyable(request)) {
+        if (isFilterApplyable(request)) {
             LOG.debug("AssetFilter apply on this request {}", request.getRequestURL().toString());
 
 			AssetFilterResponseWrapper wrapper = new AssetFilterResponseWrapper(response);
@@ -72,8 +73,9 @@ public class AssetFilter implements Filter {
 				html = generateHeadAssets(assets, html);
 				html = generateBodyAssets(assets, html);
 
+				// FIXME Break the page loading when using Thymeleaf
                 // Update the content length to new value
-                response.setIntHeader("Content-Length", html.getBytes().length);
+//                response.setIntHeader("Content-Length", html.getBytes().length);
 			}
 
             response.getWriter().println(html);
@@ -86,9 +88,30 @@ public class AssetFilter implements Filter {
 		}
 	}
 
-    private boolean isHtmlApplyable(HttpServletRequest request) {
-        // TODO this header doesn't seem reliable. It must be improved
-        return request.getHeader("accept") != null && request.getHeader("accept").contains("text/html");
+    private boolean isFilterApplyable(HttpServletRequest request) {
+    	
+    	boolean applyFilter = false;
+    	
+    	// First check the request headers to see if the content is of type HTML
+    	if(request.getHeader("Content-Type") != null && request.getHeader("Content-Type").contains("text/html")) {
+    		applyFilter = true;
+    	}
+    	else if(request.getHeader("Accept") != null && request.getHeader("Accept").contains("text/html")) {
+    		applyFilter = true;
+    	}
+    	
+		// Then, check whether the filter has been explicitely disabled
+		// (possibly by other components)
+    	if(request.getAttribute(DANDELION_ASSET_FILTER_STATE) != null){
+			applyFilter = applyFilter && Boolean.parseBoolean(String.valueOf(request.getAttribute(DANDELION_ASSET_FILTER_STATE)));
+			return applyFilter;
+		}
+    	else if(request.getParameter(DANDELION_ASSET_FILTER_STATE) != null) {
+			applyFilter = applyFilter && Boolean.parseBoolean(request.getParameter(DANDELION_ASSET_FILTER_STATE));
+			return applyFilter;
+		}
+		
+    	return applyFilter;
     }
 
     /**
