@@ -30,12 +30,12 @@
 package com.github.dandelion.core.asset.loader.impl;
 
 import com.github.dandelion.core.asset.AssetsComponent;
+import com.github.dandelion.core.asset.loader.AssetsLoaderSystem;
 import com.github.dandelion.core.asset.loader.spi.AssetsLoader;
 import com.github.dandelion.core.utils.ResourceScanner;
 import org.codehaus.jackson.JsonParser;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -58,15 +58,33 @@ public abstract class AbstractAssetsJsonLoader implements AssetsLoader {
 		try {
             Set<String> resources = ResourceScanner.getResources(getFolder(), null, ".json");
             ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+            List<String> excludedFolders = new ArrayList<String>();
+            for(AssetsLoader loader: AssetsLoaderSystem.getLoaders()) {
+                if(loader instanceof AbstractAssetsJsonLoader) {
+                    String folder = ((AbstractAssetsJsonLoader) loader).getFolder();
+                    if(folder.startsWith(getFolder()) && !folder.equalsIgnoreCase(getFolder())) {
+                        excludedFolders.add(folder);
+                    }
+                }
+            }
 			for (String resource : resources) {
                 try {
-                    getLogger().debug("resources {}", resource);
-                    InputStream configFileStream = classLoader.getResourceAsStream(resource);
+                    boolean excludedResource = false;
+                    for(String folder:excludedFolders) {
+                        if(resource.startsWith(folder)) {
+                            excludedResource = true;
+                            break;
+                        }
+                    }
+                    if(!excludedResource) {
+                        getLogger().debug("resources {}", resource);
+                        InputStream configFileStream = classLoader.getResourceAsStream(resource);
 
-                    AssetsComponent assetsComponent = mapper.readValue(configFileStream, AssetsComponent.class);
+                        AssetsComponent assetsComponent = mapper.readValue(configFileStream, AssetsComponent.class);
 
-                    getLogger().debug("found {}", assetsComponent);
-                    assetsComponentList.add(assetsComponent);
+                        getLogger().debug("found {}", assetsComponent);
+                        assetsComponentList.add(assetsComponent);
+                    }
                 } catch (IOException e) {
                     getLogger().error(e.getMessage(), e);
                 }

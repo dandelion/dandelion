@@ -52,9 +52,6 @@ import java.util.jar.JarFile;
  */
 public final class ResourceScanner {
     static Map<String, Set<String>> resourcesSets = new HashMap<String, Set<String>>();
-
-    private static String mainFolder;
-    
     /**
      * Get the resource by this name in dandelion folder
      *
@@ -64,7 +61,6 @@ public final class ResourceScanner {
      * @throws IOException If I/O errors occur
      */
     public static String getResource(String folderPath, String nameCondition) throws IOException {
-    	mainFolder = folderPath;
         Set<String> resources = getResources(folderPath, nameCondition, null, null);
         if (resources.isEmpty()) return null;
         return resources.toArray(new String[1])[0];
@@ -99,8 +95,10 @@ public final class ResourceScanner {
         
         // Filter the loaded resources with conditions
         Set<String> _filteredResources = new HashSet<String>();
-        for(String folder : resourcesSets.keySet()){
-        	_filteredResources.addAll(filterResources(folder, nameCondition, prefixCondition, suffixCondition));
+        for(String folder : resourcesSets.keySet()) {
+            if(folder.startsWith(folderPath)) {
+        	    _filteredResources.addAll(filterResources(folder, nameCondition, prefixCondition, suffixCondition));
+            }
         }
         return _filteredResources;
     }
@@ -145,7 +143,6 @@ public final class ResourceScanner {
 		if ("file".equals(resource.getProtocol())) {
 			String resourcePath = URLDecoder.decode(resource.getPath(), "UTF-8");
 			File folder = new File(resourcePath);
-			// dandelion folder need to be ... a folder
 			if (!folder.isDirectory()){
 				return;
 			}
@@ -159,8 +156,8 @@ public final class ResourceScanner {
 					
 					if(file.canRead() && file.isDirectory()){
 						String directoryName = file.toString();
-                        if(!"".equalsIgnoreCase(mainFolder)) {
-						    loadResources(directoryName.substring(directoryName.indexOf(mainFolder + File.separatorChar), directoryName.length()));
+                        if(!"".equalsIgnoreCase(folderPath)) {
+						    loadResources(directoryName.substring(directoryName.indexOf(folderPath + File.separator), directoryName.length()));
                         } else {
                             loadResources(directoryName);
                         }
