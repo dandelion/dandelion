@@ -31,6 +31,7 @@
 package com.github.dandelion.module2;
 
 import com.github.dandelion.core.asset.loader.impl.AbstractAssetsJsonLoader;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,7 +45,12 @@ public class Module2AssetJsonLoader extends AbstractAssetsJsonLoader {
     }
 
     @Override
-    public String getFolder() {
+    public String getPath() {
         return "module2";
     }
+    
+    @Override
+	public boolean isRecursive() {
+		return true;
+	}
 }

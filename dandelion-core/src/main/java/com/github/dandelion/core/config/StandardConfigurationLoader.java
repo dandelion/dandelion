@@ -104,7 +104,7 @@ public class StandardConfigurationLoader implements ConfigurationLoader {
                 defaultProperties.putAll(properties);
             }
 
-			Set<String> resources = ResourceScanner.getResources(DANDELION_FOLDER, DANDELION_OTHER, DANDELION_PROPERTIES);
+			Set<String> resources = ResourceScanner.getResources(DANDELION_FOLDER, null, DANDELION_OTHER, DANDELION_PROPERTIES, false);
 			for(String resource : resources) {
                 if((DANDELION_FOLDER + File.separator
                         + DANDELION_DEFAULT + "." + DANDELION_PROPERTIES).equals(resource)) {

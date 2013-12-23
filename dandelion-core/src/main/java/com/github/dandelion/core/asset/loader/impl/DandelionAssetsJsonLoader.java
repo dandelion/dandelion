@@ -8,8 +8,17 @@ import org.slf4j.LoggerFactory;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * <p>
+ * Main asset loader used by Dandelion.
+ * 
+ * <p>
+ * This loader focuses on JSON files inside the {@code dandelion} path and all
+ * subpaths.
+ */
 public class DandelionAssetsJsonLoader extends AbstractAssetsJsonLoader {
-    // Logger
+   
+	// Logger
     private static final Logger LOG = LoggerFactory.getLogger(DandelionAssetsJsonLoader.class);
 
     @Override
@@ -18,7 +27,7 @@ public class DandelionAssetsJsonLoader extends AbstractAssetsJsonLoader {
     }
 
     @Override
-    public String getFolder() {
+    public String getPath() {
         return "dandelion";
     }
 
@@ -29,4 +38,9 @@ public class DandelionAssetsJsonLoader extends AbstractAssetsJsonLoader {
         }
         return super.loadAssets();
     }
+
+	@Override
+	public boolean isRecursive() {
+		return true;
+	}
 }

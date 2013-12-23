@@ -30,211 +30,322 @@
 
 package com.github.dandelion.core.utils;
 
-import static com.github.dandelion.core.DevMode.devModeOverride;
-import static java.lang.Thread.currentThread;
-
 import java.io.File;
 import java.io.IOException;
 import java.net.JarURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLDecoder;
+import java.util.Collections;
 import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
+import java.util.List;
 import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
- * Scanner for resources in folder
+ * Utilities used for classpath scanning.
  */
 public final class ResourceScanner {
-    static Map<String, Set<String>> resourcesSets = new HashMap<String, Set<String>>();
-    /**
-     * Get the resource by this name in dandelion folder
-     *
-     * @param folderPath path of the resource folder
-     * @param nameCondition name of the resource
-     * @return the found resource
-     * @throws IOException If I/O errors occur
-     */
-    public static String getResource(String folderPath, String nameCondition) throws IOException {
-        Set<String> resources = getResources(folderPath, nameCondition, null, null);
-        if (resources.isEmpty()) return null;
-        return resources.toArray(new String[1])[0];
-    }
 
-    /**
-     * Get resources who matches the conditions in dandelion folder
-     *
-     * @param folderPath path of the resource folder
-     * @param prefixCondition resources prefix
-     * @param suffixCondition resources suffix
-     * @return the matched resources
-     * @throws IOException If I/O errors occur
-     */
-    public static Set<String> getResources(String folderPath, String prefixCondition, String suffixCondition) throws IOException {
-        return getResources(folderPath, null, prefixCondition, suffixCondition);
-    }
-
-    /**
-     * Get resources who matches the conditions in dandelion folder
-     *
-     * @param folderPath path of the resource folder
-     * @param nameCondition   name of the resource
-     * @param prefixCondition resources prefix
-     * @param suffixCondition resources suffix
-     * @return the matched resources
-     * @throws IOException If I/O errors occur
-     */
-    private static Set<String> getResources(String folderPath, String nameCondition, String prefixCondition, String suffixCondition) throws IOException {
-        // Load resources only if needed
-        if (devModeOverride(resourcesSets.get(folderPath) == null)) loadResources(folderPath);
-        
-        // Filter the loaded resources with conditions
-        Set<String> _filteredResources = new HashSet<String>();
-        for(String folder : resourcesSets.keySet()) {
-            if(folder.startsWith(folderPath)) {
-        	    _filteredResources.addAll(filterResources(folder, nameCondition, prefixCondition, suffixCondition));
-            }
-        }
-        return _filteredResources;
-    }
+	// Logger
+	private static final Logger LOG = LoggerFactory.getLogger(ResourceScanner.class);
 
 	/**
-	 * Load resources in dandelion folder
-	 * 
-	 * @param folderPath
-	 *            path of the resource folder
-	 * @throws IOException
-	 *             If I/O errors occur
+	 * Internal set used as buffer.
 	 */
-	synchronized private static void loadResources(String folderPath) throws IOException {
-		if (!devModeOverride(resourcesSets.get(folderPath) == null)) {
-			return;
+	private static Set<String> resources = new HashSet<String>();
+
+	/**
+	 * <p>
+	 * Get a first from its name by scanning the classpath.
+	 * 
+	 * <p>
+	 * Note that the scanning is not recursive.
+	 * 
+	 * @param path
+	 *            The virtual path in which to scan.
+	 * @param nameCondition
+	 *            Name that should match with the scanned resource names.
+	 * @return all matching resource names.
+	 * @throws IOException
+	 *             If any I/O error occur during the resource scanning.
+	 */
+	public static String getResource(String path, String nameCondition) throws IOException {
+		Set<String> resources = getResources(path, null, nameCondition, null, null, false);
+		if (resources.isEmpty()) {
+			return null;
 		}
-		
-		resourcesSets.put(folderPath, new HashSet<String>());
-		Enumeration<URL> resources = resourcesInFolder(folderPath);
-		if (!resources.hasMoreElements()) {
-			return;
-		}
-		
-		while (resources.hasMoreElements()) {
-			URL resource = resources.nextElement();
-			
-			// resources extraction with file protocol
-			extractResourcesOnFileSystem(folderPath, resource);
-			// or jar protocol
-			extractResourcesOnJarFile(folderPath, resource);
-		}
+		return resources.toArray(new String[1])[0];
 	}
 
-    /**
-     * Extract resources on file system
-     *
-     * @param folderPath path of the resource folder
-     * @param resource resource url
-     * @throws IOException 
-     */
-	private static void extractResourcesOnFileSystem(String folderPath, URL resource) throws IOException {
-		if ("file".equals(resource.getProtocol())) {
-			String resourcePath = URLDecoder.decode(resource.getPath(), "UTF-8");
-			File folder = new File(resourcePath);
-			if (!folder.isDirectory()){
-				return;
+	/**
+	 * <p>
+	 * Get all resources that matches the given confitions by scanning the
+	 * classpath.
+	 * 
+	 * @param path
+	 *            The virtual path in which to scan.
+	 * @param excludedPaths
+	 *            List of paths which will be excluded during the classpath
+	 *            scanning.
+	 * @param prefixCondition
+	 *            The prefix condition to be applied on the resource name.
+	 * @param suffixCondition
+	 *            The suffix condition to be applied on the resource name;
+	 * @param recursive
+	 *            Indicates whether the scanning is recursive or not.
+	 * @return all matching resource names.
+	 * @throws IOException
+	 *             If any I/O error occur during the resource scanning.
+	 */
+	public static Set<String> getResources(String path, List<String> excludedPaths, String prefixCondition,
+			String suffixCondition, boolean recursive) throws IOException {
+		return getResources(path, excludedPaths, null, prefixCondition, suffixCondition, recursive);
+	}
+
+	/**
+	 * <p>
+	 * Get all resources that matches the given confitions by scanning the
+	 * classpath.
+	 * 
+	 * @param path
+	 *            The virtual path in which to scan.
+	 * @param excludedPaths
+	 *            List of paths which will be excluded during the classpath
+	 *            scanning.
+	 * @param nameCondition
+	 *            Name that should match with the scanned resource names.
+	 * @param prefixCondition
+	 *            The prefix condition to be applied on the resource name.
+	 * @param suffixCondition
+	 *            The suffix condition to be applied on the resource name;
+	 * @param recursive
+	 *            Indicates whether the scanning is recursive or not.
+	 * @return all matching resource names.
+	 * @throws IOException
+	 *             If any I/O error occur during the resource scanning.
+	 */
+	private static Set<String> getResources(String path, List<String> excludedPaths, String nameCondition,
+			String prefixCondition, String suffixCondition, boolean recursive) throws IOException {
+
+		LOG.trace("Scanning for resources at '{}'...", path);
+
+		resources.addAll(scanForResources(path, excludedPaths, nameCondition, prefixCondition, suffixCondition,
+				recursive));
+
+		Set<String> scannedResources = new HashSet<String>(resources);
+
+		LOG.trace("Found {} files in {}", scannedResources.size(), path);
+
+		// Clear the temporary set for the next scanning
+		resources.clear();
+		return scannedResources;
+	}
+
+	/**
+	 * <p>
+	 * Scans for resources that matches the given conditions inside the
+	 * classpath.
+	 * 
+	 * @param path
+	 *            The virtual path in which to scan.
+	 * @param excludedPaths
+	 *            List of paths which will be excluded during the classpath
+	 *            scanning.
+	 * @param nameCondition
+	 *            Name that should match with the scanned resource names.
+	 * @param prefixCondition
+	 *            The prefix condition to be applied on the resource name.
+	 * @param suffixCondition
+	 *            The suffix condition to be applied on the resource name;
+	 * @param recursive
+	 *            Indicates whether the scanning is recursive or not.
+	 * @return all matching resource names.
+	 * @throws IOException
+	 *             If any I/O error occur during the resource scanning.
+	 */
+	private static Set<String> scanForResources(String path, List<String> excludedPaths, String nameCondition,
+			String prefixCondition, String suffixCondition, boolean recursive) throws IOException {
+
+		Set<String> resourcesString = new HashSet<String>();
+
+		Enumeration<URL> resources = Thread.currentThread().getContextClassLoader().getResources(path);
+
+		while (resources.hasMoreElements()) {
+
+			URL resource = resources.nextElement();
+
+			// resources extraction with file protocol
+			if ("file".equals(resource.getProtocol())) {
+				resourcesString.addAll(extractResourcesOnFileSystem(path, excludedPaths, nameCondition,
+						prefixCondition, suffixCondition, resource, recursive));
 			}
-			
-			File[] files = folder.listFiles();
-			if (files != null) {
-				for (File file : files) {
-					if (file.canRead() && !file.isDirectory()) {
-						resourcesSets.get(folderPath).add(folderPath + File.separator + file.getName());
-					}
-					
-					if(file.canRead() && file.isDirectory()){
-						String directoryName = file.toString();
-                        if(!"".equalsIgnoreCase(folderPath)) {
-						    loadResources(directoryName.substring(directoryName.indexOf(folderPath + File.separator), directoryName.length()));
-                        } else {
-                            loadResources(directoryName);
-                        }
-					}
-					
+
+			// or jar protocol
+			if ("jar".equals(resource.getProtocol()) || "zip".equals(resource.getProtocol())) {
+				resourcesString.addAll(extractResourcesOnJarFile(path, excludedPaths, nameCondition, prefixCondition,
+						suffixCondition, resource, recursive));
+			}
+		}
+
+		return resourcesString;
+	}
+
+	/**
+	 * Extract resources on file system
+	 * 
+	 * @param path
+	 *            path of the resource folder
+	 * @param resource
+	 *            resource url
+	 * @throws IOException
+	 */
+	private static Set<String> extractResourcesOnFileSystem(String path, List<String> excludedPaths,
+			String nameCondition, String prefixCondition, String suffixCondition, URL resource, boolean recursive)
+			throws IOException {
+
+		Set<String> extractedResources = new HashSet<String>();
+		String resourcePath = URLDecoder.decode(resource.getPath(), "UTF-8");
+		File folder = new File(resourcePath);
+		if (!folder.isDirectory()) {
+			return Collections.emptySet();
+		}
+
+		File[] files = folder.listFiles();
+
+		if (files != null) {
+
+			for (File file : files) {
+
+				if (file.canRead() && file.isFile()
+						&& isAnAuthorizedResource(file.getName(), nameCondition, prefixCondition, suffixCondition)) {
+					extractedResources.add(path + "/" + file.getName());
+				}
+				// Only extract resource in subdirectories if recursive mode is
+				// enabled
+				else if (recursive && file.canRead() && file.isDirectory()
+						&& isAnAuthorizedFolder(path + "/" + file.getName(), excludedPaths)) {
+
+					// Recursive call to fill the resource set
+					resources.addAll(scanForResources(path + "/" + file.getName(), excludedPaths,
+							nameCondition, prefixCondition, suffixCondition, recursive));
 				}
 			}
 		}
+
+		return extractedResources;
 	}
 
-    /**
-     * Extract resources on jar file
-     *
-     * @param folderPath path of the resource folder
-     * @param resource resource url
-     * @throws IOException If I/O errors occur
-     */
-    private static void extractResourcesOnJarFile(String folderPath, URL resource) throws IOException {
-        if ("jar".equals(resource.getProtocol())) {
-            URLConnection con = resource.openConnection();
-            if (!(con instanceof JarURLConnection)) return;
-            JarURLConnection jarCon = (JarURLConnection) con;
-            jarCon.setUseCaches(false);
-            JarFile jarFile = jarCon.getJarFile();
-            try {
-                Enumeration<JarEntry> entries = jarFile.entries();
-                while (entries.hasMoreElements()) {
-                    String entryName = entries.nextElement().getName();
-                    if (entryName.startsWith(folderPath)) {
-                        resourcesSets.get(folderPath).add(entryName);
-                    }
-                }
-            } finally {
-                jarFile.close();
-            }
-        }
-    }
+	/**
+	 * Extract resources on jar file
+	 * 
+	 * @param path
+	 *            path of the resource folder
+	 * @param resource
+	 *            resource url
+	 * @throws IOException
+	 *             If I/O errors occur
+	 */
+	private static Set<String> extractResourcesOnJarFile(String path, List<String> excludedPaths,
+			String nameCondition, String prefixCondition, String suffixCondition, URL resource, boolean recursive)
+			throws IOException {
+		URLConnection con = resource.openConnection();
 
-    /**
-     * Filter resources who match condition
-     *
-     * @param folderPath path of the resource folder
-     * @param nameCondition   name condition
-     * @param prefixCondition prefix condition
-     * @param suffixCondition suffix condition
-     * @return filtered resources
-     */
-    private static Set<String> filterResources(String folderPath, String nameCondition, String prefixCondition, String suffixCondition) {
-        Set<String> _filteredResources = new HashSet<String>();
-        for (String _resource : resourcesSets.get(folderPath)) {
-            String fileName = _resource.substring(_resource.lastIndexOf("/") + 1);
-            // if name condition is set, it's the only test on resources.
-            if (nameCondition != null) {
-                if (nameCondition.equalsIgnoreCase(fileName)) {
-                    _filteredResources.add(_resource);
-                }
-            } else {
-                // otherwise prefix and suffix conditions are verified
-                if (suffixCondition == null && fileName.startsWith(prefixCondition)) {
-                    _filteredResources.add(_resource);
-                } else if (prefixCondition == null && fileName.endsWith(suffixCondition)) {
-                    _filteredResources.add(_resource);
-                } else if (prefixCondition != null && suffixCondition != null
-                        && fileName.startsWith(prefixCondition) && fileName.endsWith(suffixCondition)) {
-                    _filteredResources.add(_resource);
-                }
-            }
-        }
-        return _filteredResources;
-    }
+		if (!(con instanceof JarURLConnection)) {
+			return Collections.emptySet();
+		}
+		JarURLConnection jarCon = (JarURLConnection) con;
+		jarCon.setUseCaches(false);
+		JarFile jarFile = jarCon.getJarFile();
+		try {
+			Enumeration<JarEntry> entries = jarFile.entries();
+			while (entries.hasMoreElements()) {
+				String entryName = entries.nextElement().getName();
+				if (entryName.startsWith(path)) {
+					// resourcesSets.get(folderPath).add(entryName);
+				}
+			}
+		} finally {
+			jarFile.close();
+		}
 
-    /**
-     * @param folderPath path of the resource folder
-     * @return all resources from the folder
-     * @throws IOException If I/O errors occur
-     */
-    private static Enumeration<URL> resourcesInFolder(String folderPath) throws IOException {
-        return currentThread().getContextClassLoader().getResources(folderPath);
-    }
+		return null;
+	}
+
+	/**
+	 * <p>
+	 * Test whether the passed {@code resourceName} is authorized according to
+	 * the passed filters.
+	 * 
+	 * @param resourceName
+	 *            The resource name on which filters must be applied.
+	 * @param nameCondition
+	 *            If not blank, the {@code resourceName} must match this name
+	 *            (case ignored).
+	 * @param prefixCondition
+	 *            If not blank, the {@code resourceName} must match this prefix.
+	 * @param suffixCondition
+	 *            If not blank, the {@code resourceName} must match this suffix.
+	 * @return {@code true} if the resource is authorized, otherwise
+	 *         {@code false}.
+	 */
+	private static boolean isAnAuthorizedResource(String resourceName, String nameCondition, String prefixCondition,
+			String suffixCondition) {
+
+		String fileName = resourceName.substring(resourceName.lastIndexOf("/") + 1);
+
+		if (StringUtils.isBlank(nameCondition) && StringUtils.isBlank(prefixCondition)
+				&& StringUtils.isBlank(suffixCondition)) {
+			return true;
+		}
+
+		// if name condition is set, it's the only test on resources.
+		if (StringUtils.isNotBlank(nameCondition)) {
+			if (nameCondition.equalsIgnoreCase(fileName)) {
+				return true;
+			}
+		} else {
+			// otherwise prefix and suffix conditions are verified
+			if (suffixCondition == null && fileName.startsWith(prefixCondition)) {
+				return true;
+			} else if (prefixCondition == null && fileName.endsWith(suffixCondition)) {
+				return true;
+			} else if (prefixCondition != null && suffixCondition != null && fileName.startsWith(prefixCondition)
+					&& fileName.endsWith(suffixCondition)) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * <p>
+	 * Test whether the passed {@code folderName} is authorized according to the
+	 * passed list of folder names to exclude.
+	 * 
+	 * @param path
+	 *            The folder name that must not be present in the list of
+	 *            excluded folders.
+	 * @param excludedFolders
+	 *            List of folders to exclude.
+	 * @return {@code true} if the folder is authorized, otherwise {@code false}
+	 *         .
+	 */
+	private static boolean isAnAuthorizedFolder(String path, List<String> excludedFolders) {
+		if (excludedFolders != null) {
+			for (String excludedFolder : excludedFolders) {
+				if (excludedFolder.equalsIgnoreCase(path)) {
+					return false;
+				}
+			}
+		}
+
+		return true;
+	}
 }

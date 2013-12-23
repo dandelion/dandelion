@@ -29,78 +29,98 @@
  */
 package com.github.dandelion.core.asset.loader.impl;
 
-import com.github.dandelion.core.asset.AssetsComponent;
-import com.github.dandelion.core.asset.loader.AssetsLoaderSystem;
-import com.github.dandelion.core.asset.loader.spi.AssetsLoader;
-import com.github.dandelion.core.utils.ResourceScanner;
-import org.codehaus.jackson.JsonParser;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.slf4j.Logger;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import org.codehaus.jackson.JsonParser;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.slf4j.Logger;
+
+import com.github.dandelion.core.asset.AssetsComponent;
+import com.github.dandelion.core.asset.loader.AssetsLoaderSystem;
+import com.github.dandelion.core.asset.loader.spi.AssetsLoader;
+import com.github.dandelion.core.utils.ResourceScanner;
+
 /**
- * Assets Loader for JSON definition
+ * <p>
+ * Abstract asset loader in charge of loading JSON definitions. The JSON
+ * definitions are scanned in the folder specified by the {@link #getPath()}
+ * method. The lookup is recursive depending on the {@link #isRecursive()}
+ * return value.
  */
 public abstract class AbstractAssetsJsonLoader implements AssetsLoader {
+
 	private ObjectMapper mapper = new ObjectMapper();
 
 	/**
-	 * Load assets from '${folder}/*.json' files by Classpath Scanning.
+	 * {@inheritDoc}
 	 */
 	public List<AssetsComponent> loadAssets() {
+
 		mapper.configure(JsonParser.Feature.ALLOW_COMMENTS, true);
-        List<AssetsComponent> assetsComponentList = new ArrayList<AssetsComponent>();
+		mapper.configure(JsonParser.Feature.ALLOW_SINGLE_QUOTES, true);
+		mapper.configure(JsonParser.Feature.ALLOW_BACKSLASH_ESCAPING_ANY_CHARACTER, true);
+		
+		List<AssetsComponent> assetsComponentList = new ArrayList<AssetsComponent>();
+
+		// Init the excluded folder list
+		List<String> excludedFolders = getExcludedPaths();
+
 		try {
-            Set<String> resources = ResourceScanner.getResources(getFolder(), null, ".json");
-            ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-            List<String> excludedFolders = new ArrayList<String>();
-            for(AssetsLoader loader: AssetsLoaderSystem.getLoaders()) {
-                if(loader instanceof AbstractAssetsJsonLoader) {
-                    String folder = ((AbstractAssetsJsonLoader) loader).getFolder();
-                    if(folder.startsWith(getFolder()) && !folder.equalsIgnoreCase(getFolder())) {
-                        excludedFolders.add(folder);
-                    }
-                }
-            }
+			Set<String> resources = ResourceScanner.getResources(getPath(), excludedFolders, null, ".json", isRecursive());
+			getLogger().debug("{} resources scanned inside the folder '{}'. Parsing to AssetComponent...",
+					resources.size(), getPath());
+			
+			ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
 			for (String resource : resources) {
-                try {
-                    boolean excludedResource = false;
-                    for(String folder:excludedFolders) {
-                        if(resource.startsWith(folder)) {
-                            excludedResource = true;
-                            break;
-                        }
-                    }
-                    if(!excludedResource) {
-                        getLogger().debug("resources {}", resource);
-                        InputStream configFileStream = classLoader.getResourceAsStream(resource);
+				getLogger().debug("resources {}", resource);
+				InputStream configFileStream = classLoader.getResourceAsStream(resource);
 
-                        AssetsComponent assetsComponent = mapper.readValue(configFileStream, AssetsComponent.class);
+				AssetsComponent assetsComponent = mapper.readValue(configFileStream, AssetsComponent.class);
 
-                        getLogger().debug("found {}", assetsComponent);
-                        assetsComponentList.add(assetsComponent);
-                    }
-                } catch (IOException e) {
-                    getLogger().error(e.getMessage(), e);
-                }
+				getLogger().debug("found {}", assetsComponent);
+				assetsComponentList.add(assetsComponent);
 			}
-        } catch (IOException e) {
-            getLogger().error(e.getMessage(), e);
-        }
-        return assetsComponentList;
+		} catch (IOException e) {
+			getLogger().error(e.getMessage(), e);
+		}
+		
+		return assetsComponentList;
 	}
 
-    protected abstract Logger getLogger();
+	protected abstract Logger getLogger();
 
-    public abstract String getFolder();
+	public abstract String getPath();
 
-    @Override
-    public String getType() {
-        return "json";
-    }
+	@Override
+	public String getType() {
+		return "json";
+	}
+
+	/**
+	 * <p>
+	 * Since each implementation of {@link AbstractAssetsJsonLoader} is in
+	 * charge of loading their own definitions, each one of them must be aware
+	 * of the existence of the others.
+	 * 
+	 * @return a list of paths to exclude during the classpath scanning.
+	 */
+	private List<String> getExcludedPaths() {
+
+		List<String> excludedPaths = new ArrayList<String>();
+
+		for (AssetsLoader loader : AssetsLoaderSystem.getLoaders()) {
+			if (loader instanceof AbstractAssetsJsonLoader) {
+				String path = ((AbstractAssetsJsonLoader) loader).getPath();
+				if (path.startsWith(getPath()) && !path.equalsIgnoreCase(getPath())) {
+					excludedPaths.add(path);
+				}
+			}
+		}
+
+		return excludedPaths;
+	}
 }

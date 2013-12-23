@@ -2,20 +2,20 @@
  * [The "BSD licence"]
  * Copyright (c) 2013 Dandelion
  * All rights reserved.
- *
+ * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
  * are met:
- *
+ * 
  * 1. Redistributions of source code must retain the above copyright
  * notice, this list of conditions and the following disclaimer.
  * 2. Redistributions in binary form must reproduce the above copyright
  * notice, this list of conditions and the following disclaimer in the
  * documentation and/or other materials provided with the distribution.
- * 3. Neither the name of Dandelion nor the names of its contributors
- * may be used to endorse or promote products derived from this software
+ * 3. Neither the name of Dandelion nor the names of its contributors 
+ * may be used to endorse or promote products derived from this software 
  * without specific prior written permission.
- *
+ * 
  * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
  * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
  * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
@@ -27,20 +27,36 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
-package com.github.dandelion.core.asset.loader;
+package com.github.dandelion.core.utils;
 
 import static org.fest.assertions.Assertions.assertThat;
 
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Set;
+
 import org.junit.Test;
 
-import com.github.dandelion.module2.Module2AssetJsonLoader;
+public class ResourceScannerTest {
 
-public class AbstractAssetJsonLoaderTest {
-
-    @Test
-    public void should_not_load_resource_in_submodule_folder() {
-        Module2AssetJsonLoader loader = new Module2AssetJsonLoader();
-        assertThat(loader.loadAssets()).hasSize(1);
-    }
+	@Test
+	public void should_scan_all_resources_recursively() throws IOException {
+		assertThat(ResourceScanner.getResources("scanning", null, null, null, true)).hasSize(7);
+	}
+	
+	@Test
+	public void should_filter_resources_by_suffix() throws IOException {
+		assertThat(ResourceScanner.getResources("scanning", null, null, ".json", true)).hasSize(6);
+		assertThat(ResourceScanner.getResources("scanning", null, null, ".properties", true)).hasSize(1);
+	}
+	
+	@Test
+	public void should_filter_resources_by_prefix() throws IOException {
+		assertThat(ResourceScanner.getResources("scanning", null, "resource1", null, true)).hasSize(2);
+	}
+	
+	@Test
+	public void should_filter_resources_with_excluded_folder() throws IOException {
+		assertThat(ResourceScanner.getResources("scanning", Arrays.asList("scanning/subfolder"), null, null, true)).hasSize(5);
+	}
 }

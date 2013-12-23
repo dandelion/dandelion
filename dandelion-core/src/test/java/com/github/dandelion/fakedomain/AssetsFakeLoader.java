@@ -64,4 +64,9 @@ public class AssetsFakeLoader implements AssetsLoader {
     public String getType() {
         return "fake";
     }
+
+	@Override
+	public boolean isRecursive() {
+		return true;
+	}
 }

@@ -36,15 +36,21 @@ import org.slf4j.LoggerFactory;
 import com.github.dandelion.core.asset.loader.impl.AbstractAssetsJsonLoader;
 
 public class ModuleAssetsJsonLoader extends AbstractAssetsJsonLoader {
-    // Logger
-    private static final Logger LOG = LoggerFactory.getLogger(ModuleAssetsJsonLoader.class);
+	// Logger
+	private static final Logger LOG = LoggerFactory.getLogger(ModuleAssetsJsonLoader.class);
 
-    @Override
-    protected Logger getLogger() {
-        return LOG;
-    }
-    @Override
-    public String getFolder() {
-        return "module";
-    }
+	@Override
+	protected Logger getLogger() {
+		return LOG;
+	}
+
+	@Override
+	public String getPath() {
+		return "module";
+	}
+
+	@Override
+	public boolean isRecursive() {
+		return true;
+	}
 }

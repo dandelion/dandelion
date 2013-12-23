@@ -30,13 +30,39 @@
 package com.github.dandelion.core.asset.loader.spi;
 
 import com.github.dandelion.core.asset.AssetsComponent;
+import com.github.dandelion.core.asset.loader.AssetsLoaderSystem;
 
 import java.util.List;
 
 /**
- * Public Api to define a Loader for Asset
+ * Interface that all assets loader should implement.
  */
 public interface AssetsLoader {
-    List<AssetsComponent> loadAssets();
-    String getType();
+
+	/**
+	 * <p>
+	 * Load assets by scanning the classpath starting from the configured
+	 * folder.
+	 * 
+	 * @return a list of {@link AssetsComponent}.
+	 */
+	List<AssetsComponent> loadAssets();
+
+	/**
+	 * TODO aujourd'hui uniquement utilisé pour loguer (cf
+	 * {@link AssetsLoaderSystem}).
+	 * 
+	 * @return
+	 */
+	String getType();
+
+	/**
+	 * <p>
+	 * Indicates whether the asset loader must scan for its resources
+	 * recursively inside the configured folder or not.
+	 * 
+	 * @return {@code true} if the scanning is recursive, otherwise
+	 *         {@code false}
+	 */
+	boolean isRecursive();
 }
