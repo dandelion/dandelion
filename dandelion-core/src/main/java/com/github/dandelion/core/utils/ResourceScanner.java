@@ -254,6 +254,8 @@ public final class ResourceScanner {
 	private static Set<String> extractResourcesOnJarFile(String path, List<String> excludedPaths,
 			String nameCondition, String prefixCondition, String suffixCondition, URL resource, boolean recursive)
 			throws IOException {
+
+		Set<String> extractedResources = new HashSet<String>();
 		URLConnection con = resource.openConnection();
 
 		if (!(con instanceof JarURLConnection)) {
@@ -266,15 +268,17 @@ public final class ResourceScanner {
 			Enumeration<JarEntry> entries = jarFile.entries();
 			while (entries.hasMoreElements()) {
 				String entryName = entries.nextElement().getName();
-				if (entryName.startsWith(path)) {
-					// resourcesSets.get(folderPath).add(entryName);
+
+				if (isAnAuthorizedFolder(entryName, excludedPaths)
+						&& isAnAuthorizedResource(entryName, nameCondition, prefixCondition, suffixCondition)) {
+					extractedResources.add(entryName);
 				}
 			}
 		} finally {
 			jarFile.close();
 		}
 
-		return null;
+		return extractedResources;
 	}
 
 	/**
@@ -340,7 +344,7 @@ public final class ResourceScanner {
 	private static boolean isAnAuthorizedFolder(String path, List<String> excludedFolders) {
 		if (excludedFolders != null) {
 			for (String excludedFolder : excludedFolders) {
-				if (excludedFolder.equalsIgnoreCase(path)) {
+				if (path.contains(excludedFolder)) {
 					return false;
 				}
 			}
