@@ -1,11 +1,11 @@
 package com.github.dandelion.core.asset.wrapper.impl;
 
-import com.github.dandelion.core.asset.Asset;
-import com.github.dandelion.core.asset.processor.impl.AssetAggregationProcessorEntry;
-import com.github.dandelion.core.asset.wrapper.spi.AssetLocationWrapper;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Map;
+
+import com.github.dandelion.core.asset.Asset;
+import com.github.dandelion.core.asset.processor.impl.AssetAggregationProcessorEntry;
 
 public class AggregationLocationWrapper extends CacheableLocationWrapper {
     @Override

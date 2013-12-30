@@ -30,14 +30,15 @@
 
 package com.github.dandelion.core.asset.wrapper.impl;
 
-import com.github.dandelion.core.asset.Asset;
-import com.github.dandelion.core.utils.ResourceUtils;
+import static com.github.dandelion.core.DevMode.isDevModeEnabled;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.github.dandelion.core.DevMode.isDevModeEnabled;
+import javax.servlet.http.HttpServletRequest;
+
+import com.github.dandelion.core.asset.Asset;
+import com.github.dandelion.core.utils.ResourceUtils;
 
 /**
  * Wrapper for "template" location

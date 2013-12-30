@@ -30,11 +30,12 @@
 
 package com.github.dandelion.core.asset.wrapper.impl;
 
-import com.github.dandelion.core.asset.Asset;
-import com.github.dandelion.core.utils.ResourceUtils;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Map;
+
+import com.github.dandelion.core.asset.Asset;
+import com.github.dandelion.core.utils.ResourceUtils;
 
 /**
  * Wrapper for "classpath" location

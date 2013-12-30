@@ -30,10 +30,11 @@
 
 package com.github.dandelion.core.asset.wrapper.impl;
 
-import com.github.dandelion.core.asset.Asset;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Map;
+
+import com.github.dandelion.core.asset.Asset;
 
 public class DelegatedLocationWrapper extends CacheableLocationWrapper {
     public static final String DELEGATED_CONTENT_PARAM = "DELEGATED_CONTENT";

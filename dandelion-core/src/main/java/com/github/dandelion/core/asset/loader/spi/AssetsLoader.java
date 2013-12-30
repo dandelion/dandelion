@@ -29,10 +29,10 @@
  */
 package com.github.dandelion.core.asset.loader.spi;
 
+import java.util.List;
+
 import com.github.dandelion.core.asset.AssetsComponent;
 import com.github.dandelion.core.asset.loader.AssetsLoaderSystem;
-
-import java.util.List;
 
 /**
  * Interface that all assets loader should implement.

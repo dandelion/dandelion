@@ -29,18 +29,14 @@
  */
 package com.github.dandelion.core.asset.loader;
 
-import com.github.dandelion.core.asset.Asset;
-import com.github.dandelion.core.asset.loader.spi.AssetsLoader;
-import com.github.dandelion.core.asset.processor.impl.AssetLocationProcessorEntry;
-import com.github.dandelion.core.asset.processor.spi.AssetProcessorEntry;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.ServiceLoader;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.ServiceLoader;
+import com.github.dandelion.core.asset.loader.spi.AssetsLoader;
 
 public final class AssetsLoaderSystem {
     // Logger

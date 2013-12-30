@@ -30,19 +30,20 @@
 
 package com.github.dandelion.core.asset.wrapper.impl;
 
+import static com.github.dandelion.core.DevMode.isDevModeEnabled;
+import static com.github.dandelion.core.asset.cache.AssetsCacheSystem.generateCacheKey;
+import static com.github.dandelion.core.asset.cache.AssetsCacheSystem.storeCacheContent;
+import static com.github.dandelion.core.asset.web.AssetServlet.DANDELION_ASSETS_URL;
+import static com.github.dandelion.core.asset.web.AssetsRequestContext.get;
+
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+
 import com.github.dandelion.core.asset.Asset;
 import com.github.dandelion.core.asset.cache.AssetsCacheSystem;
 import com.github.dandelion.core.asset.wrapper.spi.AssetLocationWrapper;
 import com.github.dandelion.core.utils.RequestUtils;
-
-import javax.servlet.http.HttpServletRequest;
-import java.util.Map;
-
-import static com.github.dandelion.core.asset.cache.AssetsCacheSystem.generateCacheKey;
-import static com.github.dandelion.core.asset.cache.AssetsCacheSystem.storeCacheContent;
-import static com.github.dandelion.core.asset.web.AssetServlet.DANDELION_ASSETS_URL;
-import static com.github.dandelion.core.DevMode.isDevModeEnabled;
-import static com.github.dandelion.core.asset.web.AssetsRequestContext.get;
 
 /**
  * Base for Wrapper with caching faculty

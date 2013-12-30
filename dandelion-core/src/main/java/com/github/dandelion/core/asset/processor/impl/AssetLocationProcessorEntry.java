@@ -29,16 +29,19 @@
  */
 package com.github.dandelion.core.asset.processor.impl;
 
-import com.github.dandelion.core.asset.Asset;
-import com.github.dandelion.core.asset.AssetStack;
-import com.github.dandelion.core.asset.processor.spi.AssetProcessorEntry;
+import static com.github.dandelion.core.DevMode.isDevModeEnabled;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.servlet.http.HttpServletRequest;
-import java.util.*;
-
-import static com.github.dandelion.core.DevMode.isDevModeEnabled;
+import com.github.dandelion.core.asset.Asset;
+import com.github.dandelion.core.asset.AssetStack;
+import com.github.dandelion.core.asset.processor.spi.AssetProcessorEntry;
 
 public class AssetLocationProcessorEntry extends AssetProcessorEntry {
 

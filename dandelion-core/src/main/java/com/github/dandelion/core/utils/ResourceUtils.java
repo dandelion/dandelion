@@ -29,12 +29,16 @@
  */
 package com.github.dandelion.core.utils;
 
-import com.github.dandelion.core.DandelionException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.StringWriter;
+import java.net.URL;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.*;
-import java.net.URL;
+import com.github.dandelion.core.DandelionException;
 
 public final class ResourceUtils {
     // Logger

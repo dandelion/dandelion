@@ -29,19 +29,28 @@
  */
 package com.github.dandelion.core.asset;
 
+import static com.github.dandelion.core.asset.AssetsStorage.DETACHED_PARENT_SCOPE;
+import static com.github.dandelion.core.asset.AssetsStorage.MASTER_SCOPE;
+import static com.github.dandelion.core.asset.AssetsStorage.ROOT_SCOPE;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.github.dandelion.core.DandelionException;
 import com.github.dandelion.core.asset.loader.AssetsLoaderSystem;
 import com.github.dandelion.core.asset.loader.spi.AssetsLoader;
 import com.github.dandelion.core.asset.wrapper.AssetLocationWrapperSystem;
 import com.github.dandelion.core.asset.wrapper.spi.AssetLocationWrapper;
 import com.github.dandelion.core.config.Configuration;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.util.*;
-
-import static com.github.dandelion.core.asset.AssetsStorage.*;
 
 /**
  * Load Assets configuration

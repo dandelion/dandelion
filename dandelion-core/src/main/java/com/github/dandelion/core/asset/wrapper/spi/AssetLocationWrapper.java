@@ -30,9 +30,9 @@
 
 package com.github.dandelion.core.asset.wrapper.spi;
 
-import com.github.dandelion.core.asset.Asset;
-
 import javax.servlet.http.HttpServletRequest;
+
+import com.github.dandelion.core.asset.Asset;
 
 /**
  * Wrapper for a location url associated with a location key

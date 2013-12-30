@@ -29,10 +29,11 @@
  */
 package com.github.dandelion.core.asset.processor.spi;
 
-import com.github.dandelion.core.asset.Asset;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.List;
+
+import com.github.dandelion.core.asset.Asset;
 
 public abstract class AssetProcessorEntry implements Comparable<AssetProcessorEntry> {
     private AssetProcessorEntry nextEntry;

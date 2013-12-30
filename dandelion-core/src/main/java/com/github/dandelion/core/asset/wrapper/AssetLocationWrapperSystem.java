@@ -1,10 +1,15 @@
 package com.github.dandelion.core.asset.wrapper;
 
-import com.github.dandelion.core.asset.wrapper.spi.AssetLocationWrapper;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.ServiceLoader;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.*;
+import com.github.dandelion.core.asset.wrapper.spi.AssetLocationWrapper;
 
 public final class AssetLocationWrapperSystem {
     // Logger

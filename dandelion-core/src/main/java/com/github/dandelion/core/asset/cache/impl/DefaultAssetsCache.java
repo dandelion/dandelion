@@ -30,10 +30,10 @@
 
 package com.github.dandelion.core.asset.cache.impl;
 
-import com.github.dandelion.core.asset.cache.spi.AssetsCache;
-
 import java.util.HashMap;
 import java.util.Map;
+
+import com.github.dandelion.core.asset.cache.spi.AssetsCache;
 
 /**
  * Cache System for store specific content of an asset from a Map

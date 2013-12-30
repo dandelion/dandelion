@@ -29,13 +29,17 @@
  */
 package com.github.dandelion.core.asset;
 
-import com.github.dandelion.core.asset.processor.AssetProcessorSystem;
-import com.github.dandelion.core.asset.wrapper.spi.AssetLocationWrapper;
+import static com.github.dandelion.core.DevMode.devModeOverride;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.*;
 
-import static com.github.dandelion.core.DevMode.devModeOverride;
+import com.github.dandelion.core.asset.processor.AssetProcessorSystem;
+import com.github.dandelion.core.asset.wrapper.spi.AssetLocationWrapper;
 
 public class AssetStack {
     static AssetsConfigurator assetsConfigurator;

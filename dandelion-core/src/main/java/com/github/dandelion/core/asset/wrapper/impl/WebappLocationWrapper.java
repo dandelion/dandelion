@@ -30,12 +30,12 @@
 
 package com.github.dandelion.core.asset.wrapper.impl;
 
+import javax.servlet.http.HttpServletRequest;
+
 import com.github.dandelion.core.asset.Asset;
 import com.github.dandelion.core.asset.wrapper.spi.AssetLocationWrapper;
 import com.github.dandelion.core.utils.RequestUtils;
 import com.github.dandelion.core.utils.ResourceUtils;
-
-import javax.servlet.http.HttpServletRequest;
 
 /**
  * Wrapper for "webapp" location

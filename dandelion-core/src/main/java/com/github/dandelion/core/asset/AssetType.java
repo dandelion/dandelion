@@ -29,7 +29,8 @@
  */
 package com.github.dandelion.core.asset;
 
-import static com.github.dandelion.core.asset.AssetDOMPosition.*;
+import static com.github.dandelion.core.asset.AssetDOMPosition.body;
+import static com.github.dandelion.core.asset.AssetDOMPosition.head;
 
 /**
  * Possible types of asset<br/>

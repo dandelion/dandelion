@@ -30,15 +30,15 @@
 
 package com.github.dandelion.core.asset.cache;
 
+import java.util.ServiceLoader;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.github.dandelion.core.asset.AssetType;
 import com.github.dandelion.core.asset.cache.impl.DefaultAssetsCache;
 import com.github.dandelion.core.asset.cache.spi.AssetsCache;
 import com.github.dandelion.core.utils.Sha1Utils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.servlet.http.HttpServletRequest;
-import java.util.ServiceLoader;
 
 public class AssetsCacheSystem {
     // Logger
