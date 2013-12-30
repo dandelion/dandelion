@@ -30,30 +30,35 @@
 
 package com.github.dandelion.core.asset.processor.impl;
 
+import static com.github.dandelion.core.asset.web.AssetServlet.DANDELION_ASSETS_URL;
+
+import java.io.IOException;
+import java.io.StringReader;
+import java.io.StringWriter;
+import java.io.Writer;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.mozilla.javascript.EvaluatorException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.github.dandelion.core.DandelionException;
+import com.github.dandelion.core.DevMode;
 import com.github.dandelion.core.asset.Asset;
 import com.github.dandelion.core.asset.AssetStack;
 import com.github.dandelion.core.asset.cache.AssetsCacheSystem;
 import com.github.dandelion.core.asset.processor.spi.AssetProcessorEntry;
 import com.github.dandelion.core.asset.wrapper.spi.AssetLocationWrapper;
 import com.github.dandelion.core.config.Configuration;
-import com.github.dandelion.core.DevMode;
 import com.github.dandelion.core.utils.RequestUtils;
 import com.github.dandelion.core.utils.ResourceUtils;
 import com.yahoo.platform.yui.compressor.CssCompressor;
 import com.yahoo.platform.yui.compressor.JavaScriptCompressor;
-import org.mozilla.javascript.EvaluatorException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
-import java.io.StringReader;
-import java.io.StringWriter;
-import java.io.Writer;
-import java.util.*;
-
-import static com.github.dandelion.core.asset.web.AssetServlet.DANDELION_ASSETS_URL;
 
 public class AssetCompressionProcessorEntry extends AssetProcessorEntry {
     // Logger
@@ -65,7 +70,7 @@ public class AssetCompressionProcessorEntry extends AssetProcessorEntry {
     public static final String COMPRESSION_JS_PRESERVE_SEMICOLONS = "dandelion.compression.js.preserveSemiColons";
     public static final String COMPRESSION_JS_DISABLE_OPTIMIZATIONS = "dandelion.compression.js.disableOptimizations";
 
-    private boolean compressionEnabled = true;
+    private boolean compressionEnabled = false;
     private boolean jsMunge = true;
     private boolean jsPreserveSemiColons = true;
     private boolean jsDisableOptimizations = true;

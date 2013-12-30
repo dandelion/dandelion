@@ -29,6 +29,21 @@
  */
 package com.github.dandelion.core.asset.processor.impl;
 
+import static com.github.dandelion.core.asset.cache.AssetsCacheSystem.checkCacheKey;
+import static com.github.dandelion.core.asset.cache.AssetsCacheSystem.generateCacheKey;
+import static com.github.dandelion.core.asset.cache.AssetsCacheSystem.storeCacheContent;
+import static com.github.dandelion.core.asset.web.AssetServlet.DANDELION_ASSETS_URL;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.github.dandelion.core.DevMode;
 import com.github.dandelion.core.asset.Asset;
 import com.github.dandelion.core.asset.AssetStack;
@@ -36,15 +51,8 @@ import com.github.dandelion.core.asset.AssetType;
 import com.github.dandelion.core.asset.processor.spi.AssetProcessorEntry;
 import com.github.dandelion.core.asset.wrapper.spi.AssetLocationWrapper;
 import com.github.dandelion.core.config.Configuration;
-import com.github.dandelion.core.utils.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.servlet.http.HttpServletRequest;
-import java.util.*;
-
-import static com.github.dandelion.core.asset.cache.AssetsCacheSystem.*;
-import static com.github.dandelion.core.asset.web.AssetServlet.DANDELION_ASSETS_URL;
+import com.github.dandelion.core.utils.RequestUtils;
+import com.github.dandelion.core.utils.ResourceUtils;
 
 public class AssetAggregationProcessorEntry extends AssetProcessorEntry {
     // Logger
@@ -52,7 +60,7 @@ public class AssetAggregationProcessorEntry extends AssetProcessorEntry {
 
     public static final String AGGREGATION = "aggregation";
     public static final String AGGREGATION_ENABLED_KEY = "dandelion.aggregation.enabled";
-    private boolean aggregationEnabled = true;
+    private boolean aggregationEnabled = false;
 
     public AssetAggregationProcessorEntry() {
         this.aggregationEnabled = Boolean.TRUE.toString().equals(
