@@ -36,7 +36,18 @@ public class StringUtils {
 
 	private static final String NUMERIC = "0123456789";
 	private static final Random RANDOM = new Random();
+	private static final String[] ESCAPES;
 
+	static {
+		int size = '>' + 1; // '>' is the largest escaped value
+		ESCAPES = new String[size];
+		ESCAPES['<'] = "&lt;";
+		ESCAPES['>'] = "&gt;";
+		ESCAPES['&'] = "&amp;";
+		ESCAPES['\''] = "&#039;";
+		ESCAPES['"'] = "&#034;";
+	}
+    
 	/**
 	 * <p>
 	 * Checks if a String is whitespace, empty ("") or null.
@@ -296,5 +307,55 @@ public class StringUtils {
 	 */
 	public static String getRamdomNumber() {
 		return StringUtils.randomNumeric(5);
+	}
+	
+	/**
+	 * <p>
+	 * Escapes the characters in a <code>String</code> using XML entities.
+	 * 
+	 * @param str
+	 *            the <code>String</code> to escape, may be null
+	 * @return a new escaped <code>String</code>, <code>null</code> if null
+	 *         string input
+	 */
+	public static String escape(String src) {
+		// First pass to determine the length of the buffer so we only allocate
+		// once
+		int length = 0;
+		for (int i = 0; i < src.length(); i++) {
+			char c = src.charAt(i);
+			String escape = getEscape(c);
+			if (escape != null) {
+				length += escape.length();
+			} else {
+				length += 1;
+			}
+		}
+
+		// Skip copy if no escaping is needed
+		if (length == src.length()) {
+			return src;
+		}
+
+		// Second pass to build the escaped string
+		StringBuilder buf = new StringBuilder(length);
+		for (int i = 0; i < src.length(); i++) {
+			char c = src.charAt(i);
+			String escape = getEscape(c);
+			if (escape != null) {
+				buf.append(escape);
+			} else {
+				buf.append(c);
+			}
+		}
+		return buf.toString();
+	}
+	
+	private static String getEscape(char c) {
+		if (c < ESCAPES.length) {
+			return ESCAPES[c];
+		} else {
+			return null;
+		}
 	}
 }
