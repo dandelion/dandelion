@@ -351,6 +351,23 @@ public class StringUtils {
 		return buf.toString();
 	}
 	
+	/**
+	 * <p>
+	 * Escapes the characters in a {@code String} using XML entities only if the
+	 * passed boolean is {@code true}.
+	 * 
+	 * @param str
+	 *            the {@code String} to escape.
+	 * @return a new escaped {@code String} if {@code shouldEscape} is set to
+	 *         {@code true}, an unchanged {@code String} otherwise.
+	 */
+	public static String escape(boolean shouldEscape, String src) {
+		if (shouldEscape) {
+			return escape(src);
+		}
+		return src;
+	}
+	
 	private static String getEscape(char c) {
 		if (c < ESCAPES.length) {
 			return ESCAPES[c];
