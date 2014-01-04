@@ -29,12 +29,13 @@
  */
 package com.github.dandelion.core.utils;
 
+
 public class EnumUtils {
 
-	public static <T extends Enum<T>> String printPossibleValuesOf(Class<T> enumClass) {
+	public static <E extends Enum<E>> String printPossibleValuesOf(Class<E> enumClass) {
 
 		StringBuilder possibleValues = new StringBuilder();
-		T[] enumConstants = enumClass.getEnumConstants();
+		E[] enumConstants = enumClass.getEnumConstants();
 
 		for (int i = 0; i < enumConstants.length; i++) {
 			possibleValues.append("'").append(enumConstants[i].name().toLowerCase()).append("'");
@@ -46,5 +47,33 @@ public class EnumUtils {
 		}
 		possibleValues.append(".");
 		return possibleValues.toString();
+	}
+
+	/**
+	 * <p>
+	 * Gets the enum for the class, returning {@code null} if not found.
+	 * </p>
+	 * 
+	 * <p>
+	 * This method differs from {@link Enum#valueOf} in that it does not throw
+	 * an exception for an invalid enum name.
+	 * </p>
+	 * 
+	 * @param enumClass
+	 *            the class of the enum to query, not null.
+	 * @param enumName
+	 *            the enum name, null returns null.
+	 * @return the enum, null if not found.
+	 */
+	public static <E extends Enum<E>> E getEnum(String enumName, Class<E> enumType) {
+		if (enumName == null) {
+			return null;
+		}
+
+		try {
+			return Enum.valueOf(enumType, enumName.toUpperCase().trim());
+		} catch (IllegalArgumentException ex) {
+			return null;
+		}
 	}
 }
