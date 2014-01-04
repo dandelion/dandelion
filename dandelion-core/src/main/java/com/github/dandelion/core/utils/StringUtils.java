@@ -319,6 +319,11 @@ public class StringUtils {
 	 *         string input
 	 */
 	public static String escape(String src) {
+		
+		if (src == null) {
+			return src;
+		}
+		
 		// First pass to determine the length of the buffer so we only allocate
 		// once
 		int length = 0;
