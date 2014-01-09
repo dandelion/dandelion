@@ -210,7 +210,7 @@ public class AssetsConfigurator {
         if(assetsByScope.containsKey(scope)) {
             List<Asset> _assets = assetsByScope.get(scope);
             if(_assets.isEmpty() && parentScope != null) {
-                assetsStorage.store(null, scope, parentScope);
+                assetsStorage.setupEmptyScope(scope, parentScope);
             } else {
                 for(Asset _asset:_assets) {
                     storeAsset(_asset, scope, parentScopesByScope.get(scope));
@@ -238,11 +238,10 @@ public class AssetsConfigurator {
         try {
             assetsStorage.store(asset, scope, parentScope);
         } catch (DandelionException e) {
-            e.printStackTrace();
             LOG.debug(e.getLocalizedMessage());
             if(e.getErrorCode() == AssetsStorageError.UNDEFINED_PARENT_SCOPE) {
                 LOG.debug("To avoid any configuration problem, a scope '{}' with no assets is created", parentScope);
-                assetsStorage.store(null, parentScope);
+                assetsStorage.setupEmptyParentScope(parentScope);
                 storeAsset(asset, scope, parentScope);
             }
         }

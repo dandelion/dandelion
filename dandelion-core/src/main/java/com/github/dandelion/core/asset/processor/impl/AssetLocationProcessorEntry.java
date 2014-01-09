@@ -123,12 +123,12 @@ public class AssetLocationProcessorEntry extends AssetProcessorEntry {
     }
 
     private void debugAttributes(Asset asset, String locationKey, Boolean wrapped) {
-        asset.addAttribute("name", asset.getName());
-        asset.addAttribute("type", asset.getType().name());
-        asset.addAttribute("version", asset.getVersion());
+        asset.addAttribute("data-ddl-asset-name", asset.getName());
+        asset.addAttribute("data-ddl-asset-type", asset.getType().name());
+        asset.addAttribute("data-ddl-asset-version", asset.getVersion());
         if(asset.getDom() != null)
-            asset.addAttribute("dom-position", asset.getDom().name());
-        asset.addAttribute("location-key", locationKey);
-        asset.addAttribute("location-wrap", wrapped.toString());
+            asset.addAttribute("data-ddl-asset-dom-position", asset.getDom().name());
+        asset.addAttribute("data-ddl-asset-location-key", locationKey);
+        asset.addAttribute("data-ddl-asset-location-wrap", wrapped.toString());
     }
 }

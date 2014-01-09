@@ -9,4 +9,5 @@ target/
 
 rebel.xml
 
+.DS_Store
 snapshots/

@@ -126,7 +126,7 @@ public class StandardConfigurationLoader implements ConfigurationLoader {
 				try {
 					propertiesStream.close();
 				} catch (IOException e) {
-					e.printStackTrace();
+					LOG.error("Properties Stream can't be close", e);
 				}
 			}
 		}

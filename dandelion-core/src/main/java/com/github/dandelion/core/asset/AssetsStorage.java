@@ -29,12 +29,7 @@
  */
 package com.github.dandelion.core.asset;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import com.github.dandelion.core.DandelionException;
 
@@ -47,6 +42,9 @@ import com.github.dandelion.core.DandelionException;
  */
 public final class AssetsStorage {
     static final int ASSET_SCOPE_STORAGE_POSITION = 1000;
+
+    private enum StorageCommand {INSERT, MERGE};
+
     /**
      * Assets Storage Units
      */
@@ -112,12 +110,15 @@ public final class AssetsStorage {
      * @param parentScope parent of the scope
      */
     public void store(Asset asset, String scope, String parentScope) {
+        // don't store if we found invalid asset
+        if (asset == null || !asset.isValid()) return;
+
         if (DETACHED_PARENT_SCOPE.equalsIgnoreCase(scope)) {
             throw new DandelionException(AssetsStorageError.DETACHED_SCOPE_NOT_ALLOWED)
                     .set("detachedScope", DETACHED_PARENT_SCOPE);
         }
-        AssetsScopeStorageUnit scopeUnit = getOrCreateStorageUnit(asset, scope, parentScope);
-        store(asset, scopeUnit);
+        AssetsScopeStorageUnit scopeUnit = getStorageUnit(scope, parentScope);
+        insertAsset(asset, scopeUnit);
     }
 
     /**
@@ -137,32 +138,121 @@ public final class AssetsStorage {
      * @param asset asset to store
      * @param scopeUnit storage unit of the asset's scope
      */
-    private void store(Asset asset, AssetsScopeStorageUnit scopeUnit) {
-        // don't store if we found invalid asset or invalid storage unit
-        if (scopeUnit == null || asset == null || !asset.isValid()) return;
-        // set up position in the storage and the storage unit
-        asset.storagePosition = scopeUnit.storagePosition * ASSET_SCOPE_STORAGE_POSITION + scopeUnit.assets.size();
-        scopeUnit.assets.add(asset);
+    private void insertAsset(Asset asset, AssetsScopeStorageUnit scopeUnit) {
+        StorageCommand command = checkAssetStorageIncompatibility(asset, scopeUnit);
+        switch (command) {
+            case INSERT:
+                // set up position in the storage and the storage unit
+                asset.storagePosition = scopeUnit.storagePosition * ASSET_SCOPE_STORAGE_POSITION
+                        + scopeUnit.assets.size();
+                scopeUnit.assets.add(asset);
+                break;
+            case MERGE:
+                Asset originalAsset = scopeUnit.assets.get(scopeUnit.assets.indexOf(asset));
+                combineAsset(originalAsset, asset);
+                break;
+            default:
+                return;
+        }
     }
 
-    private AssetsScopeStorageUnit getOrCreateStorageUnit(Asset asset, String scope, String parentScope) {
+    private StorageCommand checkAssetStorageIncompatibility(Asset asset, AssetsScopeStorageUnit scopeUnit) {
+        // the asset can be store if he isn't store already
+        if (!scopeUnit.assets.contains(asset)) {
+            return StorageCommand.INSERT;
+        }
+        // if not, we check if he can be merge
+        Asset originalAsset = scopeUnit.assets.get(scopeUnit.assets.indexOf(asset));
+
+        // he can be merge if the versions are equals
+        if(!originalAsset.getVersion().equals(asset.getVersion())) {
+            throw new DandelionException(AssetsStorageError.ASSET_ALREADY_EXISTS_IN_SCOPE)
+                    .set("originalAsset", asset);
+        }
+
+        // he can be merge if the locations can be merge
+        List<String> locationsInError = new ArrayList<String>();
+        for(Map.Entry<String, String> locationEntry:asset.getLocations().entrySet()) {
+            if(originalAsset.getLocations().containsKey(locationEntry.getKey())
+                    && !originalAsset.getLocations().get(locationEntry.getKey())
+                    .equals(locationEntry.getValue())) {
+                locationsInError.add(locationEntry.getKey());
+            }
+        }
+        if (!locationsInError.isEmpty()) {
+            throw new DandelionException(AssetsStorageError.ASSET_LOCATION_ALREADY_EXISTS_IN_SCOPE)
+                    .set("locations", locationsInError)
+                    .set("asset", asset);
+        }
+
+        // he can be merge if the attributes can be merge
+        List<String> attributesInError = new ArrayList<String>();
+        for(Map.Entry<String, String> attributeEntry:asset.getAttributes().entrySet()) {
+            if(originalAsset.getAttributes().containsKey(attributeEntry.getKey())
+                    && !originalAsset.getAttributes().get(attributeEntry.getKey())
+                    .equals(attributeEntry.getValue())) {
+                attributesInError.add(attributeEntry.getKey());
+            }
+        }
+        if (!attributesInError.isEmpty()) {
+            throw new DandelionException(AssetsStorageError.ASSET_ATTRIBUTE_ALREADY_EXISTS_IN_SCOPE)
+                    .set("attributes", attributesInError)
+                    .set("asset", asset);
+        }
+
+        // he can be merge if the DOM position can be merge
+        if(originalAsset.getDom() != null && asset.getDom() != null && originalAsset.getDom() != asset.getDom()) {
+            throw new DandelionException(AssetsStorageError.ASSET_DOM_POSITION_ALREADY_EXISTS_IN_SCOPE)
+                    .set("domPosition", originalAsset.getDom())
+                    .set("asset", asset);
+        }
+        return StorageCommand.MERGE;
+    }
+
+    private void combineAsset(Asset originalAsset, Asset asset) {
+        // merge the asset attributes only name to the original asset
+        List<String> attributesOnlyName = Arrays.asList(originalAsset.getAttributesOnlyName());
+        for(String attributeOnlyName:asset.getAttributesOnlyName()) {
+            if(!attributesOnlyName.contains(attributeOnlyName)) {
+                originalAsset.addAttribute(attributeOnlyName);
+            }
+        }
+
+        // merge the asset attributes to the original asset
+        for(Map.Entry<String, String> attributeEntry:asset.getAttributes().entrySet()) {
+            if(!originalAsset.getAttributes().containsKey(attributeEntry.getKey())) {
+                originalAsset.getAttributes().put(attributeEntry.getKey(), attributeEntry.getValue());
+            }
+        }
+
+        // merge the asset locations to the original asset
+        for(Map.Entry<String, String> locationEntry:asset.getLocations().entrySet()) {
+            if(!originalAsset.getLocations().containsKey(locationEntry.getKey())) {
+                originalAsset.getLocations().put(locationEntry.getKey(), locationEntry.getValue());
+            }
+        }
+
+        // merge the asset dom position to the original asset if needed
+        if(originalAsset.getDom() == null) {
+            originalAsset.setDom(asset.getDom());
+        }
+    }
+
+    void setupEmptyParentScope(String scope) {
+        getStorageUnit(scope, ROOT_SCOPE);
+    }
+
+    void setupEmptyScope(String scope, String parentScope) {
+        getStorageUnit(scope, parentScope);
+    }
+
+    private AssetsScopeStorageUnit getStorageUnit(String scope, String parentScope) {
         scope = scope.toLowerCase();
         parentScope = parentScope.toLowerCase();
         AssetsScopeStorageUnit scopeUnit;
         if (storage.containsKey(scope)) {
             AssetsScopeStorageUnit storedScopeUnit = storage.get(scope);
             checkParentScopeIncompatibility(parentScope, storedScopeUnit);
-            try {
-                checkAssetAlreadyExists(asset, storedScopeUnit);
-            } catch (DandelionException e) {
-                Asset originalAsset = storedScopeUnit.assets.get(
-                        storedScopeUnit.assets.indexOf(asset)
-                );
-                checkAssetsLocationAlreadyExists(asset, originalAsset, e);
-                // merge the asset locations to the original asset
-                originalAsset.getLocations().putAll(asset.getLocations());
-                return null;
-            }
             scopeUnit = storedScopeUnit;
         } else {
             // create a new empty scope
@@ -185,42 +275,6 @@ public final class AssetsStorage {
         if (!storage.containsKey(parentScope) && !DETACHED_PARENT_SCOPE.equalsIgnoreCase(parentScope)) {
             throw new DandelionException(AssetsStorageError.UNDEFINED_PARENT_SCOPE)
                     .set("parentScope", parentScope);
-        }
-    }
-
-    /**
-     * Check if an asset is already in this scope (same name/type)
-     *
-     * @param asset                        asset to check
-     * @param storedAssetsScopeStorageUnit stored storage unit
-     */
-    private void checkAssetAlreadyExists(Asset asset, AssetsScopeStorageUnit storedAssetsScopeStorageUnit) {
-        if (storedAssetsScopeStorageUnit.assets.contains(asset)) {
-            throw new DandelionException(AssetsStorageError.ASSET_ALREADY_EXISTS_IN_SCOPE)
-                    .set("originalAsset", asset);
-        }
-    }
-
-    /**
-     * Check if an asset location is already in this scope (same location key)
-     *
-     * @param asset         asset to check
-     * @param originalAsset original asset
-     * @param e             dandelion exception
-     */
-    private void checkAssetsLocationAlreadyExists(Asset asset, Asset originalAsset, DandelionException e) {
-        List<String> locations = new ArrayList<String>();
-        for (String assetLocationKey : asset.getLocations().keySet()) {
-            if (originalAsset.getLocations().containsKey(assetLocationKey)) {
-                locations.add(assetLocationKey);
-            }
-        }
-        if (locations.size() == originalAsset.getLocations().keySet().size()) {
-            throw e;
-        } else if (!locations.isEmpty()) {
-            throw new DandelionException(AssetsStorageError.ASSET_LOCATION_ALREADY_EXISTS_IN_SCOPE)
-                    .set("locations", locations)
-                    .set("asset", asset);
         }
     }
 
@@ -280,9 +334,25 @@ public final class AssetsStorage {
                         ?asset.storagePosition:other.getValue().storagePosition;
                 if (asset.getVersion().equalsIgnoreCase(other.getValue().getVersion())) {
                     asset.storagePosition = smallestValue;
-                    for (Map.Entry<String, String> location : other.getValue().getLocations().entrySet()) {
-                        if (!asset.getLocations().containsKey(location.getKey())) {
-                            asset.getLocations().put(location.getKey(), location.getValue());
+                    if(other.getValue().getLocations() != null) {
+                        for (Map.Entry<String, String> location : other.getValue().getLocations().entrySet()) {
+                            if (!asset.getLocations().containsKey(location.getKey())) {
+                                asset.getLocations().put(location.getKey(), location.getValue());
+                            }
+                        }
+                    }
+                    if(other.getValue().getAttributesOnlyName() != null) {
+                        for(String attribute:other.getValue().getAttributesOnlyName()) {
+                            if(!Arrays.asList(asset.getAttributesOnlyName()).contains(attribute)) {
+                                asset.addAttribute(attribute);
+                            }
+                        }
+                    }
+                    if(other.getValue().getAttributes() != null) {
+                        for (Map.Entry<String, String> attribute : other.getValue().getAttributes().entrySet()) {
+                            if(!asset.getAttributes().containsKey(attribute.getKey())) {
+                                asset.addAttribute(attribute.getKey(), attribute.getValue());
+                            }
                         }
                     }
                 } else if(smallestValue == asset.storagePosition) {

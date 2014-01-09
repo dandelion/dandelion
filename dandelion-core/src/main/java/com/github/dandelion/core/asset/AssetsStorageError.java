@@ -36,7 +36,7 @@ import com.github.dandelion.core.DandelionError;
  */
 public enum AssetsStorageError implements DandelionError {
     /**
-     * An asset can't be added twice in the same scope (same name)
+     * An asset can't be added twice in the same scope (same name but different versions)
      */
     ASSET_ALREADY_EXISTS_IN_SCOPE(100),
     /**
@@ -56,7 +56,15 @@ public enum AssetsStorageError implements DandelionError {
     /**
      * A location can't be used twice in the same scope by a similar asset
      */
-    ASSET_LOCATION_ALREADY_EXISTS_IN_SCOPE(104);
+    ASSET_LOCATION_ALREADY_EXISTS_IN_SCOPE(104),
+    /**
+     * A attribute can't be used twice in the same scope by a similar asset
+     */
+    ASSET_ATTRIBUTE_ALREADY_EXISTS_IN_SCOPE(105),
+    /**
+     * A DOM position must be equals for merging two assets with same name
+     */
+    ASSET_DOM_POSITION_ALREADY_EXISTS_IN_SCOPE(106);
 
     private final int number;
 

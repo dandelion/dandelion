@@ -29,6 +29,8 @@
  */
 package com.github.dandelion.core.asset;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -119,12 +121,16 @@ public class Asset {
         this.locations = locations;
     }
     public Map<String, String> getAttributes() {
+        if(attributes == null)
+            return Collections.emptyMap();
         return attributes;
     }
     public void setAttributes(Map<String, String> attributes) {
         this.attributes = attributes;
     }
     public String[] getAttributesOnlyName() {
+        if(attributesOnlyName == null)
+            return new String[0];
         return attributesOnlyName;
     }
     public void setAttributesOnlyName(String[] attributesOnlyName) {
@@ -178,6 +184,15 @@ public class Asset {
             attributes = new HashMap<String, String>();
         }
 
-        attributes.put("data-ddl-asset-" + attributeName, attributeValue);
+        attributes.put(attributeName, attributeValue);
+    }
+
+    public void addAttribute(String attributeName) {
+        if(attributesOnlyName == null) {
+            attributesOnlyName = new String[] {attributeName};
+        } else {
+            Arrays.copyOf(attributesOnlyName, attributesOnlyName.length + 1);
+            attributesOnlyName[attributesOnlyName.length] = attributeName;
+        }
     }
 }

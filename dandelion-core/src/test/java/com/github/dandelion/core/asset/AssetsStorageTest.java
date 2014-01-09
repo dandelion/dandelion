@@ -166,9 +166,9 @@ public class AssetsStorageTest {
     }
 
     @Test
-    public void should_store_empty_scope_by_lazy_workaround() {
+    public void should_store_empty_scope_by_workaround() {
         assetsStorage.store(asset);
-        assetsStorage.store(null, "empty_scope");
+        assetsStorage.setupEmptyParentScope("empty_scope");
         assetsStorage.store(asset2, "not_empty_scope", "empty_scope");
         assertThat(assetsStorage.assetsFor("not_empty_scope")).hasSize(2).contains(asset, asset2);
     }
@@ -185,8 +185,8 @@ public class AssetsStorageTest {
     public void should_detect_conflicts_before_storage() {
         expectedEx.expect(DandelionException.class);
         expectedEx.expect(
-                new DandelionExceptionMatcher(AssetsStorageError.ASSET_ALREADY_EXISTS_IN_SCOPE)
-                        .set("originalAsset", asset)
+            new DandelionExceptionMatcher(AssetsStorageError.ASSET_ALREADY_EXISTS_IN_SCOPE)
+                .set("originalAsset", asset)
         );
 
         assetsStorage.store(asset);
