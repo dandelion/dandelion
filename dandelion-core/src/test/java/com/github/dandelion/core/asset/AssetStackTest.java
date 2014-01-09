@@ -79,6 +79,7 @@ public class AssetStackTest {
         List<Asset> assets = AssetStack.assetsFor("detachedScope");
         assertThat(AssetStack.excludeByName(assets, "asset3addon")).hasSize(1);
         assertThat(AssetStack.excludeByName(assets, "asset1")).hasSize(0);
+        assertThat(AssetStack.excludeByName(assets, "asset1.css")).hasSize(1);
     }
 
     @Test

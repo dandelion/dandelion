@@ -162,7 +162,8 @@ public class AssetStack {
             _filters.add(filter.toLowerCase());
         }
         for(Asset _asset:assets) {
-            if(!_filters.contains(_asset.getName().toLowerCase())) {
+            if(!_filters.contains(_asset.getName().toLowerCase())
+                    && !_filters.contains(_asset.getAssetKey().toLowerCase())) {
                 _assets.add(_asset);
             }
         }
