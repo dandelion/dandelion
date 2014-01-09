@@ -204,7 +204,7 @@ public class AssetCompressionProcessorEntry extends AssetProcessorEntry {
             if (wrapper != null) {
                 content = wrapper.getWrappedContent(asset, request);
             } else {
-                content = ResourceUtils.getContentFromUrl(location.getValue(), true);
+                content = ResourceUtils.getContentFromUrl(request, location.getValue(), true);
             }
             if(content != null) {
                 groupContent.append(content).append("\n");

@@ -40,11 +40,14 @@ import org.slf4j.LoggerFactory;
 
 import com.github.dandelion.core.DandelionException;
 
+import javax.servlet.http.HttpServletRequest;
+
 public final class ResourceUtils {
     // Logger
     private static final Logger LOG = LoggerFactory.getLogger(ResourceUtils.class);
 
     private static final int DEFAULT_BUFFER_SIZE = 1024 * 4;
+    public static final String PROTOCOL_RELATIVE_PREFIX = "//";
 
     public static InputStream getFileFromClasspath(String pathToFile) {
         return Thread.currentThread().getContextClassLoader().getResourceAsStream(pathToFile);
@@ -78,9 +81,13 @@ public final class ResourceUtils {
         return sw.toString();
     }
 
-    public static String getContentFromUrl(String url, boolean neverFail) {
+    public static String getContentFromUrl(HttpServletRequest request, String url, boolean neverFail) {
         try {
-            URL urlLocation = new URL(url);
+            String realUrl = url;
+            if(realUrl.startsWith(PROTOCOL_RELATIVE_PREFIX)) {
+                realUrl = request.getProtocol() + ":" + realUrl;
+            }
+            URL urlLocation = new URL(realUrl);
             return ResourceUtils.getContentFromInputStream(urlLocation.openStream());
         } catch(IOException e) {
             DandelionException de = DandelionException.wrap(e, ResourceError.CONTENT_CANT_BE_READ_FROM_URL)

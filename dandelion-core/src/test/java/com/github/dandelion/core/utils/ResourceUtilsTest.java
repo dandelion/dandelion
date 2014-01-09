@@ -28,51 +28,28 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package com.github.dandelion.core.asset.wrapper.impl;
+package com.github.dandelion.core.utils;
 
-import javax.servlet.http.HttpServletRequest;
+import org.junit.Test;
+import org.springframework.mock.web.MockHttpServletRequest;
 
-import com.github.dandelion.core.asset.Asset;
-import com.github.dandelion.core.asset.wrapper.spi.AssetLocationWrapper;
-import com.github.dandelion.core.utils.RequestUtils;
-import com.github.dandelion.core.utils.ResourceUtils;
+import static org.fest.assertions.Assertions.assertThat;
 
-/**
- * Wrapper for "webapp" location
- */
-public class WebappLocationWrapper implements AssetLocationWrapper {
+public class ResourceUtilsTest {
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String locationKey() {
-        return "webapp";
+    @Test
+    public void should_get_content_from_url() {
+        MockHttpServletRequest request = new MockHttpServletRequest();
+
+        String content = ResourceUtils.getContentFromUrl(request, "http://dandelion.github.io", true);
+        assertThat(content).isNotEqualTo("");
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String wrapLocation(Asset asset, HttpServletRequest request) {
-        String location = asset.getLocations().get(locationKey());
-        String base = RequestUtils.getBaseUrl(request);
-        boolean pathLocation = location.startsWith("/");
-        boolean pathBase = base.endsWith("/");
-        if(pathLocation && pathBase) {
-            location = location.substring(1);
-        } else if(!pathLocation && !pathBase) {
-            location = "/" + location;
-        }
-        return base + location;
-    }
+    @Test
+    public void should_get_content_from_url_with_protocol_relative() {
+        MockHttpServletRequest request = new MockHttpServletRequest();
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String getWrappedContent(Asset asset, HttpServletRequest request) {
-        String location = asset.getLocations().get(locationKey());
-        return ResourceUtils.getContentFromUrl(request, location, true);
+        String content = ResourceUtils.getContentFromUrl(request, "//dandelion.github.io", true);
+        assertThat(content).isNotEqualTo("");
     }
 }
