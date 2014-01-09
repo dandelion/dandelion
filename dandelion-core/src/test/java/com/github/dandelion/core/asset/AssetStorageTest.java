@@ -46,11 +46,11 @@ import org.junit.rules.ExpectedException;
 import com.github.dandelion.core.DandelionException;
 import com.github.dandelion.core.DandelionExceptionMatcher;
 
-public class AssetsStorageTest {
+public class AssetStorageTest {
     @Rule
     public ExpectedException expectedEx = ExpectedException.none();
 
-    AssetsStorage assetsStorage;
+    AssetStorage assetStorage;
     
     static Map<String, String> locations; 
     static Asset asset, asset2, asset3, asset4, assetConflict;
@@ -70,7 +70,7 @@ public class AssetsStorageTest {
     
     @Before
     public void set_up() {
-        assetsStorage = new AssetsStorage();
+        assetStorage = new AssetStorage();
     }
 
     @Before
@@ -84,122 +84,122 @@ public class AssetsStorageTest {
 
     @Test
     public void should_not_store_invalid_asset() {
-        assetsStorage.store(new Asset());
+        assetStorage.store(new Asset());
 
-        assertThat(assetsStorage.assetsFor()).hasSize(0);
+        assertThat(assetStorage.assetsFor()).hasSize(0);
     }
 
     @Test
     public void should_store_asset_in_default_scope() {
-        assetsStorage.store(asset);
+        assetStorage.store(asset);
 
-        assertThat(assetsStorage.assetsFor("default")).hasSize(1).contains(asset);
+        assertThat(assetStorage.assetsFor("default")).hasSize(1).contains(asset);
     }
 
     @Test
     public void should_store_assets_in_default_scope() {
-        assetsStorage.store(asset);
-        assetsStorage.store(asset2);
+        assetStorage.store(asset);
+        assetStorage.store(asset2);
 
-        assertThat(assetsStorage.assetsFor("default")).hasSize(2).contains(asset, asset2);
+        assertThat(assetStorage.assetsFor("default")).hasSize(2).contains(asset, asset2);
     }
 
     @Test
     public void should_access_to_assets_without_any_scope() {
-        assetsStorage.store(asset);
-        assetsStorage.store(asset2);
+        assetStorage.store(asset);
+        assetStorage.store(asset2);
 
-        assertThat(assetsStorage.assetsFor()).hasSize(2);
+        assertThat(assetStorage.assetsFor()).hasSize(2);
     }
 
     @Test
     public void should_store_asset_in_another_scope() {
-        assetsStorage.store(asset);
-        assetsStorage.store(asset2);
-        assetsStorage.store(asset3, "another");
+        assetStorage.store(asset);
+        assetStorage.store(asset2);
+        assetStorage.store(asset3, "another");
 
-        assertThat(assetsStorage.assetsFor("another")).hasSize(3).contains(asset, asset2, asset3);
+        assertThat(assetStorage.assetsFor("another")).hasSize(3).contains(asset, asset2, asset3);
     }
 
     @Test
     public void should_store_assets_in_another_level_scope() {
-        assetsStorage.store(asset);
-        assetsStorage.store(asset2);
-        assetsStorage.store(asset3, "another");
-        assetsStorage.store(asset4, "another_level", "another");
+        assetStorage.store(asset);
+        assetStorage.store(asset2);
+        assetStorage.store(asset3, "another");
+        assetStorage.store(asset4, "another_level", "another");
 
-        assertThat(assetsStorage.assetsFor("another_level")).hasSize(4).contains(asset, asset2, asset3, asset4);
+        assertThat(assetStorage.assetsFor("another_level")).hasSize(4).contains(asset, asset2, asset3, asset4);
     }
 
     @Test
     public void should_not_store_assets_with_same_scope_but_not_parent_scopes() {
         expectedEx.expect(DandelionException.class);
         expectedEx.expect(
-            new DandelionExceptionMatcher(AssetsStorageError.PARENT_SCOPE_INCOMPATIBILITY)
+            new DandelionExceptionMatcher(AssetStorageError.PARENT_SCOPE_INCOMPATIBILITY)
                 .set("scope", "same_scope")
                 .set("parentScope", "parent_scope")
         );
 
-        assetsStorage.store(asset, "parent_scope");
-        assetsStorage.store(asset2, "another_parent_scope");
-        assetsStorage.store(asset3, "same_scope", "parent_scope");
-        assetsStorage.store(asset4, "same_scope", "another_parent_scope");
+        assetStorage.store(asset, "parent_scope");
+        assetStorage.store(asset2, "another_parent_scope");
+        assetStorage.store(asset3, "same_scope", "parent_scope");
+        assetStorage.store(asset4, "same_scope", "another_parent_scope");
     }
 
     @Test
     public void should_not_store_asset_with_unknown_parent_scope() {
         expectedEx.expect(DandelionException.class);
         expectedEx.expect(
-                new DandelionExceptionMatcher(AssetsStorageError.UNDEFINED_PARENT_SCOPE)
+                new DandelionExceptionMatcher(AssetStorageError.UNDEFINED_PARENT_SCOPE)
                         .set("parentScope", "unknown_parent_scope")
         );
 
-        assetsStorage.store(asset, "scope", "unknown_parent_scope");
+        assetStorage.store(asset, "scope", "unknown_parent_scope");
     }
 
     @Test
     public void should_manage_assets_with_different_types() {
         Asset assetDifferentType = new Asset("name", "version", AssetType.css, locations);
-        assetsStorage.store(asset);
-        assetsStorage.store(assetDifferentType, "differentTypes");
-        assertThat(assetsStorage.assetsFor("differentTypes")).hasSize(2).contains(assetDifferentType);
+        assetStorage.store(asset);
+        assetStorage.store(assetDifferentType, "differentTypes");
+        assertThat(assetStorage.assetsFor("differentTypes")).hasSize(2).contains(assetDifferentType);
     }
 
     @Test
     public void should_store_empty_scope_by_workaround() {
-        assetsStorage.store(asset);
-        assetsStorage.setupEmptyParentScope("empty_scope");
-        assetsStorage.store(asset2, "not_empty_scope", "empty_scope");
-        assertThat(assetsStorage.assetsFor("not_empty_scope")).hasSize(2).contains(asset, asset2);
+        assetStorage.store(asset);
+        assetStorage.setupEmptyParentScope("empty_scope");
+        assetStorage.store(asset2, "not_empty_scope", "empty_scope");
+        assertThat(assetStorage.assetsFor("not_empty_scope")).hasSize(2).contains(asset, asset2);
     }
 
     @Test
     public void should_manage_override_assets() {
         Asset assetOverride = new Asset("name", "version2", AssetType.js, locations);
-        assetsStorage.store(asset);
-        assetsStorage.store(assetOverride, "override");
-        assertThat(assetsStorage.assetsFor("override")).hasSize(1).contains(assetOverride);
+        assetStorage.store(asset);
+        assetStorage.store(assetOverride, "override");
+        assertThat(assetStorage.assetsFor("override")).hasSize(1).contains(assetOverride);
     }
 
     @Test
     public void should_detect_conflicts_before_storage() {
         expectedEx.expect(DandelionException.class);
         expectedEx.expect(
-            new DandelionExceptionMatcher(AssetsStorageError.ASSET_ALREADY_EXISTS_IN_SCOPE)
+            new DandelionExceptionMatcher(AssetStorageError.ASSET_ALREADY_EXISTS_IN_SCOPE)
                 .set("originalAsset", asset)
         );
 
-        assetsStorage.store(asset);
-        assetsStorage.store(assetConflict);
+        assetStorage.store(asset);
+        assetStorage.store(assetConflict);
     }
 
     @Test
     public void should_manage_conflicts_on_demand() {
-        assetsStorage.store(asset2);
-        assetsStorage.store(asset, "scope");
-        assetsStorage.store(assetConflict, "another_scope");
+        assetStorage.store(asset2);
+        assetStorage.store(asset, "scope");
+        assetStorage.store(assetConflict, "another_scope");
 
-        assertThat(assetsStorage.assetsFor("scope", "another_scope")).hasSize(2).contains(asset, asset2);
+        assertThat(assetStorage.assetsFor("scope", "another_scope")).hasSize(2).contains(asset, asset2);
     }
 
     @Test
@@ -207,57 +207,57 @@ public class AssetsStorageTest {
         Asset assetPriority = asset.clone(false);
         assetPriority.setVersion("versionAssetPriority");
 
-        assetsStorage.store(asset);
-        assetsStorage.store(asset4);
-        assetsStorage.store(asset2);
-        assetsStorage.store(asset3);
-        assetsStorage.store(assetPriority, "scope");
+        assetStorage.store(asset);
+        assetStorage.store(asset4);
+        assetStorage.store(asset2);
+        assetStorage.store(asset3);
+        assetStorage.store(assetPriority, "scope");
 
-        assertThat(assetsStorage.assetsFor("scope")).hasSize(4).containsSequence(assetPriority, asset4, asset2, asset3);
+        assertThat(assetStorage.assetsFor("scope")).hasSize(4).containsSequence(assetPriority, asset4, asset2, asset3);
     }
 
     @Test
     public void should_manage_detached_scope() {
         Asset assetWithDetachedScope = new Asset("detached", "version", AssetType.js, locations);
 
-        assetsStorage.store(asset);
-        assetsStorage.store(assetWithDetachedScope, "scope", "none");
+        assetStorage.store(asset);
+        assetStorage.store(assetWithDetachedScope, "scope", "none");
 
-        assertThat(assetsStorage.assetsFor("scope")).hasSize(1).contains(assetWithDetachedScope);
-        assertThat(assetsStorage.assetsFor("default", "scope")).hasSize(2).contains(assetWithDetachedScope, asset);
+        assertThat(assetStorage.assetsFor("scope")).hasSize(1).contains(assetWithDetachedScope);
+        assertThat(assetStorage.assetsFor("default", "scope")).hasSize(2).contains(assetWithDetachedScope, asset);
     }
 
     @Test
     public void should_detach_scope_not_override_other_assets() {
         Asset assetWithDetachedScope = new Asset("name", "version", AssetType.js, locations);
 
-        assetsStorage.store(asset);
-        assetsStorage.store(assetWithDetachedScope, "scope", "none");
+        assetStorage.store(asset);
+        assetStorage.store(assetWithDetachedScope, "scope", "none");
 
-        assertThat(assetsStorage.assetsFor("scope")).hasSize(1).contains(assetWithDetachedScope);
-        assertThat(assetsStorage.assetsFor("default", "scope")).hasSize(2).contains(assetWithDetachedScope, asset);
+        assertThat(assetStorage.assetsFor("scope")).hasSize(1).contains(assetWithDetachedScope);
+        assertThat(assetStorage.assetsFor("default", "scope")).hasSize(2).contains(assetWithDetachedScope, asset);
     }
 
     @Test
     public void should_not_allow_the_usage_of_detached_scope_as_a_scope() {
         expectedEx.expect(DandelionException.class);
         expectedEx.expect(
-                new DandelionExceptionMatcher(AssetsStorageError.DETACHED_SCOPE_NOT_ALLOWED)
+                new DandelionExceptionMatcher(AssetStorageError.DETACHED_SCOPE_NOT_ALLOWED)
                         .set("detachedScope", "none")
         );
 
-        assetsStorage.store(asset, "none");
+        assetStorage.store(asset, "none");
     }
 
     @Test
     public void should_merge_same_assets_with_distincts_locations() {
-        assetsStorage.store(asset);
+        assetStorage.store(asset);
         Map<String, String> assetCloneLocations = new HashMap<String, String>();
         assetCloneLocations.put("other", "otherURL");
         Asset assetClone = new Asset(asset.getName(), asset.getVersion(), asset.getType(), assetCloneLocations);
-        assetsStorage.store(assetClone);
+        assetStorage.store(assetClone);
 
-        List<Asset> assets = assetsStorage.assetsFor();
+        List<Asset> assets = assetStorage.assetsFor();
         assertThat(assets).hasSize(1).contains(asset);
         assertThat(assets.get(0).getLocations()).includes(
                 MapAssert.entry("remote", "remoteURL"),
@@ -274,24 +274,24 @@ public class AssetsStorageTest {
 
         expectedEx.expect(DandelionException.class);
         expectedEx.expect(
-                new DandelionExceptionMatcher(AssetsStorageError.ASSET_LOCATION_ALREADY_EXISTS_IN_SCOPE)
+                new DandelionExceptionMatcher(AssetStorageError.ASSET_LOCATION_ALREADY_EXISTS_IN_SCOPE)
                         .set("locations", list("remote"))
                         .set("asset", assetClone)
         );
 
-        assetsStorage.store(asset);
-        assetsStorage.store(assetClone);
+        assetStorage.store(asset);
+        assetStorage.store(assetClone);
     }
 
     @Test
     public void should_manage_tree_on_locations() {
-        assetsStorage.store(asset);
+        assetStorage.store(asset);
         Map<String, String> assetCloneLocations = new HashMap<String, String>();
         assetCloneLocations.put("other", "otherURL");
         Asset assetClone = new Asset(asset.getName(), asset.getVersion(), asset.getType(), assetCloneLocations);
-        assetsStorage.store(assetClone, "other");
+        assetStorage.store(assetClone, "other");
 
-        List<Asset> assets = assetsStorage.assetsFor("other");
+        List<Asset> assets = assetStorage.assetsFor("other");
         assertThat(assets).hasSize(1).contains(assetClone);
         assertThat(assets.get(0).getLocations()).includes(
                 MapAssert.entry("remote", "remoteURL"),

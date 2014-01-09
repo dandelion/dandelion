@@ -27,64 +27,41 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.github.dandelion.core.asset;
 
-import java.util.ArrayList;
-import java.util.List;
+package com.github.dandelion.core.asset.cache.impl;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import com.github.dandelion.core.asset.cache.spi.AssetCache;
 
 /**
- * Definition of a set of assets link to Scope/Parent Scope
+ * Cache System for store specific content of an asset from a Map
  */
-public class AssetsComponent {
-	
-	private String scope = AssetsStorage.ROOT_SCOPE;
-	private String parent = AssetsStorage.ROOT_SCOPE;
-    private boolean override = false;
-	private List<Asset> assets = new ArrayList<Asset>();
+public class HashMapAssetCache implements AssetCache {
+    private Map<String, String> cache;
 
-    public AssetsComponent() {
-    }
-
-    public AssetsComponent(String scope, String parent, List<Asset> assets) {
-        this.scope = scope;
-        this.parent = parent;
-        this.assets = assets;
-    }
-
-    public String getScope() {
-		return scope;
-	}
-
-	public void setScope(String scope) {
-		this.scope = scope;
-	}
-
-	public List<Asset> getAssets() {
-		return assets;
-	}
-
-	public void setAssets(List<Asset> assets) {
-		this.assets = assets;
-	}
-
-	public String getParent() {
-		return parent;
-	}
-
-	public void setParent(String parent) {
-		this.parent = parent;
-	}
-
-    public boolean isOverride() {
-        return override;
-    }
-
-    public void setOverride(boolean override) {
-        this.override = override;
+    public HashMapAssetCache() {
+        cache = new HashMap<String, String>();
     }
 
     @Override
-    public String toString() {
-        return "AssetsComponent [scope=" + scope + ", parent=" + parent + ", override=" + override + ", assets=" + assets + "]";
+    public String getAssetsCacheName() {
+        return "default";
+    }
+
+    @Override
+    public boolean checkCacheKey(String cacheKey) {
+        return cache.containsKey(cacheKey);
+    }
+
+    @Override
+    public String getCacheContent(String cacheKey) {
+        return cache.get(cacheKey);
+    }
+
+    @Override
+    public void storeCacheContent(String cacheKey, String cacheContent) {
+        cache.put(cacheKey, cacheContent);
     }
 }

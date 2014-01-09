@@ -31,7 +31,7 @@
 package com.github.dandelion.extras.additional.asset.wrapper;
 
 import com.github.dandelion.core.asset.Asset;
-import com.github.dandelion.core.asset.web.AssetsRequestContext;
+import com.github.dandelion.core.asset.web.AssetRequestContext;
 import com.github.dandelion.core.asset.wrapper.spi.AssetLocationWrapper;
 
 import javax.servlet.http.HttpServletRequest;
@@ -48,7 +48,7 @@ public class AdditionalAssetsLocationWrapper implements AssetLocationWrapper {
 
     @Override
     public String wrapLocation(Asset asset, HttpServletRequest request) {
-        Map<String, Object> parameters = AssetsRequestContext.get(request).getParameters(asset.getName());
+        Map<String, Object> parameters = AssetRequestContext.get(request).getParameters(asset.getName());
         if(parameters == null || parameters.isEmpty()) {
             return null;
         }

@@ -29,52 +29,62 @@
  */
 package com.github.dandelion.core.asset;
 
-import com.github.dandelion.core.DandelionError;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
- * Possible Errors for 'Assets Storage'
+ * Definition of a set of assets link to Scope/Parent Scope
  */
-public enum AssetsStorageError implements DandelionError {
-    /**
-     * An asset can't be added twice in the same scope (same name but different versions)
-     */
-    ASSET_ALREADY_EXISTS_IN_SCOPE(100),
-    /**
-     * An asset can't be added with a 'Detached Scope',
-     * 'Detached Scope' is only allowed as a Parent Scope
-     */
-    DETACHED_SCOPE_NOT_ALLOWED(101),
-    /**
-     * An asset can't have a couple of Scope/Parent Scope
-     * when its scope is already associated to another parent scope
-     */
-    PARENT_SCOPE_INCOMPATIBILITY(102),
-    /**
-     * An asset can't have a parent scope that doesn't already exist
-     */
-    UNDEFINED_PARENT_SCOPE(103),
-    /**
-     * A location can't be used twice in the same scope by a similar asset
-     */
-    ASSET_LOCATION_ALREADY_EXISTS_IN_SCOPE(104),
-    /**
-     * A attribute can't be used twice in the same scope by a similar asset
-     */
-    ASSET_ATTRIBUTE_ALREADY_EXISTS_IN_SCOPE(105),
-    /**
-     * A DOM position must be equals for merging two assets with same name
-     */
-    ASSET_DOM_POSITION_ALREADY_EXISTS_IN_SCOPE(106);
+public class AssetComponent {
+	
+	private String scope = AssetStorage.ROOT_SCOPE;
+	private String parent = AssetStorage.ROOT_SCOPE;
+    private boolean override = false;
+	private List<Asset> assets = new ArrayList<Asset>();
 
-    private final int number;
+    public AssetComponent() {
+    }
 
-    private AssetsStorageError(int number) {
-        this.number = number;
+    public AssetComponent(String scope, String parent, List<Asset> assets) {
+        this.scope = scope;
+        this.parent = parent;
+        this.assets = assets;
+    }
+
+    public String getScope() {
+		return scope;
+	}
+
+	public void setScope(String scope) {
+		this.scope = scope;
+	}
+
+	public List<Asset> getAssets() {
+		return assets;
+	}
+
+	public void setAssets(List<Asset> assets) {
+		this.assets = assets;
+	}
+
+	public String getParent() {
+		return parent;
+	}
+
+	public void setParent(String parent) {
+		this.parent = parent;
+	}
+
+    public boolean isOverride() {
+        return override;
+    }
+
+    public void setOverride(boolean override) {
+        this.override = override;
     }
 
     @Override
-    public int getNumber() {
-        return number;
+    public String toString() {
+        return "AssetComponent [scope=" + scope + ", parent=" + parent + ", override=" + override + ", assets=" + assets + "]";
     }
-
 }

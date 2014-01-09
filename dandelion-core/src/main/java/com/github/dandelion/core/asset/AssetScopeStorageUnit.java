@@ -27,47 +27,29 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.github.dandelion.core.asset.loader;
+package com.github.dandelion.core.asset;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.ServiceLoader;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+/**
+ * Container of assets associated to a scope and its parent scope
+ */
+class AssetScopeStorageUnit {
+    String scope;
+    String parentScope;
+    List<Asset> assets;
+    String rootParentScope;
+    int storagePosition = -1;
 
-import com.github.dandelion.core.asset.loader.spi.AssetsLoader;
-
-public final class AssetsLoaderSystem {
-    // Logger
-    private static final Logger LOG = LoggerFactory.getLogger(AssetsLoaderSystem.class);
-
-    private static ServiceLoader<AssetsLoader> serviceLoader = ServiceLoader.load(AssetsLoader.class);
-    private static List<AssetsLoader> loaders;
-
-    private AssetsLoaderSystem() {
-    }
-
-    private static void initialize() {
-        if(loaders == null) {
-            initializeIfNeeded();
-        }
-    }
-
-    synchronized private static void initializeIfNeeded() {
-        if(loaders != null) return;
-
-        List<AssetsLoader> als = new ArrayList<AssetsLoader>();
-        for (AssetsLoader al : serviceLoader) {
-            als.add(al);
-            LOG.info("found AssetLoader for {} named {}", al.getType(), al.getClass().getSimpleName());
-        }
-
-        loaders = als;
-    }
-
-    public static List<AssetsLoader> getLoaders() {
-        initialize();
-        return loaders;
+    /**
+     * A new container is a scope with his parent scope and a empty list of assets
+     * @param scope scope of assets
+     * @param parentScope parent of scope
+     */
+    public AssetScopeStorageUnit(String scope, String parentScope) {
+        this.scope = scope;
+        this.parentScope = parentScope;
+        this.assets = new ArrayList<Asset>();
     }
 }

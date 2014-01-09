@@ -27,30 +27,47 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+package com.github.dandelion.core.asset.loader;
 
-package com.github.dandelion.module;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.ServiceLoader;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.github.dandelion.core.asset.loader.impl.AbstractAssetsJsonLoader;
+import com.github.dandelion.core.asset.loader.spi.AssetLoader;
 
-public class ModuleAssetsJsonLoader extends AbstractAssetsJsonLoader {
-	// Logger
-	private static final Logger LOG = LoggerFactory.getLogger(ModuleAssetsJsonLoader.class);
+public final class AssetLoaderSystem {
+    // Logger
+    private static final Logger LOG = LoggerFactory.getLogger(AssetLoaderSystem.class);
 
-	@Override
-	protected Logger getLogger() {
-		return LOG;
-	}
+    private static ServiceLoader<AssetLoader> serviceLoader = ServiceLoader.load(AssetLoader.class);
+    private static List<AssetLoader> loaders;
 
-	@Override
-	public String getPath() {
-		return "module";
-	}
+    private AssetLoaderSystem() {
+    }
 
-	@Override
-	public boolean isRecursive() {
-		return true;
-	}
+    private static void initialize() {
+        if(loaders == null) {
+            initializeIfNeeded();
+        }
+    }
+
+    synchronized private static void initializeIfNeeded() {
+        if(loaders != null) return;
+
+        List<AssetLoader> als = new ArrayList<AssetLoader>();
+        for (AssetLoader al : serviceLoader) {
+            als.add(al);
+            LOG.info("found AssetLoader for {} named {}", al.getType(), al.getClass().getSimpleName());
+        }
+
+        loaders = als;
+    }
+
+    public static List<AssetLoader> getLoaders() {
+        initialize();
+        return loaders;
+    }
 }

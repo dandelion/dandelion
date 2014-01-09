@@ -62,7 +62,7 @@ public class AssetFilter implements Filter {
 			filterChain.doFilter(request, wrapper);
 
 			String html = wrapper.getWrappedContent();
-			AssetsRequestContext context = AssetsRequestContext.get(request);
+			AssetRequestContext context = AssetRequestContext.get(request);
 
 			if (isDandelionApplyable(context, wrapper)) {
                 LOG.debug("Dandelion Assets Generation apply on this request {}", request.getRequestURL().toString());
@@ -127,7 +127,7 @@ public class AssetFilter implements Filter {
 	 *            The wrapper around the response to generate.
 	 * @return true if the response can be updated.
 	 */
-	private boolean isDandelionApplyable(AssetsRequestContext context, AssetFilterResponseWrapper wrapper) {
+	private boolean isDandelionApplyable(AssetRequestContext context, AssetFilterResponseWrapper wrapper) {
         if (wrapper.getContentType() == null || !wrapper.getContentType().contains("text/html")) {
             return false;
         } else if (!AssetStack.existsAssetsFor(context.getScopes(false), context.getExcludedAssets())) {

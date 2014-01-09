@@ -42,15 +42,15 @@ import com.github.dandelion.core.asset.processor.AssetProcessorSystem;
 import com.github.dandelion.core.asset.wrapper.spi.AssetLocationWrapper;
 
 public class AssetStack {
-    static AssetsConfigurator assetsConfigurator;
-    static AssetsStorage assetsStorage;
+    static AssetConfigurator assetConfigurator;
+    static AssetStorage assetStorage;
 
     /**
      * Initialize Assets only if needed
      */
     static void initializeIfNeeded() {
-        if(devModeOverride(assetsConfigurator == null)) {
-            if(devModeOverride(assetsStorage == null)) {
+        if(devModeOverride(assetConfigurator == null)) {
+            if(devModeOverride(assetStorage == null)) {
                 initializeStorageIfNeeded();
             }
             initializeConfiguratorIfNeeded();
@@ -61,9 +61,9 @@ public class AssetStack {
      * Initialize Assets Configurator only if needed
      */
     synchronized private static void initializeConfiguratorIfNeeded() {
-        if(devModeOverride(assetsConfigurator == null)) {
-            assetsConfigurator = new AssetsConfigurator(assetsStorage);
-            assetsConfigurator.initialize();
+        if(devModeOverride(assetConfigurator == null)) {
+            assetConfigurator = new AssetConfigurator(assetStorage);
+            assetConfigurator.initialize();
         }
     }
 
@@ -71,8 +71,8 @@ public class AssetStack {
      * Initialize Assets Storage only if needed
      */
     synchronized private static void initializeStorageIfNeeded() {
-        if(devModeOverride(assetsStorage == null)) {
-            assetsStorage = new AssetsStorage();
+        if(devModeOverride(assetStorage == null)) {
+            assetStorage = new AssetStorage();
         }
     }
 
@@ -81,7 +81,7 @@ public class AssetStack {
      * @return <code>true</code> if the stack is empty
      */
     public static boolean isEmpty() {
-        return assetsStorage.containsAnyAsset();
+        return assetStorage.containsAnyAsset();
     }
 
     /**
@@ -93,7 +93,7 @@ public class AssetStack {
      */
     public static List<String> getAssetsLocations() {
         initializeIfNeeded();
-        return assetsConfigurator.assetsLocations;
+        return assetConfigurator.assetsLocations;
     }
 
     /**
@@ -105,7 +105,7 @@ public class AssetStack {
      */
     public static Map<String, AssetLocationWrapper> getAssetsLocationWrappers() {
         initializeIfNeeded();
-        return assetsConfigurator.assetsLocationWrappers;
+        return assetConfigurator.assetsLocationWrappers;
     }
 
     /**
@@ -137,7 +137,7 @@ public class AssetStack {
      */
     public static List<Asset> assetsFor(String ... scopes) {
         initializeIfNeeded();
-        return assetsStorage.assetsFor(scopes);
+        return assetStorage.assetsFor(scopes);
     }
 
     /**

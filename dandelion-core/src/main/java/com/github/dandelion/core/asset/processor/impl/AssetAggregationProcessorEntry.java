@@ -29,9 +29,9 @@
  */
 package com.github.dandelion.core.asset.processor.impl;
 
-import static com.github.dandelion.core.asset.cache.AssetsCacheSystem.checkCacheKey;
-import static com.github.dandelion.core.asset.cache.AssetsCacheSystem.generateCacheKey;
-import static com.github.dandelion.core.asset.cache.AssetsCacheSystem.storeCacheContent;
+import static com.github.dandelion.core.asset.cache.AssetCacheSystem.checkCacheKey;
+import static com.github.dandelion.core.asset.cache.AssetCacheSystem.generateCacheKey;
+import static com.github.dandelion.core.asset.cache.AssetCacheSystem.storeCacheContent;
 import static com.github.dandelion.core.asset.web.AssetServlet.DANDELION_ASSETS_URL;
 
 import java.util.ArrayList;

@@ -37,13 +37,13 @@ import java.util.List;
 import java.util.Map;
 
 import com.github.dandelion.core.asset.Asset;
+import com.github.dandelion.core.asset.AssetComponent;
 import com.github.dandelion.core.asset.AssetType;
-import com.github.dandelion.core.asset.AssetsComponent;
-import com.github.dandelion.core.asset.loader.spi.AssetsLoader;
+import com.github.dandelion.core.asset.loader.spi.AssetLoader;
 
-public class AssetsFakeLoader implements AssetsLoader {
+public class AssetFakeLoader implements AssetLoader {
     @Override
-    public List<AssetsComponent> loadAssets() {
+    public List<AssetComponent> loadAssets() {
         Map<String, String> locations = new HashMap<String, String>();
         locations.put("remote", "remoteURL");
         locations.put("local", "localPath");
@@ -52,8 +52,8 @@ public class AssetsFakeLoader implements AssetsLoader {
         locations.put("local", "localPath2");
 
         return list(
-            new AssetsComponent("default", "default", new ArrayList<Asset>()),
-            new AssetsComponent("fake", "default", list(
+            new AssetComponent("default", "default", new ArrayList<Asset>()),
+            new AssetComponent("fake", "default", list(
                 new Asset("name", "version", AssetType.js, locations),
                 new Asset("name2", "version2", AssetType.js, locations2)
             ))

@@ -29,7 +29,7 @@
  */
 package com.github.dandelion.thymeleaf.processor;
 
-import com.github.dandelion.core.asset.web.AssetsRequestContext;
+import com.github.dandelion.core.asset.web.AssetRequestContext;
 import com.github.dandelion.thymeleaf.dialect.AssetsAttributeName;
 import com.github.dandelion.thymeleaf.dialect.DandelionDialect;
 import com.github.dandelion.thymeleaf.util.ArgumentsUtil;
@@ -62,7 +62,7 @@ public class AssetsAttrProcessor extends DandelionAttrProcessor {
         String strippedAttributeName = AttributesUtil.stripPrefix(attributeName, DandelionDialect.DIALECT_PREFIX);
         AssetsAttributeName assetsAttributeName = (AssetsAttributeName) AttributesUtil.find(strippedAttributeName, AssetsAttributeName.values());
         HttpServletRequest request = ArgumentsUtil.getWebContext(arguments).getHttpServletRequest();
-        AssetsRequestContext context = AssetsRequestContext.get(request);
+        AssetRequestContext context = AssetRequestContext.get(request);
         switch (assetsAttributeName) {
             case SCOPES:
                 context.addScopes(element.getAttributeValue(attributeName));

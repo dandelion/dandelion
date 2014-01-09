@@ -40,7 +40,7 @@ import com.github.dandelion.core.DandelionException;
  * All scopes have a parent except for ROOT parent (aka Root Scope).<br/>
  * An asset can be accessed by its scope.<br/>
  */
-public final class AssetsStorage {
+public final class AssetStorage {
     static final int ASSET_SCOPE_STORAGE_POSITION = 1000;
 
     private enum StorageCommand {INSERT, MERGE};
@@ -48,7 +48,7 @@ public final class AssetsStorage {
     /**
      * Assets Storage Units
      */
-    private Map<String, AssetsScopeStorageUnit> storage;
+    private Map<String, AssetScopeStorageUnit> storage;
 
     /**
      * Define the Root Scope string representation
@@ -68,16 +68,16 @@ public final class AssetsStorage {
     /**
      * Assets Storage Utility
      */
-    AssetsStorage() {
+    AssetStorage() {
         // initialize storage
-        storage = new HashMap<String, AssetsScopeStorageUnit>();
+        storage = new HashMap<String, AssetScopeStorageUnit>();
         // initialize root storage unit
-        AssetsScopeStorageUnit rootUnit = new AssetsScopeStorageUnit(ROOT_SCOPE, MASTER_SCOPE);
+        AssetScopeStorageUnit rootUnit = new AssetScopeStorageUnit(ROOT_SCOPE, MASTER_SCOPE);
         rootUnit.rootParentScope = ROOT_SCOPE;
         rootUnit.storagePosition = 0;
         storage.put(ROOT_SCOPE, rootUnit);
         // initialize detached storage unit
-        AssetsScopeStorageUnit detachedUnit = new AssetsScopeStorageUnit(DETACHED_PARENT_SCOPE, MASTER_SCOPE);
+        AssetScopeStorageUnit detachedUnit = new AssetScopeStorageUnit(DETACHED_PARENT_SCOPE, MASTER_SCOPE);
         detachedUnit.rootParentScope = DETACHED_PARENT_SCOPE;
         detachedUnit.storagePosition = 0;
         storage.put(DETACHED_PARENT_SCOPE, detachedUnit);
@@ -114,10 +114,10 @@ public final class AssetsStorage {
         if (asset == null || !asset.isValid()) return;
 
         if (DETACHED_PARENT_SCOPE.equalsIgnoreCase(scope)) {
-            throw new DandelionException(AssetsStorageError.DETACHED_SCOPE_NOT_ALLOWED)
+            throw new DandelionException(AssetStorageError.DETACHED_SCOPE_NOT_ALLOWED)
                     .set("detachedScope", DETACHED_PARENT_SCOPE);
         }
-        AssetsScopeStorageUnit scopeUnit = getStorageUnit(scope, parentScope);
+        AssetScopeStorageUnit scopeUnit = getStorageUnit(scope, parentScope);
         insertAsset(asset, scopeUnit);
     }
 
@@ -138,7 +138,7 @@ public final class AssetsStorage {
      * @param asset asset to store
      * @param scopeUnit storage unit of the asset's scope
      */
-    private void insertAsset(Asset asset, AssetsScopeStorageUnit scopeUnit) {
+    private void insertAsset(Asset asset, AssetScopeStorageUnit scopeUnit) {
         StorageCommand command = checkAssetStorageIncompatibility(asset, scopeUnit);
         switch (command) {
             case INSERT:
@@ -156,7 +156,7 @@ public final class AssetsStorage {
         }
     }
 
-    private StorageCommand checkAssetStorageIncompatibility(Asset asset, AssetsScopeStorageUnit scopeUnit) {
+    private StorageCommand checkAssetStorageIncompatibility(Asset asset, AssetScopeStorageUnit scopeUnit) {
         // the asset can be store if he isn't store already
         if (!scopeUnit.assets.contains(asset)) {
             return StorageCommand.INSERT;
@@ -166,7 +166,7 @@ public final class AssetsStorage {
 
         // he can be merge if the versions are equals
         if(!originalAsset.getVersion().equals(asset.getVersion())) {
-            throw new DandelionException(AssetsStorageError.ASSET_ALREADY_EXISTS_IN_SCOPE)
+            throw new DandelionException(AssetStorageError.ASSET_ALREADY_EXISTS_IN_SCOPE)
                     .set("originalAsset", asset);
         }
 
@@ -180,7 +180,7 @@ public final class AssetsStorage {
             }
         }
         if (!locationsInError.isEmpty()) {
-            throw new DandelionException(AssetsStorageError.ASSET_LOCATION_ALREADY_EXISTS_IN_SCOPE)
+            throw new DandelionException(AssetStorageError.ASSET_LOCATION_ALREADY_EXISTS_IN_SCOPE)
                     .set("locations", locationsInError)
                     .set("asset", asset);
         }
@@ -195,14 +195,14 @@ public final class AssetsStorage {
             }
         }
         if (!attributesInError.isEmpty()) {
-            throw new DandelionException(AssetsStorageError.ASSET_ATTRIBUTE_ALREADY_EXISTS_IN_SCOPE)
+            throw new DandelionException(AssetStorageError.ASSET_ATTRIBUTE_ALREADY_EXISTS_IN_SCOPE)
                     .set("attributes", attributesInError)
                     .set("asset", asset);
         }
 
         // he can be merge if the DOM position can be merge
         if(originalAsset.getDom() != null && asset.getDom() != null && originalAsset.getDom() != asset.getDom()) {
-            throw new DandelionException(AssetsStorageError.ASSET_DOM_POSITION_ALREADY_EXISTS_IN_SCOPE)
+            throw new DandelionException(AssetStorageError.ASSET_DOM_POSITION_ALREADY_EXISTS_IN_SCOPE)
                     .set("domPosition", originalAsset.getDom())
                     .set("asset", asset);
         }
@@ -246,19 +246,19 @@ public final class AssetsStorage {
         getStorageUnit(scope, parentScope);
     }
 
-    private AssetsScopeStorageUnit getStorageUnit(String scope, String parentScope) {
+    private AssetScopeStorageUnit getStorageUnit(String scope, String parentScope) {
         scope = scope.toLowerCase();
         parentScope = parentScope.toLowerCase();
-        AssetsScopeStorageUnit scopeUnit;
+        AssetScopeStorageUnit scopeUnit;
         if (storage.containsKey(scope)) {
-            AssetsScopeStorageUnit storedScopeUnit = storage.get(scope);
+            AssetScopeStorageUnit storedScopeUnit = storage.get(scope);
             checkParentScopeIncompatibility(parentScope, storedScopeUnit);
             scopeUnit = storedScopeUnit;
         } else {
             // create a new empty scope
             checkUnknownParentScope(parentScope);
-            scopeUnit = new AssetsScopeStorageUnit(scope, parentScope);
-            AssetsScopeStorageUnit parentScopeUnit = storage.get(parentScope);
+            scopeUnit = new AssetScopeStorageUnit(scope, parentScope);
+            AssetScopeStorageUnit parentScopeUnit = storage.get(parentScope);
             scopeUnit.rootParentScope = parentScopeUnit.rootParentScope;
             scopeUnit.storagePosition = parentScopeUnit.storagePosition + 1;
             storage.put(scope, scopeUnit);
@@ -273,7 +273,7 @@ public final class AssetsStorage {
      */
     private void checkUnknownParentScope(String parentScope) {
         if (!storage.containsKey(parentScope) && !DETACHED_PARENT_SCOPE.equalsIgnoreCase(parentScope)) {
-            throw new DandelionException(AssetsStorageError.UNDEFINED_PARENT_SCOPE)
+            throw new DandelionException(AssetStorageError.UNDEFINED_PARENT_SCOPE)
                     .set("parentScope", parentScope);
         }
     }
@@ -282,13 +282,13 @@ public final class AssetsStorage {
      * Check if an asset don't have a couple of Scope/Parent Scope identical to the couple Scope/Another parent scope
      *
      * @param parentScope                  parent scope to check
-     * @param storedAssetsScopeStorageUnit stored storage unit
+     * @param storedAssetScopeStorageUnit stored storage unit
      */
-    private void checkParentScopeIncompatibility(String parentScope, AssetsScopeStorageUnit storedAssetsScopeStorageUnit) {
-        if (!storedAssetsScopeStorageUnit.parentScope.equalsIgnoreCase(parentScope)) {
-            throw new DandelionException(AssetsStorageError.PARENT_SCOPE_INCOMPATIBILITY)
-                    .set("scope", storedAssetsScopeStorageUnit.scope)
-                    .set("parentScope", storedAssetsScopeStorageUnit.parentScope);
+    private void checkParentScopeIncompatibility(String parentScope, AssetScopeStorageUnit storedAssetScopeStorageUnit) {
+        if (!storedAssetScopeStorageUnit.parentScope.equalsIgnoreCase(parentScope)) {
+            throw new DandelionException(AssetStorageError.PARENT_SCOPE_INCOMPATIBILITY)
+                    .set("scope", storedAssetScopeStorageUnit.scope)
+                    .set("parentScope", storedAssetScopeStorageUnit.parentScope);
         }
     }
 
@@ -305,7 +305,7 @@ public final class AssetsStorage {
         Map<String, Asset> assetsMap = new HashMap<String, Asset>();
         for (String scope : scopes) {
             Map<String, Asset> scopedAssetsMap = new HashMap<String, Asset>();
-            AssetsScopeStorageUnit assetScope = storage.get(scope.toLowerCase());
+            AssetScopeStorageUnit assetScope = storage.get(scope.toLowerCase());
             if (assetScope != null) {
                 for (Asset asset : assetScope.assets) {
                     String key = asset.getAssetKey() + "_" + assetScope.rootParentScope;
@@ -383,7 +383,7 @@ public final class AssetsStorage {
      * @return <code>true</code> if one (or more) asset is store
      */
     public boolean containsAnyAsset() {
-        for(AssetsScopeStorageUnit unit:storage.values()) {
+        for(AssetScopeStorageUnit unit:storage.values()) {
             if(!unit.assets.isEmpty()) {
                 return false;
             }

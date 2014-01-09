@@ -6,12 +6,12 @@ import java.io.IOException;
 
 import javax.servlet.ServletException;
 
+import com.github.dandelion.core.asset.cache.AssetCacheSystem;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
 import com.github.dandelion.core.asset.AssetType;
-import com.github.dandelion.core.asset.cache.AssetsCacheSystem;
 
 public class AssetServletTest {
     private AssetServlet servlet = new AssetServlet();
@@ -22,8 +22,8 @@ public class AssetServletTest {
         MockHttpServletResponse response = new MockHttpServletResponse();
 
         String content = "CONTENT" + Math.random();
-        AssetsCacheSystem.storeCacheContent("should_retrieve_content_from_cache", "location", "resourceName", AssetType.css, content);
-        request.setRequestURI("/test/" + AssetsCacheSystem.generateCacheKey("should_retrieve_content_from_cache", "location", "resourceName", AssetType.css));
+        AssetCacheSystem.storeCacheContent("should_retrieve_content_from_cache", "location", "resourceName", AssetType.css, content);
+        request.setRequestURI("/test/" + AssetCacheSystem.generateCacheKey("should_retrieve_content_from_cache", "location", "resourceName", AssetType.css));
 
         servlet.doGet(request, response);
 
@@ -38,7 +38,7 @@ public class AssetServletTest {
         MockHttpServletRequest request = new MockHttpServletRequest();
         MockHttpServletResponse response = new MockHttpServletResponse();
 
-        request.setRequestURI("/test/" + AssetsCacheSystem.generateCacheKey("should_fail_to_retrieve_missing_content_from_cache", "location", "resourceName", AssetType.css));
+        request.setRequestURI("/test/" + AssetCacheSystem.generateCacheKey("should_fail_to_retrieve_missing_content_from_cache", "location", "resourceName", AssetType.css));
 
         servlet.doGet(request, response);
 
@@ -51,7 +51,7 @@ public class AssetServletTest {
         MockHttpServletRequest request = new MockHttpServletRequest();
         MockHttpServletResponse response = new MockHttpServletResponse();
 
-        request.setRequestURI("/test/" + AssetsCacheSystem.generateCacheKey("should_manage_unknown_type", "location", "resourceName", AssetType.css) + System.currentTimeMillis());
+        request.setRequestURI("/test/" + AssetCacheSystem.generateCacheKey("should_manage_unknown_type", "location", "resourceName", AssetType.css) + System.currentTimeMillis());
 
         servlet.doGet(request, response);
 

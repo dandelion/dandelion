@@ -6,7 +6,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.github.dandelion.core.asset.AssetsComponent;
+import com.github.dandelion.core.asset.AssetComponent;
 import com.github.dandelion.core.config.Configuration;
 
 /**
@@ -17,10 +17,10 @@ import com.github.dandelion.core.config.Configuration;
  * This loader focuses on JSON files inside the {@code dandelion} path and all
  * subpaths.
  */
-public class DandelionAssetsJsonLoader extends AbstractAssetsJsonLoader {
+public class DandelionAssetJsonLoader extends AbstractAssetJsonLoader {
    
 	// Logger
-    private static final Logger LOG = LoggerFactory.getLogger(DandelionAssetsJsonLoader.class);
+    private static final Logger LOG = LoggerFactory.getLogger(DandelionAssetJsonLoader.class);
 
     @Override
     protected Logger getLogger() {
@@ -33,7 +33,7 @@ public class DandelionAssetsJsonLoader extends AbstractAssetsJsonLoader {
     }
 
     @Override
-    public List<AssetsComponent> loadAssets() {
+    public List<AssetComponent> loadAssets() {
         if("false".equalsIgnoreCase(Configuration.getProperty("dandelion.asset.json.loader.active"))) {
             return Collections.emptyList();
         }

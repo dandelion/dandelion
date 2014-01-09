@@ -32,12 +32,12 @@ package com.github.dandelion.core.asset.web;
 
 import static com.github.dandelion.core.DevMode.isDevModeEnabled;
 
+import com.github.dandelion.core.asset.cache.AssetCacheSystem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.github.dandelion.core.asset.Asset;
 import com.github.dandelion.core.asset.AssetType;
-import com.github.dandelion.core.asset.cache.AssetsCacheSystem;
 import com.github.dandelion.core.asset.web.data.AssetContent;
 import com.github.dandelion.core.config.Configuration;
 import com.github.dandelion.core.html.HtmlTag;
@@ -97,7 +97,7 @@ public class HtmlUtil {
         String contentType = null;
         AssetType resourceType = AssetType.typeOfAsset(assetKey);
         if (resourceType != null) {
-            content = AssetsCacheSystem.getCacheContent(assetKey);
+            content = AssetCacheSystem.getCacheContent(assetKey);
             if (content == null) {
                 LOG.debug("missing content from key {}", assetKey);
                 content = "";

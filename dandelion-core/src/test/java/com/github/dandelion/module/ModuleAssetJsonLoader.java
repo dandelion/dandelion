@@ -27,42 +27,29 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.github.dandelion.core.asset.loader.spi;
 
-import java.util.List;
+package com.github.dandelion.module;
 
-import com.github.dandelion.core.asset.AssetsComponent;
-import com.github.dandelion.core.asset.loader.AssetsLoaderSystem;
+import com.github.dandelion.core.asset.loader.impl.AbstractAssetJsonLoader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-/**
- * Interface that all assets loader should implement.
- */
-public interface AssetsLoader {
+public class ModuleAssetJsonLoader extends AbstractAssetJsonLoader {
+	// Logger
+	private static final Logger LOG = LoggerFactory.getLogger(ModuleAssetJsonLoader.class);
 
-	/**
-	 * <p>
-	 * Load assets by scanning the classpath starting from the configured
-	 * folder.
-	 * 
-	 * @return a list of {@link AssetsComponent}.
-	 */
-	List<AssetsComponent> loadAssets();
+	@Override
+	protected Logger getLogger() {
+		return LOG;
+	}
 
-	/**
-	 * TODO aujourd'hui uniquement utilisé pour loguer (cf
-	 * {@link AssetsLoaderSystem}).
-	 * 
-	 * @return
-	 */
-	String getType();
+	@Override
+	public String getPath() {
+		return "module";
+	}
 
-	/**
-	 * <p>
-	 * Indicates whether the asset loader must scan for its resources
-	 * recursively inside the configured folder or not.
-	 * 
-	 * @return {@code true} if the scanning is recursive, otherwise
-	 *         {@code false}
-	 */
-	boolean isRecursive();
+	@Override
+	public boolean isRecursive() {
+		return true;
+	}
 }

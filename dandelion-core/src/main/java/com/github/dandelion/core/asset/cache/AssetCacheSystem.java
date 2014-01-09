@@ -32,45 +32,45 @@ package com.github.dandelion.core.asset.cache;
 
 import java.util.ServiceLoader;
 
+import com.github.dandelion.core.asset.cache.impl.HashMapAssetCache;
+import com.github.dandelion.core.asset.cache.spi.AssetCache;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.github.dandelion.core.asset.AssetType;
-import com.github.dandelion.core.asset.cache.impl.DefaultAssetsCache;
-import com.github.dandelion.core.asset.cache.spi.AssetsCache;
 import com.github.dandelion.core.utils.Sha1Utils;
 
-public class AssetsCacheSystem {
+public class AssetCacheSystem {
     // Logger
-    private static final Logger LOG = LoggerFactory.getLogger(AssetsCacheSystem.class);
+    private static final Logger LOG = LoggerFactory.getLogger(AssetCacheSystem.class);
 
-    private static ServiceLoader<AssetsCache> loader = ServiceLoader.load(AssetsCache.class);
-    private static AssetsCache assetsCache;
+    private static ServiceLoader<AssetCache> loader = ServiceLoader.load(AssetCache.class);
+    private static AssetCache assetCache;
 
-    private AssetsCacheSystem() {
+    private AssetCacheSystem() {
     }
 
     private static void initializeAssetsCache() {
-        if(assetsCache == null) {
+        if(assetCache == null) {
             initializeAssetsCacheIfNeeded();
         }
     }
 
     synchronized private static void initializeAssetsCacheIfNeeded() {
-        if(assetsCache != null) return;
+        if(assetCache != null) return;
 
-        for (AssetsCache ac : loader) {
-            if (assetsCache != null) {
-                LOG.info("found {} assets cache but it's already configured with {} cache system", ac.getAssetsCacheName(), assetsCache.getAssetsCacheName());
+        for (AssetCache ac : loader) {
+            if (assetCache != null) {
+                LOG.info("found {} assets cache but it's already configured with {} cache system", ac.getAssetsCacheName(), assetCache.getAssetsCacheName());
             } else if (!ac.getAssetsCacheName().equals("default")) {
-                assetsCache = ac;
-                LOG.info("setup assets cache with {} cache system", assetsCache.getAssetsCacheName());
+                assetCache = ac;
+                LOG.info("setup assets cache with {} cache system", assetCache.getAssetsCacheName());
             }
         }
 
-        if (assetsCache == null) {
-            assetsCache = new DefaultAssetsCache();
-            LOG.info("setup assets cache with {} cache system", assetsCache.getAssetsCacheName());
+        if (assetCache == null) {
+            assetCache = new HashMapAssetCache();
+            LOG.info("setup assets cache with {} cache system", assetCache.getAssetsCacheName());
         }
     }
 
@@ -83,24 +83,24 @@ public class AssetsCacheSystem {
     public static boolean checkCacheKey(String cacheKey) {
         initializeAssetsCache();
         LOG.debug("check cache for key {}", cacheKey);
-        return assetsCache.checkCacheKey(cacheKey);
+        return assetCache.checkCacheKey(cacheKey);
     }
 
     public static String getCacheContent(String cacheKey) {
         initializeAssetsCache();
         LOG.debug("get content of key {}", cacheKey);
-        return assetsCache.getCacheContent(cacheKey);
+        return assetCache.getCacheContent(cacheKey);
     }
 
     public static void storeCacheContent(String context, String location, String resourceName, AssetType type, String content) {
         initializeAssetsCache();
         String generatedKey = generateCacheKey(context, location, resourceName, type);
         LOG.debug("store in cache the key {} with content [{}]", generatedKey, content);
-        assetsCache.storeCacheContent(generatedKey, content);
+        assetCache.storeCacheContent(generatedKey, content);
     }
 
     public static String getAssetsCacheName() {
         initializeAssetsCache();
-        return assetsCache.getAssetsCacheName();
+        return assetCache.getAssetsCacheName();
     }
 }

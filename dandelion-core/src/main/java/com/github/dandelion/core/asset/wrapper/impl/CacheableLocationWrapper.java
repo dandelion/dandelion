@@ -31,17 +31,17 @@
 package com.github.dandelion.core.asset.wrapper.impl;
 
 import static com.github.dandelion.core.DevMode.isDevModeEnabled;
-import static com.github.dandelion.core.asset.cache.AssetsCacheSystem.generateCacheKey;
-import static com.github.dandelion.core.asset.cache.AssetsCacheSystem.storeCacheContent;
+import static com.github.dandelion.core.asset.cache.AssetCacheSystem.generateCacheKey;
+import static com.github.dandelion.core.asset.cache.AssetCacheSystem.storeCacheContent;
 import static com.github.dandelion.core.asset.web.AssetServlet.DANDELION_ASSETS_URL;
-import static com.github.dandelion.core.asset.web.AssetsRequestContext.get;
+import static com.github.dandelion.core.asset.web.AssetRequestContext.get;
 
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
 import com.github.dandelion.core.asset.Asset;
-import com.github.dandelion.core.asset.cache.AssetsCacheSystem;
+import com.github.dandelion.core.asset.cache.AssetCacheSystem;
 import com.github.dandelion.core.asset.wrapper.spi.AssetLocationWrapper;
 import com.github.dandelion.core.utils.RequestUtils;
 
@@ -63,7 +63,7 @@ public abstract class CacheableLocationWrapper implements AssetLocationWrapper {
         String cacheKey = generateCacheKey(context, location, asset.getName(), asset.getType());
 
         Map<String, Object> parameters = get(request).getParameters(asset.getName());
-        if (isDevModeEnabled() || !AssetsCacheSystem.checkCacheKey(cacheKey)) {
+        if (isDevModeEnabled() || !AssetCacheSystem.checkCacheKey(cacheKey)) {
             String content = getContent(asset, location, parameters, request);
             storeCacheContent(context, location, asset.getName(), asset.getType(), content);
         }
@@ -79,7 +79,7 @@ public abstract class CacheableLocationWrapper implements AssetLocationWrapper {
         String location = asset.getLocations().get(locationKey());
         String prefixCacheKey = RequestUtils.getBaseUrl(request) + DANDELION_ASSETS_URL;
         String cacheKey = location.replaceAll(prefixCacheKey, "");
-        return AssetsCacheSystem.getCacheContent(cacheKey);
+        return AssetCacheSystem.getCacheContent(cacheKey);
     }
 
     protected abstract String getContent(Asset asset, String location, Map<String, Object> parameters, HttpServletRequest request);

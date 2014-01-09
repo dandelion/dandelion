@@ -27,29 +27,18 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.github.dandelion.core.asset;
-
-import java.util.ArrayList;
-import java.util.List;
+package com.github.dandelion.core.asset.cache.spi;
 
 /**
- * Container of assets associated to a scope and its parent scope
+ * Cache System to store specific content of an asset
  */
-class AssetsScopeStorageUnit {
-    String scope;
-    String parentScope;
-    List<Asset> assets;
-    String rootParentScope;
-    int storagePosition = -1;
+public interface AssetCache {
 
-    /**
-     * A new container is a scope with his parent scope and a empty list of assets
-     * @param scope scope of assets
-     * @param parentScope parent of scope
-     */
-    public AssetsScopeStorageUnit(String scope, String parentScope) {
-        this.scope = scope;
-        this.parentScope = parentScope;
-        this.assets = new ArrayList<Asset>();
-    }
+    String getAssetsCacheName();
+
+    boolean checkCacheKey(String cacheKey);
+
+    String getCacheContent(String cacheKey);
+
+    void storeCacheContent(String cacheKey, String cacheContent);
 }

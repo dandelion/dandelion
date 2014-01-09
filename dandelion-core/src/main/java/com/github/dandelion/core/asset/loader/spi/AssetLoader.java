@@ -27,41 +27,41 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+package com.github.dandelion.core.asset.loader.spi;
 
-package com.github.dandelion.core.asset.cache.impl;
+import java.util.List;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import com.github.dandelion.core.asset.cache.spi.AssetsCache;
+import com.github.dandelion.core.asset.AssetComponent;
 
 /**
- * Cache System for store specific content of an asset from a Map
+ * Interface that all assets loader should implement.
  */
-public class DefaultAssetsCache implements AssetsCache {
-    private Map<String, String> cache;
+public interface AssetLoader {
 
-    public DefaultAssetsCache() {
-        cache = new HashMap<String, String>();
-    }
+	/**
+	 * <p>
+	 * Load assets by scanning the classpath starting from the configured
+	 * folder.
+	 * 
+	 * @return a list of {@link com.github.dandelion.core.asset.AssetComponent}.
+	 */
+	List<AssetComponent> loadAssets();
 
-    @Override
-    public String getAssetsCacheName() {
-        return "default";
-    }
+	/**
+	 * TODO aujourd'hui uniquement utilisé pour loguer (cf
+	 * {@link com.github.dandelion.core.asset.loader.AssetLoaderSystem}).
+	 * 
+	 * @return
+	 */
+	String getType();
 
-    @Override
-    public boolean checkCacheKey(String cacheKey) {
-        return cache.containsKey(cacheKey);
-    }
-
-    @Override
-    public String getCacheContent(String cacheKey) {
-        return cache.get(cacheKey);
-    }
-
-    @Override
-    public void storeCacheContent(String cacheKey, String cacheContent) {
-        cache.put(cacheKey, cacheContent);
-    }
+	/**
+	 * <p>
+	 * Indicates whether the asset loader must scan for its resources
+	 * recursively inside the configured folder or not.
+	 * 
+	 * @return {@code true} if the scanning is recursive, otherwise
+	 *         {@code false}
+	 */
+	boolean isRecursive();
 }

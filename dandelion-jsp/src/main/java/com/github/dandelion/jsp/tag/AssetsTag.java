@@ -30,7 +30,7 @@
 
 package com.github.dandelion.jsp.tag;
 
-import com.github.dandelion.core.asset.web.AssetsRequestContext;
+import com.github.dandelion.core.asset.web.AssetRequestContext;
 
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.TagSupport;
@@ -53,7 +53,7 @@ public class AssetsTag extends TagSupport {
     private String excludedAssets;
 
 	public int doEndTag() throws JspException {
-        AssetsRequestContext
+        AssetRequestContext
                 .get(pageContext.getRequest())
                 .addScopes(getScopes())
                 .excludeScopes(getExcludedScopes())

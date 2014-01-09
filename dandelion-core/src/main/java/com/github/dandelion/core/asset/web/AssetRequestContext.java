@@ -47,14 +47,14 @@ import com.github.dandelion.core.config.Configuration;
 /**
  * Request Context used to store all needed assets by scopes during the pages processing
  */
-public class AssetsRequestContext {
+public class AssetRequestContext {
     private List<String> scopes;
     private boolean alreadyRendered;
     private List<String> excludedScopes;
     private List<String> excludedAssets;
     private Map<String, Map<String, Object>> parameters;
 
-    private AssetsRequestContext() {
+    private AssetRequestContext() {
         this.scopes = new ArrayList<String>();
         this.excludedScopes = new ArrayList<String>();
         this.excludedAssets = new ArrayList<String>();
@@ -66,14 +66,14 @@ public class AssetsRequestContext {
      * @param servletRequest given servlet request
      * @return Assets Request context for given servlet request
      */
-    public static AssetsRequestContext get(ServletRequest servletRequest) {
-        Object attribute = servletRequest.getAttribute(AssetsRequestContext.class.getCanonicalName());
-        if(attribute == null || !(attribute instanceof AssetsRequestContext)) {
-            attribute = new AssetsRequestContext();
-            ((AssetsRequestContext) attribute).addScopes(Configuration.getProperties().getProperty("assets.included.scopes"));
-            servletRequest.setAttribute(AssetsRequestContext.class.getCanonicalName(), attribute);
+    public static AssetRequestContext get(ServletRequest servletRequest) {
+        Object attribute = servletRequest.getAttribute(AssetRequestContext.class.getCanonicalName());
+        if(attribute == null || !(attribute instanceof AssetRequestContext)) {
+            attribute = new AssetRequestContext();
+            ((AssetRequestContext) attribute).addScopes(Configuration.getProperties().getProperty("assets.included.scopes"));
+            servletRequest.setAttribute(AssetRequestContext.class.getCanonicalName(), attribute);
         }
-        return AssetsRequestContext.class.cast(attribute);
+        return AssetRequestContext.class.cast(attribute);
     }
 
     /**
@@ -81,7 +81,7 @@ public class AssetsRequestContext {
      * @param scopes scopes (separated by comma)
      * @return this context
      */
-    public AssetsRequestContext excludeScopes(String scopes) {
+    public AssetRequestContext excludeScopes(String scopes) {
         if(scopes == null) return this;
         return excludeScopes(scopes.split(","));
     }
@@ -91,7 +91,7 @@ public class AssetsRequestContext {
      * @param scopes scopes
      * @return this context
      */
-    private AssetsRequestContext excludeScopes(String... scopes) {
+    private AssetRequestContext excludeScopes(String... scopes) {
         this.excludedScopes.addAll(Arrays.asList(scopes));
         return this;
     }
@@ -101,7 +101,7 @@ public class AssetsRequestContext {
      * @param scopes scopes
      * @return this context
      */
-    private AssetsRequestContext excludeScopes(AssetScope... scopes) {
+    private AssetRequestContext excludeScopes(AssetScope... scopes) {
         for(AssetScope scope:scopes) {
             excludeScope(scope);
         }
@@ -113,7 +113,7 @@ public class AssetsRequestContext {
      * @param scopes scopes
      * @return this context
      */
-    private AssetsRequestContext excludeScopes(Object... scopes) {
+    private AssetRequestContext excludeScopes(Object... scopes) {
         for(Object scope:scopes) {
             excludeScope(scope);
         }
@@ -125,7 +125,7 @@ public class AssetsRequestContext {
      * @param scope scope
      * @return this context
      */
-    private AssetsRequestContext excludeScope(String scope) {
+    private AssetRequestContext excludeScope(String scope) {
         this.excludedScopes.add(scope);
         return this;
     }
@@ -135,7 +135,7 @@ public class AssetsRequestContext {
      * @param scope scope
      * @return this context
      */
-    private AssetsRequestContext excludeScope(AssetScope scope) {
+    private AssetRequestContext excludeScope(AssetScope scope) {
         this.excludedScopes.add(scope.toString());
         return this;
     }
@@ -145,7 +145,7 @@ public class AssetsRequestContext {
      * @param scope scope
      * @return this context
      */
-    private AssetsRequestContext excludeScope(Object scope) {
+    private AssetRequestContext excludeScope(Object scope) {
         this.excludedScopes.add(scope.toString());
         return this;
     }
@@ -155,7 +155,7 @@ public class AssetsRequestContext {
      * @param assetNames asset names (separated by comma)
      * @return this context
      */
-    public AssetsRequestContext excludeAssets(String assetNames) {
+    public AssetRequestContext excludeAssets(String assetNames) {
         if(assetNames == null) return this;
         return excludeAssets(assetNames.split(","));
     }
@@ -165,7 +165,7 @@ public class AssetsRequestContext {
      * @param assetNames asset names
      * @return this context
      */
-    private AssetsRequestContext excludeAssets(String... assetNames) {
+    private AssetRequestContext excludeAssets(String... assetNames) {
         this.excludedAssets.addAll(Arrays.asList(assetNames));
         return this;
     }
@@ -175,7 +175,7 @@ public class AssetsRequestContext {
      * @param assetNames asset names
      * @return this context
      */
-    private AssetsRequestContext excludeAssets(AssetName... assetNames) {
+    private AssetRequestContext excludeAssets(AssetName... assetNames) {
         for(Object asset:assetNames) {
             excludeAsset(asset);
         }
@@ -187,7 +187,7 @@ public class AssetsRequestContext {
      * @param assetNames asset names
      * @return this context
      */
-    private AssetsRequestContext excludeAssets(Object... assetNames) {
+    private AssetRequestContext excludeAssets(Object... assetNames) {
         for(Object asset:assetNames) {
             excludeAsset(asset);
         }
@@ -199,7 +199,7 @@ public class AssetsRequestContext {
      * @param assetName asset name
      * @return this context
      */
-    private AssetsRequestContext excludeAsset(String assetName) {
+    private AssetRequestContext excludeAsset(String assetName) {
         this.excludedAssets.add(assetName);
         return this;
     }
@@ -209,7 +209,7 @@ public class AssetsRequestContext {
      * @param assetName asset name
      * @return this context
      */
-    private AssetsRequestContext excludeAsset(AssetName assetName) {
+    private AssetRequestContext excludeAsset(AssetName assetName) {
         this.excludedAssets.add(assetName.toString());
         return this;
     }
@@ -219,7 +219,7 @@ public class AssetsRequestContext {
      * @param assetName asset name
      * @return this context
      */
-    private AssetsRequestContext excludeAsset(Object assetName) {
+    private AssetRequestContext excludeAsset(Object assetName) {
         this.excludedAssets.add(assetName.toString());
         return this;
     }
@@ -229,7 +229,7 @@ public class AssetsRequestContext {
      * @param scopes scopes (separated by comma)
      * @return this context
      */
-    public AssetsRequestContext addScopes(String scopes) {
+    public AssetRequestContext addScopes(String scopes) {
         if(scopes == null) return this;
         return addScopes(scopes.split(","));
     }
@@ -239,7 +239,7 @@ public class AssetsRequestContext {
      * @param scopes scopes
      * @return this context
      */
-    public AssetsRequestContext addScopes(String ... scopes) {
+    public AssetRequestContext addScopes(String ... scopes) {
         this.scopes.addAll(Arrays.asList(scopes));
         return this;
     }
@@ -249,7 +249,7 @@ public class AssetsRequestContext {
      * @param scopes scopes
      * @return this context
      */
-    public AssetsRequestContext addScopes(AssetScope ... scopes) {
+    public AssetRequestContext addScopes(AssetScope ... scopes) {
         for(AssetScope scope:scopes) {
             addScope(scope);
         }
@@ -261,7 +261,7 @@ public class AssetsRequestContext {
      * @param scopes scopes
      * @return this context
      */
-    public AssetsRequestContext addScopes(Object ... scopes) {
+    public AssetRequestContext addScopes(Object ... scopes) {
         for(Object scope:scopes) {
             addScope(scope);
         }
@@ -273,7 +273,7 @@ public class AssetsRequestContext {
      * @param scope scope
      * @return this context
      */
-    public AssetsRequestContext addScope(String scope) {
+    public AssetRequestContext addScope(String scope) {
         this.scopes.add(scope);
         return this;
     }
@@ -283,7 +283,7 @@ public class AssetsRequestContext {
      * @param scope scope
      * @return this context
      */
-    public AssetsRequestContext addScope(AssetScope scope) {
+    public AssetRequestContext addScope(AssetScope scope) {
         addScope(scope.toString());
         return this;
     }
@@ -293,7 +293,7 @@ public class AssetsRequestContext {
      * @param scope scope
      * @return this context
      */
-    public AssetsRequestContext addScope(Object scope) {
+    public AssetRequestContext addScope(Object scope) {
         addScope(scope.toString());
         return this;
     }
@@ -334,7 +334,7 @@ public class AssetsRequestContext {
      * Set this context as rendered
      * @return this context
      */
-    public AssetsRequestContext hasBeenRendered() {
+    public AssetRequestContext hasBeenRendered() {
         this.alreadyRendered = true;
         return this;
     }
@@ -347,7 +347,7 @@ public class AssetsRequestContext {
      * @param value value
      * @return this context
      */
-    public AssetsRequestContext addParameter(String assetName, String parameter, Object value) {
+    public AssetRequestContext addParameter(String assetName, String parameter, Object value) {
         return addParameter(assetName, parameter, value, false);
     }
 
@@ -359,7 +359,7 @@ public class AssetsRequestContext {
      * @param value value
      * @return this context
      */
-    public AssetsRequestContext addParameter(AssetName assetName, String parameter, Object value) {
+    public AssetRequestContext addParameter(AssetName assetName, String parameter, Object value) {
         return addParameter(assetName.toString(), parameter, value, false);
     }
 
@@ -371,7 +371,7 @@ public class AssetsRequestContext {
      * @param value value
      * @return this context
      */
-    public AssetsRequestContext addParameter(Object assetName, String parameter, Object value) {
+    public AssetRequestContext addParameter(Object assetName, String parameter, Object value) {
         return addParameter(assetName.toString(), parameter, value, false);
     }
     
@@ -384,7 +384,7 @@ public class AssetsRequestContext {
      * @param replaceIfExists replace the parameter if he exists already
      * @return this context
      */
-    public AssetsRequestContext addParameter(String assetName, String parameter, Object value, boolean replaceIfExists) {
+    public AssetRequestContext addParameter(String assetName, String parameter, Object value, boolean replaceIfExists) {
         if(!parameters.containsKey(assetName)) {
             parameters.put(assetName, new HashMap<String, Object>());
         }
@@ -406,7 +406,7 @@ public class AssetsRequestContext {
      * @param replaceIfExists replace the parameter if he exists already
      * @return this context
      */
-    public AssetsRequestContext addParameter(AssetName assetName, String parameter, Object value, boolean replaceIfExists) {
+    public AssetRequestContext addParameter(AssetName assetName, String parameter, Object value, boolean replaceIfExists) {
         return addParameter(assetName.toString(), parameter, value, replaceIfExists);
     }
 
@@ -419,7 +419,7 @@ public class AssetsRequestContext {
      * @param replaceIfExists replace the parameter if he exists already
      * @return this context
      */
-    public AssetsRequestContext addParameter(Object assetName, String parameter, Object value, boolean replaceIfExists) {
+    public AssetRequestContext addParameter(Object assetName, String parameter, Object value, boolean replaceIfExists) {
         return addParameter(assetName.toString(), parameter, value, replaceIfExists);
     }
 

@@ -34,7 +34,7 @@ import com.github.dandelion.core.DevMode;
 import com.github.dandelion.core.asset.Asset;
 import com.github.dandelion.core.asset.AssetStack;
 import com.github.dandelion.core.asset.processor.spi.AssetProcessorEntry;
-import com.github.dandelion.core.asset.web.AssetsRequestContext;
+import com.github.dandelion.core.asset.web.AssetRequestContext;
 import com.github.dandelion.core.asset.wrapper.spi.AssetLocationWrapper;
 import com.github.dandelion.core.config.Configuration;
 import org.slf4j.Logger;
@@ -80,7 +80,7 @@ public class AdditionalAssetsProcessorEntry extends AssetProcessorEntry {
         List<Asset> processedAssets = new ArrayList<Asset>();
         for(Asset asset:assets) {
             if(asset.getLocations().size() == 1 && asset.getLocations().containsKey(getTreatmentKey())) {
-                Map<String, Object> parameters = AssetsRequestContext.get(request).getParameters(asset.getName());
+                Map<String, Object> parameters = AssetRequestContext.get(request).getParameters(asset.getName());
                 Map<String, AssetLocationWrapper> wrappers = AssetStack.getAssetsLocationWrappers();
                 for(Map.Entry<String, Object> entry:parameters.entrySet()) {
                     Asset additionalAsset = asset.clone(true);

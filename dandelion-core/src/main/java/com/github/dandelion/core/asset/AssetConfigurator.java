@@ -29,9 +29,9 @@
  */
 package com.github.dandelion.core.asset;
 
-import static com.github.dandelion.core.asset.AssetsStorage.DETACHED_PARENT_SCOPE;
-import static com.github.dandelion.core.asset.AssetsStorage.MASTER_SCOPE;
-import static com.github.dandelion.core.asset.AssetsStorage.ROOT_SCOPE;
+import static com.github.dandelion.core.asset.AssetStorage.DETACHED_PARENT_SCOPE;
+import static com.github.dandelion.core.asset.AssetStorage.MASTER_SCOPE;
+import static com.github.dandelion.core.asset.AssetStorage.ROOT_SCOPE;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -42,12 +42,12 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
+import com.github.dandelion.core.asset.loader.AssetLoaderSystem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.github.dandelion.core.DandelionException;
-import com.github.dandelion.core.asset.loader.AssetsLoaderSystem;
-import com.github.dandelion.core.asset.loader.spi.AssetsLoader;
+import com.github.dandelion.core.asset.loader.spi.AssetLoader;
 import com.github.dandelion.core.asset.wrapper.AssetLocationWrapperSystem;
 import com.github.dandelion.core.asset.wrapper.spi.AssetLocationWrapper;
 import com.github.dandelion.core.config.Configuration;
@@ -57,9 +57,9 @@ import com.github.dandelion.core.config.Configuration;
  * <ul>
  *     <li>assetsLoader :
  *          <ul>
- *               <li>the {@link AssetsLoader}
+ *               <li>the {@link com.github.dandelion.core.asset.loader.spi.AssetLoader}
  * found in 'dandelion/dandelion.properties' for the key 'assetsLoader'</li>
- *               <li>or {@link com.github.dandelion.core.asset.loader.impl.AbstractAssetsJsonLoader} by default</li>
+ *               <li>or {@link com.github.dandelion.core.asset.loader.impl.AbstractAssetJsonLoader} by default</li>
  *          </ul>
  *     </li>
  *     <li>assets.locations : type of access to assets content(remote [by default], local)</li>
@@ -67,11 +67,11 @@ import com.github.dandelion.core.config.Configuration;
  * Default Asset Loader is
  *
  */
-public class AssetsConfigurator {
+public class AssetConfigurator {
     // Logger
-    private static final Logger LOG = LoggerFactory.getLogger(AssetsConfigurator.class);
-    AssetsStorage assetsStorage;
-    List<AssetsLoader> assetsLoaders;
+    private static final Logger LOG = LoggerFactory.getLogger(AssetConfigurator.class);
+    AssetStorage assetStorage;
+    List<AssetLoader> assetLoaders;
     List<String> assetsLocations;
     List<String> excludedScopes;
     List<String> excludedAssets;
@@ -82,8 +82,8 @@ public class AssetsConfigurator {
     private Map<String, String> parentScopesByScope = new HashMap<String, String>();
     private Map<String, List<Asset>> overrideAssetsByScope = new HashMap<String, List<Asset>>();
 
-    AssetsConfigurator(AssetsStorage assetsStorage) {
-        this.assetsStorage = assetsStorage;
+    AssetConfigurator(AssetStorage assetStorage) {
+        this.assetStorage = assetStorage;
     }
 
     /**
@@ -96,7 +96,7 @@ public class AssetsConfigurator {
         excludedScopes = setPropertyAsList(configuration.getProperty("assets.excluded.scopes"), ",");
         excludedAssets = setPropertyAsList(configuration.getProperty("assets.excluded.assets"), ",");
 
-        assetsLoaders = AssetsLoaderSystem.getLoaders();
+        assetLoaders = AssetLoaderSystem.getLoaders();
         assetsLocationWrappers = AssetLocationWrapperSystem.getWrappersWithKey();
 
         processAssetsLoading(true);
@@ -123,8 +123,8 @@ public class AssetsConfigurator {
     void processAssetsLoading(boolean defaultsNeeded) {
         if(defaultsNeeded) setDefaultsIfNeeded();
 
-        for(AssetsLoader assetsLoader:assetsLoaders) {
-            prepareAssetsLoading(assetsLoader.loadAssets());
+        for(AssetLoader assetLoader : assetLoaders) {
+            prepareAssetsLoading(assetLoader.loadAssets());
         }
 
         repairOrphanParentScope();
@@ -178,11 +178,11 @@ public class AssetsConfigurator {
      *
      * @param components components to analyze
      */
-    private void prepareAssetsLoading(List<AssetsComponent> components) {
+    private void prepareAssetsLoading(List<AssetComponent> components) {
         LOG.debug("Excludes scopes are {}", excludedScopes);
         LOG.debug("Excludes assets are {}", excludedAssets);
 
-        for(AssetsComponent component:components) {
+        for(AssetComponent component:components) {
             LOG.debug("Prepare {}", component);
 
             if(!excludedScopes.contains(component.getScope())
@@ -210,7 +210,7 @@ public class AssetsConfigurator {
         if(assetsByScope.containsKey(scope)) {
             List<Asset> _assets = assetsByScope.get(scope);
             if(_assets.isEmpty() && parentScope != null) {
-                assetsStorage.setupEmptyScope(scope, parentScope);
+                assetStorage.setupEmptyScope(scope, parentScope);
             } else {
                 for(Asset _asset:_assets) {
                     storeAsset(_asset, scope, parentScopesByScope.get(scope));
@@ -236,12 +236,12 @@ public class AssetsConfigurator {
     private void storeAsset(Asset asset, String scope, String parentScope) {
         LOG.debug("Stored '{}' in scope '{}/{}'", asset, scope, parentScope);
         try {
-            assetsStorage.store(asset, scope, parentScope);
+            assetStorage.store(asset, scope, parentScope);
         } catch (DandelionException e) {
             LOG.debug(e.getLocalizedMessage());
-            if(e.getErrorCode() == AssetsStorageError.UNDEFINED_PARENT_SCOPE) {
+            if(e.getErrorCode() == AssetStorageError.UNDEFINED_PARENT_SCOPE) {
                 LOG.debug("To avoid any configuration problem, a scope '{}' with no assets is created", parentScope);
-                assetsStorage.setupEmptyParentScope(parentScope);
+                assetStorage.setupEmptyParentScope(parentScope);
                 storeAsset(asset, scope, parentScope);
             }
         }
@@ -263,7 +263,7 @@ public class AssetsConfigurator {
         return Arrays.asList(values.split(delimiter));
     }
 
-    private void prepareScope(AssetsComponent component) {
+    private void prepareScope(AssetComponent component) {
         if (ROOT_SCOPE.equalsIgnoreCase(component.getScope())) {
             LOG.debug("{} is the root scope", component.getScope());
             return;
@@ -281,7 +281,7 @@ public class AssetsConfigurator {
         }
     }
 
-    private void prepareParentScope(AssetsComponent component) {
+    private void prepareParentScope(AssetComponent component) {
         LOG.debug("Stored {} as parent of {}", component.getParent(), component.getScope());
         if(ROOT_SCOPE.equalsIgnoreCase(component.getParent())
                 && ROOT_SCOPE.equalsIgnoreCase(component.getScope())) {
@@ -290,7 +290,7 @@ public class AssetsConfigurator {
         parentScopesByScope.put(component.getScope(), component.getParent());
     }
 
-    private void prepareAssets(AssetsComponent component) {
+    private void prepareAssets(AssetComponent component) {
         if (!assetsByScope.containsKey(component.getScope())) {
             assetsByScope.put(component.getScope(), new ArrayList<Asset>());
         }
@@ -306,7 +306,7 @@ public class AssetsConfigurator {
         }
     }
 
-    private void prepareOverrideAssets(AssetsComponent component) {
+    private void prepareOverrideAssets(AssetComponent component) {
         List<Asset> _assets = new ArrayList<Asset>();
 
         for(Asset asset:component.getAssets()) {

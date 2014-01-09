@@ -33,11 +33,9 @@ package com.github.dandelion.core.asset.wrapper.impl;
 import com.github.dandelion.core.DevMode;
 import com.github.dandelion.core.asset.Asset;
 import com.github.dandelion.core.asset.AssetType;
-import com.github.dandelion.core.asset.web.AssetsRequestContext;
+import com.github.dandelion.core.asset.web.AssetRequestContext;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
-
-import javax.servlet.http.HttpServletRequest;
 
 import static java.util.Collections.singletonMap;
 import static org.fest.assertions.Assertions.assertThat;
@@ -53,7 +51,7 @@ public class TemplateLocationWrapperTest {
         request.setRequestURI("/context/page.html");
         request.setContextPath("/context");
 
-        AssetsRequestContext.get(request).addParameter("asset-template", "/* content */", "/* content param */");
+        AssetRequestContext.get(request).addParameter("asset-template", "/* content */", "/* content param */");
 
         Asset asset = new Asset("asset-template", "1.0", AssetType.js, singletonMap(wrapper.locationKey(), "com/github/dandelion/core/asset/wrapper/impl/asset.js"));
         String location = wrapper.wrapLocation(asset, request);

@@ -1,3 +1,3 @@
-com.github.dandelion.module.ModuleAssetsJsonLoader
+com.github.dandelion.module.ModuleAssetJsonLoader
 com.github.dandelion.module2.Module2AssetJsonLoader
 com.github.dandelion.module2.Submodule2AssetJsonLoader

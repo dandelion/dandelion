@@ -1,8 +1,8 @@
 package com.github.dandelion.core.asset.cache;
 
-import com.github.dandelion.core.asset.cache.impl.DefaultAssetsCache;
+import com.github.dandelion.core.asset.cache.impl.HashMapAssetCache;
 
-public class AnotherAssetsCache extends DefaultAssetsCache {
+public class AnotherAssetCache extends HashMapAssetCache {
     @Override
     public String getAssetsCacheName() {
         return "another";

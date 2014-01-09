@@ -32,7 +32,7 @@ package com.github.dandelion.core.asset.wrapper.impl;
 
 import com.github.dandelion.core.asset.Asset;
 import com.github.dandelion.core.asset.AssetType;
-import com.github.dandelion.core.asset.web.AssetsRequestContext;
+import com.github.dandelion.core.asset.web.AssetRequestContext;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 
@@ -50,7 +50,7 @@ public class DelegatedLocationWrapperTest {
         request.setRequestURI("/context/page.html");
         request.setContextPath("/context");
 
-        AssetsRequestContext.get(request).addParameter("asset-delegated", DelegatedLocationWrapper.DELEGATED_CONTENT_PARAM, new DelegatedContent() {
+        AssetRequestContext.get(request).addParameter("asset-delegated", DelegatedLocationWrapper.DELEGATED_CONTENT_PARAM, new DelegatedContent() {
             @Override
             public String getContent(HttpServletRequest request) {
                 return "/* content */";

@@ -6,13 +6,13 @@ import org.fest.assertions.MapAssert;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 
-public class AssetsRequestContextTest {
+public class AssetRequestContextTest {
 
     @Test
     public void should_store_scopes() {
         MockHttpServletRequest request = new MockHttpServletRequest();
 
-        AssetsRequestContext context = AssetsRequestContext.get(request);
+        AssetRequestContext context = AssetRequestContext.get(request);
         context.addScopes("scope1,scope2");
         assertThat(context.getScopes(false)).hasSize(2).contains("scope1", "scope2");
 
@@ -24,7 +24,7 @@ public class AssetsRequestContextTest {
     public void should_exclude_scopes() {
         MockHttpServletRequest request = new MockHttpServletRequest();
 
-        AssetsRequestContext context = AssetsRequestContext.get(request);
+        AssetRequestContext context = AssetRequestContext.get(request);
         context.addScopes("scope1,scope2,scope3,scope4");
         context.excludeScopes("scope2,scope4");
 
@@ -37,7 +37,7 @@ public class AssetsRequestContextTest {
     public void should_exclude_assets() {
         MockHttpServletRequest request = new MockHttpServletRequest();
 
-        AssetsRequestContext context = AssetsRequestContext.get(request);
+        AssetRequestContext context = AssetRequestContext.get(request);
         context.excludeAssets("asset1,asset2");
 
         assertThat(context.getExcludedAssets()).hasSize(2).contains("asset1", "asset2");
@@ -47,18 +47,18 @@ public class AssetsRequestContextTest {
     public void should_keep_a_rendering_state() {
         MockHttpServletRequest request = new MockHttpServletRequest();
 
-        AssetsRequestContext context = AssetsRequestContext.get(request);
+        AssetRequestContext context = AssetRequestContext.get(request);
         assertThat(context.isAlreadyRendered()).isFalse();
 
         context.hasBeenRendered();
         assertThat(context.isAlreadyRendered()).isTrue();
-        assertThat(AssetsRequestContext.get(request).isAlreadyRendered()).isTrue();
+        assertThat(AssetRequestContext.get(request).isAlreadyRendered()).isTrue();
     }
 
     @Test
     public void should_store_parameters() {
         MockHttpServletRequest request = new MockHttpServletRequest();
-        AssetsRequestContext context = AssetsRequestContext.get(request);
+        AssetRequestContext context = AssetRequestContext.get(request);
 
         context.addParameter("asset1", "param1", "value1");
         context.addParameter("asset1", "param2", "value2");

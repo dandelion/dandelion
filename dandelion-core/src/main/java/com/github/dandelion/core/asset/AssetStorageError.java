@@ -27,18 +27,54 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.github.dandelion.core.asset.cache.spi;
+package com.github.dandelion.core.asset;
+
+import com.github.dandelion.core.DandelionError;
 
 /**
- * Cache System to store specific content of an asset
+ * Possible Errors for 'Assets Storage'
  */
-public interface AssetsCache {
+public enum AssetStorageError implements DandelionError {
+    /**
+     * An asset can't be added twice in the same scope (same name but different versions)
+     */
+    ASSET_ALREADY_EXISTS_IN_SCOPE(100),
+    /**
+     * An asset can't be added with a 'Detached Scope',
+     * 'Detached Scope' is only allowed as a Parent Scope
+     */
+    DETACHED_SCOPE_NOT_ALLOWED(101),
+    /**
+     * An asset can't have a couple of Scope/Parent Scope
+     * when its scope is already associated to another parent scope
+     */
+    PARENT_SCOPE_INCOMPATIBILITY(102),
+    /**
+     * An asset can't have a parent scope that doesn't already exist
+     */
+    UNDEFINED_PARENT_SCOPE(103),
+    /**
+     * A location can't be used twice in the same scope by a similar asset
+     */
+    ASSET_LOCATION_ALREADY_EXISTS_IN_SCOPE(104),
+    /**
+     * A attribute can't be used twice in the same scope by a similar asset
+     */
+    ASSET_ATTRIBUTE_ALREADY_EXISTS_IN_SCOPE(105),
+    /**
+     * A DOM position must be equals for merging two assets with same name
+     */
+    ASSET_DOM_POSITION_ALREADY_EXISTS_IN_SCOPE(106);
 
-    String getAssetsCacheName();
+    private final int number;
 
-    boolean checkCacheKey(String cacheKey);
+    private AssetStorageError(int number) {
+        this.number = number;
+    }
 
-    String getCacheContent(String cacheKey);
+    @Override
+    public int getNumber() {
+        return number;
+    }
 
-    void storeCacheContent(String cacheKey, String cacheContent);
 }
