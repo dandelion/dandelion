@@ -70,21 +70,21 @@ public abstract class AbstractAssetJsonLoader implements AssetLoader {
 		List<String> excludedFolders = getExcludedPaths();
 
 		try {
-			Set<String> resources = ResourceScanner.getResources(getPath(), excludedFolders, null, ".json", isRecursive());
+			Set<String> resourcePaths = ResourceScanner.findResourcePaths(getPath(), excludedFolders, null, ".json",
+					isRecursive());
 			getLogger().debug("{} resources scanned inside the folder '{}'. Parsing to AssetComponent...",
-					resources.size(), getPath());
-			
+					resourcePaths.size(), getPath());
+
 			ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-			for (String resource : resources) {
-				getLogger().debug("resources {}", resource);
-				InputStream configFileStream = classLoader.getResourceAsStream(resource);
-
+			
+			for (String resourcePath : resourcePaths) {
+				InputStream configFileStream = classLoader.getResourceAsStream(resourcePath);
 				AssetComponent assetComponent = mapper.readValue(configFileStream, AssetComponent.class);
-
-				getLogger().debug("found {}", assetComponent);
+				getLogger().debug("Parsed {}", assetComponent);
 				assetComponentList.add(assetComponent);
 			}
-		} catch (IOException e) {
+		}
+		catch (IOException e) {
 			getLogger().error(e.getMessage(), e);
 		}
 		

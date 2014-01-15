@@ -68,15 +68,15 @@ import com.github.dandelion.core.utils.UTF8Control;
  */
 public class StandardConfigurationLoader implements ConfigurationLoader {
 
-    public static final String DANDELION_DEFAULT = "dandelion-default";
-    public static final String DANDELION_PROPERTIES = "properties";
-    public static final String DANDELION_OTHER = "dandelion";
-    public static final String DANDELION_FOLDER = "dandelion";
-    // Logger
+	// Logger
 	private static Logger LOG = LoggerFactory.getLogger(StandardConfigurationLoader.class);
 
-    public final static String DANDELION_USER_PROPERTIES = "dandelion";
-    public final static String DANDELION_CONFIGURATION = "dandelion.configuration";
+	public static final String DANDELION_DEFAULT = "dandelion-default";
+	public static final String DANDELION_PROPERTIES = "properties";
+	public static final String DANDELION_OTHER = "dandelion";
+	public static final String DANDELION_FOLDER = "dandelion";
+	public static final String DANDELION_USER_PROPERTIES = "dandelion";
+	public static final String DANDELION_CONFIGURATION = "dandelion.configuration";
 
 	/**
 	 * {@inheritDoc}
@@ -93,39 +93,44 @@ public class StandardConfigurationLoader implements ConfigurationLoader {
 
 		try {
 			Reader reader;
-            Properties properties;
+			Properties properties;
 
-            String defaultResource = ResourceScanner.getResource(DANDELION_FOLDER, DANDELION_DEFAULT + "." + DANDELION_PROPERTIES);
-            if(defaultResource != null) {
-                propertiesStream = Thread.currentThread().getContextClassLoader().getResourceAsStream(defaultResource);
-                reader = new InputStreamReader(propertiesStream, "UTF-8");
-                properties = new Properties();
-                properties.load(reader);
-                defaultProperties.putAll(properties);
-            }
-
-			Set<String> resources = ResourceScanner.getResources(DANDELION_FOLDER, null, DANDELION_OTHER, DANDELION_PROPERTIES, false);
-			for(String resource : resources) {
-                if((DANDELION_FOLDER + File.separator
-                        + DANDELION_DEFAULT + "." + DANDELION_PROPERTIES).equals(resource)) {
-                    continue;
-                }
-
+			String defaultPropertiesPath = ResourceScanner.findResourcePath(DANDELION_FOLDER, DANDELION_DEFAULT + "."
+					+ DANDELION_PROPERTIES);
+			if (defaultPropertiesPath != null) {
 				propertiesStream = Thread.currentThread().getContextClassLoader()
-						.getResourceAsStream(resource);
+						.getResourceAsStream(defaultPropertiesPath);
 				reader = new InputStreamReader(propertiesStream, "UTF-8");
 				properties = new Properties();
-                properties.load(reader);
-                defaultProperties.putAll(properties);
+				properties.load(reader);
+				defaultProperties.putAll(properties);
 			}
-		} catch (IOException e) {
-			throw DandelionException.wrap(e, ConfigurationError.DEFAULT_CONFIGURATION_LOADING)
-					.set("default name", DANDELION_DEFAULT + "." + DANDELION_PROPERTIES);
-		} finally {
+
+			Set<String> resourcePaths = ResourceScanner.findResourcePaths(DANDELION_FOLDER, null, DANDELION_OTHER,
+					DANDELION_PROPERTIES, false);
+			for (String resourcePath : resourcePaths) {
+				if ((DANDELION_FOLDER + File.separator + DANDELION_DEFAULT + "." + DANDELION_PROPERTIES)
+						.equals(resourcePath)) {
+					continue;
+				}
+
+				propertiesStream = Thread.currentThread().getContextClassLoader().getResourceAsStream(resourcePath);
+				reader = new InputStreamReader(propertiesStream, "UTF-8");
+				properties = new Properties();
+				properties.load(reader);
+				defaultProperties.putAll(properties);
+			}
+		}
+		catch (IOException e) {
+			throw DandelionException.wrap(e, ConfigurationError.DEFAULT_CONFIGURATION_LOADING).set("default name",
+					DANDELION_DEFAULT + "." + DANDELION_PROPERTIES);
+		}
+		finally {
 			if (propertiesStream != null) {
 				try {
 					propertiesStream.close();
-				} catch (IOException e) {
+				}
+				catch (IOException e) {
 					LOG.error("Properties Stream can't be close", e);
 				}
 			}
