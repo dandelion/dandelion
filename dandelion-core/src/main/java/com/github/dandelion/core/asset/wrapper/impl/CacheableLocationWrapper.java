@@ -32,7 +32,7 @@ package com.github.dandelion.core.asset.wrapper.impl;
 
 
 import static com.github.dandelion.core.asset.cache.AssetCacheSystem.generateCacheKey;
-import static com.github.dandelion.core.asset.cache.AssetCacheSystem.storeCacheContent;
+import static com.github.dandelion.core.asset.cache.AssetCacheSystem.storeContent;
 import static com.github.dandelion.core.asset.web.AssetServlet.DANDELION_ASSETS_URL;
 import static com.github.dandelion.core.asset.web.AssetRequestContext.get;
 
@@ -62,13 +62,14 @@ public abstract class CacheableLocationWrapper implements AssetLocationWrapper {
         context = context.replaceAll("\\?", "_").replaceAll("&", "_");
 
         String cacheKey = generateCacheKey(context, location, asset.getName(), asset.getType());
-
-        Map<String, Object> parameters = get(request).getParameters(asset.getName());
-        if (DevMode.enabled() || !AssetCacheSystem.checkCacheKey(cacheKey)) {
-            String content = getContent(asset, location, parameters, request);
-            storeCacheContent(context, location, asset.getName(), asset.getType(), content);
+        String content = AssetCacheSystem.getContent(cacheKey);
+        
+        if(content == null || DevMode.enabled()){
+        	Map<String, Object> parameters = get(request).getParameters(asset.getName());
+        	content = getContent(asset, location, parameters, request);
+        	storeContent(context, location, asset.getName(), asset.getType(), content);
         }
-
+        
         return RequestUtils.getBaseUrl(request) + DANDELION_ASSETS_URL + cacheKey;
     }
 
@@ -80,7 +81,7 @@ public abstract class CacheableLocationWrapper implements AssetLocationWrapper {
         String location = asset.getLocations().get(locationKey());
         String prefixCacheKey = RequestUtils.getBaseUrl(request) + DANDELION_ASSETS_URL;
         String cacheKey = location.replaceAll(prefixCacheKey, "");
-        return AssetCacheSystem.getCacheContent(cacheKey);
+        return AssetCacheSystem.getContent(cacheKey);
     }
 
     protected abstract String getContent(Asset asset, String location, Map<String, Object> parameters, HttpServletRequest request);

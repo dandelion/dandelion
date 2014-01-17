@@ -4,7 +4,7 @@ import com.github.dandelion.core.asset.cache.impl.HashMapAssetCache;
 
 public class AnotherAssetCache extends HashMapAssetCache {
     @Override
-    public String getAssetsCacheName() {
+    public String getCacheName() {
         return "another";
     }
 }

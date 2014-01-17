@@ -43,7 +43,6 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import com.github.dandelion.core.asset.cache.AssetCacheSystem;
 import org.mozilla.javascript.EvaluatorException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,6 +51,7 @@ import com.github.dandelion.core.DandelionException;
 import com.github.dandelion.core.DevMode;
 import com.github.dandelion.core.asset.Asset;
 import com.github.dandelion.core.asset.AssetStack;
+import com.github.dandelion.core.asset.cache.AssetCacheSystem;
 import com.github.dandelion.core.asset.processor.spi.AssetProcessorEntry;
 import com.github.dandelion.core.asset.wrapper.spi.AssetLocationWrapper;
 import com.github.dandelion.core.config.Configuration;
@@ -122,10 +122,10 @@ public class AssetCompressionProcessorEntry extends AssetProcessorEntry {
             for(String location:asset.getLocations().values()) {
                 String cacheKey = AssetCacheSystem.generateCacheKey(context, location, COMPRESSION, asset.getType());
 
-                if (!AssetCacheSystem.checkCacheKey(cacheKey)) {
-                    LOG.debug("cache assets compression for asset {}", asset.getAssetKey());
-                    cacheCompressedContent(request, context, location, asset, cacheKey);
-                }
+				// Updates the cache in order for the compressed content to be
+				// retrieved by the servlet
+				LOG.debug("Cache updated with compressed assets (key={})", asset.getAssetKey());
+				cacheCompressedContent(request, context, location, asset, cacheKey);
 
                 String accessLocation = baseUrl + DANDELION_ASSETS_URL + cacheKey;
 
@@ -141,7 +141,7 @@ public class AssetCompressionProcessorEntry extends AssetProcessorEntry {
 
     private void cacheCompressedContent(HttpServletRequest request, String context, String location, Asset asset, String cacheKey) {
         String content = compress(asset, request);
-        AssetCacheSystem.storeCacheContent(context, location, COMPRESSION, asset.getType(), content);
+        AssetCacheSystem.storeContent(context, location, COMPRESSION, asset.getType(), content);
     }
 
     private String compress(Asset asset, HttpServletRequest request) {

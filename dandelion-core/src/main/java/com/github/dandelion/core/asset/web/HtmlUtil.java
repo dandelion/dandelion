@@ -98,7 +98,7 @@ public class HtmlUtil {
         String contentType = null;
         AssetType resourceType = AssetType.typeOfAsset(assetKey);
         if (resourceType != null) {
-            content = AssetCacheSystem.getCacheContent(assetKey);
+            content = AssetCacheSystem.getContent(assetKey);
             if (content == null) {
                 LOG.debug("missing content from key {}", assetKey);
                 content = "";

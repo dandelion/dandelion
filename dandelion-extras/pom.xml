@@ -14,5 +14,6 @@
         <module>dandelion-spring3</module>
         <module>dandelion-servlet3</module>
         <module>dandelion-additional-assets</module>
+        <module>dandelion-ehcache</module>
     </modules>
 </project>

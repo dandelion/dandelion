@@ -22,7 +22,7 @@ public class AssetServletTest {
         MockHttpServletResponse response = new MockHttpServletResponse();
 
         String content = "CONTENT" + Math.random();
-        AssetCacheSystem.storeCacheContent("should_retrieve_content_from_cache", "location", "resourceName", AssetType.css, content);
+        AssetCacheSystem.storeContent("should_retrieve_content_from_cache", "location", "resourceName", AssetType.css, content);
         request.setRequestURI("/test/" + AssetCacheSystem.generateCacheKey("should_retrieve_content_from_cache", "location", "resourceName", AssetType.css));
 
         servlet.doGet(request, response);

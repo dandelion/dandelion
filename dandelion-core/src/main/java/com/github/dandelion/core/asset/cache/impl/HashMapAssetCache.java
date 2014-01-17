@@ -30,38 +30,46 @@
 
 package com.github.dandelion.core.asset.cache.impl;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import com.github.dandelion.core.asset.cache.spi.AssetCache;
 
 /**
- * Cache System for store specific content of an asset from a Map
+ * Service provider for {@link AssetCache} that uses a simple {@link ConcurrentHashMap} as
+ * a store.
+ * 
+ * @author Romain Lespinasse
+ * @since 0.10.0
  */
 public class HashMapAssetCache implements AssetCache {
-    private Map<String, String> cache;
+	private Map<String, String> cache;
 
-    public HashMapAssetCache() {
-        cache = new HashMap<String, String>();
-    }
+	public HashMapAssetCache() {
+		cache = new ConcurrentHashMap<String, String>();
+	}
 
-    @Override
-    public String getAssetsCacheName() {
-        return "default";
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public String getCacheName() {
+		return "default";
+	}
 
-    @Override
-    public boolean checkCacheKey(String cacheKey) {
-        return cache.containsKey(cacheKey);
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public String getContent(String cacheKey) {
+		return cache.get(cacheKey);
+	}
 
-    @Override
-    public String getCacheContent(String cacheKey) {
-        return cache.get(cacheKey);
-    }
-
-    @Override
-    public void storeCacheContent(String cacheKey, String cacheContent) {
-        cache.put(cacheKey, cacheContent);
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void storeContent(String cacheKey, String cacheContent) {
+		cache.put(cacheKey, cacheContent);
+	}
 }

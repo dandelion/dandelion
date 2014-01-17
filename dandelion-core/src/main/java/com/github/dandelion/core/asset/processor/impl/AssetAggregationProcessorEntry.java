@@ -29,9 +29,8 @@
  */
 package com.github.dandelion.core.asset.processor.impl;
 
-import static com.github.dandelion.core.asset.cache.AssetCacheSystem.checkCacheKey;
 import static com.github.dandelion.core.asset.cache.AssetCacheSystem.generateCacheKey;
-import static com.github.dandelion.core.asset.cache.AssetCacheSystem.storeCacheContent;
+import static com.github.dandelion.core.asset.cache.AssetCacheSystem.storeContent;
 import static com.github.dandelion.core.asset.web.AssetServlet.DANDELION_ASSETS_URL;
 
 import java.util.ArrayList;
@@ -107,10 +106,10 @@ public class AssetAggregationProcessorEntry extends AssetProcessorEntry {
             String aggregationKey = generateAggregationKey(typedAssets);
             String cacheKey = generateCacheKey(context, aggregationKey, AGGREGATION, type);
 
-            if (!checkCacheKey(cacheKey)) {
-                LOG.debug("cache assets aggregation for type {}", type.name());
-                cacheAggregatedContent(request, context, type, typedAssets, aggregationKey);
-            }
+			// Updates the cache in order for the aggregated content to be
+			// retrieved by the servlet
+			LOG.debug("Cache updated with aggregated assets for the type {} (key={})", type.name(), aggregationKey);
+			cacheAggregatedContent(request, context, type, typedAssets, aggregationKey);
 
             String accessLocation = baseUrl + DANDELION_ASSETS_URL + cacheKey;
 
@@ -142,7 +141,7 @@ public class AssetAggregationProcessorEntry extends AssetProcessorEntry {
             }
         }
 
-        storeCacheContent(context, generatedAssetKey, AGGREGATION, type, aggregatedContent.toString());
+        storeContent(context, generatedAssetKey, AGGREGATION, type, aggregatedContent.toString());
     }
 
     private String generateAggregationKey(List<Asset> assets) {

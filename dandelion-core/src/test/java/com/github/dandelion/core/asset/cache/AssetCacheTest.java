@@ -8,6 +8,6 @@ public class AssetCacheTest {
 
     @Test
     public void should_load_another_cache_system() {
-        assertThat(AssetCacheSystem.getAssetsCacheName()).isEqualTo(new AnotherAssetCache().getAssetsCacheName());
+        assertThat(AssetCacheSystem.getCacheName()).isEqualTo(new AnotherAssetCache().getCacheName());
     }
 }
