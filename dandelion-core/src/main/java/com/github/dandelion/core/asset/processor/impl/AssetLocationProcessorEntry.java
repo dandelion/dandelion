@@ -29,13 +29,14 @@
  */
 package com.github.dandelion.core.asset.processor.impl;
 
-import static com.github.dandelion.core.DevMode.isDevModeEnabled;
+
 
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.github.dandelion.core.DevMode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -113,7 +114,7 @@ public class AssetLocationProcessorEntry extends AssetProcessorEntry {
 
             Asset wrappedAsset = asset.clone(true);
             wrappedAsset.getLocations().put(locationKey, location);
-            if(isDevModeEnabled()) {
+            if(DevMode.enabled()) {
                 debugAttributes(wrappedAsset, locationKey, false);
             }
             _assets.add(wrappedAsset);

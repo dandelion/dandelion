@@ -59,7 +59,7 @@ public class AdditionalAssetsProcessorEntry extends AssetProcessorEntry {
         this.additionalAssetsEnabled = Boolean.TRUE.toString().equals(
                 Configuration.getProperty(ADDITIONAL_ASSETS_ENABLED_KEY, Boolean.toString(additionalAssetsEnabled)));
 
-        if(DevMode.isDevModeEnabled()) {
+        if(DevMode.enabled()) {
             this.additionalAssetsEnabled = false;
         }
 

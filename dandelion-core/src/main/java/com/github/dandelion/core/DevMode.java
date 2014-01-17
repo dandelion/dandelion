@@ -37,16 +37,8 @@ public final class DevMode {
         devMode = Boolean.TRUE.toString().equals(System.getProperty(DANDELION_DEV_MODE, Boolean.toString(devMode)));
     }
 
-    public static boolean isDevModeEnabled() {
+    public static boolean enabled() {
         return devMode;
-    }
-
-    public static boolean devModeOverride(boolean realResult) {
-        return isDevModeEnabled() || realResult;
-    }
-    
-    public static void setDevMode(boolean devMode){
-    	DevMode.devMode = devMode;
     }
 
 }

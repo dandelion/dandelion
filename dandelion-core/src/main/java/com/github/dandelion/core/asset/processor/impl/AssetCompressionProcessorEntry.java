@@ -85,7 +85,7 @@ public class AssetCompressionProcessorEntry extends AssetProcessorEntry {
         this.jsDisableOptimizations = Boolean.TRUE.toString().equals(
                 Configuration.getProperty(COMPRESSION_JS_DISABLE_OPTIMIZATIONS, Boolean.toString(compressionEnabled)));
 
-        if(DevMode.isDevModeEnabled()) {
+        if(DevMode.enabled()) {
             this.compressionEnabled = false;
         }
 

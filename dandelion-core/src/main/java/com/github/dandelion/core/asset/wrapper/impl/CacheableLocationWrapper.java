@@ -30,7 +30,7 @@
 
 package com.github.dandelion.core.asset.wrapper.impl;
 
-import static com.github.dandelion.core.DevMode.isDevModeEnabled;
+
 import static com.github.dandelion.core.asset.cache.AssetCacheSystem.generateCacheKey;
 import static com.github.dandelion.core.asset.cache.AssetCacheSystem.storeCacheContent;
 import static com.github.dandelion.core.asset.web.AssetServlet.DANDELION_ASSETS_URL;
@@ -40,6 +40,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.github.dandelion.core.DevMode;
 import com.github.dandelion.core.asset.Asset;
 import com.github.dandelion.core.asset.cache.AssetCacheSystem;
 import com.github.dandelion.core.asset.wrapper.spi.AssetLocationWrapper;
@@ -63,7 +64,7 @@ public abstract class CacheableLocationWrapper implements AssetLocationWrapper {
         String cacheKey = generateCacheKey(context, location, asset.getName(), asset.getType());
 
         Map<String, Object> parameters = get(request).getParameters(asset.getName());
-        if (isDevModeEnabled() || !AssetCacheSystem.checkCacheKey(cacheKey)) {
+        if (DevMode.enabled() || !AssetCacheSystem.checkCacheKey(cacheKey)) {
             String content = getContent(asset, location, parameters, request);
             storeCacheContent(context, location, asset.getName(), asset.getType(), content);
         }

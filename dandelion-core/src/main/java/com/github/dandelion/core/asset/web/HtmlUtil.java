@@ -30,8 +30,9 @@
 
 package com.github.dandelion.core.asset.web;
 
-import static com.github.dandelion.core.DevMode.isDevModeEnabled;
 
+
+import com.github.dandelion.core.DevMode;
 import com.github.dandelion.core.asset.cache.AssetCacheSystem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -60,7 +61,7 @@ public class HtmlUtil {
         }
 
         String _cacheControl = Configuration.getProperty(CACHE_CONTROL);
-        if (isDevModeEnabled() || _cacheControl == null || _cacheControl.isEmpty()) {
+        if (DevMode.enabled() || _cacheControl == null || _cacheControl.isEmpty()) {
             _cacheControl = DEFAULT_CACHE_CONTROL;
         }
         cacheControl = _cacheControl;

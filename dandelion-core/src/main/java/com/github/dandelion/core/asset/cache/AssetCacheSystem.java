@@ -62,7 +62,7 @@ public class AssetCacheSystem {
         for (AssetCache ac : loader) {
             if (assetCache != null) {
                 LOG.info("found {} assets cache but it's already configured with {} cache system", ac.getAssetsCacheName(), assetCache.getAssetsCacheName());
-            } else if (!ac.getAssetsCacheName().equals("default")) {
+            } else {
                 assetCache = ac;
                 LOG.info("setup assets cache with {} cache system", assetCache.getAssetsCacheName());
             }

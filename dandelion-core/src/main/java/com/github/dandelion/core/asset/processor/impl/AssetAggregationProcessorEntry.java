@@ -66,7 +66,7 @@ public class AssetAggregationProcessorEntry extends AssetProcessorEntry {
         this.aggregationEnabled = Boolean.TRUE.toString().equals(
                 Configuration.getProperty(AGGREGATION_ENABLED_KEY, Boolean.toString(aggregationEnabled)));
 
-        if(DevMode.isDevModeEnabled()) {
+        if(DevMode.enabled()) {
             this.aggregationEnabled = false;
         }
 

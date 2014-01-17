@@ -30,13 +30,12 @@
 
 package com.github.dandelion.core.asset.wrapper.impl;
 
-import static com.github.dandelion.core.DevMode.isDevModeEnabled;
-
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.github.dandelion.core.DevMode;
 import com.github.dandelion.core.asset.Asset;
 import com.github.dandelion.core.utils.ResourceUtils;
 
@@ -51,7 +50,7 @@ public class TemplateLocationWrapper extends CacheableLocationWrapper {
     }
 
     private String getTemplateContent(String tplLocation) {
-        if(isDevModeEnabled() || !cache.containsKey(tplLocation))
+        if(DevMode.enabled() || !cache.containsKey(tplLocation))
             cache.put(tplLocation, ResourceUtils.getFileContentFromClasspath(tplLocation, false));
         return cache.get(tplLocation);
     }

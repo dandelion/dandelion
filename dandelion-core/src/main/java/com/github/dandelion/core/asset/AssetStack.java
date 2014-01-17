@@ -29,7 +29,7 @@
  */
 package com.github.dandelion.core.asset;
 
-import static com.github.dandelion.core.DevMode.devModeOverride;
+
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -38,6 +38,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.github.dandelion.core.DevMode;
 import com.github.dandelion.core.asset.processor.AssetProcessorSystem;
 import com.github.dandelion.core.asset.wrapper.spi.AssetLocationWrapper;
 
@@ -49,10 +50,10 @@ public class AssetStack {
      * Initialize Assets only if needed
      */
     static void initializeIfNeeded() {
-        if(devModeOverride(assetConfigurator == null)) {
-            if(devModeOverride(assetStorage == null)) {
-                initializeStorageIfNeeded();
-            }
+        if(assetStorage == null) {
+            initializeStorageIfNeeded();
+        }
+        if(assetConfigurator == null) {
             initializeConfiguratorIfNeeded();
         }
     }
@@ -61,7 +62,7 @@ public class AssetStack {
      * Initialize Assets Configurator only if needed
      */
     synchronized private static void initializeConfiguratorIfNeeded() {
-        if(devModeOverride(assetConfigurator == null)) {
+        if(assetConfigurator == null) {
             assetConfigurator = new AssetConfigurator(assetStorage);
             assetConfigurator.initialize();
         }
@@ -71,7 +72,7 @@ public class AssetStack {
      * Initialize Assets Storage only if needed
      */
     synchronized private static void initializeStorageIfNeeded() {
-        if(devModeOverride(assetStorage == null)) {
+        if(assetStorage == null) {
             assetStorage = new AssetStorage();
         }
     }
@@ -115,19 +116,7 @@ public class AssetStack {
      * @return Prepared Assets of scopes
      */
     public static List<Asset> prepareAssetsFor(HttpServletRequest request, String[] scopes, String[] excludeAssetsName) {
-        initializeIfNeeded();
-        return processAssets(excludeByName(assetsFor(scopes), excludeAssetsName), request);
-    }
-
-    /**
-     * Prepare Assets of Scopes for rendering
-     * @param assets assets to process
-     * @param request http request
-     * @return Prepared Assets of scopes
-     */
-    public static List<Asset> processAssets(List<Asset> assets, HttpServletRequest request) {
-        initializeIfNeeded();
-        return AssetProcessorSystem.process(assets, request);
+        return AssetProcessorSystem.process(excludeByName(assetsFor(scopes), excludeAssetsName), request);
     }
 
     /**
