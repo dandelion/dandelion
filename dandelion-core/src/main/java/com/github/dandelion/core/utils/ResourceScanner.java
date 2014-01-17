@@ -175,7 +175,7 @@ public final class ResourceScanner {
 				// Computes the physical root of the classpath to later
 				// determine the resource path more easily
 				String resourcePath = URLDecoder.decode(url.getPath(), "UTF-8");
-				if (resourcePath.endsWith("/")) {
+				if (resourcePath.endsWith("/") && location.length() > 1) {
 					resourcePath = resourcePath.substring(0, resourcePath.length() - 1);
 				}
 				String classpathPhysicalRoot = resourcePath.substring(0, resourcePath.length() - location.length());
