@@ -24,7 +24,7 @@ import com.github.dandelion.core.html.HtmlTag;
 /**
  * <p>
  * Dandelion filter used to inject web resources at the right positions in the
- * HTML, depending on the content of the asset stack.
+ * HTML, depending on the content of the {@link AssetStack}.
  * 
  * @since 0.3.0
  */
@@ -46,7 +46,7 @@ public class AssetFilter implements Filter {
 
 		// Only filter HTTP requests
 		if (!(servletRequest instanceof HttpServletRequest)) {
-            LOG.debug("AssetFilter apply only on HTTP request");
+            LOG.warn("The AssetFilter only applies to HTTP requests");
 			filterChain.doFilter(servletRequest, serlvetResponse);
 			return;
 		}
@@ -56,7 +56,7 @@ public class AssetFilter implements Filter {
 
 		// Only filter requests that accept HTML
         if (isFilterApplyable(request)) {
-            LOG.debug("AssetFilter apply on this request {}", request.getRequestURL().toString());
+            LOG.trace("The AssetFilter applies to the request {}", request.getRequestURL().toString());
 
 			AssetFilterResponseWrapper wrapper = new AssetFilterResponseWrapper(response);
 			filterChain.doFilter(request, wrapper);
@@ -73,9 +73,8 @@ public class AssetFilter implements Filter {
 				html = generateHeadAssets(assets, html);
 				html = generateBodyAssets(assets, html);
 
-				// FIXME Break the page loading when using Thymeleaf
-                // Update the content length to new value
-//                response.setIntHeader("Content-Length", html.getBytes().length);
+				// The Content-Length header is deliberately not updated here
+				// because it causes issues with Thymeleaf
 			}
 
             response.getWriter().println(html);
@@ -83,7 +82,9 @@ public class AssetFilter implements Filter {
 		}
 		// All other requests are not filtered
 		else {
-            LOG.debug("AssetFilter apply only on content type 'text/html' on this request {}", request.getRequestURL().toString());
+			LOG.trace(
+					"The AssetFilter only applies to the content type 'text/html', whereas the request {} has a content type '{}'",
+					request.getRequestURL().toString(), request.getContentType());
 			filterChain.doFilter(request, response);
 		}
 	}
