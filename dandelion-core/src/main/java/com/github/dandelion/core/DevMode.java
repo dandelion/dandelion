@@ -41,4 +41,7 @@ public final class DevMode {
         return devMode;
     }
 
+    public static void set(boolean state){
+    	devMode = state;
+    }
 }
