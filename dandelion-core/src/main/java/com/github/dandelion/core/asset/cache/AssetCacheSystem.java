@@ -30,10 +30,13 @@
 
 package com.github.dandelion.core.asset.cache;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.ServiceLoader;
 
 import com.github.dandelion.core.asset.cache.impl.HashMapAssetCache;
 import com.github.dandelion.core.asset.cache.spi.AssetCache;
+import com.github.dandelion.core.config.Configuration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,7 +52,7 @@ import com.github.dandelion.core.utils.Sha1Utils;
  * @author Thibault Duchateau
  * @since 0.10.0
  */
-public class AssetCacheSystem {
+public class    AssetCacheSystem {
 
 	// Logger
 	private static final Logger LOG = LoggerFactory.getLogger(AssetCacheSystem.class);
@@ -71,21 +74,29 @@ public class AssetCacheSystem {
 			return;
 		}
 
+        Map<String, AssetCache> caches = new HashMap<String, AssetCache>();
 		for (AssetCache ac : loader) {
-			if (assetCache != null) {
-				LOG.info("found {} assets cache but it's already configured with {} cache system", ac.getCacheName(),
-						assetCache.getCacheName());
-			}
-			else {
-				assetCache = ac;
-				LOG.info("setup assets cache with {} cache system", assetCache.getCacheName());
-			}
+            caches.put(ac.getCacheName(), ac);
+            LOG.debug("find a asset cache name {}", ac.getCacheName());
 		}
+
+        String cacheName = Configuration.getProperty("asset.cache.strategy");
+        if(!caches.isEmpty()) {
+            if(caches.containsKey(cacheName)) {
+                assetCache = caches.get(cacheName);
+            } else if(cacheName == null && caches.size() == 1) {
+                assetCache = caches.values().iterator().next();
+            } else {
+                LOG.warn("Asset Cache Strategy is set with {}, but we only found caches with names {}", cacheName, caches.keySet());
+            }
+        } else if (cacheName != null) {
+            LOG.warn("Asset Cache Strategy is set with {}, but we don't find any cache", cacheName);
+        }
 
 		if (assetCache == null) {
 			assetCache = new HashMapAssetCache();
-			LOG.info("setup assets cache with {} cache system", assetCache.getCacheName());
 		}
+        LOG.info("setup assets cache with {} cache system", assetCache.getCacheName());
 	}
 
 	public static String generateCacheKey(String context, String location, String assetName, AssetType assetType) {
