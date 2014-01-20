@@ -45,7 +45,6 @@ import com.github.dandelion.core.asset.loader.spi.AssetLoader;
 import com.github.dandelion.core.utils.ResourceScanner;
 
 /**
- * <p>
  * Abstract asset loader in charge of loading JSON definitions. The JSON
  * definitions are scanned in the folder specified by the {@link #getPath()}
  * method. The lookup is recursive depending on the {@link #isRecursive()}
@@ -95,13 +94,7 @@ public abstract class AbstractAssetJsonLoader implements AssetLoader {
 
 	public abstract String getPath();
 
-	@Override
-	public String getType() {
-		return "json";
-	}
-
 	/**
-	 * <p>
 	 * Since each implementation of {@link AbstractAssetJsonLoader} is in
 	 * charge of loading their own definitions, each one of them must be aware
 	 * of the existence of the others.
@@ -112,7 +105,7 @@ public abstract class AbstractAssetJsonLoader implements AssetLoader {
 
 		List<String> excludedPaths = new ArrayList<String>();
 
-		for (AssetLoader loader : AssetLoaderSystem.getLoaders()) {
+		for (AssetLoader loader : AssetLoaderSystem.getLoaders(true)) {
 			if (loader instanceof AbstractAssetJsonLoader) {
 				String path = ((AbstractAssetJsonLoader) loader).getPath();
 				if (path.startsWith(getPath()) && !path.equalsIgnoreCase(getPath())) {

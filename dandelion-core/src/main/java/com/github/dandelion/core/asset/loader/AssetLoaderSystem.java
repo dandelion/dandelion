@@ -33,6 +33,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ServiceLoader;
 
+import com.github.dandelion.core.config.Configuration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,6 +45,7 @@ public final class AssetLoaderSystem {
 
     private static ServiceLoader<AssetLoader> serviceLoader = ServiceLoader.load(AssetLoader.class);
     private static List<AssetLoader> loaders;
+    private static List<AssetLoader> allLoaders;
 
     private AssetLoaderSystem() {
     }
@@ -58,16 +60,29 @@ public final class AssetLoaderSystem {
         if(loaders != null) return;
 
         List<AssetLoader> als = new ArrayList<AssetLoader>();
+        List<AssetLoader> aals = new ArrayList<AssetLoader>();
         for (AssetLoader al : serviceLoader) {
-            als.add(al);
-            LOG.info("found AssetLoader for {} named {}", al.getType(), al.getClass().getSimpleName());
+            if(!"false".equalsIgnoreCase(Configuration.getProperty("asset.loader." + al.getName() + ".active"))) {
+                als.add(al);
+                LOG.info("found an active AssetLoader named {}", al.getClass().getSimpleName());
+            } else {
+                LOG.info("found an inactive AssetLoader named {}", al.getClass().getSimpleName());
+            }
+            aals.add(al);
+            LOG.info("found AssetLoader named {}", al.getClass().getSimpleName());
         }
 
         loaders = als;
+        allLoaders = aals;
     }
 
     public static List<AssetLoader> getLoaders() {
         initialize();
         return loaders;
+    }
+
+    public static List<AssetLoader> getLoaders(boolean withInactiveLoaders) {
+        initialize();
+        return withInactiveLoaders?allLoaders:getLoaders();
     }
 }

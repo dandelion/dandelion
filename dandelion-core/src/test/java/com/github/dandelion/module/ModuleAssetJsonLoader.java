@@ -48,6 +48,11 @@ public class ModuleAssetJsonLoader extends AbstractAssetJsonLoader {
 		return "module";
 	}
 
+    @Override
+    public String getName() {
+        return "module";
+    }
+
 	@Override
 	public boolean isRecursive() {
 		return true;

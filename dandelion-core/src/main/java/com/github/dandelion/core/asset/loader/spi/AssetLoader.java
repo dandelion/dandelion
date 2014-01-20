@@ -39,7 +39,6 @@ import com.github.dandelion.core.asset.AssetComponent;
 public interface AssetLoader {
 
 	/**
-	 * <p>
 	 * Load assets by scanning the classpath starting from the configured
 	 * folder.
 	 * 
@@ -48,15 +47,11 @@ public interface AssetLoader {
 	List<AssetComponent> loadAssets();
 
 	/**
-	 * TODO aujourd'hui uniquement utilisé pour loguer (cf
-	 * {@link com.github.dandelion.core.asset.loader.AssetLoaderSystem}).
-	 * 
-	 * @return
+	 * @return the name of the loader
 	 */
-	String getType();
+	String getName();
 
 	/**
-	 * <p>
 	 * Indicates whether the asset loader must scan for its resources
 	 * recursively inside the configured folder or not.
 	 * 

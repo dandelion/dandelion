@@ -61,7 +61,7 @@ public class AssetFakeLoader implements AssetLoader {
     }
 
     @Override
-    public String getType() {
+    public String getName() {
         return "fake";
     }
 

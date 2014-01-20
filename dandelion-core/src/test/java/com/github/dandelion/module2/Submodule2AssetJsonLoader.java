@@ -48,7 +48,12 @@ public class Submodule2AssetJsonLoader extends AbstractAssetJsonLoader {
     public String getPath() {
         return "module2/submodule";
     }
-    
+
+    @Override
+    public String getName() {
+        return "submodule2";
+    }
+
     @Override
 	public boolean isRecursive() {
 		return true;

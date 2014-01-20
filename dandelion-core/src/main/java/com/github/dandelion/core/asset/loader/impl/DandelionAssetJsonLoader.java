@@ -18,13 +18,12 @@ import com.github.dandelion.core.config.Configuration;
  * subpaths.
  */
 public class DandelionAssetJsonLoader extends AbstractAssetJsonLoader {
-   
 	// Logger
     private static final Logger LOG = LoggerFactory.getLogger(DandelionAssetJsonLoader.class);
 
     @Override
-    protected Logger getLogger() {
-        return LOG;
+    public String getName() {
+        return "dandelion";
     }
 
     @Override
@@ -34,14 +33,16 @@ public class DandelionAssetJsonLoader extends AbstractAssetJsonLoader {
 
     @Override
     public List<AssetComponent> loadAssets() {
-        if("false".equalsIgnoreCase(Configuration.getProperty("dandelion.asset.json.loader.active"))) {
-            return Collections.emptyList();
-        }
         return super.loadAssets();
     }
 
-	@Override
+    @Override
 	public boolean isRecursive() {
 		return true;
 	}
+
+    @Override
+    protected Logger getLogger() {
+        return LOG;
+    }
 }
