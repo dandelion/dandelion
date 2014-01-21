@@ -294,7 +294,7 @@ public final class ResourceScanner {
 	private static boolean isPathAuthorized(String path, List<String> excludedPaths) {
 		if (excludedPaths != null) {
 			for (String excludedFolder : excludedPaths) {
-				if (FileUtils.contains(path, excludedFolder)) {
+				if (path.contains(excludedFolder)) {
 					return false;
 				}
 			}
@@ -337,7 +337,7 @@ public final class ResourceScanner {
 
 			if (isPathAuthorized(resourcePath, excludedPaths)) {
 
-				String resourceName = FileUtils.getName(resourcePath);
+				String resourceName = resourcePath.substring(resourcePath.lastIndexOf("/") + 1);
 
 				if (StringUtils.isBlank(nameFilter) && StringUtils.isBlank(prefixFilter)
 						&& StringUtils.isBlank(suffixFilter)) {
