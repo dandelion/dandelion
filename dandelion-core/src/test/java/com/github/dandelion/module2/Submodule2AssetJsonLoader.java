@@ -46,7 +46,7 @@ public class Submodule2AssetJsonLoader extends AbstractAssetJsonLoader {
 
     @Override
     public String getPath() {
-        return "module2/submodule";
+        return "module2\\submodule";
     }
 
     @Override

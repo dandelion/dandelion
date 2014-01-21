@@ -142,11 +142,11 @@ public final class ResourceScanner {
 	 * @param excludedPaths
 	 *            List of paths which will be excluded during the classpath
 	 *            scanning.
-	 * @param resourceName
+	 * @param nameFilter
 	 *            The name of the resource to look for.
-	 * @param prefix
+	 * @param prefixFilter
 	 *            The prefix condition to be applied on the resource name.
-	 * @param suffix
+	 * @param suffixFilter
 	 *            The suffix condition to be applied on the resource name.
 	 * @param recursive
 	 *            Whether the scanning should be recursive or not.
@@ -294,7 +294,7 @@ public final class ResourceScanner {
 	private static boolean isPathAuthorized(String path, List<String> excludedPaths) {
 		if (excludedPaths != null) {
 			for (String excludedFolder : excludedPaths) {
-				if (path.contains(excludedFolder)) {
+				if (FileUtils.contains(path, excludedFolder)) {
 					return false;
 				}
 			}
@@ -326,8 +326,6 @@ public final class ResourceScanner {
 	 *            The prefix condition to be applied on the resource name.
 	 * @param suffixFilter
 	 *            The suffix condition to be applied on the resource name;
-	 * @param recursive
-	 *            Whether the scanning should be recursive or not.
 	 * @return A set of resource paths that match the given conditions.
 	 */
 	private static Set<String> filterResourcePaths(Set<String> resourcePaths, List<String> excludedPaths,
@@ -339,7 +337,7 @@ public final class ResourceScanner {
 
 			if (isPathAuthorized(resourcePath, excludedPaths)) {
 
-				String resourceName = resourcePath.substring(resourcePath.lastIndexOf("/") + 1);
+				String resourceName = FileUtils.getName(resourcePath);
 
 				if (StringUtils.isBlank(nameFilter) && StringUtils.isBlank(prefixFilter)
 						&& StringUtils.isBlank(suffixFilter)) {

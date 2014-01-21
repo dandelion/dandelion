@@ -1,6 +1,6 @@
 /*
  * [The "BSD licence"]
- * Copyright (c) 2013 Dandelion
+ * Copyright (c) 2014 Dandelion
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,35 +27,48 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+package com.github.dandelion.core.utils;
 
-package com.github.dandelion.module2;
+import java.io.File;
 
-import com.github.dandelion.core.asset.loader.impl.AbstractAssetJsonLoader;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-public class Module2AssetJsonLoader extends AbstractAssetJsonLoader {
-    // Logger
-    private static final Logger LOG = LoggerFactory.getLogger(Module2AssetJsonLoader.class);
-
-    @Override
-    protected Logger getLogger() {
-        return LOG;
+/**
+ * Utility for File manipulation.
+ * @author Romain Lespinasse
+ * @since 0.10.0
+ */
+public final class FileUtils {
+    /**
+     * Check if a filePath start with the folderPath
+     * @param filePath path of file
+     * @param folderPath path of folder
+     * @return <code>true</code> if the file is in the folder
+     */
+    public static boolean contains(String filePath, String folderPath) {
+        return cleanBase(filePath).contains(cleanBase(folderPath));
     }
 
-    @Override
-    public String getPath() {
-        return "module2";
+    /**
+     * Get the name from file path
+     * @param filePath file path
+     * @return the name of the file path
+     */
+    public static String getName(String filePath) {
+        return filePath.substring(filePath.lastIndexOf("/") + 1);
     }
 
-    @Override
-    public String getName() {
-        return "module2";
+    /**
+     * Clean the path for cross-platform usage
+     *
+     * @param path path to clean
+     * @return clean path
+     */
+    private static String cleanBase(String path) {
+        return path.toLowerCase().replace("\\", "/");
     }
-    
-    @Override
-	public boolean isRecursive() {
-		return true;
-	}
+
+    /**
+     * Prevent instantiation.
+     */
+    private FileUtils() {
+    }
 }
