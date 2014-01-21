@@ -41,6 +41,7 @@
    
    <artifactId>dandelion-ehcache</artifactId>
    <name>Dandelion :: Extras :: Cache :: EhCache</name>
+   <description>Extra allowing to plug a back-end cache based on Ehcache in the asset cache system.</description>
    
    <dependencies>
       <dependency>
