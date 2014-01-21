@@ -28,16 +28,16 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package com.github.dandelion.module2;
+package com.github.dandelion.module_with_submodule;
 
 import com.github.dandelion.core.asset.loader.impl.AbstractAssetJsonLoader;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class Submodule2AssetJsonLoader extends AbstractAssetJsonLoader {
+public class ModuleWithSubmoduleAssetJsonLoader extends AbstractAssetJsonLoader {
     // Logger
-    private static final Logger LOG = LoggerFactory.getLogger(Submodule2AssetJsonLoader.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ModuleWithSubmoduleAssetJsonLoader.class);
 
     @Override
     protected Logger getLogger() {
@@ -46,14 +46,14 @@ public class Submodule2AssetJsonLoader extends AbstractAssetJsonLoader {
 
     @Override
     public String getPath() {
-        return "module2/submodule";
+        return "module_with_submodule";
     }
 
     @Override
     public String getName() {
-        return "submodule2";
+        return "module_with_submodule";
     }
-
+    
     @Override
 	public boolean isRecursive() {
 		return true;

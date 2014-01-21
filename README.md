@@ -1,5 +1,4 @@
-Dandelion
-========================
+# Dandelion [![Build Status](https://dandelion.ci.cloudbees.com/job/dandelion-build/badge/icon)](https://dandelion.ci.cloudbees.com/job/dandelion-build/)
 
 [Dandelion](http://dandelion.github.io) is the core of all modules that helps you to manage your assets in your application.
 

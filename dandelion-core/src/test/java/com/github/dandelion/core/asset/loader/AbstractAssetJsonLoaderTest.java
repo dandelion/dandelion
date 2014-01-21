@@ -32,14 +32,14 @@ package com.github.dandelion.core.asset.loader;
 
 import static org.fest.assertions.Assertions.assertThat;
 
-import com.github.dandelion.module2.Module2AssetJsonLoader;
+import com.github.dandelion.module_with_submodule.ModuleWithSubmoduleAssetJsonLoader;
 import org.junit.Test;
 
 public class AbstractAssetJsonLoaderTest {
 
     @Test
     public void should_not_load_resource_in_submodule_folder() {
-        Module2AssetJsonLoader loader = new Module2AssetJsonLoader();
+        ModuleWithSubmoduleAssetJsonLoader loader = new ModuleWithSubmoduleAssetJsonLoader();
         assertThat(loader.loadAssets()).hasSize(1);
     }
 }
