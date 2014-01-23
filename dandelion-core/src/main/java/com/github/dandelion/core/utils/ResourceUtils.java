@@ -85,7 +85,7 @@ public final class ResourceUtils {
         try {
             String realUrl = url;
             if(realUrl.startsWith(PROTOCOL_RELATIVE_PREFIX)) {
-                realUrl = request.getProtocol() + ":" + realUrl;
+                realUrl = request.isSecure()?"https:":"http:"+ realUrl;
             }
             URL urlLocation = new URL(realUrl);
             return ResourceUtils.getContentFromInputStream(urlLocation.openStream());
