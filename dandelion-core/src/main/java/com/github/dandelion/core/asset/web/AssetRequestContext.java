@@ -70,7 +70,7 @@ public class AssetRequestContext {
         Object attribute = servletRequest.getAttribute(AssetRequestContext.class.getCanonicalName());
         if(attribute == null || !(attribute instanceof AssetRequestContext)) {
             attribute = new AssetRequestContext();
-            ((AssetRequestContext) attribute).addScopes(Configuration.getProperties().getProperty("assets.included.scopes"));
+            ((AssetRequestContext) attribute).addScopes(Configuration.getProperties().getProperty("assets.actives.scopes"));
             servletRequest.setAttribute(AssetRequestContext.class.getCanonicalName(), attribute);
         }
         return AssetRequestContext.class.cast(attribute);
