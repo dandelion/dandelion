@@ -39,50 +39,60 @@ import org.slf4j.LoggerFactory;
 
 import com.github.dandelion.core.asset.loader.spi.AssetLoader;
 
+/**
+ * System in charge of discovering all implementations of {@link AssetLoader}
+ * available in the classpath.
+ * 
+ * @author Romain Lespinasse
+ * @since 0.10.0
+ */
 public final class AssetLoaderSystem {
-    // Logger
-    private static final Logger LOG = LoggerFactory.getLogger(AssetLoaderSystem.class);
 
-    private static ServiceLoader<AssetLoader> serviceLoader = ServiceLoader.load(AssetLoader.class);
-    private static List<AssetLoader> loaders;
-    private static List<AssetLoader> allLoaders;
+	// Logger
+	private static final Logger LOG = LoggerFactory.getLogger(AssetLoaderSystem.class);
 
-    private AssetLoaderSystem() {
-    }
+	private static ServiceLoader<AssetLoader> serviceLoader = ServiceLoader.load(AssetLoader.class);
+	private static List<AssetLoader> loaders;
+	private static List<AssetLoader> allLoaders;
 
-    private static void initialize() {
-        if(loaders == null) {
-            initializeIfNeeded();
-        }
-    }
+	private AssetLoaderSystem() {
+	}
 
-    synchronized private static void initializeIfNeeded() {
-        if(loaders != null) return;
+	private static void initialize() {
+		if (loaders == null) {
+			initializeIfNeeded();
+		}
+	}
 
-        List<AssetLoader> als = new ArrayList<AssetLoader>();
-        List<AssetLoader> aals = new ArrayList<AssetLoader>();
-        for (AssetLoader al : serviceLoader) {
-            if(!"false".equalsIgnoreCase(Configuration.getProperty("asset.loader." + al.getName() + ".active"))) {
-                als.add(al);
-                LOG.info("found an active AssetLoader named {}", al.getClass().getSimpleName());
-            } else {
-                LOG.info("found an inactive AssetLoader named {}", al.getClass().getSimpleName());
-            }
-            aals.add(al);
-            LOG.info("found AssetLoader named {}", al.getClass().getSimpleName());
-        }
+	synchronized private static void initializeIfNeeded() {
+		if (loaders != null) {
+			return;
+		}
 
-        loaders = als;
-        allLoaders = aals;
-    }
+		List<AssetLoader> als = new ArrayList<AssetLoader>();
+		List<AssetLoader> aals = new ArrayList<AssetLoader>();
+		for (AssetLoader al : serviceLoader) {
+			if (!"false".equalsIgnoreCase(Configuration.getProperty("asset.loader." + al.getName() + ".active"))) {
+				als.add(al);
+				LOG.info("Active AssetLoader found: {}", al.getClass().getSimpleName());
+			}
+			else {
+				LOG.info("Inactive AssetLoader found: {}", al.getClass().getSimpleName());
+			}
+			aals.add(al);
+		}
 
-    public static List<AssetLoader> getLoaders() {
-        initialize();
-        return loaders;
-    }
+		loaders = als;
+		allLoaders = aals;
+	}
 
-    public static List<AssetLoader> getLoaders(boolean withInactiveLoaders) {
-        initialize();
-        return withInactiveLoaders?allLoaders:getLoaders();
-    }
+	public static List<AssetLoader> getLoaders() {
+		initialize();
+		return loaders;
+	}
+
+	public static List<AssetLoader> getLoaders(boolean withInactiveLoaders) {
+		initialize();
+		return withInactiveLoaders ? allLoaders : getLoaders();
+	}
 }

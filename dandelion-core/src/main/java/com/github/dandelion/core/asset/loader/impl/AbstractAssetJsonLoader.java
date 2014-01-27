@@ -35,12 +35,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import com.github.dandelion.core.asset.AssetComponent;
-import com.github.dandelion.core.asset.loader.AssetLoaderSystem;
 import org.codehaus.jackson.JsonParser;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 
+import com.github.dandelion.core.asset.AssetComponent;
+import com.github.dandelion.core.asset.loader.AssetLoaderSystem;
 import com.github.dandelion.core.asset.loader.spi.AssetLoader;
 import com.github.dandelion.core.utils.ResourceScanner;
 
@@ -49,6 +49,10 @@ import com.github.dandelion.core.utils.ResourceScanner;
  * definitions are scanned in the folder specified by the {@link #getPath()}
  * method. The lookup is recursive depending on the {@link #isRecursive()}
  * return value.
+ * 
+ * @author Romain Lespinasse
+ * @author Thibault Duchateau
+ * @since 0.10.0
  */
 public abstract class AbstractAssetJsonLoader implements AssetLoader {
 

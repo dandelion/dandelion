@@ -1,13 +1,11 @@
 package com.github.dandelion.core.asset.loader.impl;
 
-import java.util.Collections;
 import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.github.dandelion.core.asset.AssetComponent;
-import com.github.dandelion.core.config.Configuration;
 
 /**
  * <p>
@@ -16,6 +14,10 @@ import com.github.dandelion.core.config.Configuration;
  * <p>
  * This loader focuses on JSON files inside the {@code dandelion} path and all
  * subpaths.
+ * 
+ * @author Romain Lespinasse
+ * @author Thibault Duchateau
+ * @since 0.10.0
  */
 public class DandelionAssetJsonLoader extends AbstractAssetJsonLoader {
 	// Logger

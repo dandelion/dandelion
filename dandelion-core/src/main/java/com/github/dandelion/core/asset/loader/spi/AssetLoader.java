@@ -34,7 +34,11 @@ import java.util.List;
 import com.github.dandelion.core.asset.AssetComponent;
 
 /**
- * Interface that all assets loader should implement.
+ * Interface that all asset loaders should implement.
+ * 
+ * @author Romain Lespinasse
+ * @author Thibault Duchateau
+ * @since 0.10.0
  */
 public interface AssetLoader {
 
