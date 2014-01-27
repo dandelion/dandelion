@@ -49,7 +49,6 @@ import com.github.dandelion.core.config.Configuration;
  */
 public class AssetRequestContext {
     private List<String> scopes;
-    private boolean alreadyRendered;
     private List<String> excludedScopes;
     private List<String> excludedAssets;
     private Map<String, Map<String, Object>> parameters;
@@ -70,7 +69,7 @@ public class AssetRequestContext {
         Object attribute = servletRequest.getAttribute(AssetRequestContext.class.getCanonicalName());
         if(attribute == null || !(attribute instanceof AssetRequestContext)) {
             attribute = new AssetRequestContext();
-            ((AssetRequestContext) attribute).addScopes(Configuration.getProperties().getProperty("assets.actives.scopes"));
+            ((AssetRequestContext) attribute).addScopes(Configuration.getProperties().getProperty("assets.active.scopes"));
             servletRequest.setAttribute(AssetRequestContext.class.getCanonicalName(), attribute);
         }
         return AssetRequestContext.class.cast(attribute);
@@ -82,7 +81,7 @@ public class AssetRequestContext {
      * @return this context
      */
     public AssetRequestContext excludeScopes(String scopes) {
-        if(scopes == null) return this;
+        if(scopes == null || scopes.isEmpty()) return this;
         return excludeScopes(scopes.split(","));
     }
 
@@ -156,7 +155,7 @@ public class AssetRequestContext {
      * @return this context
      */
     public AssetRequestContext excludeAssets(String assetNames) {
-        if(assetNames == null) return this;
+        if(assetNames == null || assetNames.isEmpty()) return this;
         return excludeAssets(assetNames.split(","));
     }
 
@@ -230,7 +229,7 @@ public class AssetRequestContext {
      * @return this context
      */
     public AssetRequestContext addScopes(String scopes) {
-        if(scopes == null) return this;
+        if(scopes == null || scopes.isEmpty()) return this;
         return addScopes(scopes.split(","));
     }
 
@@ -321,22 +320,6 @@ public class AssetRequestContext {
      */
     public String[] getExcludedAssets() {
         return excludedAssets.toArray(new String[excludedAssets.size()]);
-    }
-
-    /**
-     * @return <code>true</code> if this context his already rendered in the response
-     */
-    public boolean isAlreadyRendered() {
-        return alreadyRendered;
-    }
-
-    /**
-     * Set this context as rendered
-     * @return this context
-     */
-    public AssetRequestContext hasBeenRendered() {
-        this.alreadyRendered = true;
-        return this;
     }
 
     /**

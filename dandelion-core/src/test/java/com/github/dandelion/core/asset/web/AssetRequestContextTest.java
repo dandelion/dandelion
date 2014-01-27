@@ -44,18 +44,6 @@ public class AssetRequestContextTest {
     }
 
     @Test
-    public void should_keep_a_rendering_state() {
-        MockHttpServletRequest request = new MockHttpServletRequest();
-
-        AssetRequestContext context = AssetRequestContext.get(request);
-        assertThat(context.isAlreadyRendered()).isFalse();
-
-        context.hasBeenRendered();
-        assertThat(context.isAlreadyRendered()).isTrue();
-        assertThat(AssetRequestContext.get(request).isAlreadyRendered()).isTrue();
-    }
-
-    @Test
     public void should_store_parameters() {
         MockHttpServletRequest request = new MockHttpServletRequest();
         AssetRequestContext context = AssetRequestContext.get(request);
@@ -66,5 +54,18 @@ public class AssetRequestContextTest {
         assertThat(context.getParameters("asset1")).hasSize(2).includes(
                 MapAssert.entry("param1", "value1"), MapAssert.entry("param2", "value2"));
         assertThat(context.getParameterValue("asset1", "unknown")).isNull();
+    }
+
+    @Test
+    public void should_dont_blink_a_eye() {
+        MockHttpServletRequest request = new MockHttpServletRequest();
+
+        AssetRequestContext context = AssetRequestContext.get(request);
+        context.addScopes("");
+        assertThat(context.getScopes(false)).isEmpty();
+
+        String nullValue = null;
+        context.addScopes(nullValue);
+        assertThat(context.getScopes(false)).isEmpty();
     }
 }

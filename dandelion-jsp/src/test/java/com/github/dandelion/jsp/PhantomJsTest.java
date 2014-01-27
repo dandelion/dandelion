@@ -121,7 +121,7 @@ public abstract class PhantomJsTest extends FluentAdapter {
                 });
 
                 Capabilities capabilities = new DesiredCapabilities();
-                DriverService service = PhantomJSDriverService.createDefaultService(capabilities);
+                PhantomJSDriverService service = PhantomJSDriverService.createDefaultService(capabilities);
                 driver = new PhantomJSDriver(service, capabilities);
             }
 
