@@ -43,7 +43,7 @@ import com.github.dandelion.core.DandelionException;
  * to the {@link DandelionConfigurator}.
  * 
  * @author Thibault Duchateau
- * @since 0.3.0
+ * @since 0.10.0
  */
 public interface ConfigurationLoader {
 

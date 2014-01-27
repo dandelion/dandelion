@@ -29,7 +29,7 @@ import com.github.dandelion.core.asset.web.AssetServlet;
  * <code>&lt;import resource="classpath:dandelion.xml" /&gt;</code>
  * </pre>
  * 
- * @since 0.3.0
+ * @since 0.10.0
  */
 @Controller
 @RequestMapping(value = AssetServlet.DANDELION_ASSETS_URL, method = RequestMethod.GET)

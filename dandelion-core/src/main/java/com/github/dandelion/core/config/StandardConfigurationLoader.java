@@ -61,7 +61,7 @@ import com.github.dandelion.core.utils.UTF8Control;
  * {@link DandelionConfigurator}.
  * 
  * @author Thibault Duchateau
- * @since 0.3.0
+ * @since 0.10.0
  * @see ConfigurationLoader
  * @see DandelionConfigurator
  * @see ConfigurationError
