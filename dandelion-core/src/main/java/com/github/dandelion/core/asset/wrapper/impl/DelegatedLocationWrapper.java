@@ -35,23 +35,35 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import com.github.dandelion.core.asset.Asset;
+import com.github.dandelion.core.asset.web.AssetRequestContext;
 
+/**
+ * <p>
+ * Location wrapper for {@code delegated} assets.
+ * 
+ * <p>
+ * Basically, a "delegated asset" is an asset that is generated programmatically
+ * and provided by the {@link AssetRequestContext}.
+ * 
+ * @author Romain Lespinasse
+ * @since 0.2.0
+ */
 public class DelegatedLocationWrapper extends CacheableLocationWrapper {
-    public static final String DELEGATED_CONTENT_PARAM = "DELEGATED_CONTENT";
+	public static final String DELEGATED_CONTENT_PARAM = "DELEGATED_CONTENT";
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String getLocationKey() {
-        return "delegated";
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public String getLocationKey() {
+		return "delegated";
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected String getContent(Asset asset, String location, Map<String, Object> parameters, HttpServletRequest request) {
-        return ((DelegatedContent) parameters.get(DELEGATED_CONTENT_PARAM)).getContent(request);
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected String getContent(Asset asset, String location, Map<String, Object> parameters, HttpServletRequest request) {
+		return ((DelegatedContent) parameters.get(DELEGATED_CONTENT_PARAM)).getContent(request);
+	}
 }
