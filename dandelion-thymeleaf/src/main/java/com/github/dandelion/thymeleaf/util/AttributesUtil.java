@@ -52,7 +52,7 @@ public class AttributesUtil {
      */
     public static AttributeName find(String attributeName, AttributeName[] names) {
         for(AttributeName _name:names) {
-            if(_name.getAttribute().equals(attributeName)) {
+            if(_name.getAttribute().equalsIgnoreCase(attributeName)) {
                 return _name;
             }
         }
