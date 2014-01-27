@@ -34,30 +34,30 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.ServiceLoader;
 
-import com.github.dandelion.core.asset.cache.impl.HashMapAssetCache;
-import com.github.dandelion.core.asset.cache.spi.AssetCache;
-import com.github.dandelion.core.config.Configuration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.github.dandelion.core.asset.AssetType;
+import com.github.dandelion.core.asset.cache.impl.HashMapAssetCache;
+import com.github.dandelion.core.asset.cache.spi.AssetCache;
+import com.github.dandelion.core.config.Configuration;
 import com.github.dandelion.core.utils.Sha1Utils;
 
 /**
  * <p>
- * Utilities used for initializing and accessing the configured
- * {@link AssetCache}.
+ * System in charge of discovering all implementations of {@link AssetCache}
+ * available in the classpath.
  * 
  * @author Romain Lespinasse
  * @author Thibault Duchateau
  * @since 0.10.0
  */
-public class    AssetCacheSystem {
+public class AssetCacheSystem {
 
 	// Logger
 	private static final Logger LOG = LoggerFactory.getLogger(AssetCacheSystem.class);
 
-	private static ServiceLoader<AssetCache> loader = ServiceLoader.load(AssetCache.class);
+	private static ServiceLoader<AssetCache> assetCacheServiceLoader = ServiceLoader.load(AssetCache.class);
 	private static AssetCache assetCache;
 
 	private AssetCacheSystem() {
@@ -74,29 +74,33 @@ public class    AssetCacheSystem {
 			return;
 		}
 
-        Map<String, AssetCache> caches = new HashMap<String, AssetCache>();
-		for (AssetCache ac : loader) {
-            caches.put(ac.getCacheName(), ac);
-            LOG.debug("find a asset cache name {}", ac.getCacheName());
+		Map<String, AssetCache> caches = new HashMap<String, AssetCache>();
+		for (AssetCache ac : assetCacheServiceLoader) {
+			caches.put(ac.getCacheName(), ac);
+			LOG.info("Asset cache found: {}", ac.getClass().getSimpleName());
 		}
 
-        String cacheName = Configuration.getProperty("asset.cache.strategy");
-        if(!caches.isEmpty()) {
-            if(caches.containsKey(cacheName)) {
-                assetCache = caches.get(cacheName);
-            } else if(cacheName == null && caches.size() == 1) {
-                assetCache = caches.values().iterator().next();
-            } else {
-                LOG.warn("Asset Cache Strategy is set with {}, but we only found caches with names {}", cacheName, caches.keySet());
-            }
-        } else if (cacheName != null) {
-            LOG.warn("Asset Cache Strategy is set with {}, but we don't find any cache", cacheName);
-        }
+		String cacheName = Configuration.getProperty("asset.cache.strategy");
+		if (!caches.isEmpty()) {
+			if (caches.containsKey(cacheName)) {
+				assetCache = caches.get(cacheName);
+			}
+			else if (cacheName == null && caches.size() == 1) {
+				assetCache = caches.values().iterator().next();
+			}
+			else {
+				LOG.warn("Asset Cache Strategy is set with {}, but we only found caches with names {}", cacheName,
+						caches.keySet());
+			}
+		}
+		else if (cacheName != null) {
+			LOG.warn("Asset Cache Strategy is set with {}, but we don't find any cache", cacheName);
+		}
 
 		if (assetCache == null) {
 			assetCache = new HashMapAssetCache();
 		}
-        LOG.info("setup assets cache with {} cache system", assetCache.getCacheName());
+		LOG.info("Selected asset cache system: {}", assetCache.getCacheName());
 	}
 
 	public static String generateCacheKey(String context, String location, String assetName, AssetType assetType) {

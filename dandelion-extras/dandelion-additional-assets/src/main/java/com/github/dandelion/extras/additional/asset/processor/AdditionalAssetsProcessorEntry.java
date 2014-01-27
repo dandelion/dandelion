@@ -79,7 +79,7 @@ public class AdditionalAssetsProcessorEntry extends AssetProcessorEntry {
 
         List<Asset> processedAssets = new ArrayList<Asset>();
         for(Asset asset:assets) {
-            if(asset.getLocations().size() == 1 && asset.getLocations().containsKey(getTreatmentKey())) {
+            if(asset.getLocations().size() == 1 && asset.getLocations().containsKey(getProcessorKey())) {
                 Map<String, Object> parameters = AssetRequestContext.get(request).getParameters(asset.getName());
                 Map<String, AssetLocationWrapper> wrappers = AssetStack.getAssetsLocationWrappers();
                 for(Map.Entry<String, Object> entry:parameters.entrySet()) {
@@ -98,7 +98,7 @@ public class AdditionalAssetsProcessorEntry extends AssetProcessorEntry {
     }
 
     @Override
-    public String getTreatmentKey() {
+    public String getProcessorKey() {
         return "additional_assets";
     }
 }

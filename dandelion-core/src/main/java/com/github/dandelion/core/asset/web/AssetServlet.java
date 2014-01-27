@@ -43,11 +43,15 @@ import org.slf4j.LoggerFactory;
 import com.github.dandelion.core.asset.web.data.AssetContent;
 
 /**
+ * <p>
  * The servlet intercepts the request and renders the appropriate web resource
  * stored in the configured cache system.
+ * 
+ * @author Romain Lespinasse
+ * @since 0.10.0
  */
 public class AssetServlet extends HttpServlet {
-    private static Logger LOG = LoggerFactory.getLogger(AssetServlet.class);
+	private static Logger LOG = LoggerFactory.getLogger(AssetServlet.class);
 
 	public static final String DANDELION_ASSETS = "dandelionAssets";
 	public static final String DANDELION_ASSETS_URL = "/dandelion-assets/";
@@ -58,17 +62,17 @@ public class AssetServlet extends HttpServlet {
 		getLogger().debug("Dandelion Asset servlet captured GET request {}", request.getRequestURI());
 
 		String assetKey = request.getRequestURL().substring(request.getRequestURL().lastIndexOf("/") + 1);
-        AssetContent assetContent = HtmlUtil.getAssetContent(assetKey);
+		AssetContent assetContent = HtmlUtil.getAssetContent(assetKey);
 
-        response.setHeader("Cache-Control", HtmlUtil.getCacheControl());
-        response.setContentType(assetContent.getContentType());
+		response.setHeader("Cache-Control", HtmlUtil.getCacheControl());
+		response.setContentType(assetContent.getContentType());
 
-        PrintWriter writer = response.getWriter();
+		PrintWriter writer = response.getWriter();
 		writer.write(assetContent.getContent());
 		writer.close();
 	}
 
-    protected Logger getLogger() {
-        return LOG;
-    }
+	protected Logger getLogger() {
+		return LOG;
+	}
 }

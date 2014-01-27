@@ -53,103 +53,116 @@ import com.github.dandelion.core.config.Configuration;
 import com.github.dandelion.core.utils.RequestUtils;
 import com.github.dandelion.core.utils.ResourceUtils;
 
+/**
+ * <p>
+ * Processor entry in charge of aggregating all assets present in the
+ * {@link AssetStack}.
+ * 
+ * @author Romain Lespinasse
+ * @since 0.10.0
+ */
 public class AssetAggregationProcessorEntry extends AssetProcessorEntry {
-    // Logger
-    private static final Logger LOG = LoggerFactory.getLogger(AssetAggregationProcessorEntry.class);
 
-    public static final String AGGREGATION = "aggregation";
-    public static final String AGGREGATION_ENABLED_KEY = "dandelion.aggregation.enabled";
-    private boolean aggregationEnabled = false;
+	// Logger
+	private static final Logger LOG = LoggerFactory.getLogger(AssetAggregationProcessorEntry.class);
 
-    public AssetAggregationProcessorEntry() {
-        this.aggregationEnabled = Boolean.TRUE.toString().equals(
-                Configuration.getProperty(AGGREGATION_ENABLED_KEY, Boolean.toString(aggregationEnabled)));
+	public static final String AGGREGATION = "aggregation";
+	public static final String AGGREGATION_ENABLED_KEY = "dandelion.aggregation.enabled";
+	private boolean aggregationEnabled = false;
 
-        if(DevMode.enabled()) {
-            this.aggregationEnabled = false;
-        }
+	public AssetAggregationProcessorEntry() {
+		this.aggregationEnabled = Boolean.TRUE.toString().equals(
+				Configuration.getProperty(AGGREGATION_ENABLED_KEY, Boolean.toString(aggregationEnabled)));
 
-        LOG.info("Dandelion Asset Aggregation is {}", aggregationEnabled?"enabled":"disabled");
-    }
+		if (DevMode.enabled()) {
+			this.aggregationEnabled = false;
+		}
 
-    @Override
-    public String getTreatmentKey() {
-        return AGGREGATION;
-    }
+		LOG.info("Dandelion Asset Aggregation is {}", aggregationEnabled ? "enabled" : "disabled");
+	}
 
-    @Override
-    public int getRank() {
-        return 1000;
-    }
+	@Override
+	public String getProcessorKey() {
+		return AGGREGATION;
+	}
 
-    @Override
-    public List<Asset> process(List<Asset> assets, HttpServletRequest request) {
-        if(!aggregationEnabled) {
-            return assets;
-        }
+	@Override
+	public int getRank() {
+		return 1000;
+	}
 
-        String context = RequestUtils.getCurrentUrl(request, true);
-        context = context.replaceAll("\\?", "_").replaceAll("&", "_");
+	@Override
+	public List<Asset> process(List<Asset> assets, HttpServletRequest request) {
+		if (!aggregationEnabled) {
+			return assets;
+		}
 
-        String baseUrl = RequestUtils.getBaseUrl(request);
+		String context = RequestUtils.getCurrentUrl(request, true);
+		context = context.replaceAll("\\?", "_").replaceAll("&", "_");
 
-        List<Asset> aggregatedAssets = new ArrayList<Asset>();
-        for (AssetType type : AssetType.values()) {
-            LOG.debug("Aggregation for asset type {}", type.name());
-            List<Asset> typedAssets = AssetStack.filterByType(assets, type);
+		String baseUrl = RequestUtils.getBaseUrl(request);
 
-            if(typedAssets.isEmpty()) {
-                LOG.debug("No asset for type {}", type.name());
-                continue;
-            }
+		List<Asset> aggregatedAssets = new ArrayList<Asset>();
+		for (AssetType type : AssetType.values()) {
+			LOG.debug("Aggregation for asset type {}", type.name());
+			List<Asset> typedAssets = AssetStack.filterByType(assets, type);
 
-            String aggregationKey = generateAggregationKey(typedAssets);
-            String cacheKey = generateCacheKey(context, aggregationKey, AGGREGATION, type);
+			if (typedAssets.isEmpty()) {
+				LOG.debug("No asset for type {}", type.name());
+				continue;
+			}
+
+			String aggregationKey = generateAggregationKey(typedAssets);
+			String cacheKey = generateCacheKey(context, aggregationKey, AGGREGATION, type);
 
 			// Updates the cache in order for the aggregated content to be
 			// retrieved by the servlet
 			LOG.debug("Cache updated with aggregated assets for the type {} (key={})", type.name(), aggregationKey);
 			cacheAggregatedContent(request, context, type, typedAssets, aggregationKey);
 
-            String accessLocation = baseUrl + DANDELION_ASSETS_URL + cacheKey;
+			String accessLocation = baseUrl + DANDELION_ASSETS_URL + cacheKey;
 
-            Map<String, String> locations = new HashMap<String, String>();
-            locations.put(AGGREGATION, accessLocation);
+			Map<String, String> locations = new HashMap<String, String>();
+			locations.put(AGGREGATION, accessLocation);
 
-            aggregatedAssets.add(new Asset(aggregationKey, AGGREGATION, type, locations));
-            LOG.debug("create a new asset with name {}, version {}, type {}, locations [{}={}]", aggregationKey, AGGREGATION, type, AGGREGATION, accessLocation);
-        }
-        return aggregatedAssets;
-    }
+			aggregatedAssets.add(new Asset(aggregationKey, AGGREGATION, type, locations));
+			LOG.debug("New asset created with name {}, version {}, type {}, locations [{}={}]", aggregationKey,
+					AGGREGATION, type, AGGREGATION, accessLocation);
+		}
+		return aggregatedAssets;
+	}
 
-    private void cacheAggregatedContent(HttpServletRequest request, String context, AssetType type, List<Asset> typedAssets, String generatedAssetKey) {
-        Map<String, AssetLocationWrapper> wrappers = AssetStack.getAssetsLocationWrappers();
-        StringBuilder aggregatedContent = new StringBuilder();
+	private void cacheAggregatedContent(HttpServletRequest request, String context, AssetType type,
+			List<Asset> typedAssets, String generatedAssetKey) {
 
-        for (Asset asset : typedAssets) {
-            for (Map.Entry<String, String> location : asset.getLocations().entrySet()) {
-                AssetLocationWrapper wrapper = wrappers.get(location.getKey());
-                String content;
-                if (wrapper != null) {
-                    content = wrapper.getWrappedContent(asset, request);
-                } else {
-                    content = ResourceUtils.getContentFromUrl(request, location.getValue(), true);
-                }
-                if(content != null) {
-                    aggregatedContent.append(content).append("\n");
-                }
-            }
-        }
+		Map<String, AssetLocationWrapper> wrappers = AssetStack.getAssetsLocationWrappers();
+		StringBuilder aggregatedContent = new StringBuilder();
 
-        storeContent(context, generatedAssetKey, AGGREGATION, type, aggregatedContent.toString());
-    }
+		for (Asset asset : typedAssets) {
+			for (Map.Entry<String, String> location : asset.getLocations().entrySet()) {
+				AssetLocationWrapper wrapper = wrappers.get(location.getKey());
+				String content;
+				if (wrapper != null) {
+					content = wrapper.getWrappedContent(asset, request);
+				}
+				else {
+					content = ResourceUtils.getContentFromUrl(request, location.getValue(), true);
+				}
+				if (content != null) {
+					aggregatedContent.append(content).append("\n");
+				}
+			}
+		}
 
-    private String generateAggregationKey(List<Asset> assets) {
-        StringBuilder key = new StringBuilder();
+		storeContent(context, generatedAssetKey, AGGREGATION, type, aggregatedContent.toString());
+	}
 
-        for (Asset asset : assets) {
-            key.append(asset.getAssetKey()).append("|");
-        }
-        return key.toString();
-    }
+	private String generateAggregationKey(List<Asset> assets) {
+		StringBuilder key = new StringBuilder();
+
+		for (Asset asset : assets) {
+			key.append(asset.getAssetKey()).append("|");
+		}
+		return key.toString();
+	}
 }

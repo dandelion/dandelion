@@ -60,156 +60,176 @@ import com.github.dandelion.core.utils.ResourceUtils;
 import com.yahoo.platform.yui.compressor.CssCompressor;
 import com.yahoo.platform.yui.compressor.JavaScriptCompressor;
 
+/**
+ * <p>
+ * Processor entry in charge of compressing all assets present in the
+ * {@link AssetStack}.
+ * 
+ * <p>
+ * This processor entry is based on YUI Compressor.
+ * 
+ * @author Romain Lespinasse
+ * @since 0.10.0
+ */
 public class AssetCompressionProcessorEntry extends AssetProcessorEntry {
-    // Logger
-    private static final Logger LOG = LoggerFactory.getLogger(AssetCompressionProcessorEntry.class);
 
-    public static final String COMPRESSION = "compression";
-    public static final String COMPRESSION_ENABLED_KEY = "dandelion.compression.enabled";
-    public static final String COMPRESSION_JS_MUNGE = "dandelion.compression.js.munge";
-    public static final String COMPRESSION_JS_PRESERVE_SEMICOLONS = "dandelion.compression.js.preserveSemiColons";
-    public static final String COMPRESSION_JS_DISABLE_OPTIMIZATIONS = "dandelion.compression.js.disableOptimizations";
+	// Logger
+	private static final Logger LOG = LoggerFactory.getLogger(AssetCompressionProcessorEntry.class);
 
-    private boolean compressionEnabled = false;
-    private boolean jsMunge = true;
-    private boolean jsPreserveSemiColons = true;
-    private boolean jsDisableOptimizations = true;
+	public static final String COMPRESSION = "compression";
+	public static final String COMPRESSION_ENABLED_KEY = "dandelion.compression.enabled";
+	public static final String COMPRESSION_JS_MUNGE = "dandelion.compression.js.munge";
+	public static final String COMPRESSION_JS_PRESERVE_SEMICOLONS = "dandelion.compression.js.preserveSemiColons";
+	public static final String COMPRESSION_JS_DISABLE_OPTIMIZATIONS = "dandelion.compression.js.disableOptimizations";
 
-    public AssetCompressionProcessorEntry() {
-        this.compressionEnabled = Boolean.TRUE.toString().equals(
-                Configuration.getProperty(COMPRESSION_ENABLED_KEY, Boolean.toString(compressionEnabled)));
-        this.jsMunge = Boolean.TRUE.toString().equals(
-                Configuration.getProperty(COMPRESSION_JS_MUNGE, Boolean.toString(compressionEnabled)));
-        this.jsPreserveSemiColons = Boolean.TRUE.toString().equals(
-                Configuration.getProperty(COMPRESSION_JS_PRESERVE_SEMICOLONS, Boolean.toString(compressionEnabled)));
-        this.jsDisableOptimizations = Boolean.TRUE.toString().equals(
-                Configuration.getProperty(COMPRESSION_JS_DISABLE_OPTIMIZATIONS, Boolean.toString(compressionEnabled)));
+	private boolean compressionEnabled = false;
+	private boolean jsMunge = true;
+	private boolean jsPreserveSemiColons = true;
+	private boolean jsDisableOptimizations = true;
 
-        if(DevMode.enabled()) {
-            this.compressionEnabled = false;
-        }
+	public AssetCompressionProcessorEntry() {
+		this.compressionEnabled = Boolean.TRUE.toString().equals(
+				Configuration.getProperty(COMPRESSION_ENABLED_KEY, Boolean.toString(compressionEnabled)));
+		this.jsMunge = Boolean.TRUE.toString().equals(
+				Configuration.getProperty(COMPRESSION_JS_MUNGE, Boolean.toString(compressionEnabled)));
+		this.jsPreserveSemiColons = Boolean.TRUE.toString().equals(
+				Configuration.getProperty(COMPRESSION_JS_PRESERVE_SEMICOLONS, Boolean.toString(compressionEnabled)));
+		this.jsDisableOptimizations = Boolean.TRUE.toString().equals(
+				Configuration.getProperty(COMPRESSION_JS_DISABLE_OPTIMIZATIONS, Boolean.toString(compressionEnabled)));
 
-        LOG.info("Dandelion Asset Compression is {}", compressionEnabled?"enabled":"disabled");
-        if(compressionEnabled) {
-            LOG.debug("Dandelion Asset Compression JS munge is {}", jsMunge?"enabled":"disabled");
-            LOG.debug("Dandelion Asset Compression JS preserve semicolons is {}", jsPreserveSemiColons?"enabled":"disabled");
-            LOG.debug("Dandelion Asset Compression JS disable optimizations is {}", jsDisableOptimizations ? "enabled" : "disabled");
-        }
-    }
+		if (DevMode.enabled()) {
+			this.compressionEnabled = false;
+		}
 
-    @Override
-    public String getTreatmentKey() {
-        return COMPRESSION;
-    }
+		LOG.info("Dandelion Asset Compression is {}", compressionEnabled ? "enabled" : "disabled");
+		if (compressionEnabled) {
+			LOG.debug("Dandelion Asset Compression JS munge is {}", jsMunge ? "enabled" : "disabled");
+			LOG.debug("Dandelion Asset Compression JS preserve semicolons is {}", jsPreserveSemiColons ? "enabled"
+					: "disabled");
+			LOG.debug("Dandelion Asset Compression JS disable optimizations is {}", jsDisableOptimizations ? "enabled"
+					: "disabled");
+		}
+	}
 
-    @Override
-    public int getRank() {
-        return 2000;
-    }
+	@Override
+	public String getProcessorKey() {
+		return COMPRESSION;
+	}
 
-    @Override
-    public List<Asset> process(List<Asset> assets, HttpServletRequest request) {
-        if(!compressionEnabled) {
-            return assets;
-        }
+	@Override
+	public int getRank() {
+		return 2000;
+	}
 
-        String context = RequestUtils.getCurrentUrl(request, true);
-        context = context.replaceAll("\\?", "_").replaceAll("&", "_");
+	@Override
+	public List<Asset> process(List<Asset> assets, HttpServletRequest request) {
+		if (!compressionEnabled) {
+			return assets;
+		}
 
-        String baseUrl = RequestUtils.getBaseUrl(request);
-        List<Asset> compressedAssets = new ArrayList<Asset>();
-        for(Asset asset:assets) {
-            for(String location:asset.getLocations().values()) {
-                String cacheKey = AssetCacheSystem.generateCacheKey(context, location, COMPRESSION, asset.getType());
+		String context = RequestUtils.getCurrentUrl(request, true);
+		context = context.replaceAll("\\?", "_").replaceAll("&", "_");
+
+		String baseUrl = RequestUtils.getBaseUrl(request);
+		List<Asset> compressedAssets = new ArrayList<Asset>();
+		for (Asset asset : assets) {
+			for (String location : asset.getLocations().values()) {
+				String cacheKey = AssetCacheSystem.generateCacheKey(context, location, COMPRESSION, asset.getType());
 
 				// Updates the cache in order for the compressed content to be
 				// retrieved by the servlet
 				LOG.debug("Cache updated with compressed assets (key={})", asset.getAssetKey());
 				cacheCompressedContent(request, context, location, asset, cacheKey);
 
-                String accessLocation = baseUrl + DANDELION_ASSETS_URL + cacheKey;
+				String accessLocation = baseUrl + DANDELION_ASSETS_URL + cacheKey;
 
-                Map<String, String> locations = new HashMap<String, String>();
-                locations.put(COMPRESSION, accessLocation);
+				Map<String, String> locations = new HashMap<String, String>();
+				locations.put(COMPRESSION, accessLocation);
 
-                compressedAssets.add(new Asset(cacheKey, COMPRESSION, asset.getType(), locations));
-                LOG.debug("create a new asset with name {}, version {}, type {}, locations [{}={}]", cacheKey, COMPRESSION, asset.getType(), COMPRESSION, accessLocation);
-            }
-        }
-        return compressedAssets;
-    }
+				compressedAssets.add(new Asset(cacheKey, COMPRESSION, asset.getType(), locations));
+				LOG.debug("New asset created with name {}, version {}, type {}, locations [{}={}]", cacheKey,
+						COMPRESSION, asset.getType(), COMPRESSION, accessLocation);
+			}
+		}
+		return compressedAssets;
+	}
 
-    private void cacheCompressedContent(HttpServletRequest request, String context, String location, Asset asset, String cacheKey) {
-        String content = compress(asset, request);
-        AssetCacheSystem.storeContent(context, location, COMPRESSION, asset.getType(), content);
-    }
+	private void cacheCompressedContent(HttpServletRequest request, String context, String location, Asset asset,
+			String cacheKey) {
+		String content = compress(asset, request);
+		AssetCacheSystem.storeContent(context, location, COMPRESSION, asset.getType(), content);
+	}
 
-    private String compress(Asset asset, HttpServletRequest request) {
-        String content = extractContent(asset, request);
-        switch (asset.getType()) {
-            case css:
-                LOG.debug("CSS compression for asset {}", asset.getAssetKey());
-                return compressCss(asset.getAssetKey(), content);
-            case js:
-                LOG.debug("JS compression for asset {}", asset.getAssetKey());
-                return compressJs(asset.getAssetKey(), content);
-            default:
-                LOG.debug("No compression for asset {}", asset.getAssetKey());
-                return content;
-        }
-    }
+	private String compress(Asset asset, HttpServletRequest request) {
+		String content = extractContent(asset, request);
+		switch (asset.getType()) {
+		case css:
+			LOG.debug("CSS compression for asset {}", asset.getAssetKey());
+			return compressCss(asset.getAssetKey(), content);
+		case js:
+			LOG.debug("JS compression for asset {}", asset.getAssetKey());
+			return compressJs(asset.getAssetKey(), content);
+		default:
+			LOG.debug("No compression for asset {}", asset.getAssetKey());
+			return content;
+		}
+	}
 
-    private String compressJs(String assetKey, String content) {
-        LOG.debug("JS compression with YUI compressor");
-        Writer output = new StringWriter();
+	private String compressJs(String assetKey, String content) {
+		LOG.debug("JS compression with YUI compressor");
+		Writer output = new StringWriter();
 
-        try {
-            JavaScriptCompressor compressor = new JavaScriptCompressor(new StringReader(content), new YuiCompressorErrorReporter());
-            compressor.compress(output, -1, jsMunge, false, jsPreserveSemiColons, jsDisableOptimizations);
-        } catch (EvaluatorException e) {
-            LOG.error("YUI compressor can't evaluate the content of {}", assetKey);
-            LOG.debug("YUI compressor can't evaluate the content [{}]", content);
-            throw DandelionException.wrap(e, null)
-                    .set("assetKey", assetKey).set("content", content);
-        } catch (IOException e) {
-            LOG.error("YUI compressor can't access to the content of {}", assetKey);
-            throw DandelionException.wrap(e, null).set("assetKey", assetKey);
-        }
+		try {
+			JavaScriptCompressor compressor = new JavaScriptCompressor(new StringReader(content),
+					new YuiCompressorErrorReporter());
+			compressor.compress(output, -1, jsMunge, false, jsPreserveSemiColons, jsDisableOptimizations);
+		}
+		catch (EvaluatorException e) {
+			LOG.error("YUI compressor can't evaluate the content of {}", assetKey);
+			LOG.debug("YUI compressor can't evaluate the content [{}]", content);
+			throw DandelionException.wrap(e, null).set("assetKey", assetKey).set("content", content);
+		}
+		catch (IOException e) {
+			LOG.error("YUI compressor can't access to the content of {}", assetKey);
+			throw DandelionException.wrap(e, null).set("assetKey", assetKey);
+		}
 
-        return output.toString();
-    }
+		return output.toString();
+	}
 
-    private String compressCss(String assetKey, String content) {
-        LOG.debug("CSS compression with YUI compressor");
-        Writer output = new StringWriter();
+	private String compressCss(String assetKey, String content) {
+		LOG.debug("CSS compression with YUI compressor");
+		Writer output = new StringWriter();
 
-        try {
-            CssCompressor compressor = new CssCompressor(new StringReader(content));
-            compressor.compress(output, -1);
-        } catch (IOException e) {
-            LOG.error("YUI compressor can't access to the content of {}", assetKey);
-            throw DandelionException.wrap(e, null).set("assetKey", assetKey);
-        }
+		try {
+			CssCompressor compressor = new CssCompressor(new StringReader(content));
+			compressor.compress(output, -1);
+		}
+		catch (IOException e) {
+			LOG.error("YUI compressor can't access to the content of {}", assetKey);
+			throw DandelionException.wrap(e, null).set("assetKey", assetKey);
+		}
 
-        return output.toString();
-    }
+		return output.toString();
+	}
 
-    private String extractContent(Asset asset, HttpServletRequest request) {
-        Map<String, AssetLocationWrapper> wrappers = AssetStack.getAssetsLocationWrappers();
-        StringBuilder groupContent = new StringBuilder();
+	private String extractContent(Asset asset, HttpServletRequest request) {
+		Map<String, AssetLocationWrapper> wrappers = AssetStack.getAssetsLocationWrappers();
+		StringBuilder groupContent = new StringBuilder();
 
-        for (Map.Entry<String, String> location : asset.getLocations().entrySet()) {
-            AssetLocationWrapper wrapper = wrappers.get(location.getKey());
-            String content;
-            if (wrapper != null) {
-                content = wrapper.getWrappedContent(asset, request);
-            } else {
-                content = ResourceUtils.getContentFromUrl(request, location.getValue(), true);
-            }
-            if(content != null) {
-                groupContent.append(content).append("\n");
-            }
-        }
-        return groupContent.toString();
-    }
+		for (Map.Entry<String, String> location : asset.getLocations().entrySet()) {
+			AssetLocationWrapper wrapper = wrappers.get(location.getKey());
+			String content;
+			if (wrapper != null) {
+				content = wrapper.getWrappedContent(asset, request);
+			}
+			else {
+				content = ResourceUtils.getContentFromUrl(request, location.getValue(), true);
+			}
+			if (content != null) {
+				groupContent.append(content).append("\n");
+			}
+		}
+		return groupContent.toString();
+	}
 }

@@ -43,51 +43,62 @@ import com.github.dandelion.core.asset.Asset;
 import com.github.dandelion.core.asset.processor.impl.AssetLocationProcessorEntry;
 import com.github.dandelion.core.asset.processor.spi.AssetProcessorEntry;
 
+/**
+ * System in charge of discovering all implementations of
+ * {@link AssetProcessorEntry} available in the classpath.
+ * 
+ * @author Romain Lespinasse
+ * @since 0.10.0
+ */
 public final class AssetProcessorSystem {
-    // Logger
-    private static final Logger LOG = LoggerFactory.getLogger(AssetProcessorSystem.class);
 
-    private static ServiceLoader<AssetProcessorEntry> loader = ServiceLoader.load(AssetProcessorEntry.class);
-    private static List<AssetProcessorEntry> entries = new ArrayList<AssetProcessorEntry>();
-    private static AssetProcessorEntry starter;
+	// Logger
+	private static final Logger LOG = LoggerFactory.getLogger(AssetProcessorSystem.class);
 
-    private AssetProcessorSystem() {
-    }
+	private static ServiceLoader<AssetProcessorEntry> assetProcessorServiceLoader = ServiceLoader.load(AssetProcessorEntry.class);
+	private static List<AssetProcessorEntry> entries = new ArrayList<AssetProcessorEntry>();
+	private static AssetProcessorEntry starter;
 
-    private static void initialize() {
-        if(starter == null) {
-            initializeIfNeeded();
-        }
-    }
+	private AssetProcessorSystem() {
+	}
 
-    synchronized private static void initializeIfNeeded() {
-        if(starter != null) return;
+	private static void initialize() {
+		if (starter == null) {
+			initializeIfNeeded();
+		}
+	}
 
-        for (AssetProcessorEntry ape : loader) {
-            entries.add(ape);
-        }
+	synchronized private static void initializeIfNeeded() {
+		if (starter != null) {
+			return;
+		}
 
-        Collections.sort(entries);
+		for (AssetProcessorEntry ape : assetProcessorServiceLoader) {
+			entries.add(ape);
+			LOG.info("Asset processor found: {}", ape.getClass().getSimpleName());
+		}
 
-        AssetProcessorEntry location = new AssetLocationProcessorEntry();
-        LOG.info("Dandelion Assets Processor Entry starter treat {}", location.getTreatmentKey());
+		Collections.sort(entries);
 
-        AssetProcessorEntry lastEntry = location;
-        for(AssetProcessorEntry ape:entries) {
-            lastEntry.setNextEntry(ape);
-            lastEntry = ape;
-            LOG.info("Dandelion Assets Processor Entry [rank {}] treat {}", ape.getRank(), ape.getTreatmentKey());
-        }
+		AssetProcessorEntry processorEntry = new AssetLocationProcessorEntry();
+		LOG.info("Dandelion Assets Processor Entry starter treat {}", processorEntry.getProcessorKey());
 
-        starter = location;
-    }
+		AssetProcessorEntry lastEntry = processorEntry;
+		for (AssetProcessorEntry ape : entries) {
+			lastEntry.setNextEntry(ape);
+			lastEntry = ape;
+			LOG.info("Assets processor entry [rank: {}, processorKey: {}]", ape.getRank(), ape.getProcessorKey());
+		}
 
-    public static AssetProcessorEntry getStarter() {
-        initialize();
-        return starter;
-    }
+		starter = processorEntry;
+	}
 
-    public static List<Asset> process(List<Asset> assets, HttpServletRequest request) {
-        return getStarter().doProcess(assets, request);
-    }
+	public static AssetProcessorEntry getStarter() {
+		initialize();
+		return starter;
+	}
+
+	public static List<Asset> process(List<Asset> assets, HttpServletRequest request) {
+		return getStarter().doProcess(assets, request);
+	}
 }

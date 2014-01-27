@@ -45,7 +45,12 @@ import com.github.dandelion.core.asset.web.data.AssetScope;
 import com.github.dandelion.core.config.Configuration;
 
 /**
- * Request Context used to store all needed assets by scopes during the pages processing
+ * <p>
+ * Request context used to store all needed assets by scopes loaded within a
+ * page.
+ * 
+ * @author Romain Lespinasse
+ * @since 0.10.0
  */
 public class AssetRequestContext {
     private List<String> scopes;

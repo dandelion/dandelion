@@ -35,26 +35,34 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.github.dandelion.core.asset.Asset;
 
+/**
+ * <p>
+ * Abstract superclass for all processors.
+ * 
+ * @author Romain Lespinasse
+ * @since 0.10.0
+ */
 public abstract class AssetProcessorEntry implements Comparable<AssetProcessorEntry> {
-    private AssetProcessorEntry nextEntry;
 
-    public abstract int getRank();
+	private AssetProcessorEntry nextEntry;
 
-    public void setNextEntry(AssetProcessorEntry nextEntry) {
-        this.nextEntry = nextEntry;
-    }
+	public abstract int getRank();
 
-    public List<Asset> doProcess(List<Asset> assets, HttpServletRequest request) {
-        List<Asset> _assets = process(assets, request);
-        return nextEntry==null?_assets:nextEntry.doProcess(_assets, request);
-    }
+	public void setNextEntry(AssetProcessorEntry nextEntry) {
+		this.nextEntry = nextEntry;
+	}
 
-    public abstract List<Asset> process(List<Asset> assets, HttpServletRequest request);
+	public List<Asset> doProcess(List<Asset> assets, HttpServletRequest request) {
+		List<Asset> _assets = process(assets, request);
+		return nextEntry == null ? _assets : nextEntry.doProcess(_assets, request);
+	}
 
-    public abstract String getTreatmentKey();
+	public abstract List<Asset> process(List<Asset> assets, HttpServletRequest request);
 
-    @Override
-    public int compareTo(AssetProcessorEntry entry) {
-        return getRank() - entry.getRank();
-    }
+	public abstract String getProcessorKey();
+
+	@Override
+	public int compareTo(AssetProcessorEntry entry) {
+		return getRank() - entry.getRank();
+	}
 }

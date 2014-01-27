@@ -26,6 +26,8 @@ import com.github.dandelion.core.html.HtmlTag;
  * Dandelion filter used to inject web resources at the right positions in the
  * HTML, depending on the content of the {@link AssetStack}.
  * 
+ * @author Thibault Duchateau
+ * @author Romain Lespinasse
  * @since 0.10.0
  */
 public class AssetFilter implements Filter {

@@ -51,7 +51,7 @@ public final class AssetLoaderSystem {
 	// Logger
 	private static final Logger LOG = LoggerFactory.getLogger(AssetLoaderSystem.class);
 
-	private static ServiceLoader<AssetLoader> serviceLoader = ServiceLoader.load(AssetLoader.class);
+	private static ServiceLoader<AssetLoader> assetLoaderServiceLoader = ServiceLoader.load(AssetLoader.class);
 	private static List<AssetLoader> loaders;
 	private static List<AssetLoader> allLoaders;
 
@@ -71,7 +71,7 @@ public final class AssetLoaderSystem {
 
 		List<AssetLoader> als = new ArrayList<AssetLoader>();
 		List<AssetLoader> aals = new ArrayList<AssetLoader>();
-		for (AssetLoader al : serviceLoader) {
+		for (AssetLoader al : assetLoaderServiceLoader) {
 			if (!"false".equalsIgnoreCase(Configuration.getProperty("asset.loader." + al.getName() + ".active"))) {
 				als.add(al);
 				LOG.info("Active AssetLoader found: {}", al.getClass().getSimpleName());

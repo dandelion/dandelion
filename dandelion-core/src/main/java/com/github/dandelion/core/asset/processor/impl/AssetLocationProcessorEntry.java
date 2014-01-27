@@ -29,8 +29,6 @@
  */
 package com.github.dandelion.core.asset.processor.impl;
 
-
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -44,92 +42,103 @@ import com.github.dandelion.core.asset.Asset;
 import com.github.dandelion.core.asset.AssetStack;
 import com.github.dandelion.core.asset.processor.spi.AssetProcessorEntry;
 
+/**
+ * <p>
+ * Processor entry in charge of resolving asset locations.
+ * 
+ * @author Romain Lespinasse
+ * @since 0.10.0
+ */
 public class AssetLocationProcessorEntry extends AssetProcessorEntry {
 
-    // Logger
-    private static final Logger LOG = LoggerFactory.getLogger(AssetLocationProcessorEntry.class);
+	// Logger
+	private static final Logger LOG = LoggerFactory.getLogger(AssetLocationProcessorEntry.class);
 
-    @Override
-    public String getTreatmentKey() {
-        return "location";
-    }
+	@Override
+	public String getProcessorKey() {
+		return "location";
+	}
 
-    @Override
-    public int getRank() {
-        return 0;
-    }
+	@Override
+	public int getRank() {
+		return 0;
+	}
 
-    @Override
-    public List<Asset> process(List<Asset> assets, HttpServletRequest request) {
-        List<Asset> _assets = new ArrayList<Asset>();
+	@Override
+	public List<Asset> process(List<Asset> assets, HttpServletRequest request) {
+		List<Asset> _assets = new ArrayList<Asset>();
 
-        for(Asset asset:assets) {
-            // no available locations = no locations
-            if(asset.getLocations().isEmpty()) {
-                LOG.warn("no available locations for {}.", asset.toString());
-                continue;
-            }
+		for (Asset asset : assets) {
+			// no available locations = no locations
+			if (asset.getLocations().isEmpty()) {
+				LOG.warn("no available locations for {}.", asset.toString());
+				continue;
+			}
 
-            String locationKey = null;
-            if(asset.getLocations().size() == 1) {
-                // use the unique location if needed
-                LOG.debug("only one location {}, automatically used.", asset.toString());
-                for(String _locationKey:asset.getLocations().keySet()) {
-                    locationKey = _locationKey;
-                }
-            } else {
-                // otherwise search for the first match in authorized locations
-                LOG.debug("search the right location for {}.", asset.toString());
-                for(String searchedLocationKey: AssetStack.getAssetsLocations()) {
-                    if(asset.getLocations().containsKey(searchedLocationKey)) {
-                        String location = asset.getLocations().get(searchedLocationKey);
-                        if(location != null && !location.isEmpty()) {
-                            locationKey = searchedLocationKey;
-                            break;
-                        }
-                    }
-                }
+			String locationKey = null;
+			if (asset.getLocations().size() == 1) {
+				// use the unique location if needed
+				LOG.debug("only one location {}, automatically used.", asset.toString());
+				for (String _locationKey : asset.getLocations().keySet()) {
+					locationKey = _locationKey;
+				}
+			}
+			else {
+				// otherwise search for the first match in authorized locations
+				LOG.debug("search the right location for {}.", asset.toString());
+				for (String searchedLocationKey : AssetStack.getAssetsLocations()) {
+					if (asset.getLocations().containsKey(searchedLocationKey)) {
+						String location = asset.getLocations().get(searchedLocationKey);
+						if (location != null && !location.isEmpty()) {
+							locationKey = searchedLocationKey;
+							break;
+						}
+					}
+				}
 
-            }
+			}
 
-            // And if any location was found = no locations
-            if(locationKey == null) {
-                LOG.warn("any location match the asked locations {} for {}.", AssetStack.getAssetsLocations(), asset.toString());
-                continue;
-            }
+			// And if any location was found = no locations
+			if (locationKey == null) {
+				LOG.warn("any location match the asked locations {} for {}.", AssetStack.getAssetsLocations(),
+						asset.toString());
+				continue;
+			}
 
-            // Otherwise check for wrapper
-            String location;
-            if(AssetStack.getAssetsLocationWrappers().containsKey(locationKey)) {
-                LOG.debug("use location wrapper for {} on {}.", locationKey, asset);
-                location = AssetStack.getAssetsLocationWrappers().get(locationKey).wrapLocation(asset, request);
-            } else {
-                location = asset.getLocations().get(locationKey);
-            }
+			// Otherwise check for wrapper
+			String location;
+			if (AssetStack.getAssetsLocationWrappers().containsKey(locationKey)) {
+				LOG.debug("use location wrapper for {} on {}.", locationKey, asset);
+				location = AssetStack.getAssetsLocationWrappers().get(locationKey).wrapLocation(asset, request);
+			}
+			else {
+				location = asset.getLocations().get(locationKey);
+			}
 
-            if(location == null) {
-                LOG.warn("No location found for {} on {}", locationKey, asset.toString());
-                continue;
-            }
+			if (location == null) {
+				LOG.warn("No location found for {} on {}", locationKey, asset.toString());
+				continue;
+			}
 
-            Asset wrappedAsset = asset.clone(true);
-            wrappedAsset.getLocations().put(locationKey, location);
-            if(DevMode.enabled()) {
-                debugAttributes(wrappedAsset, locationKey, false);
-            }
-            _assets.add(wrappedAsset);
+			Asset wrappedAsset = asset.clone(true);
+			wrappedAsset.getLocations().put(locationKey, location);
+			if (DevMode.enabled()) {
+				debugAttributes(wrappedAsset, locationKey, false);
+			}
+			_assets.add(wrappedAsset);
 
-        }
-        return _assets;
-    }
+		}
+		return _assets;
+	}
 
-    private void debugAttributes(Asset asset, String locationKey, Boolean wrapped) {
-        asset.addAttribute("asset-name", asset.getName());
-        asset.addAttribute("asset-type", asset.getType().name());
-        asset.addAttribute("asset-version", asset.getVersion());
-        if(asset.getDom() != null)
-            asset.addAttribute("asset-dom-position", asset.getDom().name());
-        asset.addAttribute("asset-location-key", locationKey);
-        asset.addAttribute("asset-location-wrap", wrapped.toString());
-    }
+	private void debugAttributes(Asset asset, String locationKey, Boolean wrapped) {
+		asset.addAttribute("asset-name", asset.getName());
+		asset.addAttribute("asset-type", asset.getType().name());
+		asset.addAttribute("asset-version", asset.getVersion());
+		if (asset.getDom() != null) {
+			asset.addAttribute("asset-dom-position", asset.getDom().name());
+		}
+		asset.addAttribute("asset-location-key", locationKey);
+		asset.addAttribute("asset-location-wrap", wrapped.toString());
+	}
 }
