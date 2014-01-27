@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dialect xmlns="http://www.thymeleaf.org/extras/dialect" 
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://www.thymeleaf.org/extras/dialect 
+                       http://www.thymeleaf.org/xsd/thymeleaf-extras-dialect-2.1.xsd"
+   prefix="ddl" 
+   namespace-uri="http://www.thymeleaf.org/dandelion"
+   namespace-strict="false"
+   class="com.github.dandelion.thymeleaf.dialect.DandelionDialect">
+   
+   <attribute-processor name="assets-scopes">
+      <documentation>
+         <![CDATA[
+            <p>Comma-separated list of scopes to load in the current request.</p>
+         ]]>
+      </documentation>
+   </attribute-processor>
+   
+   <attribute-processor name="assets-excludedScopes">
+      <documentation>
+         <![CDATA[
+            <p>Comma-separated list of scopes to exclude from the current request.</p>
+         ]]>
+      </documentation>
+   </attribute-processor>
+   
+   <attribute-processor name="assets-excludedAssets">
+      <documentation>
+         <![CDATA[
+            <p>Comma-separated list of assets to load in the current request.</p>
+         ]]>
+      </documentation>
+   </attribute-processor>
+   
+</dialect>
