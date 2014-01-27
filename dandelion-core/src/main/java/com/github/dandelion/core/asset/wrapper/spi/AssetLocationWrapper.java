@@ -36,28 +36,36 @@ import com.github.dandelion.core.asset.Asset;
 
 /**
  * Wrapper for a location url associated with a location key
+ * 
+ * @author Romain Lespinasse
+ * @since 0.2.0
  */
 public interface AssetLocationWrapper {
 
-    /**
-     * @return the location key that matches this wrapper
-     */
-    String locationKey();
+	/**
+	 * @return the location key that matches this wrapper.
+	 */
+	String getLocationKey();
 
-    /**
-     * Wrap the location of the asset.
-     *
-     * @param asset asset
-     * @param request http request
-     * @return the customized location
-     */
-    String wrapLocation(Asset asset, HttpServletRequest request);
+	/**
+	 * Get the wrapped location of the given {@link Asset}.
+	 * 
+	 * @param asset
+	 *            The asset to extract the location from.
+	 * @param request
+	 *            The current HTTP request.
+	 * @return the customized location
+	 */
+	String getWrappedLocation(Asset asset, HttpServletRequest request);
 
-    /**
-     * Get content of the value of the location key in the asset
-     * @param asset asset
-     * @param request http request
-     * @return the content of location
-     */
-    String getWrappedContent(Asset asset, HttpServletRequest request);
+	/**
+	 * Get the content of the given {@link Asset}.
+	 * 
+	 * @param asset
+	 *            The asset to extract the content from.
+	 * @param request
+	 *            The current HTTP request.
+	 * @return the content of location
+	 */
+	String getWrappedContent(Asset asset, HttpServletRequest request);
 }

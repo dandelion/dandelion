@@ -11,41 +11,52 @@ import org.slf4j.LoggerFactory;
 
 import com.github.dandelion.core.asset.wrapper.spi.AssetLocationWrapper;
 
+/**
+ * System in charge of discovering all implementations of
+ * {@link AssetLocationWrapper} available in the classpath.
+ * 
+ * @author Romain Lespinasse
+ * @since 0.10.0
+ */
 public final class AssetLocationWrapperSystem {
-    // Logger
-    private static final Logger LOG = LoggerFactory.getLogger(AssetLocationWrapperSystem.class);
 
-    private static ServiceLoader<AssetLocationWrapper> loader = ServiceLoader.load(AssetLocationWrapper.class);
-    private static List<AssetLocationWrapper> wrappers;
+	// Logger
+	private static final Logger LOG = LoggerFactory.getLogger(AssetLocationWrapperSystem.class);
 
-    private static void initialize() {
-        if(wrappers == null) {
-            initializeIfNeeded();
-        }
-    }
+	private static ServiceLoader<AssetLocationWrapper> locationWrapperServiceLoader = ServiceLoader
+			.load(AssetLocationWrapper.class);
+	private static List<AssetLocationWrapper> wrappers;
 
-    synchronized private static void initializeIfNeeded() {
-        if(wrappers != null) return;
+	private static void initialize() {
+		if (wrappers == null) {
+			initializeIfNeeded();
+		}
+	}
 
-        List<AssetLocationWrapper> alws = new ArrayList<AssetLocationWrapper>();
-        for (AssetLocationWrapper alw : loader) {
-            alws.add(alw);
-            LOG.info("found Dandelion Assets Location Wrapper for {}", alw.locationKey());
-        }
+	synchronized private static void initializeIfNeeded() {
+		if (wrappers != null) {
+			return;
+		}
 
-        wrappers = alws;
-    }
+		List<AssetLocationWrapper> alws = new ArrayList<AssetLocationWrapper>();
+		for (AssetLocationWrapper alw : locationWrapperServiceLoader) {
+			alws.add(alw);
+			LOG.info("Asset location wrapper found: {}", alw.getLocationKey());
+		}
 
-    public static List<AssetLocationWrapper> getWrappers() {
-        initialize();
-        return wrappers;
-    }
+		wrappers = alws;
+	}
 
-    public static Map<String, AssetLocationWrapper> getWrappersWithKey() {
-        Map<String, AssetLocationWrapper> wrappers = new HashMap<String, AssetLocationWrapper>();
-        for(AssetLocationWrapper wrapper: getWrappers()) {
-            wrappers.put(wrapper.locationKey(), wrapper);
-        }
-        return wrappers;
-    }
+	public static List<AssetLocationWrapper> getWrappers() {
+		initialize();
+		return wrappers;
+	}
+
+	public static Map<String, AssetLocationWrapper> getWrappersWithKey() {
+		Map<String, AssetLocationWrapper> wrappers = new HashMap<String, AssetLocationWrapper>();
+		for (AssetLocationWrapper wrapper : getWrappers()) {
+			wrappers.put(wrapper.getLocationKey(), wrapper);
+		}
+		return wrappers;
+	}
 }

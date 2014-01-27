@@ -38,41 +38,50 @@ import com.github.dandelion.core.utils.RequestUtils;
 import com.github.dandelion.core.utils.ResourceUtils;
 
 /**
- * Wrapper for "webapp" location
+ * <p>
+ * Location wrapper for {@code webapp} assets.
+ * 
+ * <p>
+ * Basically, a "webapp asset" is an asset coming from the resources of the
+ * deployed web application.
+ * 
+ * @author Romain Lespinasse
+ * @since 0.2.0
  */
 public class WebappLocationWrapper implements AssetLocationWrapper {
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String locationKey() {
-        return "webapp";
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public String getLocationKey() {
+		return "webapp";
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String wrapLocation(Asset asset, HttpServletRequest request) {
-        String location = asset.getLocations().get(locationKey());
-        String base = RequestUtils.getBaseUrl(request);
-        boolean pathLocation = location.startsWith("/");
-        boolean pathBase = base.endsWith("/");
-        if(pathLocation && pathBase) {
-            location = location.substring(1);
-        } else if(!pathLocation && !pathBase) {
-            location = "/" + location;
-        }
-        return base + location;
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public String getWrappedLocation(Asset asset, HttpServletRequest request) {
+		String location = asset.getLocations().get(getLocationKey());
+		String base = RequestUtils.getBaseUrl(request);
+		boolean pathLocation = location.startsWith("/");
+		boolean pathBase = base.endsWith("/");
+		if (pathLocation && pathBase) {
+			location = location.substring(1);
+		}
+		else if (!pathLocation && !pathBase) {
+			location = "/" + location;
+		}
+		return base + location;
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String getWrappedContent(Asset asset, HttpServletRequest request) {
-        String location = asset.getLocations().get(locationKey());
-        return ResourceUtils.getContentFromUrl(request, location, true);
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public String getWrappedContent(Asset asset, HttpServletRequest request) {
+		String location = asset.getLocations().get(getLocationKey());
+		return ResourceUtils.getContentFromUrl(request, location, true);
+	}
 }

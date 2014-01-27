@@ -109,7 +109,7 @@ public class AssetLocationProcessorEntry extends AssetProcessorEntry {
 			String location;
 			if (AssetStack.getAssetsLocationWrappers().containsKey(locationKey)) {
 				LOG.debug("use location wrapper for {} on {}.", locationKey, asset);
-				location = AssetStack.getAssetsLocationWrappers().get(locationKey).wrapLocation(asset, request);
+				location = AssetStack.getAssetsLocationWrappers().get(locationKey).getWrappedLocation(asset, request);
 			}
 			else {
 				location = asset.getLocations().get(locationKey);

@@ -42,17 +42,17 @@ import java.util.Map;
  */
 public class AdditionalAssetsLocationWrapper implements AssetLocationWrapper {
     @Override
-    public String locationKey() {
+    public String getLocationKey() {
         return "additional_assets";
     }
 
     @Override
-    public String wrapLocation(Asset asset, HttpServletRequest request) {
+    public String getWrappedLocation(Asset asset, HttpServletRequest request) {
         Map<String, Object> parameters = AssetRequestContext.get(request).getParameters(asset.getName());
         if(parameters == null || parameters.isEmpty()) {
             return null;
         }
-        return asset.getLocations().get(locationKey());
+        return asset.getLocations().get(getLocationKey());
     }
 
     @Override

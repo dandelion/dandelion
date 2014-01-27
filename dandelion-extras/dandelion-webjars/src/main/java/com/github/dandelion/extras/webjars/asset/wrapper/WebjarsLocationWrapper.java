@@ -48,7 +48,7 @@ public class WebjarsLocationWrapper extends CacheableLocationWrapper {
      * {@inheritDoc}
      */
     @Override
-    public String locationKey() {
+    public String getLocationKey() {
         return "webjars";
     }
 

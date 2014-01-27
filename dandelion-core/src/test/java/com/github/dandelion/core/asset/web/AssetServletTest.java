@@ -6,12 +6,12 @@ import java.io.IOException;
 
 import javax.servlet.ServletException;
 
-import com.github.dandelion.core.asset.cache.AssetCacheSystem;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
 import com.github.dandelion.core.asset.AssetType;
+import com.github.dandelion.core.asset.cache.AssetCacheSystem;
 
 public class AssetServletTest {
     private AssetServlet servlet = new AssetServlet();

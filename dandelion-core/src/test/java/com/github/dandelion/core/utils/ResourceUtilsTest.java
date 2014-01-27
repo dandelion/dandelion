@@ -30,10 +30,10 @@
 
 package com.github.dandelion.core.utils;
 
+import static org.fest.assertions.Assertions.assertThat;
+
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
-
-import static org.fest.assertions.Assertions.assertThat;
 
 public class ResourceUtilsTest {
 

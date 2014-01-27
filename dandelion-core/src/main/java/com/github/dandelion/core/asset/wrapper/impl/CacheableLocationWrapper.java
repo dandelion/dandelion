@@ -30,7 +30,6 @@
 
 package com.github.dandelion.core.asset.wrapper.impl;
 
-
 import static com.github.dandelion.core.asset.cache.AssetCacheSystem.generateCacheKey;
 import static com.github.dandelion.core.asset.cache.AssetCacheSystem.storeContent;
 import static com.github.dandelion.core.asset.web.AssetServlet.DANDELION_ASSETS_URL;
@@ -47,42 +46,48 @@ import com.github.dandelion.core.asset.wrapper.spi.AssetLocationWrapper;
 import com.github.dandelion.core.utils.RequestUtils;
 
 /**
- * Base for Wrapper with caching faculty
+ * <p>
+ * Base for all {@link AssetLocationWrapper} byt with caching faculty.
+ * 
+ * @author Romain Lespinasse
+ * @author Thibault Duchateau
+ * @since 0.2.0
  */
 public abstract class CacheableLocationWrapper implements AssetLocationWrapper {
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String wrapLocation(Asset asset, HttpServletRequest request) {
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public String getWrappedLocation(Asset asset, HttpServletRequest request) {
 
-        String location = asset.getLocations().get(locationKey());
-        String context = RequestUtils.getCurrentUrl(request, true);
-        context = context.replaceAll("\\?", "_").replaceAll("&", "_");
+		String location = asset.getLocations().get(getLocationKey());
+		String context = RequestUtils.getCurrentUrl(request, true);
+		context = context.replaceAll("\\?", "_").replaceAll("&", "_");
 
-        String cacheKey = generateCacheKey(context, location, asset.getName(), asset.getType());
-        String content = AssetCacheSystem.getContent(cacheKey);
-        
-        if(content == null || DevMode.enabled()){
-        	Map<String, Object> parameters = get(request).getParameters(asset.getName());
-        	content = getContent(asset, location, parameters, request);
-        	storeContent(context, location, asset.getName(), asset.getType(), content);
-        }
-        
-        return RequestUtils.getBaseUrl(request) + DANDELION_ASSETS_URL + cacheKey;
-    }
+		String cacheKey = generateCacheKey(context, location, asset.getName(), asset.getType());
+		String content = AssetCacheSystem.getContent(cacheKey);
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String getWrappedContent(Asset asset, HttpServletRequest request) {
-        String location = asset.getLocations().get(locationKey());
-        String prefixCacheKey = RequestUtils.getBaseUrl(request) + DANDELION_ASSETS_URL;
-        String cacheKey = location.replaceAll(prefixCacheKey, "");
-        return AssetCacheSystem.getContent(cacheKey);
-    }
+		if (content == null || DevMode.enabled()) {
+			Map<String, Object> parameters = get(request).getParameters(asset.getName());
+			content = getContent(asset, location, parameters, request);
+			storeContent(context, location, asset.getName(), asset.getType(), content);
+		}
 
-    protected abstract String getContent(Asset asset, String location, Map<String, Object> parameters, HttpServletRequest request);
+		return RequestUtils.getBaseUrl(request) + DANDELION_ASSETS_URL + cacheKey;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public String getWrappedContent(Asset asset, HttpServletRequest request) {
+		String location = asset.getLocations().get(getLocationKey());
+		String prefixCacheKey = RequestUtils.getBaseUrl(request) + DANDELION_ASSETS_URL;
+		String cacheKey = location.replaceAll(prefixCacheKey, "");
+		return AssetCacheSystem.getContent(cacheKey);
+	}
+
+	protected abstract String getContent(Asset asset, String location, Map<String, Object> parameters,
+			HttpServletRequest request);
 }

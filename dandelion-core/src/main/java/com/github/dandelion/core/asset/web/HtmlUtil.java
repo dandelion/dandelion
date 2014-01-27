@@ -30,8 +30,6 @@
 
 package com.github.dandelion.core.asset.web;
 
-
-
 import com.github.dandelion.core.DevMode;
 import com.github.dandelion.core.asset.cache.AssetCacheSystem;
 import org.slf4j.Logger;

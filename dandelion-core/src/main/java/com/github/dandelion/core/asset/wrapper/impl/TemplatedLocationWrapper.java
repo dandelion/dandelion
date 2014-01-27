@@ -37,41 +37,52 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.github.dandelion.core.DevMode;
 import com.github.dandelion.core.asset.Asset;
+import com.github.dandelion.core.asset.web.AssetRequestContext;
 import com.github.dandelion.core.utils.ResourceUtils;
 
 /**
- * Wrapper for "template" location
+ * <p>
+ * Location wrapper for {@code templated} assets.
+ * 
+ * <p>
+ * Basically, a "templated asset" is an asset that can contain one or more
+ * variables that are to be provided by the {@link AssetRequestContext}.
+ * 
+ * @author Romain Lespinasse
+ * @since 0.2.0
  */
-public class TemplateLocationWrapper extends CacheableLocationWrapper {
-    private Map<String, String> cache;
+public class TemplatedLocationWrapper extends CacheableLocationWrapper {
 
-    public TemplateLocationWrapper() {
-        cache = new HashMap<String, String>();
-    }
+	private Map<String, String> cache;
 
-    private String getTemplateContent(String tplLocation) {
-        if(DevMode.enabled() || !cache.containsKey(tplLocation))
-            cache.put(tplLocation, ResourceUtils.getFileContentFromClasspath(tplLocation, false));
-        return cache.get(tplLocation);
-    }
+	public TemplatedLocationWrapper() {
+		cache = new HashMap<String, String>();
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String locationKey() {
-        return "template";
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public String getLocationKey() {
+		return "templated";
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected String getContent(Asset asset, String location, Map<String, Object> parameters, HttpServletRequest request) {
-        String content = getTemplateContent(location);
-        for(Map.Entry<String, Object> entry:parameters.entrySet()) {
-            content = content.replace(entry.getKey(), entry.getValue().toString());
-        }
-        return content;
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected String getContent(Asset asset, String location, Map<String, Object> parameters, HttpServletRequest request) {
+		String content = getTemplateContent(location);
+		for (Map.Entry<String, Object> entry : parameters.entrySet()) {
+			content = content.replace(entry.getKey(), entry.getValue().toString());
+		}
+		return content;
+	}
+
+	private String getTemplateContent(String tplLocation) {
+		if (DevMode.enabled() || !cache.containsKey(tplLocation)) {
+			cache.put(tplLocation, ResourceUtils.getFileContentFromClasspath(tplLocation, false));
+		}
+		return cache.get(tplLocation);
+	}
 }

@@ -32,8 +32,9 @@ package com.github.dandelion.core.asset.loader;
 
 import static org.fest.assertions.Assertions.assertThat;
 
-import com.github.dandelion.module_with_submodule.ModuleWithSubmoduleAssetJsonLoader;
 import org.junit.Test;
+
+import com.github.dandelion.module_with_submodule.ModuleWithSubmoduleAssetJsonLoader;
 
 public class AbstractAssetJsonLoaderTest {
 

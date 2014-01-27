@@ -30,16 +30,14 @@
 
 package com.github.dandelion.core.asset.wrapper.impl;
 
-import com.github.dandelion.core.DevMode;
-import com.github.dandelion.core.asset.Asset;
-import com.github.dandelion.core.asset.AssetType;
+import static java.util.Collections.singletonMap;
+import static org.fest.assertions.Assertions.assertThat;
+
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 
-import java.io.File;
-
-import static java.util.Collections.singletonMap;
-import static org.fest.assertions.Assertions.assertThat;
+import com.github.dandelion.core.asset.Asset;
+import com.github.dandelion.core.asset.AssetType;
 
 public class ClasspathLocationWrapperTest {
     ClasspathLocationWrapper wrapper = new ClasspathLocationWrapper();
@@ -50,11 +48,11 @@ public class ClasspathLocationWrapperTest {
         request.setRequestURI("/context/page.html");
         request.setContextPath("/context");
 
-        Asset asset = new Asset("asset-classpath", "1.0", AssetType.js, singletonMap(wrapper.locationKey(), "com/github/dandelion/core/asset/wrapper/impl/asset.js"));
-        String location = wrapper.wrapLocation(asset, request);
+        Asset asset = new Asset("asset-classpath", "1.0", AssetType.js, singletonMap(wrapper.getLocationKey(), "com/github/dandelion/core/asset/wrapper/impl/asset.js"));
+        String location = wrapper.getWrappedLocation(asset, request);
         assertThat(location).isEqualTo("http://localhost:80/context/dandelion-assets/f9d126fdc5489f63a5ae1eae859a6ef030948539-asset-classpath.js");
 
-        asset = new Asset("asset-classpath", "1.0", AssetType.js, singletonMap(wrapper.locationKey(), location));
+        asset = new Asset("asset-classpath", "1.0", AssetType.js, singletonMap(wrapper.getLocationKey(), location));
         String content = wrapper.getWrappedContent(asset, request);
         assertThat(content).isEqualTo("/* content */");
     }

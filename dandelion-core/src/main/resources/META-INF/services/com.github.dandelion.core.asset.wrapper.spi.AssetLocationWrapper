@@ -2,5 +2,5 @@ com.github.dandelion.core.asset.wrapper.impl.AggregationLocationWrapper
 com.github.dandelion.core.asset.wrapper.impl.CompressionLocationWrapper
 com.github.dandelion.core.asset.wrapper.impl.ClasspathLocationWrapper
 com.github.dandelion.core.asset.wrapper.impl.DelegatedLocationWrapper
-com.github.dandelion.core.asset.wrapper.impl.TemplateLocationWrapper
+com.github.dandelion.core.asset.wrapper.impl.TemplatedLocationWrapper
 com.github.dandelion.core.asset.wrapper.impl.WebappLocationWrapper

@@ -30,16 +30,17 @@
 
 package com.github.dandelion.core.asset.wrapper.impl;
 
-import com.github.dandelion.core.asset.Asset;
-import com.github.dandelion.core.asset.AssetType;
-import com.github.dandelion.core.asset.web.AssetRequestContext;
-import org.junit.Test;
-import org.springframework.mock.web.MockHttpServletRequest;
+import static java.util.Collections.singletonMap;
+import static org.fest.assertions.Assertions.assertThat;
 
 import javax.servlet.http.HttpServletRequest;
 
-import static java.util.Collections.singletonMap;
-import static org.fest.assertions.Assertions.assertThat;
+import org.junit.Test;
+import org.springframework.mock.web.MockHttpServletRequest;
+
+import com.github.dandelion.core.asset.Asset;
+import com.github.dandelion.core.asset.AssetType;
+import com.github.dandelion.core.asset.web.AssetRequestContext;
 
 public class DelegatedLocationWrapperTest {
     DelegatedLocationWrapper wrapper = new DelegatedLocationWrapper();
@@ -57,11 +58,11 @@ public class DelegatedLocationWrapperTest {
             }
         });
 
-        Asset asset = new Asset("asset-delegated", "1.0", AssetType.js, singletonMap(wrapper.locationKey(), "asset.js"));
-        String location = wrapper.wrapLocation(asset, request);
+        Asset asset = new Asset("asset-delegated", "1.0", AssetType.js, singletonMap(wrapper.getLocationKey(), "asset.js"));
+        String location = wrapper.getWrappedLocation(asset, request);
         assertThat(location).isEqualTo("http://localhost:80/context/dandelion-assets/0cf3fbac07aa31f38153ba45eca0c943d627ba8b-asset-delegated.js");
 
-        asset = new Asset("asset-delegated", "1.0", AssetType.js, singletonMap(wrapper.locationKey(), location));
+        asset = new Asset("asset-delegated", "1.0", AssetType.js, singletonMap(wrapper.getLocationKey(), location));
         String content = wrapper.getWrappedContent(asset, request);
         assertThat(content).isEqualTo("/* content */");
     }

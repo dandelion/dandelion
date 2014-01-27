@@ -37,7 +37,7 @@ public class CompressionLocationWrapperTest {
 
     @Test(expected = IllegalStateException.class)
     public void should_cant_wrap_aggregation_location() {
-        wrapper.wrapLocation(null, null);
+        wrapper.getWrappedLocation(null, null);
     }
 
     @Test(expected = IllegalStateException.class)

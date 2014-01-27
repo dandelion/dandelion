@@ -38,23 +38,30 @@ import com.github.dandelion.core.asset.Asset;
 import com.github.dandelion.core.utils.ResourceUtils;
 
 /**
- * Wrapper for "classpath" location
+ * <p>
+ * Location wrapper for {@code classpath} assets.
+ * 
+ * <p>
+ * Basically, a "classpath asset" is an asset coming from the classpath.
+ * 
+ * @author Romain Lespinasse
+ * @since 0.2.0
  */
 public class ClasspathLocationWrapper extends CacheableLocationWrapper {
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String locationKey() {
-        return "classpath";
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public String getLocationKey() {
+		return "classpath";
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected String getContent(Asset asset, String location, Map<String, Object> parameters, HttpServletRequest request) {
-        return ResourceUtils.getFileContentFromClasspath(location, false);
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected String getContent(Asset asset, String location, Map<String, Object> parameters, HttpServletRequest request) {
+		return ResourceUtils.getFileContentFromClasspath(location, false);
+	}
 }

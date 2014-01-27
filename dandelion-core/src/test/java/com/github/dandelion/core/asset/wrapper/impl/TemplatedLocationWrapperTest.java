@@ -30,18 +30,19 @@
 
 package com.github.dandelion.core.asset.wrapper.impl;
 
+import static java.util.Collections.singletonMap;
+import static org.fest.assertions.Assertions.assertThat;
+
+import org.junit.Test;
+import org.springframework.mock.web.MockHttpServletRequest;
+
 import com.github.dandelion.core.DevMode;
 import com.github.dandelion.core.asset.Asset;
 import com.github.dandelion.core.asset.AssetType;
 import com.github.dandelion.core.asset.web.AssetRequestContext;
-import org.junit.Test;
-import org.springframework.mock.web.MockHttpServletRequest;
 
-import static java.util.Collections.singletonMap;
-import static org.fest.assertions.Assertions.assertThat;
-
-public class TemplateLocationWrapperTest {
-    TemplateLocationWrapper wrapper = new TemplateLocationWrapper();
+public class TemplatedLocationWrapperTest {
+    TemplatedLocationWrapper wrapper = new TemplatedLocationWrapper();
 
     @Test
     public void should_can_wrap_location_and_get_it() {
@@ -53,11 +54,11 @@ public class TemplateLocationWrapperTest {
 
         AssetRequestContext.get(request).addParameter("asset-template", "/* content */", "/* content param */");
 
-        Asset asset = new Asset("asset-template", "1.0", AssetType.js, singletonMap(wrapper.locationKey(), "com/github/dandelion/core/asset/wrapper/impl/asset.js"));
-        String location = wrapper.wrapLocation(asset, request);
+        Asset asset = new Asset("asset-template", "1.0", AssetType.js, singletonMap(wrapper.getLocationKey(), "com/github/dandelion/core/asset/wrapper/impl/asset.js"));
+        String location = wrapper.getWrappedLocation(asset, request);
         assertThat(location).isEqualTo("http://localhost:80/context/dandelion-assets/f9d126fdc5489f63a5ae1eae859a6ef030948539-asset-template.js");
 
-        asset = new Asset("asset-template", "1.0", AssetType.js, singletonMap(wrapper.locationKey(), location));
+        asset = new Asset("asset-template", "1.0", AssetType.js, singletonMap(wrapper.getLocationKey(), location));
         String content = wrapper.getWrappedContent(asset, request);
         assertThat(content).isEqualTo("/* content param */");
     }

@@ -86,7 +86,7 @@ public class AdditionalAssetsProcessorEntry extends AssetProcessorEntry {
                     Asset additionalAsset = asset.clone(true);
                     additionalAsset.getLocations().put(entry.getKey(), entry.getValue().toString());
                     if(wrappers.containsKey(entry.getKey())) {
-                        additionalAsset.getLocations().put(entry.getKey(), wrappers.get(entry.getKey()).wrapLocation(additionalAsset, request));
+                        additionalAsset.getLocations().put(entry.getKey(), wrappers.get(entry.getKey()).getWrappedLocation(additionalAsset, request));
                     }
                     processedAssets.add(additionalAsset);
                 }

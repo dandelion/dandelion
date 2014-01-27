@@ -43,7 +43,7 @@ public class DelegatedLocationWrapper extends CacheableLocationWrapper {
      * {@inheritDoc}
      */
     @Override
-    public String locationKey() {
+    public String getLocationKey() {
         return "delegated";
     }
 
