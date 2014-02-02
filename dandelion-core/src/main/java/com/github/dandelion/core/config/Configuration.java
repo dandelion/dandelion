@@ -27,7 +27,6 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
 package com.github.dandelion.core.config;
 
 import java.util.Properties;
@@ -35,31 +34,33 @@ import java.util.Properties;
 /**
  * <p>
  * Entry point for the whole Dandelion configuration.
- *
+ * 
  * <p>
  * The configuration is loaded only once using the configured instance of
  * {@link ConfigurationLoader}.
- *
- * @since v0.0.3
+ * 
+ * @author Thibault Duchateau
+ * @author Romain Lespinasse
+ * @since 0.10.0
  */
 public class Configuration {
 
 	static Properties configuration;
 
-    public static Properties getProperties() {
-        if(configuration == null) {
-            loadConfiguration();
-        }
-        return configuration;
-    }
+	public static Properties getProperties() {
+		if (configuration == null) {
+			loadConfiguration();
+		}
+		return configuration;
+	}
 
-    public static String getProperty(String key) {
-        return getProperties().getProperty(key);
-    }
+	public static String getProperty(String key) {
+		return getProperties().getProperty(key);
+	}
 
-    public static String getProperty(String key, String defaultValue) {
-        return getProperties().getProperty(key, defaultValue);
-    }
+	public static String getProperty(String key, String defaultValue) {
+		return getProperties().getProperty(key, defaultValue);
+	}
 
 	/**
 	 * <p>
@@ -71,14 +72,14 @@ public class Configuration {
 	 * mechanism and override the default configuration</li>
 	 * </ul>
 	 */
-    synchronized private static void loadConfiguration() {
-        if(configuration == null) {
+	synchronized private static void loadConfiguration() {
+		if (configuration == null) {
 
-        	ConfigurationLoader confLoader = DandelionConfigurator.getConfigurationLoader();
-            Properties properties = new Properties();
-            properties.putAll(confLoader.loadDefaultConfiguration());
-            properties.putAll(confLoader.loadUserConfiguration());
-            configuration = properties;
-        }
-    }
+			ConfigurationLoader confLoader = DandelionConfigurator.getConfigurationLoader();
+			Properties properties = new Properties();
+			properties.putAll(confLoader.loadDefaultConfiguration());
+			properties.putAll(confLoader.loadUserConfiguration());
+			configuration = properties;
+		}
+	}
 }

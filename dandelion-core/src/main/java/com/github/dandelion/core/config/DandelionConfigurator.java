@@ -82,10 +82,11 @@ public class DandelionConfigurator {
 				try {
 					clazz = ClassUtils.getClass(System.getProperty(ConfigurationLoader.DANDELION_CONFLOADER_CLASS));
 					configurationLoader = (ConfigurationLoader) ClassUtils.getNewInstance(clazz);
-				} catch (Exception e) {
+				}
+				catch (Exception e) {
 					LOG.warn(
 							"Unable to instantiate the configured {} due to a {} exception. Falling back to the default one.",
-                            ConfigurationLoader.DANDELION_CONFLOADER_CLASS, e.getClass().getName(), e);
+							ConfigurationLoader.DANDELION_CONFLOADER_CLASS, e.getClass().getName(), e);
 				}
 			}
 
