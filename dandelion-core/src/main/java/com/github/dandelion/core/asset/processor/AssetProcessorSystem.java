@@ -44,6 +44,7 @@ import com.github.dandelion.core.asset.processor.impl.AssetLocationProcessorEntr
 import com.github.dandelion.core.asset.processor.spi.AssetProcessorEntry;
 
 /**
+ * <p>
  * System in charge of discovering all implementations of
  * {@link AssetProcessorEntry} available in the classpath.
  * 
@@ -55,7 +56,8 @@ public final class AssetProcessorSystem {
 	// Logger
 	private static final Logger LOG = LoggerFactory.getLogger(AssetProcessorSystem.class);
 
-	private static ServiceLoader<AssetProcessorEntry> assetProcessorServiceLoader = ServiceLoader.load(AssetProcessorEntry.class);
+	private static ServiceLoader<AssetProcessorEntry> assetProcessorServiceLoader = ServiceLoader
+			.load(AssetProcessorEntry.class);
 	private static List<AssetProcessorEntry> entries = new ArrayList<AssetProcessorEntry>();
 	private static AssetProcessorEntry starter;
 

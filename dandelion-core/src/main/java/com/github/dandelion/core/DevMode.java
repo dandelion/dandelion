@@ -29,19 +29,27 @@
  */
 package com.github.dandelion.core;
 
+/**
+ * <p>
+ * Utility class used to set/get the development mode.
+ * 
+ * @author Romain Lespinasse
+ * @author Thibault Duchateau
+ */
 public final class DevMode {
-    public final static String DANDELION_DEV_MODE = "dandelion.dev.mode";
-    private static boolean devMode = false;
+	
+	public final static String DANDELION_DEV_MODE = "dandelion.dev.mode";
+	private static boolean devMode = false;
 
-    static {
-        devMode = Boolean.TRUE.toString().equals(System.getProperty(DANDELION_DEV_MODE, Boolean.toString(devMode)));
-    }
+	static {
+		devMode = Boolean.TRUE.toString().equals(System.getProperty(DANDELION_DEV_MODE, Boolean.toString(devMode)));
+	}
 
-    public static boolean enabled() {
-        return devMode;
-    }
+	public static boolean enabled() {
+		return devMode;
+	}
 
-    public static void set(boolean state){
-    	devMode = state;
-    }
+	public static void set(boolean state) {
+		devMode = state;
+	}
 }

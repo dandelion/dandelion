@@ -45,10 +45,15 @@ import com.github.dandelion.core.asset.loader.spi.AssetLoader;
 import com.github.dandelion.core.utils.ResourceScanner;
 
 /**
- * Abstract asset loader in charge of loading JSON definitions. The JSON
- * definitions are scanned in the folder specified by the {@link #getPath()}
- * method. The lookup is recursive depending on the {@link #isRecursive()}
- * return value.
+ * <p>
+ * Abstract asset loader in charge of loading JSON definitions.
+ * 
+ * <p>
+ * The JSON definitions are scanned in the folder specified by the
+ * {@link #getPath()} method.
+ * 
+ * <p>
+ * The lookup is recursive depending on the {@link #isRecursive()} return value.
  * 
  * @author Romain Lespinasse
  * @author Thibault Duchateau
@@ -66,7 +71,7 @@ public abstract class AbstractAssetJsonLoader implements AssetLoader {
 		mapper.configure(JsonParser.Feature.ALLOW_COMMENTS, true);
 		mapper.configure(JsonParser.Feature.ALLOW_SINGLE_QUOTES, true);
 		mapper.configure(JsonParser.Feature.ALLOW_BACKSLASH_ESCAPING_ANY_CHARACTER, true);
-		
+
 		List<AssetComponent> assetComponentList = new ArrayList<AssetComponent>();
 
 		// Init the excluded folder list
@@ -79,7 +84,7 @@ public abstract class AbstractAssetJsonLoader implements AssetLoader {
 					resourcePaths.size(), getPath());
 
 			ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-			
+
 			for (String resourcePath : resourcePaths) {
 				InputStream configFileStream = classLoader.getResourceAsStream(resourcePath);
 				AssetComponent assetComponent = mapper.readValue(configFileStream, AssetComponent.class);
@@ -90,7 +95,7 @@ public abstract class AbstractAssetJsonLoader implements AssetLoader {
 		catch (IOException e) {
 			getLogger().error(e.getMessage(), e);
 		}
-		
+
 		return assetComponentList;
 	}
 
@@ -99,9 +104,9 @@ public abstract class AbstractAssetJsonLoader implements AssetLoader {
 	public abstract String getPath();
 
 	/**
-	 * Since each implementation of {@link AbstractAssetJsonLoader} is in
-	 * charge of loading their own definitions, each one of them must be aware
-	 * of the existence of the others.
+	 * Since each implementation of {@link AbstractAssetJsonLoader} is in charge
+	 * of loading their own definitions, each one of them must be aware of the
+	 * existence of the others.
 	 * 
 	 * @return a list of paths to exclude during the classpath scanning.
 	 */

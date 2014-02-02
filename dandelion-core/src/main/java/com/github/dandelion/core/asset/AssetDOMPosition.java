@@ -31,8 +31,20 @@
 package com.github.dandelion.core.asset;
 
 /**
- * Possible DOM position of an Asset
+ * <p>
+ * Possible DOM positions for the assets.
+ * 
+ * @author Romain Lespinasse
  */
 public enum AssetDOMPosition {
-    head, body;
+
+	/**
+	 * Typically used for CSS files.
+	 */
+	head,
+
+	/**
+	 * Usually used for JS files, more precisely at the end of the BODY.
+	 */
+	body;
 }

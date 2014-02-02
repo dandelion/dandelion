@@ -27,7 +27,6 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
 package com.github.dandelion.core.asset.cache.impl;
 
 import java.util.Map;
@@ -36,8 +35,9 @@ import java.util.concurrent.ConcurrentHashMap;
 import com.github.dandelion.core.asset.cache.spi.AssetCache;
 
 /**
- * Service provider for {@link AssetCache} that uses a simple {@link ConcurrentHashMap} as
- * a store.
+ * <p>
+ * Service provider for {@link AssetCache} that uses a simple
+ * {@link ConcurrentHashMap} as a store.
  * 
  * @author Romain Lespinasse
  * @since 0.10.0

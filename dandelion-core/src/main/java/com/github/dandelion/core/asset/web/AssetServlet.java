@@ -40,17 +40,21 @@ import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.github.dandelion.core.asset.cache.AssetCacheSystem;
 import com.github.dandelion.core.asset.web.data.AssetContent;
 
 /**
  * <p>
- * The servlet intercepts the request and renders the appropriate web resource
- * stored in the configured cache system.
+ * Dandelion servlet that intercepts the request and renders the appropriate web
+ * resource stored in the configured {@link AssetCacheSystem}.
  * 
  * @author Romain Lespinasse
  * @since 0.10.0
  */
 public class AssetServlet extends HttpServlet {
+
+	private static final long serialVersionUID = -6874842638265359418L;
+
 	private static Logger LOG = LoggerFactory.getLogger(AssetServlet.class);
 
 	public static final String DANDELION_ASSETS = "dandelionAssets";

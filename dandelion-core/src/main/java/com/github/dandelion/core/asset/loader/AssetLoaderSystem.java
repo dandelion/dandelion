@@ -40,6 +40,7 @@ import org.slf4j.LoggerFactory;
 import com.github.dandelion.core.asset.loader.spi.AssetLoader;
 
 /**
+ * <p>
  * System in charge of discovering all implementations of {@link AssetLoader}
  * available in the classpath.
  * 

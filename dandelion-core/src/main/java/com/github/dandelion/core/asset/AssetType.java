@@ -33,41 +33,46 @@ import static com.github.dandelion.core.asset.AssetDOMPosition.body;
 import static com.github.dandelion.core.asset.AssetDOMPosition.head;
 
 /**
- * Possible types of asset<br/>
- * The order in the enum represent the order in dom
+ * <p>
+ * Possible types of asset.
+ * 
+ * <p>
+ * The order in the enum corresponds to the order in the DOM.
  */
 public enum AssetType {
-    /**
-     * Cascade Style Sheet type
-     */
-    css("text/css", head),
-    /**
-     * Javascript type
-     */
+
+	/**
+	 * Cascade Style Sheet type
+	 */
+	css("text/css", head),
+
+	/**
+	 * Javascript type
+	 */
 	js("application/javascript", body);
 
-    private String contentType;
-    private AssetDOMPosition defaultDom;
+	private String contentType;
+	private AssetDOMPosition defaultDom;
 
-    private AssetType(String contentType, AssetDOMPosition defaultDom) {
-        this.contentType = contentType;
-        this.defaultDom = defaultDom;
-    }
+	private AssetType(String contentType, AssetDOMPosition defaultDom) {
+		this.contentType = contentType;
+		this.defaultDom = defaultDom;
+	}
 
-    public String getContentType() {
-        return contentType;
-    }
+	public String getContentType() {
+		return contentType;
+	}
 
-    public AssetDOMPosition getDefaultDom() {
-        return defaultDom;
-    }
+	public AssetDOMPosition getDefaultDom() {
+		return defaultDom;
+	}
 
-    public static AssetType typeOfAsset(String resource) {
-        for(AssetType type:values()) {
-            if(resource.endsWith(type.name())) {
-                return type;
-            }
-        }
-        return null;
-    }
+	public static AssetType typeOfAsset(String resource) {
+		for (AssetType type : values()) {
+			if (resource.endsWith(type.name())) {
+				return type;
+			}
+		}
+		return null;
+	}
 }

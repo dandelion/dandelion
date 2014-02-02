@@ -29,8 +29,6 @@
  */
 package com.github.dandelion.core.asset;
 
-
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -38,11 +36,11 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import com.github.dandelion.core.DevMode;
 import com.github.dandelion.core.asset.processor.AssetProcessorSystem;
 import com.github.dandelion.core.asset.wrapper.spi.AssetLocationWrapper;
 
 public class AssetStack {
+	
     static AssetConfigurator assetConfigurator;
     static AssetStorage assetStorage;
 

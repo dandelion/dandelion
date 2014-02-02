@@ -8,33 +8,42 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
 
+/**
+ * <p>
+ * Response wrapper that allows to access the wrapped response in a String
+ * format thanks to the {@link #getWrappedContent()}.
+ * 
+ * @author Romain Lespinasse
+ * @since 0.10.0
+ */
 public class AssetFilterResponseWrapper extends HttpServletResponseWrapper {
-    protected PrintWriter printWriter = null;
-    protected CharArrayWriter writer = null;
 
-    public AssetFilterResponseWrapper(HttpServletResponse response) {
-        super(response);
-    }
+	protected PrintWriter printWriter = null;
+	protected CharArrayWriter writer = null;
 
-    @Override
-    public ServletOutputStream getOutputStream() throws IOException {
-        throw new IllegalStateException("getWriter() has already been called for this response");
-    }
+	public AssetFilterResponseWrapper(HttpServletResponse response) {
+		super(response);
+	}
 
-    @Override
-    public PrintWriter getWriter() throws IOException {
-        if (writer == null) {
-            writer = new CharArrayWriter();
-        }
+	@Override
+	public ServletOutputStream getOutputStream() throws IOException {
+		throw new IllegalStateException("getWriter() has already been called for this response");
+	}
 
-        if (printWriter == null) {
-            printWriter = new PrintWriter(writer);
-        }
+	@Override
+	public PrintWriter getWriter() throws IOException {
+		if (writer == null) {
+			writer = new CharArrayWriter();
+		}
 
-        return printWriter;
-    }
+		if (printWriter == null) {
+			printWriter = new PrintWriter(writer);
+		}
 
-    public String getWrappedContent() {
-        return writer.toString();
-    }
+		return printWriter;
+	}
+
+	public String getWrappedContent() {
+		return writer.toString();
+	}
 }

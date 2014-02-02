@@ -35,7 +35,8 @@ import javax.servlet.http.HttpServletRequest;
 import com.github.dandelion.core.asset.Asset;
 
 /**
- * Wrapper for a location url associated with a location key
+ * <p>
+ * Wrapper for a location url associated with a location key.
  * 
  * @author Romain Lespinasse
  * @since 0.2.0

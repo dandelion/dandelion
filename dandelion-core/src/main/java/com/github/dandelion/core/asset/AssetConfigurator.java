@@ -55,22 +55,26 @@ import com.github.dandelion.core.config.Configuration;
 /**
  * Load Assets configuration
  * <ul>
- *     <li>assetsLoader :
- *          <ul>
- *               <li>the {@link com.github.dandelion.core.asset.loader.spi.AssetLoader}
- * found in 'dandelion/dandelion.properties' for the key 'assetsLoader'</li>
- *               <li>or {@link com.github.dandelion.core.asset.loader.impl.AbstractAssetJsonLoader} by default</li>
- *          </ul>
- *     </li>
- *     <li>assets.locations : type of access to assets content(remote [by default], local)</li>
+ * <li>assetsLoader :
+ * <ul>
+ * <li>the {@link com.github.dandelion.core.asset.loader.spi.AssetLoader} found
+ * in 'dandelion/dandelion.properties' for the key 'assetsLoader'</li>
+ * <li>or
+ * {@link com.github.dandelion.core.asset.loader.impl.AbstractAssetJsonLoader}
+ * by default</li>
  * </ul>
- * Default Asset Loader is
- *
+ * </li>
+ * <li>assets.locations : type of access to assets content(remote [by default],
+ * local)</li>
+ * </ul>
+ * 
+ * @author Romain Lespinasse
  */
 public class AssetConfigurator {
-    // Logger
-    private static final Logger LOG = LoggerFactory.getLogger(AssetConfigurator.class);
-    AssetStorage assetStorage;
+
+	private static final Logger LOG = LoggerFactory.getLogger(AssetConfigurator.class);
+    
+	AssetStorage assetStorage;
     List<AssetLoader> assetLoaders;
     List<String> assetsLocations;
     List<String> excludedScopes;

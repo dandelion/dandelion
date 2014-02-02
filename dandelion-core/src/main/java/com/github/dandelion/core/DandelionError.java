@@ -30,11 +30,15 @@
 package com.github.dandelion.core;
 
 /**
- * Definition of an Dandelion Error for Domain-Specific
+ * <p>
+ * Interface for all Dandelion error repositories.
+ * 
+ * @author Romain Lespinasse
  */
 public interface DandelionError {
-    /**
-     * @return Domain-Specific Error number
-     */
-    int getNumber();
+
+	/**
+	 * @return Domain-Specific Error number
+	 */
+	int getNumber();
 }
