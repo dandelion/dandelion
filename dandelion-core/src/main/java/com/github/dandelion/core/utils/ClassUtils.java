@@ -42,37 +42,29 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 /**
- * Helper class used for all reflection stuff.
+ * <p>
+ * Utility class used when dealing with Java classes.
  * 
  * @author Thibault Duchateau
  */
 public class ClassUtils {
 
 	/**
+	 * <p>
 	 * Get a Java class from its name.
 	 * 
 	 * @param className
-	 *            The class name.
-	 * @return The corresponding class.
+	 *            The name of the class to load.
+	 * @return The loaded class.
 	 * @throws ClassNotFoundException
-	 *             
-	 * Tries to load a class with more classloaders. Can be useful in J2EE
-	 * applications if jar is loaded from a different classloader than user
-	 * classes. If class is not found using the standard classloader, tries whit
-	 * the thread classloader.
-	 * 
-	 * @param className
-	 *            class name
-	 * @return Class loaded class
-	 * @throws ClassNotFoundException
-	 *             if none of the ClassLoaders is able to found the reuested
-	 *             class
+	 *             if none of the ClassLoaders is able to found the class.
 	 */
 	public static Class<?> getClass(String className) throws ClassNotFoundException {
 		try {
 			// trying with the default ClassLoader
 			return Class.forName(className);
-		} catch (ClassNotFoundException cnfe) {
+		}
+		catch (ClassNotFoundException cnfe) {
 			// trying with thread ClassLoader
 			Thread thread = Thread.currentThread();
 			ClassLoader threadClassLoader = thread.getContextClassLoader();
@@ -81,35 +73,16 @@ public class ClassUtils {
 	}
 
 	/**
-	 * Instanciate a class.
+	 * Instantiates a class and returns the instance.
 	 * 
 	 * @param klass
-	 *            The class to instanciate.
+	 *            The class to instantiate.
 	 * @return a new instance of the given class.
-	 * @throws IllegalAccessException 
+	 * @throws IllegalAccessException
 	 * @throws InstantiationException
 	 */
 	public static Object getNewInstance(Class<?> klass) throws InstantiationException, IllegalAccessException {
 		return klass.newInstance();
-	}
-
-	/**
-	 * Test if a class exists in the classPath, trying to load it with its name.
-	 * 
-	 * @param className
-	 *            The class to test.
-	 * @return true if the class can be used, false otherwise.
-	 */
-	public static Boolean canBeUsed(String className) {
-		Boolean canBeUsed = false;
-		try {
-			ClassUtils.getClass(className);
-			canBeUsed = true;
-		} 
-		catch (ClassNotFoundException e) {
-			// do nothing
-		}
-		return canBeUsed;
 	}
 
 	/**
@@ -118,20 +91,22 @@ public class ClassUtils {
 	 * or one of its dependencies is not present or cannot be loaded.
 	 * 
 	 * @param className
-	 *            the name of the class to check
-	 * @return whether the specified class is present
+	 *            The fully qualified name of the class to check.
+	 * @return whether the specified class is present or not.
 	 */
 	public static boolean isPresent(String className) {
 		try {
 			Class.forName(className);
 			return true;
-		} catch (Throwable ex) {
+		}
+		catch (Throwable ex) {
 			// Class or one of its dependencies is not present...
 			return false;
 		}
 	}
 
-	public static List<Class<?>> getSubClassesInPackage(String packageName, Class<?> superClass) throws ClassNotFoundException, IOException {
+	public static List<Class<?>> getSubClassesInPackage(String packageName, Class<?> superClass)
+			throws ClassNotFoundException, IOException {
 		ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
 
 		String path = packageName.replace('.', '/');
@@ -141,22 +116,22 @@ public class ClassUtils {
 			URL resource = resources.nextElement();
 			dirs.add(URLDecoder.decode(resource.getFile(), "UTF-8"));
 		}
-		
+
 		TreeSet<String> classes = new TreeSet<String>();
 		for (String directory : dirs) {
 			classes.addAll(findClasses(directory, packageName));
 		}
-		
+
 		ArrayList<Class<?>> classList = new ArrayList<Class<?>>();
 		for (String clazz : classes) {
 			Class<?> clazzz = Class.forName(clazz);
-			if(superClass.isAssignableFrom(clazzz)){
+			if (superClass.isAssignableFrom(clazzz)) {
 				classList.add(clazzz);
 			}
 		}
 		return classList;
 	}
-	
+
 	public static List<Class<?>> getAllClassesInPackage(String packageName) throws ClassNotFoundException, IOException {
 		ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
 		String path = packageName.replace('.', '/');
@@ -176,8 +151,9 @@ public class ClassUtils {
 		}
 		return classList;
 	}
-	
-	private static TreeSet<String> findClasses(String path, String packageName) throws MalformedURLException, IOException {
+
+	private static TreeSet<String> findClasses(String path, String packageName) throws MalformedURLException,
+			IOException {
 		TreeSet<String> classes = new TreeSet<String>();
 		if (path.startsWith("file:") && path.contains("!")) {
 			String[] split = path.split("!");
@@ -186,7 +162,8 @@ public class ClassUtils {
 			ZipEntry entry;
 			while ((entry = zip.getNextEntry()) != null) {
 				if (entry.getName().endsWith(".class")) {
-					String className = entry.getName().replaceAll("[$].*", "").replaceAll("[.]class", "").replace('/', '.');
+					String className = entry.getName().replaceAll("[$].*", "").replaceAll("[.]class", "")
+							.replace('/', '.');
 					if (className.startsWith(packageName)) {
 						classes.add(className);
 					}
@@ -198,16 +175,18 @@ public class ClassUtils {
 			return classes;
 		}
 		File[] files = dir.listFiles();
-        if(files == null) {
-            return classes;
-        }
+		if (files == null) {
+			return classes;
+		}
 		for (File file : files) {
 			if (file.isDirectory()) {
 				classes.addAll(findClasses(file.getAbsolutePath(), packageName + "." + file.getName()));
-			} else if (file.getName().endsWith(".class")) {
+			}
+			else if (file.getName().endsWith(".class")) {
 				// Build the class name with the package name and the file after
 				// removing the .class extension
-				String className = packageName + '.' + file.getName().substring(0, file.getName().length() - ".class".length());
+				String className = packageName + '.'
+						+ file.getName().substring(0, file.getName().length() - ".class".length());
 				classes.add(className);
 			}
 		}

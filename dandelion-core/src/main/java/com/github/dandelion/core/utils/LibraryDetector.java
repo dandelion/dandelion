@@ -30,30 +30,42 @@
 package com.github.dandelion.core.utils;
 
 /**
- * Detects whether certain libraries are available or not.
+ * <p>
+ * Utility class used to detects whether some libraries are available or not.
+ * 
+ * @author Thibault Duchateau
+ * @since 0.10.0
  */
 public final class LibraryDetector {
 
 	private static Boolean jstlAvailable;
-	
+
 	private static Boolean thymeleafAvailable;
-	
+
+	/**
+	 * @return {@code true} if the JSTL is present in the classpath, otherwise
+	 *         {@code false}.
+	 */
 	public static boolean isJstlAvailable() {
-		if(jstlAvailable == null) {
+		if (jstlAvailable == null) {
 			jstlAvailable = ClassUtils.isPresent("javax.servlet.jsp.jstl.core.Config");
 		}
-		
+
 		return jstlAvailable;
 	}
-	
+
+	/**
+	 * @return {@code true} if Thymeleaf is present in the classpath, otherwise
+	 *         {@code false}.
+	 */
 	public static boolean isThymeleafAvailable() {
-		if(thymeleafAvailable == null) {
+		if (thymeleafAvailable == null) {
 			thymeleafAvailable = ClassUtils.isPresent("org.thymeleaf.TemplateEngine");
 		}
-		
+
 		return thymeleafAvailable;
 	}
-	
+
 	/**
 	 * Prevent instantiation.
 	 */

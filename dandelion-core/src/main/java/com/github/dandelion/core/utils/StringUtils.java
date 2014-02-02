@@ -32,6 +32,12 @@ package com.github.dandelion.core.utils;
 import java.util.Iterator;
 import java.util.Random;
 
+/**
+ * Utility class used when dealing with Strings.
+ * 
+ * @author Thibault Duchateau
+ * @author Romain Lespinasse
+ */
 public class StringUtils {
 
 	private static final String NUMERIC = "0123456789";
@@ -47,7 +53,7 @@ public class StringUtils {
 		ESCAPES['\''] = "&#039;";
 		ESCAPES['"'] = "&#034;";
 	}
-    
+
 	/**
 	 * <p>
 	 * Checks if a String is whitespace, empty ("") or null.
@@ -165,9 +171,6 @@ public class StringUtils {
 		return result.toString();
 	}
 
-	// Joining
-	// -----------------------------------------------------------------------
-
 	public static String join(Object[] target, String separator) {
 
 		final StringBuilder sb = new StringBuilder();
@@ -250,11 +253,13 @@ public class StringUtils {
 		}
 		return false;
 	}
-	
+
 	/**
-	 * Trim <i>all</i> whitespace from the given String:
-	 * leading, trailing, and inbetween characters.
-	 * @param str the String to check
+	 * Trim <i>all</i> whitespace from the given String: leading, trailing, and
+	 * inbetween characters.
+	 * 
+	 * @param str
+	 *            the String to check
 	 * @return the trimmed String
 	 * @see java.lang.Character#isWhitespace
 	 */
@@ -274,17 +279,22 @@ public class StringUtils {
 		}
 		return sb.toString();
 	}
-	
+
 	/**
-	 * Check that the given CharSequence is neither {@code null} nor of length 0.
-	 * Note: Will return {@code true} for a CharSequence that purely consists of whitespace.
-	 * <p><pre>
+	 * Check that the given CharSequence is neither {@code null} nor of length
+	 * 0. Note: Will return {@code true} for a CharSequence that purely consists
+	 * of whitespace.
+	 * <p>
+	 * 
+	 * <pre>
 	 * StringUtils.hasLength(null) = false
 	 * StringUtils.hasLength("") = false
 	 * StringUtils.hasLength(" ") = true
 	 * StringUtils.hasLength("Hello") = true
 	 * </pre>
-	 * @param str the CharSequence to check (may be {@code null})
+	 * 
+	 * @param str
+	 *            the CharSequence to check (may be {@code null})
 	 * @return {@code true} if the CharSequence is not null and has length
 	 */
 	public static boolean hasLength(CharSequence str) {
@@ -293,22 +303,25 @@ public class StringUtils {
 
 	/**
 	 * Check that the given String is neither {@code null} nor of length 0.
-	 * Note: Will return {@code true} for a String that purely consists of whitespace.
-	 * @param str the String to check (may be {@code null})
+	 * Note: Will return {@code true} for a String that purely consists of
+	 * whitespace.
+	 * 
+	 * @param str
+	 *            the String to check (may be {@code null})
 	 * @return {@code true} if the String is not null and has length
 	 * @see #hasLength(CharSequence)
 	 */
 	public static boolean hasLength(String str) {
 		return hasLength((CharSequence) str);
 	}
-	
+
 	/**
 	 * @return a random number with 5 digits
 	 */
 	public static String getRamdomNumber() {
 		return StringUtils.randomNumeric(5);
 	}
-	
+
 	/**
 	 * <p>
 	 * Escapes the characters in a <code>String</code> using XML entities.
@@ -319,11 +332,11 @@ public class StringUtils {
 	 *         string input
 	 */
 	public static String escape(String src) {
-		
+
 		if (src == null) {
 			return src;
 		}
-		
+
 		// First pass to determine the length of the buffer so we only allocate
 		// once
 		int length = 0;
@@ -332,7 +345,8 @@ public class StringUtils {
 			String escape = getEscape(c);
 			if (escape != null) {
 				length += escape.length();
-			} else {
+			}
+			else {
 				length += 1;
 			}
 		}
@@ -349,13 +363,14 @@ public class StringUtils {
 			String escape = getEscape(c);
 			if (escape != null) {
 				buf.append(escape);
-			} else {
+			}
+			else {
 				buf.append(c);
 			}
 		}
 		return buf.toString();
 	}
-	
+
 	/**
 	 * <p>
 	 * Escapes the characters in a {@code String} using XML entities only if the
@@ -372,11 +387,12 @@ public class StringUtils {
 		}
 		return src;
 	}
-	
+
 	private static String getEscape(char c) {
 		if (c < ESCAPES.length) {
 			return ESCAPES[c];
-		} else {
+		}
+		else {
 			return null;
 		}
 	}

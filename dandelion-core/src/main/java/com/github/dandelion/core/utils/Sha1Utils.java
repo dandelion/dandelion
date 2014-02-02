@@ -37,40 +37,59 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Utils on sha-1
+ * <p>
+ * Utility class used when dealing with SHA-1.
+ * 
+ * <p>
+ * The {@link MessageDigest} for SHA1 is loaded at the first use.
+ * 
+ * @author Romain Lespinasse
  */
 public final class Sha1Utils {
-    // Logger
-    private static final Logger LOG = LoggerFactory.getLogger(Sha1Utils.class);
 
-    static MessageDigest mDigest;
+	private static final Logger LOG = LoggerFactory.getLogger(Sha1Utils.class);
 
-    static {
-        try {
-            mDigest = MessageDigest.getInstance("SHA1");
-        } catch (NoSuchAlgorithmException e) {
-            LOG.error("SHA1 algorithm unknown, no generation");
-        }
+	static MessageDigest mDigest;
 
-    }
+	static {
+		try {
+			mDigest = MessageDigest.getInstance("SHA1");
+		}
+		catch (NoSuchAlgorithmException e) {
+			LOG.error("SHA1 algorithm unknown, no generation");
+		}
 
-    public static String generateSha1(String input, boolean neverFail) {
-        if(mDigest==null) {
-            if(neverFail) {
-                LOG.error("SHA-1 can't be calculate for input [{}], the input is return instead of", input);
-                return input;
-            } else {
-                LOG.error("SHA-1 can't be calculate for input [{}], null is return", input);
-                return null;
-            }
-        }
+	}
 
-        byte[] result = mDigest.digest(input.getBytes());
-        StringBuilder sb = new StringBuilder();
-        for (byte aResult : result) {
-            sb.append(Integer.toString((aResult & 0xff) + 0x100, 16).substring(1));
-        }
+	/**
+	 * <p>
+	 * Generates a SHA1 from the supplied input.
+	 * 
+	 * @param input
+	 *            The input from which the SHA1 is generated.
+	 * @param neverFail
+	 *            Whether the function should return something even if the
+	 *            {@link MessageDigest} algorithm can't be loaded.
+	 * @return a hash value from the {@code input}.
+	 */
+	public static String generateSha1(String input, boolean neverFail) {
+		if (mDigest == null) {
+			if (neverFail) {
+				LOG.error("SHA-1 can't be calculated for [{}]. Returning the unchanged input instead.", input);
+				return input;
+			}
+			else {
+				LOG.error("SHA-1 can't be calculated for [{}]. Returning null instead.", input);
+				return null;
+			}
+		}
 
-        return sb.toString();
-    }
+		byte[] result = mDigest.digest(input.getBytes());
+		StringBuilder sb = new StringBuilder();
+		for (byte aResult : result) {
+			sb.append(Integer.toString((aResult & 0xff) + 0x100, 16).substring(1));
+		}
+
+		return sb.toString();
+	}
 }

@@ -40,8 +40,8 @@ import java.util.ResourceBundle;
 import java.util.ResourceBundle.Control;
 
 /**
- * Custom implementation of @link {@link Control} that reads properties file in
- * UTF-8.
+ * <p>
+ * Custom implementation of {@link Control} that reads properties file in UTF-8.
  */
 public class UTF8Control extends Control {
 
@@ -155,13 +155,15 @@ public class UTF8Control extends Control {
 					stream = connection.getInputStream();
 				}
 			}
-		} else {
+		}
+		else {
 			stream = loader.getResourceAsStream(resourceName);
 		}
 		if (stream != null) {
 			try {
 				bundle = new PropertyResourceBundle(new InputStreamReader(stream, "UTF-8"));
-			} finally {
+			}
+			finally {
 				stream.close();
 			}
 		}

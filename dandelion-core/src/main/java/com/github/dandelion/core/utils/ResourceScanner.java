@@ -48,7 +48,11 @@ import org.slf4j.LoggerFactory;
 import com.github.dandelion.core.DandelionException;
 
 /**
- * Utilities used for classpath scanning.
+ * <p>
+ * Utility class used for searching for resources in the classpath.
+ * 
+ * @author Thibault Duchateau
+ * @since 0.10.0
  */
 public final class ResourceScanner {
 
@@ -106,7 +110,7 @@ public final class ResourceScanner {
 			boolean recursive) throws IOException {
 		return scanForResourcePaths(location, excludedPaths, nameFilter, null, null, recursive);
 	}
-	
+
 	/**
 	 * <p>
 	 * Finds the virtual path of all resources that match the given conditions

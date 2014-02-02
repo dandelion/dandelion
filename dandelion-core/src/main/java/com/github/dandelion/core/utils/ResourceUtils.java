@@ -43,7 +43,7 @@ import com.github.dandelion.core.DandelionException;
 import javax.servlet.http.HttpServletRequest;
 
 public final class ResourceUtils {
-    // Logger
+	
     private static final Logger LOG = LoggerFactory.getLogger(ResourceUtils.class);
 
     private static final int DEFAULT_BUFFER_SIZE = 1024 * 4;

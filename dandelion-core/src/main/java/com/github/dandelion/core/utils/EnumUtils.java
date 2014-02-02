@@ -29,9 +29,23 @@
  */
 package com.github.dandelion.core.utils;
 
-
+/**
+ * <p>
+ * Utility class used when dealing with Enums.
+ * 
+ * @author Thibault Duchateau
+ * @since 0.10.0
+ */
 public class EnumUtils {
 
+	/**
+	 * Build a String containing all the possible values of the supplied
+	 * {@code enumClass}.
+	 * 
+	 * @param enumClass
+	 *            The enum from which the possible values must be displayed.
+	 * @return a String containing all the possible values separated by a comma.
+	 */
 	public static <E extends Enum<E>> String printPossibleValuesOf(Class<E> enumClass) {
 
 		StringBuilder possibleValues = new StringBuilder();
@@ -41,7 +55,8 @@ public class EnumUtils {
 			possibleValues.append("'").append(enumConstants[i].name().toLowerCase()).append("'");
 			if (i < enumConstants.length - 2) {
 				possibleValues.append(", ");
-			} else if (i == (enumConstants.length - 2)) {
+			}
+			else if (i == (enumConstants.length - 2)) {
 				possibleValues.append(" and ");
 			}
 		}
@@ -72,7 +87,8 @@ public class EnumUtils {
 
 		try {
 			return Enum.valueOf(enumType, enumName.toUpperCase().trim());
-		} catch (IllegalArgumentException ex) {
+		}
+		catch (IllegalArgumentException ex) {
 			return null;
 		}
 	}
