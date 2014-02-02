@@ -11,18 +11,24 @@
 
    <artifactId>dandelion-ehcache</artifactId>
    <name>Dandelion :: Extras :: Cache :: EhCache</name>
-   <description>Extra allowing to plug a back-end cache based on Ehcache in the asset cache system.</description>
+   <description>Extra allowing to plug a back-end cache based on Ehcache in the Dandelion asset cache system.</description>
 
    <dependencies>
+      <!-- Internal dependencies -->
       <dependency>
          <groupId>com.github.dandelion</groupId>
          <artifactId>dandelion-core</artifactId>
          <version>${project.version}</version>
       </dependency>
+
+      <!-- Servlet API -->
       <dependency>
          <groupId>javax.servlet</groupId>
          <artifactId>servlet-api</artifactId>
+         <scope>provided</scope>
       </dependency>
+
+      <!-- Ehcache -->
       <dependency>
          <groupId>net.sf.ehcache</groupId>
          <artifactId>ehcache-core</artifactId>

@@ -11,24 +11,24 @@
    <artifactId>dandelion-spring3</artifactId>
    <packaging>jar</packaging>
    <name>Dandelion :: Extras :: Spring3</name>
-
+   <description>Extra providing utilities when dealing with Spring 3.x+.</description>
    <properties>
       <spring.version>[3.0.0.RELEASE,)</spring.version>
    </properties>
 
    <dependencies>
-   
-      <!-- Dandelion Core -->
+      <!-- Internal dependencies -->
       <dependency>
          <groupId>com.github.dandelion</groupId>
          <artifactId>dandelion-core</artifactId>
          <version>${project.version}</version>
       </dependency>
 
-      <!-- Servlet -->
+      <!-- Servlet API -->
       <dependency>
          <groupId>javax.servlet</groupId>
          <artifactId>servlet-api</artifactId>
+         <scope>provided</scope>
       </dependency>
 
       <!-- Spring -->

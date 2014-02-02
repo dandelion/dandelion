@@ -30,8 +30,8 @@
 
 package com.github.dandelion.jsp;
 
-import com.github.dandelion.core.asset.web.AssetFilter;
-import com.github.dandelion.core.asset.web.AssetServlet;
+import java.io.File;
+
 import org.apache.jasper.servlet.JspServlet;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.nio.SelectChannelConnector;
@@ -51,9 +51,9 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.phantomjs.PhantomJSDriver;
 import org.openqa.selenium.phantomjs.PhantomJSDriverService;
 import org.openqa.selenium.remote.DesiredCapabilities;
-import org.openqa.selenium.remote.service.DriverService;
 
-import java.io.File;
+import com.github.dandelion.core.asset.web.AssetFilter;
+import com.github.dandelion.core.asset.web.AssetServlet;
 
 public abstract class PhantomJsTest extends FluentAdapter {
     private static final Dimension DEFAULT_WINDOW_SIZE = new Dimension(1024, 768);

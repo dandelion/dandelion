@@ -11,17 +11,24 @@
    <artifactId>dandelion-jsp</artifactId>
    <packaging>jar</packaging>
    <name>Dandelion :: JSP</name>
+   <description>JSP implementation of Dandelion that provides a JSP taglib.</description>
 
    <dependencies>
+      <!-- Internal dependancies -->
       <dependency>
          <groupId>com.github.dandelion</groupId>
          <artifactId>dandelion-core</artifactId>
          <version>${project.version}</version>
       </dependency>
+
+      <!-- Servlet API -->
       <dependency>
          <groupId>javax.servlet</groupId>
          <artifactId>servlet-api</artifactId>
+         <scope>provided</scope>
       </dependency>
+
+      <!-- JSP API -->
       <dependency>
          <groupId>javax.servlet.jsp</groupId>
          <artifactId>jsp-api</artifactId>
@@ -29,16 +36,21 @@
       </dependency>
 
       <!-- Test dependencies -->
+      <!-- PhantomJS + GhostDriver -->
       <dependency>
          <groupId>com.github.detro.ghostdriver</groupId>
          <artifactId>phantomjsdriver</artifactId>
          <scope>test</scope>
       </dependency>
+
+      <!-- JUnit -->
       <dependency>
          <groupId>junit</groupId>
          <artifactId>junit-dep</artifactId>
          <scope>test</scope>
       </dependency>
+
+      <!-- Jetty -->
       <dependency>
          <groupId>org.eclipse.jetty</groupId>
          <artifactId>jetty-jsp</artifactId>
@@ -59,19 +71,15 @@
          <artifactId>jetty-webapp</artifactId>
          <scope>test</scope>
       </dependency>
+
+      <!-- FluentLenium -->
       <dependency>
          <groupId>org.fluentlenium</groupId>
          <artifactId>fluentlenium-core</artifactId>
          <scope>test</scope>
-         <exclusions>
-            <exclusion>
-               <artifactId>junit-dep</artifactId>
-               <groupId>junit</groupId>
-            </exclusion>
-         </exclusions>
       </dependency>
    </dependencies>
-   
+
    <build>
       <plugins>
          <plugin>

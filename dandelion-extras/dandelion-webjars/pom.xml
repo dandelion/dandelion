@@ -10,18 +10,26 @@
    </parent>
 
    <artifactId>dandelion-webjars</artifactId>
+   <packaging>jar</packaging>
    <name>Dandelion :: Extras :: Webjars</name>
+   <description>Extra providing a new asset location wrapper for WebJars.</description>
 
    <dependencies>
+      <!-- Internal dependencies -->
       <dependency>
          <groupId>com.github.dandelion</groupId>
          <artifactId>dandelion-core</artifactId>
          <version>${project.version}</version>
       </dependency>
+
+      <!-- Servlet API -->
       <dependency>
          <groupId>javax.servlet</groupId>
          <artifactId>servlet-api</artifactId>
+         <scope>provided</scope>
       </dependency>
+
+      <!-- WebJars -->
       <dependency>
          <groupId>org.webjars</groupId>
          <artifactId>webjars-locator</artifactId>

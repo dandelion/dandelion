@@ -14,7 +14,7 @@
    <packaging>pom</packaging>
    <name>Dandelion</name>
    <description>
-      Dandelion, an extensible web framework making web development simpler
+      Dandelion, an extensible web framework making web development simpler.
    </description>
    <url>http://dandelion.github.io/dandelion</url>
    <inceptionYear>2013</inceptionYear>
@@ -44,12 +44,22 @@
       <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
       <!-- Dependencies -->
+      <ehcache.version>2.6.6</ehcache.version>
+      <jackson-mapper.version>1.9.11</jackson-mapper.version>
+      <jsp-api.version>2.2</jsp-api.version>
       <servlet-api.version>2.5</servlet-api.version>
       <slf4j-api.version>1.7.5</slf4j-api.version>
-      <fest-assert.version>1.4</fest-assert.version>
+      <thymeleaf.version>2.1.1.RELEASE</thymeleaf.version>
+      <webjars-locator.version>0.9</webjars-locator.version>
+      <yui-compressor.version>2.4.7</yui-compressor.version>
 
       <!-- Test dependencies -->
+      <fest-assert.version>1.4</fest-assert.version>
+      <fluentlenium.version>0.7.8</fluentlenium.version>
+      <jetty.test.version>7.6.13.v20130916</jetty.test.version>
       <junit.version>4.11</junit.version>
+      <phantomjsdriver.version>1.0.3</phantomjsdriver.version>
+      <spring-test.version>3.2.2.RELEASE</spring-test.version>
 
       <!-- Maven plugins -->
       <maven.compiler.version>2.3.2</maven.compiler.version>
@@ -58,43 +68,49 @@
       <maven.release.version>2.3.2</maven.release.version>
       <maven.site.version>3.1</maven.site.version>
       <maven.source.version>2.2</maven.source.version>
+      <maven.surefire.version>2.13</maven.surefire.version>
       <maven.gpg.version>1.4</maven.gpg.version>
    </properties>
 
    <dependencyManagement>
       <dependencies>
+
+         <!-- Servlet API -->
          <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>servlet-api</artifactId>
             <version>${servlet-api.version}</version>
             <scope>provided</scope>
          </dependency>
+
+         <!-- JSP API -->
          <dependency>
             <groupId>javax.servlet.jsp</groupId>
             <artifactId>jsp-api</artifactId>
-            <version>2.2</version>
+            <version>${jsp-api.version}</version>
             <scope>provided</scope>
          </dependency>
+
+         <!-- Thymeleaf -->
          <dependency>
             <groupId>org.thymeleaf</groupId>
             <artifactId>thymeleaf</artifactId>
-            <version>2.1.1.RELEASE</version>
+            <version>${thymeleaf.version}</version>
             <scope>provided</scope>
          </dependency>
-         <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-annotations</artifactId>
-            <version>2.3.1</version>
-         </dependency>
+
+         <!-- Jackson -->
          <dependency>
             <groupId>org.codehaus.jackson</groupId>
             <artifactId>jackson-mapper-asl</artifactId>
-            <version>1.9.11</version>
+            <version>${jackson-mapper.version}</version>
          </dependency>
+
+         <!-- YUI Compressor -->
          <dependency>
             <groupId>com.yahoo.platform.yui</groupId>
             <artifactId>yuicompressor</artifactId>
-            <version>2.4.7</version>
+            <version>${yui-compressor.version}</version>
             <exclusions>
                <exclusion>
                   <groupId>rhino</groupId>
@@ -103,66 +119,90 @@
             </exclusions>
          </dependency>
 
+         <!-- Ehcache -->
          <dependency>
             <groupId>net.sf.ehcache</groupId>
             <artifactId>ehcache-core</artifactId>
-            <version>2.6.6</version>
+            <version>${ehcache.version}</version>
             <scope>provided</scope>
          </dependency>
 
+         <!-- WebJars locator -->
          <dependency>
             <groupId>org.webjars</groupId>
             <artifactId>webjars-locator</artifactId>
-            <version>0.9</version>
+            <version>${webjars-locator.version}</version>
+         </dependency>
+
+         <!-- SLF4J -->
+         <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${slf4j-api.version}</version>
          </dependency>
 
          <!-- Test dependencies -->
+         <!-- Spring -->
          <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-test</artifactId>
-            <version>3.2.2.RELEASE</version>
+            <version>${spring-test.version}</version>
             <scope>test</scope>
          </dependency>
+
+         <!-- PhantomJS + GhostDriver -->
          <dependency>
             <groupId>com.github.detro.ghostdriver</groupId>
             <artifactId>phantomjsdriver</artifactId>
-            <version>1.0.3</version>
+            <version>${phantomjsdriver.version}</version>
+            <scope>test</scope>
+         </dependency>
+
+         <!-- JUnit -->
+         <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit-dep</artifactId>
+            <version>${junit.version}</version>
             <scope>test</scope>
          </dependency>
          <dependency>
             <groupId>junit</groupId>
-            <artifactId>junit-dep</artifactId>
-            <version>4.11</version>
+            <artifactId>junit</artifactId>
+            <version>${junit.version}</version>
             <scope>test</scope>
          </dependency>
-         <dependency>
-            <groupId>org.eclipse.jetty</groupId>
-            <artifactId>jetty-jsp</artifactId>
-            <version>7.6.13.v20130916</version>
-            <scope>test</scope>
-         </dependency>
+
+         <!-- Jetty -->
          <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-server</artifactId>
-            <version>7.6.13.v20130916</version>
-            <scope>test</scope>
-         </dependency>
-         <dependency>
-            <groupId>org.eclipse.jetty</groupId>
-            <artifactId>jetty-util</artifactId>
-            <version>7.6.13.v20130916</version>
+            <version>${jetty.test.version}</version>
             <scope>test</scope>
          </dependency>
          <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-webapp</artifactId>
-            <version>7.6.13.v20130916</version>
+            <version>${jetty.test.version}</version>
             <scope>test</scope>
          </dependency>
          <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-jsp</artifactId>
+            <version>${jetty.test.version}</version>
+            <scope>test</scope>
+         </dependency>
+         <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-util</artifactId>
+            <version>${jetty.test.version}</version>
+            <scope>test</scope>
+         </dependency>
+
+         <!-- FluentLenium + Selenium -->
+         <dependency>
             <groupId>org.fluentlenium</groupId>
             <artifactId>fluentlenium-core</artifactId>
-            <version>0.7.8</version>
+            <version>${fluentlenium.version}</version>
             <scope>test</scope>
             <exclusions>
                <exclusion>
@@ -171,6 +211,14 @@
                </exclusion>
             </exclusions>
          </dependency>
+
+         <!-- FestAssert -->
+         <dependency>
+            <groupId>org.easytesting</groupId>
+            <artifactId>fest-assert</artifactId>
+            <version>${fest-assert.version}</version>
+            <scope>test</scope>
+         </dependency>
       </dependencies>
    </dependencyManagement>
 
@@ -178,34 +226,31 @@
       <dependency>
          <groupId>org.slf4j</groupId>
          <artifactId>slf4j-api</artifactId>
-         <version>${slf4j-api.version}</version>
       </dependency>
       <dependency>
          <groupId>junit</groupId>
          <artifactId>junit</artifactId>
-         <version>${junit.version}</version>
          <scope>test</scope>
       </dependency>
       <dependency>
          <groupId>org.easytesting</groupId>
          <artifactId>fest-assert</artifactId>
-         <version>${fest-assert.version}</version>
          <scope>test</scope>
       </dependency>
    </dependencies>
 
    <build>
       <pluginManagement>
-          <plugins>
-              <plugin>
-                  <groupId>org.apache.maven.plugins</groupId>
-                  <artifactId>maven-surefire-plugin</artifactId>
-                  <version>2.13</version>
-                  <configuration>
-                      <useSystemClassLoader>false</useSystemClassLoader>
-                  </configuration>
-              </plugin>
-          </plugins>
+         <plugins>
+            <plugin>
+               <groupId>org.apache.maven.plugins</groupId>
+               <artifactId>maven-surefire-plugin</artifactId>
+               <version>${maven.surefire.version}</version>
+               <configuration>
+                  <useSystemClassLoader>false</useSystemClassLoader>
+               </configuration>
+            </plugin>
+         </plugins>
       </pluginManagement>
       <plugins>
          <plugin>

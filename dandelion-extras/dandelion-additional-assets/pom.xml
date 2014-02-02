@@ -10,17 +10,22 @@
    </parent>
 
    <artifactId>dandelion-additional-assets</artifactId>
+   <packaging>jar</packaging>
    <name>Dandelion :: Extras :: Additional Assets</name>
 
    <dependencies>
+      <!-- Internal dependencies -->
       <dependency>
          <groupId>com.github.dandelion</groupId>
          <artifactId>dandelion-core</artifactId>
          <version>${project.version}</version>
       </dependency>
+
+      <!-- Servlet API -->
       <dependency>
          <groupId>javax.servlet</groupId>
          <artifactId>servlet-api</artifactId>
+         <scope>provided</scope>
       </dependency>
    </dependencies>
 </project>
