@@ -373,7 +373,7 @@ public class AssetRequestContext {
 	 * @return this context
 	 */
 	public AssetRequestContext addScope(Enum<?> scope) {
-		addScope(scope.toString().replace("_", "-"));
+		addScope(scope.toString().toLowerCase().replace("_", "-"));
 		return this;
 	}
 
