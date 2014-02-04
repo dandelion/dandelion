@@ -1,10 +1,10 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 
 <%@ taglib prefix="dandelion" uri="http://github.com/dandelion" %>
 
 <%--
   ~ [The "BSD licence"]
-  ~ Copyright (c) 2013 Dandelion
+  ~ Copyright (c) 2013-2014 Dandelion
   ~ All rights reserved.
   ~
   ~ Redistribution and use in source and binary forms, with or without
@@ -37,6 +37,6 @@
 <head>
 </head>
 <body>
-   <dandelion:assets scopes="assets_excludedAssets" excludedAssets="assets_excludedAssets_1"/>
+<dandelion:assets scopes="assets_excludedAssets" excludedAssets="assets_excludedAssets_1"/>
 </body>
 </html>

@@ -1,6 +1,6 @@
 /*
  * [The "BSD licence"]
- * Copyright (c) 2013 Dandelion
+ * Copyright (c) 2013-2014 Dandelion
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -34,5 +34,5 @@ package com.github.dandelion.core.asset.web.data;
  * Representation of a asset name
  */
 public interface AssetName {
-    String toString();
+	String toString();
 }

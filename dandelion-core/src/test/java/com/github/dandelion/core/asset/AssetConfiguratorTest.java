@@ -1,6 +1,6 @@
 /*
  * [The "BSD licence"]
- * Copyright (c) 2013 Dandelion
+ * Copyright (c) 2013-2014 Dandelion
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -44,56 +44,56 @@ import com.github.dandelion.core.asset.loader.spi.AssetLoader;
 import com.github.dandelion.fakedomain.AssetFakeLoader;
 
 public class AssetConfiguratorTest {
-    static AssetConfigurator assetConfigurator;
+	static AssetConfigurator assetConfigurator;
 
-    @BeforeClass
-    public static void set_up() {
-        assetConfigurator = new AssetConfigurator(new AssetStorage());
-        assetConfigurator.initialize();
-    }
+	@BeforeClass
+	public static void set_up() {
+		assetConfigurator = new AssetConfigurator(new AssetStorage());
+		assetConfigurator.initialize();
+	}
 
-    @Test
-    public void should_load_default_scope() {
-        assertThat(assetConfigurator.assetStorage.assetsFor()).hasSize(1);
-    }
+	@Test
+	public void should_load_default_scope() {
+		assertThat(assetConfigurator.assetStorage.assetsFor()).hasSize(1);
+	}
 
-    @Test
-    public void should_load_other_scopes() {
-        assertThat(assetConfigurator.assetStorage.assetsFor("plugin1")).hasSize(3);
-        assertThat(assetConfigurator.assetStorage.assetsFor("plugin2")).hasSize(3);
-        assertThat(assetConfigurator.assetStorage.assetsFor("plugin1addon")).hasSize(4);
-        assertThat(assetConfigurator.assetStorage.assetsFor("plugin1addon", "plugin2")).hasSize(6);
-        assertThat(assetConfigurator.assetStorage.assetsFor("plugin4")).hasSize(3)
-                .onProperty("dom").containsSequence(head, null, body);
-    }
+	@Test
+	public void should_load_other_scopes() {
+		assertThat(assetConfigurator.assetStorage.assetsFor("plugin1")).hasSize(3);
+		assertThat(assetConfigurator.assetStorage.assetsFor("plugin2")).hasSize(3);
+		assertThat(assetConfigurator.assetStorage.assetsFor("plugin1addon")).hasSize(4);
+		assertThat(assetConfigurator.assetStorage.assetsFor("plugin1addon", "plugin2")).hasSize(6);
+		assertThat(assetConfigurator.assetStorage.assetsFor("plugin4")).hasSize(3).onProperty("dom")
+				.containsSequence(head, null, body);
+	}
 
-    @Test
-    public void should_load_the_assets_locations() {
-        assertThat(assetConfigurator.assetsLocations).containsSequence("other", "remote", "local");
-    }
+	@Test
+	public void should_load_the_assets_locations() {
+		assertThat(assetConfigurator.assetsLocations).containsSequence("other", "remote", "local");
+	}
 
-    @Test
-    public void should_manage_asset_with_empty_parent_scope() {
-        List<Asset> assets = assetConfigurator.assetStorage.assetsFor("scope_base", "empty_scope_as_parent");
-        assertThat(assets).hasSize(1).onProperty("version").containsOnly("empty_scope_as_parent");
-    }
+	@Test
+	public void should_manage_asset_with_empty_parent_scope() {
+		List<Asset> assets = assetConfigurator.assetStorage.assetsFor("scope_base", "empty_scope_as_parent");
+		assertThat(assets).hasSize(1).onProperty("version").containsOnly("empty_scope_as_parent");
+	}
 
-    @Test
-    public void should_work_with_another_loader() {
-        AssetConfigurator anotherConfigurator = new AssetConfigurator(new AssetStorage());
+	@Test
+	public void should_work_with_another_loader() {
+		AssetConfigurator anotherConfigurator = new AssetConfigurator(new AssetStorage());
 
-        // simulate Default configuration
-        anotherConfigurator.setDefaultsIfNeeded();
+		// simulate Default configuration
+		anotherConfigurator.setDefaultsIfNeeded();
 
-        // clean loaded configuration
-        anotherConfigurator.assetLoaders = new ArrayList<AssetLoader>();
-        anotherConfigurator.assetLoaders.add(new AssetFakeLoader());
-        anotherConfigurator.assetsLocations = list("local");
+		// clean loaded configuration
+		anotherConfigurator.assetLoaders = new ArrayList<AssetLoader>();
+		anotherConfigurator.assetLoaders.add(new AssetFakeLoader());
+		anotherConfigurator.assetsLocations = list("local");
 
-        anotherConfigurator.processAssetsLoading(false);
+		anotherConfigurator.processAssetsLoading(false);
 
-        assertThat(anotherConfigurator.assetStorage.assetsFor()).hasSize(0);
-        assertThat(anotherConfigurator.assetStorage.assetsFor("fake")).hasSize(2);
-        assertThat(anotherConfigurator.assetsLocations).contains("local");
-    }
+		assertThat(anotherConfigurator.assetStorage.assetsFor()).hasSize(0);
+		assertThat(anotherConfigurator.assetStorage.assetsFor("fake")).hasSize(2);
+		assertThat(anotherConfigurator.assetsLocations).contains("local");
+	}
 }

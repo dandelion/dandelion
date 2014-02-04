@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!--
   ~ [The "BSD licence"]
-  ~ Copyright (c) 2013 Dandelion
+  ~ Copyright (c) 2013-2014 Dandelion
   ~ All rights reserved.
   ~
   ~ Redistribution and use in source and binary forms, with or without
@@ -30,33 +30,33 @@
   -->
 <taglib xmlns="http://java.sun.com/xml/ns/j2ee"
         version="2.0">
-    <description>Taglib for Dandelion JSP module</description>
-    <tlib-version>0.30</tlib-version>
-    <short-name>dandelion</short-name>
-    <uri>http://github.com/dandelion</uri>
+   <description>Taglib for Dandelion JSP module</description>
+   <tlib-version>0.30</tlib-version>
+   <short-name>dandelion</short-name>
+   <uri>http://github.com/dandelion</uri>
 
-    <tag>
-        <description>Generates the HTML tags in order to have all assets loaded</description>
-        <name>assets</name>
-        <tag-class>com.github.dandelion.jsp.tag.AssetsTag</tag-class>
-        <body-content>empty</body-content>
-        <attribute>
-            <description>List of requested scopes (comma separated)</description>
-            <name>scopes</name>
-            <required>false</required>
-            <rtexprvalue>true</rtexprvalue>
-        </attribute>
-        <attribute>
-            <description>List of excluded scopes (comma separated)</description>
-            <name>excludedScopes</name>
-            <required>false</required>
-            <rtexprvalue>true</rtexprvalue>
-        </attribute>
-        <attribute>
-            <description>List of excluded assets (comma separated)</description>
-            <name>excludedAssets</name>
-            <required>false</required>
-            <rtexprvalue>true</rtexprvalue>
-        </attribute>
-    </tag>
+   <tag>
+      <description>Generates the HTML tags in order to have all assets loaded</description>
+      <name>assets</name>
+      <tag-class>com.github.dandelion.jsp.tag.AssetsTag</tag-class>
+      <body-content>empty</body-content>
+      <attribute>
+         <description>List of requested scopes (comma separated)</description>
+         <name>scopes</name>
+         <required>false</required>
+         <rtexprvalue>true</rtexprvalue>
+      </attribute>
+      <attribute>
+         <description>List of excluded scopes (comma separated)</description>
+         <name>excludedScopes</name>
+         <required>false</required>
+         <rtexprvalue>true</rtexprvalue>
+      </attribute>
+      <attribute>
+         <description>List of excluded assets (comma separated)</description>
+         <name>excludedAssets</name>
+         <required>false</required>
+         <rtexprvalue>true</rtexprvalue>
+      </attribute>
+   </tag>
 </taglib>

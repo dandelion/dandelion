@@ -1,6 +1,6 @@
 /*
  * [The "BSD licence"]
- * Copyright (c) 2012 Dandelion
+ * Copyright (c) 2013-2014 Dandelion
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without
@@ -41,33 +41,34 @@ import org.junit.Test;
 public class StandardConfigurationLoaderTest {
 
 	private static StandardConfigurationLoader loader;
-	
+
 	@BeforeClass
-	public static void setup(){
+	public static void setup() {
 		loader = new StandardConfigurationLoader();
 	}
-	
+
 	@Before
 	public void before() throws Exception {
 		loader.loadDefaultConfiguration();
 		System.clearProperty(StandardConfigurationLoader.DANDELION_CONFIGURATION);
 	}
-	
+
 	@Test
 	public void should_return_empty_user_properties_from_classpath() throws Exception {
 		Properties userProperties = loader.loadUserConfiguration();
-		
+
 		assertThat(userProperties).isNotNull();
 		assertThat(userProperties).isEmpty();
 	}
-	
+
 	@Test
 	public void should_load_user_properties_from_system_property() throws Exception {
-		String path = new File("src/test/resources/dandelion-test/configuration-loader/".replace("/", File.separator)).getAbsolutePath();
+		String path = new File("src/test/resources/dandelion-test/configuration-loader/".replace("/", File.separator))
+				.getAbsolutePath();
 		System.setProperty(StandardConfigurationLoader.DANDELION_CONFIGURATION, path);
-		
+
 		Properties userProperties = loader.loadUserConfiguration();
-		
+
 		assertThat(userProperties).isNotNull().hasSize(1);
 		assertThat(userProperties.getProperty("assets.locations")).isEqualTo("other,remote,local");
 	}

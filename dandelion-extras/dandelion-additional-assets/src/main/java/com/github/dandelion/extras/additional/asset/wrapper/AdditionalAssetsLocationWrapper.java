@@ -1,6 +1,6 @@
 /*
  * [The "BSD licence"]
- * Copyright (c) 2013 Dandelion
+ * Copyright (c) 2013-2014 Dandelion
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -30,34 +30,35 @@
 
 package com.github.dandelion.extras.additional.asset.wrapper;
 
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+
 import com.github.dandelion.core.asset.Asset;
 import com.github.dandelion.core.asset.web.AssetRequestContext;
 import com.github.dandelion.core.asset.wrapper.spi.AssetLocationWrapper;
-
-import javax.servlet.http.HttpServletRequest;
-import java.util.Map;
 
 /**
  * Location Wrapper for "additional_assets"
  */
 public class AdditionalAssetsLocationWrapper implements AssetLocationWrapper {
-    @Override
-    public String getLocationKey() {
-        return "additional_assets";
-    }
+	@Override
+	public String getLocationKey() {
+		return "additional_assets";
+	}
 
-    @Override
-    public String getWrappedLocation(Asset asset, HttpServletRequest request) {
-        Map<String, Object> parameters = AssetRequestContext.get(request).getParameters(asset.getName());
-        if(parameters == null || parameters.isEmpty()) {
-            return null;
-        }
-        return asset.getLocations().get(getLocationKey());
-    }
+	@Override
+	public String getWrappedLocation(Asset asset, HttpServletRequest request) {
+		Map<String, Object> parameters = AssetRequestContext.get(request).getParameters(asset.getName());
+		if (parameters == null || parameters.isEmpty()) {
+			return null;
+		}
+		return asset.getLocations().get(getLocationKey());
+	}
 
-    @Override
-    public String getWrappedContent(Asset asset, HttpServletRequest request) {
-        // dedicated to the processor for additional assets
-        return null;
-    }
+	@Override
+	public String getWrappedContent(Asset asset, HttpServletRequest request) {
+		// dedicated to the processor for additional assets
+		return null;
+	}
 }

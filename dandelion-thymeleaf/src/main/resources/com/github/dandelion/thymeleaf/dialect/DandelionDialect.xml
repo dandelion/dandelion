@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<dialect xmlns="http://www.thymeleaf.org/extras/dialect" 
-   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-   xsi:schemaLocation="http://www.thymeleaf.org/extras/dialect 
+<dialect xmlns="http://www.thymeleaf.org/extras/dialect"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://www.thymeleaf.org/extras/dialect
                        http://www.thymeleaf.org/xsd/thymeleaf-extras-dialect-2.1.xsd"
-   prefix="ddl" 
-   namespace-uri="http://www.thymeleaf.org/dandelion"
-   namespace-strict="false"
-   class="com.github.dandelion.thymeleaf.dialect.DandelionDialect">
-   
+         prefix="ddl"
+         namespace-uri="http://www.thymeleaf.org/dandelion"
+         namespace-strict="false"
+         class="com.github.dandelion.thymeleaf.dialect.DandelionDialect">
+
    <attribute-processor name="assets-scopes">
       <documentation>
          <![CDATA[
@@ -15,7 +15,7 @@
          ]]>
       </documentation>
    </attribute-processor>
-   
+
    <attribute-processor name="assets-excludedScopes">
       <documentation>
          <![CDATA[
@@ -23,7 +23,7 @@
          ]]>
       </documentation>
    </attribute-processor>
-   
+
    <attribute-processor name="assets-excludedAssets">
       <documentation>
          <![CDATA[
@@ -31,5 +31,5 @@
          ]]>
       </documentation>
    </attribute-processor>
-   
+
 </dialect>

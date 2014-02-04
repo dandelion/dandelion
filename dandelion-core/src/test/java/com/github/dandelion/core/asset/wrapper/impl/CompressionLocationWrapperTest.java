@@ -1,6 +1,6 @@
 /*
  * [The "BSD licence"]
- * Copyright (c) 2013 Dandelion
+ * Copyright (c) 2013-2014 Dandelion
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -33,16 +33,16 @@ package com.github.dandelion.core.asset.wrapper.impl;
 import org.junit.Test;
 
 public class CompressionLocationWrapperTest {
-    CompressionLocationWrapper wrapper = new CompressionLocationWrapper();
+	CompressionLocationWrapper wrapper = new CompressionLocationWrapper();
 
-    @Test(expected = IllegalStateException.class)
-    public void should_cant_wrap_aggregation_location() {
-        wrapper.getWrappedLocation(null, null);
-    }
+	@Test(expected = IllegalStateException.class)
+	public void should_cant_wrap_aggregation_location() {
+		wrapper.getWrappedLocation(null, null);
+	}
 
-    @Test(expected = IllegalStateException.class)
-    public void should_cant_get_content_for_caching() {
-        wrapper.getContent(null, null, null, null);
-    }
+	@Test(expected = IllegalStateException.class)
+	public void should_cant_get_content_for_caching() {
+		wrapper.getContent(null, null, null, null);
+	}
 
 }

@@ -1,6 +1,6 @@
 /*
  * [The "BSD licence"]
- * Copyright (c) 2013 Dandelion
+ * Copyright (c) 2013-2014 Dandelion
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without
@@ -40,39 +40,40 @@ public class ScriptTag extends HtmlTag {
 	 * Plain old HTML <code>src</code> attribute.
 	 */
 	private String src;
-	
-	public ScriptTag(){
+
+	public ScriptTag() {
 	}
-	
+
 	public ScriptTag(String src) {
 		this.src = src;
 	}
 
-    /**
+	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public String toHtml(){
+	public String toHtml() {
 		StringBuffer html = new StringBuffer();
 		html.append("<script");
-		
-		if(this.src != null){
+
+		if (this.src != null) {
 			html.append(" src=\"");
 			html.append(this.src);
 			html.append("\"");
 		}
 
-        html.append(attributesToHtml());
-        html.append(attributesOnlyNameToHtml());
-		
+		html.append(attributesToHtml());
+		html.append(attributesOnlyNameToHtml());
+
 		html.append("></script>");
-		
+
 		return html.toString();
 	}
-	
+
 	public String getSrc() {
 		return src;
 	}
+
 	public void setSrc(String src) {
 		this.src = src;
 	}

@@ -1,6 +1,6 @@
 /*
  * [The "BSD licence"]
- * Copyright (c) 2013 Dandelion
+ * Copyright (c) 2013-2014 Dandelion
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without
@@ -42,54 +42,56 @@ public class ResourceScannerTest {
 	public void should_scan_all_resources_recursively() throws IOException {
 		assertThat(ResourceScanner.findResourcePaths("scanning", null, null, null, true)).hasSize(8);
 	}
-	
+
 	@Test
 	public void should_return_an_empty_set() throws IOException {
 		assertThat(ResourceScanner.findResourcePaths("unknown-folder", null, null, null, true)).isEmpty();
 	}
-	
+
 	@Test
 	public void should_return_only_one_resource_filtered_by_name() throws IOException {
-		assertThat(ResourceScanner.findResourcePath("scanning", "resource5.properties")).isEqualTo("scanning/resource5.properties");
+		assertThat(ResourceScanner.findResourcePath("scanning", "resource5.properties")).isEqualTo(
+				"scanning/resource5.properties");
 	}
-	
+
 	@Test
 	public void should_filter_resources_by_suffix_non_recursively() throws IOException {
 		assertThat(ResourceScanner.findResourcePaths("scanning", null, null, ".json", false)).hasSize(4);
 		assertThat(ResourceScanner.findResourcePaths("scanning", null, null, ".properties", false)).hasSize(1);
 	}
-	
+
 	@Test
 	public void should_filter_resources_by_suffix_recursively() throws IOException {
 		assertThat(ResourceScanner.findResourcePaths("scanning", null, null, ".json", true)).hasSize(6);
 		assertThat(ResourceScanner.findResourcePaths("scanning", null, null, ".properties", true)).hasSize(2);
 	}
-	
+
 	@Test
 	public void should_filter_resources_by_prefix_non_recursively() throws IOException {
 		assertThat(ResourceScanner.findResourcePaths("scanning", null, "resource1", null, false)).hasSize(1);
 	}
-	
+
 	@Test
 	public void should_filter_resources_by_prefix_recursively() throws IOException {
 		assertThat(ResourceScanner.findResourcePaths("scanning", null, "resource1", null, true)).hasSize(2);
 	}
-	
+
 	@Test
 	public void should_filter_resources_by_name_non_recursively() throws IOException {
 		assertThat(ResourceScanner.findResourcePaths("scanning", null, "resource5.properties", false)).hasSize(1);
 	}
-	
+
 	@Test
 	public void should_filter_resources_by_name_recursively() throws IOException {
 		assertThat(ResourceScanner.findResourcePaths("scanning", null, "resource5.properties", true)).hasSize(2);
 	}
-	
+
 	@Test
 	public void should_filter_resources_with_excluded_folder() throws IOException {
-		assertThat(ResourceScanner.findResourcePaths("scanning", Arrays.asList("scanning/subfolder"), null, null, true)).hasSize(5);
+		assertThat(ResourceScanner.findResourcePaths("scanning", Arrays.asList("scanning/subfolder"), null, null, true))
+				.hasSize(5);
 	}
-	
+
 	@Test
 	public void should_filter_resources_by_suffix_without_recursivity() throws IOException {
 		assertThat(ResourceScanner.findResourcePaths("scanning", null, null, ".json", false)).hasSize(4);

@@ -1,6 +1,6 @@
 /*
  * [The "BSD licence"]
- * Copyright (c) 2013 Dandelion
+ * Copyright (c) 2013-2014 Dandelion
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -42,24 +42,26 @@ import com.github.dandelion.core.asset.Asset;
 import com.github.dandelion.core.asset.AssetType;
 
 public class WebappLocationWrapperTest {
-    WebappLocationWrapper wrapper = new WebappLocationWrapper();
+	WebappLocationWrapper wrapper = new WebappLocationWrapper();
 
-    @Test
-    public void should_can_wrap_location() {
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        request.setRequestURI("/context/page.html");
-        request.setContextPath("/context");
+	@Test
+	public void should_can_wrap_location() {
+		MockHttpServletRequest request = new MockHttpServletRequest();
+		request.setRequestURI("/context/page.html");
+		request.setContextPath("/context");
 
-        Asset asset = new Asset("asset-webapp", "1.0", AssetType.js, singletonMap(wrapper.getLocationKey(), "asset.js"));
-        String location = wrapper.getWrappedLocation(asset, request);
-        assertThat(location).isEqualTo("http://localhost:80/context/asset.js");
-    }
+		Asset asset = new Asset("asset-webapp", "1.0", AssetType.js, singletonMap(wrapper.getLocationKey(), "asset.js"));
+		String location = wrapper.getWrappedLocation(asset, request);
+		assertThat(location).isEqualTo("http://localhost:80/context/asset.js");
+	}
 
-    @Test
-    public void should_can_get_wrapped_content() {
-        String filePath = new File("src/test/resources/com/github/dandelion/core/asset/wrapper/impl/asset.js").getAbsolutePath();
-        Asset asset = new Asset("asset-webapp", "1.0", AssetType.js, singletonMap(wrapper.getLocationKey(), "file://" + filePath));
-        String content = wrapper.getWrappedContent(asset, null);
-        assertThat(content).isEqualTo("/* content */");
-    }
+	@Test
+	public void should_can_get_wrapped_content() {
+		String filePath = new File("src/test/resources/com/github/dandelion/core/asset/wrapper/impl/asset.js")
+				.getAbsolutePath();
+		Asset asset = new Asset("asset-webapp", "1.0", AssetType.js, singletonMap(wrapper.getLocationKey(), "file://"
+				+ filePath));
+		String content = wrapper.getWrappedContent(asset, null);
+		assertThat(content).isEqualTo("/* content */");
+	}
 }

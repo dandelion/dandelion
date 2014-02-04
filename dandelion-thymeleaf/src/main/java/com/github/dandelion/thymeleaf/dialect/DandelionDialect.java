@@ -1,6 +1,6 @@
 /*
  * [The "BSD licence"]
- * Copyright (c) 2013 Dandelion
+ * Copyright (c) 2013-2014 Dandelion
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -29,25 +29,26 @@
  */
 package com.github.dandelion.thymeleaf.dialect;
 
-import com.github.dandelion.thymeleaf.processor.AssetsAttrProcessor;
+import java.util.HashSet;
+import java.util.Set;
+
 import org.thymeleaf.dialect.AbstractDialect;
 import org.thymeleaf.processor.IProcessor;
 
-import java.util.HashSet;
-import java.util.Set;
+import com.github.dandelion.thymeleaf.processor.AssetsAttrProcessor;
 
 /**
  * Thymeleaf Dialect for dandelion
  * <ul>
- *     <li>Prefix : ddl</li>
- *     <li>Namespace : http://www.thymeleaf.org/dandelion</li>
+ * <li>Prefix : ddl</li>
+ * <li>Namespace : http://www.thymeleaf.org/dandelion</li>
  * </ul>
  */
 public class DandelionDialect extends AbstractDialect {
 
 	public static final String DIALECT_PREFIX = "ddl";
 	public static final String LAYOUT_NAMESPACE = "http://www.thymeleaf.org/dandelion";
-    public static final int HIGHEST_PRECEDENCE = 3500;
+	public static final int HIGHEST_PRECEDENCE = 3500;
 
 	public String getPrefix() {
 		return DIALECT_PREFIX;
@@ -61,10 +62,10 @@ public class DandelionDialect extends AbstractDialect {
 	public Set<IProcessor> getProcessors() {
 		final Set<IProcessor> processors = new HashSet<IProcessor>();
 
-        // processors for the 'Assets' feature
-        for(AssetsAttributeName attr: AssetsAttributeName.values()) {
-            processors.add(new AssetsAttrProcessor(attr.getAttribute()));
-        }
+		// processors for the 'Assets' feature
+		for (AssetsAttributeName attr : AssetsAttributeName.values()) {
+			processors.add(new AssetsAttrProcessor(attr.getAttribute()));
+		}
 
 		return processors;
 	}

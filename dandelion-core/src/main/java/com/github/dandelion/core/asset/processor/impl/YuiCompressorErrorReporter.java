@@ -1,6 +1,6 @@
 /*
  * [The "BSD licence"]
- * Copyright (c) 2013 Dandelion
+ * Copyright (c) 2013-2014 Dandelion
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -36,27 +36,30 @@ import org.slf4j.LoggerFactory;
 
 public class YuiCompressorErrorReporter implements ErrorReporter {
 
-    // Logger
-    private static Logger logger = LoggerFactory.getLogger(YuiCompressorErrorReporter.class);
+	// Logger
+	private static Logger logger = LoggerFactory.getLogger(YuiCompressorErrorReporter.class);
 
-    public void warning(String message, String sourceName, int line, String lineSource, int lineOffset) {
-        if (line < 0) {
-            logger.warn(message);
-        } else {
-            logger.warn("{}:{}:{}", line, lineOffset, message);
-        }
-    }
+	public void warning(String message, String sourceName, int line, String lineSource, int lineOffset) {
+		if (line < 0) {
+			logger.warn(message);
+		}
+		else {
+			logger.warn("{}:{}:{}", line, lineOffset, message);
+		}
+	}
 
-    public void error(String message, String sourceName, int line, String lineSource, int lineOffset) {
-        if (line < 0) {
-            logger.error(message);
-        } else {
-            logger.error("{}:{}:{}", line, lineOffset, message);
-        }
-    }
+	public void error(String message, String sourceName, int line, String lineSource, int lineOffset) {
+		if (line < 0) {
+			logger.error(message);
+		}
+		else {
+			logger.error("{}:{}:{}", line, lineOffset, message);
+		}
+	}
 
-    public EvaluatorException runtimeError(String message, String sourceName, int line, String lineSource, int lineOffset) {
-        error(message, sourceName, line, lineSource, lineOffset);
-        return new EvaluatorException(message);
-    }
+	public EvaluatorException runtimeError(String message, String sourceName, int line, String lineSource,
+			int lineOffset) {
+		error(message, sourceName, line, lineSource, lineOffset);
+		return new EvaluatorException(message);
+	}
 }

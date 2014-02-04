@@ -1,6 +1,6 @@
 /*
  * [The "BSD licence"]
- * Copyright (c) 2013 Dandelion
+ * Copyright (c) 2013-2014 Dandelion
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -38,9 +38,9 @@ import com.github.dandelion.module_with_submodule.ModuleWithSubmoduleAssetJsonLo
 
 public class AbstractAssetJsonLoaderTest {
 
-    @Test
-    public void should_not_load_resource_in_submodule_folder() {
-        ModuleWithSubmoduleAssetJsonLoader loader = new ModuleWithSubmoduleAssetJsonLoader();
-        assertThat(loader.loadAssets()).hasSize(1);
-    }
+	@Test
+	public void should_not_load_resource_in_submodule_folder() {
+		ModuleWithSubmoduleAssetJsonLoader loader = new ModuleWithSubmoduleAssetJsonLoader();
+		assertThat(loader.loadAssets()).hasSize(1);
+	}
 }

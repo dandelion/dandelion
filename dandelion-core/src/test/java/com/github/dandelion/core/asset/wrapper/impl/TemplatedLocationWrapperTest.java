@@ -1,6 +1,6 @@
 /*
  * [The "BSD licence"]
- * Copyright (c) 2013 Dandelion
+ * Copyright (c) 2013-2014 Dandelion
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -42,24 +42,27 @@ import com.github.dandelion.core.asset.AssetType;
 import com.github.dandelion.core.asset.web.AssetRequestContext;
 
 public class TemplatedLocationWrapperTest {
-    TemplatedLocationWrapper wrapper = new TemplatedLocationWrapper();
+	TemplatedLocationWrapper wrapper = new TemplatedLocationWrapper();
 
-    @Test
-    public void should_can_wrap_location_and_get_it() {
-        System.setProperty(DevMode.DANDELION_DEV_MODE, "false");
+	@Test
+	public void should_can_wrap_location_and_get_it() {
+		System.setProperty(DevMode.DANDELION_DEV_MODE, "false");
 
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        request.setRequestURI("/context/page.html");
-        request.setContextPath("/context");
+		MockHttpServletRequest request = new MockHttpServletRequest();
+		request.setRequestURI("/context/page.html");
+		request.setContextPath("/context");
 
-        AssetRequestContext.get(request).addParameter("asset-template", "/* content */", "/* content param */");
+		AssetRequestContext.get(request).addParameter("asset-template", "/* content */", "/* content param */");
 
-        Asset asset = new Asset("asset-template", "1.0", AssetType.js, singletonMap(wrapper.getLocationKey(), "com/github/dandelion/core/asset/wrapper/impl/asset.js"));
-        String location = wrapper.getWrappedLocation(asset, request);
-        assertThat(location).isEqualTo("http://localhost:80/context/dandelion-assets/f9d126fdc5489f63a5ae1eae859a6ef030948539-asset-template.js");
+		Asset asset = new Asset("asset-template", "1.0", AssetType.js, singletonMap(wrapper.getLocationKey(),
+				"com/github/dandelion/core/asset/wrapper/impl/asset.js"));
+		String location = wrapper.getWrappedLocation(asset, request);
+		assertThat(location)
+				.isEqualTo(
+                        "http://localhost:80/context/dandelion-assets/f9d126fdc5489f63a5ae1eae859a6ef030948539-asset-template.js");
 
-        asset = new Asset("asset-template", "1.0", AssetType.js, singletonMap(wrapper.getLocationKey(), location));
-        String content = wrapper.getWrappedContent(asset, request);
-        assertThat(content).isEqualTo("/* content param */");
-    }
+		asset = new Asset("asset-template", "1.0", AssetType.js, singletonMap(wrapper.getLocationKey(), location));
+		String content = wrapper.getWrappedContent(asset, request);
+		assertThat(content).isEqualTo("/* content param */");
+	}
 }

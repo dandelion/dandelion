@@ -1,6 +1,6 @@
 /*
  * [The "BSD licence"]
- * Copyright (c) 2013 Dandelion
+ * Copyright (c) 2013-2014 Dandelion
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -33,5 +33,5 @@ package com.github.dandelion.thymeleaf.util;
  * Definition of an Attribute Name object
  */
 public interface AttributeName {
-    public String getAttribute();
+	public String getAttribute();
 }

@@ -1,6 +1,6 @@
 /*
  * [The "BSD licence"]
- * Copyright (c) 2013 Dandelion
+ * Copyright (c) 2013-2014 Dandelion
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -36,25 +36,25 @@ import org.slf4j.LoggerFactory;
 import com.github.dandelion.core.asset.loader.impl.AbstractAssetJsonLoader;
 
 public class SubmoduleAssetJsonLoader extends AbstractAssetJsonLoader {
-    // Logger
-    private static final Logger LOG = LoggerFactory.getLogger(SubmoduleAssetJsonLoader.class);
+	// Logger
+	private static final Logger LOG = LoggerFactory.getLogger(SubmoduleAssetJsonLoader.class);
 
-    @Override
-    protected Logger getLogger() {
-        return LOG;
-    }
+	@Override
+	protected Logger getLogger() {
+		return LOG;
+	}
 
-    @Override
-    public String getPath() {
-        return "module_with_submodule/submodule";
-    }
+	@Override
+	public String getPath() {
+		return "module_with_submodule/submodule";
+	}
 
-    @Override
-    public String getName() {
-        return "submodule2";
-    }
+	@Override
+	public String getName() {
+		return "submodule2";
+	}
 
-    @Override
+	@Override
 	public boolean isRecursive() {
 		return true;
 	}

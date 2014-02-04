@@ -1,6 +1,6 @@
 /*
  * [The "BSD licence"]
- * Copyright (c) 2013 Dandelion
+ * Copyright (c) 2013-2014 Dandelion
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -30,16 +30,16 @@
 
 package com.github.dandelion.jsp.tag;
 
-import java.io.File;
+import static org.fest.assertions.Assertions.assertThat;
 
-import com.github.dandelion.core.config.StandardConfigurationLoader;
-import com.github.dandelion.jsp.PhantomJsTest;
+import java.io.File;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import static org.fest.assertions.Assertions.assertThat;
+import com.github.dandelion.core.config.StandardConfigurationLoader;
+import com.github.dandelion.jsp.PhantomJsTest;
 
 public class AssetsTagTest extends PhantomJsTest {
 
@@ -67,9 +67,9 @@ public class AssetsTagTest extends PhantomJsTest {
 		goTo("/assets_excludedAssets.jsp");
 		assertThat(text("script")).hasSize(1);
 	}
-	
+
 	@AfterClass
-	public static void tearDown(){
+	public static void tearDown() {
 		System.clearProperty(StandardConfigurationLoader.DANDELION_CONFIGURATION);
 	}
 }

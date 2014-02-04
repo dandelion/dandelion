@@ -1,6 +1,6 @@
 /*
  * [The "BSD licence"]
- * Copyright (c) 2013 Dandelion
+ * Copyright (c) 2013-2014 Dandelion
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -36,39 +36,39 @@ import org.junit.Test;
 
 public class HtmlTagTest {
 
-    static HtmlTag tag = new HtmlTag() {
-        @Override
-        public String toHtml() {
-            return "test";
-        }
-    };
+	static HtmlTag tag = new HtmlTag() {
+		@Override
+		public String toHtml() {
+			return "test";
+		}
+	};
 
-    @Test
-    public void should_have_correct_html_rendering() {
-        assertThat(tag.toHtml()).isEqualTo("test");
-    }
+	@Test
+	public void should_have_correct_html_rendering() {
+		assertThat(tag.toHtml()).isEqualTo("test");
+	}
 
-    @Test
-    public void should_have_full_access_to_the_tag() {
-        tag.setId("id");
-        assertThat(tag.getId()).isEqualTo("id");
+	@Test
+	public void should_have_full_access_to_the_tag() {
+		tag.setId("id");
+		assertThat(tag.getId()).isEqualTo("id");
 
-        tag.addCssClass("class1");
-        assertThat(tag.getCssClass().toString()).isEqualTo(" class1");
+		tag.addCssClass("class1");
+		assertThat(tag.getCssClass().toString()).isEqualTo(" class1");
 
-        tag.addCssStyle("style1");
-        assertThat(tag.getCssStyle().toString()).isEqualTo("style1;");
+		tag.addCssStyle("style1");
+		assertThat(tag.getCssStyle().toString()).isEqualTo("style1;");
 
-        tag.addCssClass("class2");
-        assertThat(tag.getCssClass().toString()).isEqualTo(" class1 class2");
+		tag.addCssClass("class2");
+		assertThat(tag.getCssClass().toString()).isEqualTo(" class1 class2");
 
-        tag.addCssStyle("style2");
-        assertThat(tag.getCssStyle().toString()).isEqualTo("style1;style2;");
+		tag.addCssStyle("style2");
+		assertThat(tag.getCssStyle().toString()).isEqualTo("style1;style2;");
 
-        tag.setCssClass(new StringBuffer("class1"));
-        assertThat(tag.getCssClass().toString()).isEqualTo("class1");
+		tag.setCssClass(new StringBuffer("class1"));
+		assertThat(tag.getCssClass().toString()).isEqualTo("class1");
 
-        tag.setCssStyle(new StringBuffer("style1"));
-        assertThat(tag.getCssStyle().toString()).isEqualTo("style1");
-    }
+		tag.setCssStyle(new StringBuffer("style1"));
+		assertThat(tag.getCssStyle().toString()).isEqualTo("style1");
+	}
 }

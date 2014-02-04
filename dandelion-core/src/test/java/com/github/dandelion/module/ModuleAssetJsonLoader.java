@@ -1,6 +1,6 @@
 /*
  * [The "BSD licence"]
- * Copyright (c) 2013 Dandelion
+ * Copyright (c) 2013-2014 Dandelion
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -49,10 +49,10 @@ public class ModuleAssetJsonLoader extends AbstractAssetJsonLoader {
 		return "module";
 	}
 
-    @Override
-    public String getName() {
-        return "module";
-    }
+	@Override
+	public String getName() {
+		return "module";
+	}
 
 	@Override
 	public boolean isRecursive() {

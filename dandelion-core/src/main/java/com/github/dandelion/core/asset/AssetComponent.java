@@ -1,6 +1,6 @@
 /*
  * [The "BSD licence"]
- * Copyright (c) 2013 Dandelion
+ * Copyright (c) 2013-2014 Dandelion
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -36,22 +36,22 @@ import java.util.List;
  * Definition of a set of assets link to Scope/Parent Scope
  */
 public class AssetComponent {
-	
+
 	private String scope = AssetStorage.ROOT_SCOPE;
 	private String parent = AssetStorage.ROOT_SCOPE;
-    private boolean override = false;
+	private boolean override = false;
 	private List<Asset> assets = new ArrayList<Asset>();
 
-    public AssetComponent() {
-    }
+	public AssetComponent() {
+	}
 
-    public AssetComponent(String scope, String parent, List<Asset> assets) {
-        this.scope = scope;
-        this.parent = parent;
-        this.assets = assets;
-    }
+	public AssetComponent(String scope, String parent, List<Asset> assets) {
+		this.scope = scope;
+		this.parent = parent;
+		this.assets = assets;
+	}
 
-    public String getScope() {
+	public String getScope() {
 		return scope;
 	}
 
@@ -75,16 +75,17 @@ public class AssetComponent {
 		this.parent = parent;
 	}
 
-    public boolean isOverride() {
-        return override;
-    }
+	public boolean isOverride() {
+		return override;
+	}
 
-    public void setOverride(boolean override) {
-        this.override = override;
-    }
+	public void setOverride(boolean override) {
+		this.override = override;
+	}
 
-    @Override
-    public String toString() {
-        return "AssetComponent [scope=" + scope + ", parent=" + parent + ", override=" + override + ", assets=" + assets + "]";
-    }
+	@Override
+	public String toString() {
+		return "AssetComponent [scope=" + scope + ", parent=" + parent + ", override=" + override + ", assets="
+				+ assets + "]";
+	}
 }

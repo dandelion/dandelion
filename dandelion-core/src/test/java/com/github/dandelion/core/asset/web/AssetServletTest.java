@@ -14,50 +14,53 @@ import com.github.dandelion.core.asset.AssetType;
 import com.github.dandelion.core.asset.cache.AssetCacheSystem;
 
 public class AssetServletTest {
-    private AssetServlet servlet = new AssetServlet();
+	private AssetServlet servlet = new AssetServlet();
 
-    @Test
-    public void should_retrieve_content_from_cache() throws ServletException, IOException {
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        MockHttpServletResponse response = new MockHttpServletResponse();
+	@Test
+	public void should_retrieve_content_from_cache() throws ServletException, IOException {
+		MockHttpServletRequest request = new MockHttpServletRequest();
+		MockHttpServletResponse response = new MockHttpServletResponse();
 
-        String content = "CONTENT" + Math.random();
-        AssetCacheSystem.storeContent("should_retrieve_content_from_cache", "location", "resourceName", AssetType.css, content);
-        request.setRequestURI("/test/" + AssetCacheSystem.generateCacheKey("should_retrieve_content_from_cache", "location", "resourceName", AssetType.css));
+		String content = "CONTENT" + Math.random();
+		AssetCacheSystem.storeContent("should_retrieve_content_from_cache", "location", "resourceName", AssetType.css,
+				content);
+		request.setRequestURI("/test/"
+				+ AssetCacheSystem.generateCacheKey("should_retrieve_content_from_cache", "location", "resourceName",
+						AssetType.css));
 
-        servlet.doGet(request, response);
+		servlet.doGet(request, response);
 
-        assertThat(response.getContentType()).isEqualTo(AssetType.css.getContentType());
-        assertThat(response.getContentAsString()).isEqualTo(content);
+		assertThat(response.getContentType()).isEqualTo(AssetType.css.getContentType());
+		assertThat(response.getContentAsString()).isEqualTo(content);
 
-    }
+	}
 
+	@Test
+	public void should_never_fail_to_retrieve_missing_content_from_cache() throws ServletException, IOException {
+		MockHttpServletRequest request = new MockHttpServletRequest();
+		MockHttpServletResponse response = new MockHttpServletResponse();
 
-    @Test
-    public void should_never_fail_to_retrieve_missing_content_from_cache() throws ServletException, IOException {
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        MockHttpServletResponse response = new MockHttpServletResponse();
+		request.setRequestURI("/test/"
+				+ AssetCacheSystem.generateCacheKey("should_fail_to_retrieve_missing_content_from_cache", "location",
+						"resourceName", AssetType.css));
 
-        request.setRequestURI("/test/" + AssetCacheSystem.generateCacheKey("should_fail_to_retrieve_missing_content_from_cache", "location", "resourceName", AssetType.css));
+		servlet.doGet(request, response);
 
-        servlet.doGet(request, response);
+		assertThat(response.getContentAsString()).isEqualTo("");
+	}
 
-        assertThat(response.getContentAsString()).isEqualTo("");
-    }
+	@Test
+	public void should_manage_unknown_type() throws ServletException, IOException {
+		MockHttpServletRequest request = new MockHttpServletRequest();
+		MockHttpServletResponse response = new MockHttpServletResponse();
 
+		request.setRequestURI("/test/"
+				+ AssetCacheSystem.generateCacheKey("should_manage_unknown_type", "location", "resourceName",
+						AssetType.css) + System.currentTimeMillis());
 
-    @Test
-    public void should_manage_unknown_type() throws ServletException, IOException {
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        MockHttpServletResponse response = new MockHttpServletResponse();
+		servlet.doGet(request, response);
 
-        request.setRequestURI("/test/" + AssetCacheSystem.generateCacheKey("should_manage_unknown_type", "location", "resourceName", AssetType.css) + System.currentTimeMillis());
+		assertThat(response.getContentAsString()).isEmpty();
 
-        servlet.doGet(request, response);
-
-        assertThat(response.getContentAsString()).isEmpty();
-
-
-
-    }
+	}
 }

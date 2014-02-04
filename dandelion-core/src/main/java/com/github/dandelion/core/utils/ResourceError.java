@@ -1,6 +1,6 @@
 /*
  * [The "BSD licence"]
- * Copyright (c) 2013 Dandelion
+ * Copyright (c) 2013-2014 Dandelion
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -33,22 +33,22 @@ package com.github.dandelion.core.utils;
 import com.github.dandelion.core.DandelionError;
 
 public enum ResourceError implements DandelionError {
-    /** File path doesn't exist in the webapp */
-    FILE_PATH_DONT_EXISTS_IN_WEBAPP(10),
-    /** The content can't be read from the InputStream */
-    CONTENT_CANT_BE_READ_FROM_INPUTSTREAM(20),
-    /** The content can't be read from the url */
-    CONTENT_CANT_BE_READ_FROM_URL(30);
+	/** File path doesn't exist in the webapp */
+	FILE_PATH_DONT_EXISTS_IN_WEBAPP(10),
+	/** The content can't be read from the InputStream */
+	CONTENT_CANT_BE_READ_FROM_INPUTSTREAM(20),
+	/** The content can't be read from the url */
+	CONTENT_CANT_BE_READ_FROM_URL(30);
 
-    private final int number;
+	private final int number;
 
-    private ResourceError(int number) {
-        this.number = number;
-    }
+	private ResourceError(int number) {
+		this.number = number;
+	}
 
-    @Override
-    public int getNumber() {
-        return number;
-    }
+	@Override
+	public int getNumber() {
+		return number;
+	}
 
 }

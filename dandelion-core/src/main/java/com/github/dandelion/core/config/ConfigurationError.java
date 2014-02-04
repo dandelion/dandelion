@@ -1,6 +1,6 @@
 /*
  * [The "BSD licence"]
- * Copyright (c) 2013 Dandelion
+ * Copyright (c) 2013-2014 Dandelion
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -40,9 +40,7 @@ import com.github.dandelion.core.DandelionError;
  */
 public enum ConfigurationError implements DandelionError {
 
-	DEFAULT_CONFIGURATION_LOADING(0), 
-	LOCALE_RESOLVER_CLASS_NOT_FOUND(1), 
-	LOCALE_RESOLVER_CLASS_INSTANCIATION(2);
+	DEFAULT_CONFIGURATION_LOADING(0), LOCALE_RESOLVER_CLASS_NOT_FOUND(1), LOCALE_RESOLVER_CLASS_INSTANCIATION(2);
 
 	private final int number;
 

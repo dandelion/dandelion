@@ -1,6 +1,6 @@
 /*
  * [The "BSD licence"]
- * Copyright (c) 2013 Dandelion
+ * Copyright (c) 2013-2014 Dandelion
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -37,9 +37,10 @@ import javax.servlet.http.HttpServletRequest;
  */
 public interface DelegatedContent {
 
-    /**
-     * @param request http request
-     * @return get the generated content
-     */
-    String getContent(HttpServletRequest request);
+	/**
+	 * @param request
+	 *            http request
+	 * @return get the generated content
+	 */
+	String getContent(HttpServletRequest request);
 }

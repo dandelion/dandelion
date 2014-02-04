@@ -1,6 +1,6 @@
 /*
  * [The "BSD licence"]
- * Copyright (c) 2013 Dandelion
+ * Copyright (c) 2013-2014 Dandelion
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -30,13 +30,13 @@
 
 package com.github.dandelion.core.asset.web;
 
-import com.github.dandelion.core.DevMode;
-import com.github.dandelion.core.asset.cache.AssetCacheSystem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.github.dandelion.core.DevMode;
 import com.github.dandelion.core.asset.Asset;
 import com.github.dandelion.core.asset.AssetType;
+import com.github.dandelion.core.asset.cache.AssetCacheSystem;
 import com.github.dandelion.core.asset.web.data.AssetContent;
 import com.github.dandelion.core.config.Configuration;
 import com.github.dandelion.core.html.HtmlTag;
@@ -47,66 +47,67 @@ import com.github.dandelion.core.html.ScriptTag;
  * Utilities on Html tags creation
  */
 public class HtmlUtil {
-    private static Logger LOG = LoggerFactory.getLogger(HtmlUtil.class);
+	private static Logger LOG = LoggerFactory.getLogger(HtmlUtil.class);
 
-    public static final String DEFAULT_CACHE_CONTROL = "no-cache";
-    private static final String CACHE_CONTROL = "assets.servlet.cache.control";
-    private static String cacheControl;
+	public static final String DEFAULT_CACHE_CONTROL = "no-cache";
+	private static final String CACHE_CONTROL = "assets.servlet.cache.control";
+	private static String cacheControl;
 
-    synchronized private static void initializeCacheControl() {
-        if (cacheControl != null) {
-            return;
-        }
+	synchronized private static void initializeCacheControl() {
+		if (cacheControl != null) {
+			return;
+		}
 
-        String _cacheControl = Configuration.getProperty(CACHE_CONTROL);
-        if (DevMode.enabled() || _cacheControl == null || _cacheControl.isEmpty()) {
-            _cacheControl = DEFAULT_CACHE_CONTROL;
-        }
-        cacheControl = _cacheControl;
-    }
+		String _cacheControl = Configuration.getProperty(CACHE_CONTROL);
+		if (DevMode.enabled() || _cacheControl == null || _cacheControl.isEmpty()) {
+			_cacheControl = DEFAULT_CACHE_CONTROL;
+		}
+		cacheControl = _cacheControl;
+	}
 
-    public static String getCacheControl() {
-        if (cacheControl == null) {
-            initializeCacheControl();
-        }
-        return cacheControl;
-    }
+	public static String getCacheControl() {
+		if (cacheControl == null) {
+			initializeCacheControl();
+		}
+		return cacheControl;
+	}
 
-    public static HtmlTag transformAsset(Asset asset, String location) {
-        HtmlTag tag;
-        switch (asset.getType()) {
-            case css:
-                tag = new LinkTag(location);
-                break;
-            case js:
-                tag = new ScriptTag(location);
-                break;
-            default:
-                tag = null;
-        }
-        if(tag != null) {
-            tag.addAttributesOnlyName(asset.getAttributesOnlyName());
-            tag.addAttributes(asset.getAttributes());
-        }
-        return tag;
-    }
+	public static HtmlTag transformAsset(Asset asset, String location) {
+		HtmlTag tag;
+		switch (asset.getType()) {
+		case css:
+			tag = new LinkTag(location);
+			break;
+		case js:
+			tag = new ScriptTag(location);
+			break;
+		default:
+			tag = null;
+		}
+		if (tag != null) {
+			tag.addAttributesOnlyName(asset.getAttributesOnlyName());
+			tag.addAttributes(asset.getAttributes());
+		}
+		return tag;
+	}
 
-    public static AssetContent getAssetContent(String assetKey) {
-        String content = "";
-        String contentType = null;
-        AssetType resourceType = AssetType.typeOfAsset(assetKey);
-        if (resourceType != null) {
-            content = AssetCacheSystem.getContent(assetKey);
-            if (content == null) {
-                LOG.debug("missing content from key {}", assetKey);
-                content = "";
-            }
-            contentType = resourceType.getContentType();
-        } else {
-            content = "";
-            contentType = "text/plain";
-            LOG.debug("unknown asset type from key {}", assetKey);
-        }
-        return new AssetContent(content, contentType);
-    }
+	public static AssetContent getAssetContent(String assetKey) {
+		String content = "";
+		String contentType = null;
+		AssetType resourceType = AssetType.typeOfAsset(assetKey);
+		if (resourceType != null) {
+			content = AssetCacheSystem.getContent(assetKey);
+			if (content == null) {
+				LOG.debug("missing content from key {}", assetKey);
+				content = "";
+			}
+			contentType = resourceType.getContentType();
+		}
+		else {
+			content = "";
+			contentType = "text/plain";
+			LOG.debug("unknown asset type from key {}", assetKey);
+		}
+		return new AssetContent(content, contentType);
+	}
 }

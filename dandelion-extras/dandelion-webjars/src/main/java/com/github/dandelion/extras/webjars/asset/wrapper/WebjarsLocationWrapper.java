@@ -1,6 +1,6 @@
 /*
  * [The "BSD licence"]
- * Copyright (c) 2013 Dandelion
+ * Copyright (c) 2013-2014 Dandelion
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -30,34 +30,36 @@
 
 package com.github.dandelion.extras.webjars.asset.wrapper;
 
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.webjars.WebJarAssetLocator;
+
 import com.github.dandelion.core.asset.Asset;
 import com.github.dandelion.core.asset.wrapper.impl.CacheableLocationWrapper;
 import com.github.dandelion.core.utils.ResourceUtils;
-import org.webjars.WebJarAssetLocator;
-
-import javax.servlet.http.HttpServletRequest;
-import java.util.Map;
 
 /**
  * Assets Location Wrapper for Webjars
  */
 public class WebjarsLocationWrapper extends CacheableLocationWrapper {
-    private static WebJarAssetLocator locator = new WebJarAssetLocator();
+	private static WebJarAssetLocator locator = new WebJarAssetLocator();
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String getLocationKey() {
-        return "webjars";
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public String getLocationKey() {
+		return "webjars";
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected String getContent(Asset asset, String location, Map<String, Object> parameters, HttpServletRequest request) {
-        String webjarsLocation = locator.getFullPath(location);
-        return ResourceUtils.getFileContentFromClasspath(webjarsLocation, false);
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected String getContent(Asset asset, String location, Map<String, Object> parameters, HttpServletRequest request) {
+		String webjarsLocation = locator.getFullPath(location);
+		return ResourceUtils.getFileContentFromClasspath(webjarsLocation, false);
+	}
 }

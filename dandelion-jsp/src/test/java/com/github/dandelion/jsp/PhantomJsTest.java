@@ -1,6 +1,6 @@
 /*
  * [The "BSD licence"]
- * Copyright (c) 2013 Dandelion
+ * Copyright (c) 2013-2014 Dandelion
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -56,96 +56,97 @@ import com.github.dandelion.core.asset.web.AssetFilter;
 import com.github.dandelion.core.asset.web.AssetServlet;
 
 public abstract class PhantomJsTest extends FluentAdapter {
-    private static final Dimension DEFAULT_WINDOW_SIZE = new Dimension(1024, 768);
+	private static final Dimension DEFAULT_WINDOW_SIZE = new Dimension(1024, 768);
 
-    protected static WebDriver driver;
-    private static Server webServer;
+	protected static WebDriver driver;
+	private static Server webServer;
 
-    @BeforeClass
-    public static void configure_server() {
-        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-        webServer = new Server();
+	@BeforeClass
+	public static void configure_server() {
+		ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+		webServer = new Server();
 
-        SelectChannelConnector connector = new SelectChannelConnector();
-        connector.setHost("127.0.0.1");
-        connector.setPort(9090);
-        webServer.addConnector(connector);
+		SelectChannelConnector connector = new SelectChannelConnector();
+		connector.setHost("127.0.0.1");
+		connector.setPort(9090);
+		webServer.addConnector(connector);
 
-        final ServletContextHandler context =
-                new ServletContextHandler(ServletContextHandler.SESSIONS);
-        String webAppResources = classLoader.getResource("webapp").toExternalForm();
-        context.setContextPath("/");
-        context.setResourceBase(webAppResources);
-        context.setClassLoader(classLoader);
+		final ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
+		String webAppResources = classLoader.getResource("webapp").toExternalForm();
+		context.setContextPath("/");
+		context.setResourceBase(webAppResources);
+		context.setClassLoader(classLoader);
 
-        context.addServlet(new ServletHolder(new AssetServlet()), AssetServlet.DANDELION_ASSETS_URL_PATTERN);
-        context.addFilter(new FilterHolder(new AssetFilter()), "/*", 0);
+		context.addServlet(new ServletHolder(new AssetServlet()), AssetServlet.DANDELION_ASSETS_URL_PATTERN);
+		context.addFilter(new FilterHolder(new AssetFilter()), "/*", 0);
 
-        ServletHolder jsp = context.addServlet(JspServlet.class, "*.jsp");
-        jsp.setInitParameter("classpath", context.getClassPath());
+		ServletHolder jsp = context.addServlet(JspServlet.class, "*.jsp");
+		jsp.setInitParameter("classpath", context.getClassPath());
 
-        webServer.setHandler(context);
-        webServer.setStopAtShutdown(true);
-    }
+		webServer.setHandler(context);
+		webServer.setStopAtShutdown(true);
+	}
 
-    @Before
-    public void start_server() {
-        try {
-            webServer.start();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
+	@Before
+	public void start_server() {
+		try {
+			webServer.start();
+		}
+		catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
 
-    @After
-    public void stop_server() {
-        try {
-            webServer.stop();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
+	@After
+	public void stop_server() {
+		try {
+			webServer.stop();
+		}
+		catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
 
-    @Rule
-    public TestWatcher lifecycle = new TestWatcher() {
-        @Override
-        protected void starting(Description description) {
-            if (null == driver) {
-                Runtime.getRuntime().addShutdownHook(new Thread() {
-                    @Override
-                    public void run() {
-                        if (driver != null) {
-                            driver.quit();
-                        }
-                    }
-                });
+	@Rule
+	public TestWatcher lifecycle = new TestWatcher() {
+		@Override
+		protected void starting(Description description) {
+			if (null == driver) {
+				Runtime.getRuntime().addShutdownHook(new Thread() {
+					@Override
+					public void run() {
+						if (driver != null) {
+							driver.quit();
+						}
+					}
+				});
 
-                Capabilities capabilities = new DesiredCapabilities();
-                PhantomJSDriverService service = PhantomJSDriverService.createDefaultService(capabilities);
-                driver = new PhantomJSDriver(service, capabilities);
-            }
+				Capabilities capabilities = new DesiredCapabilities();
+				PhantomJSDriverService service = PhantomJSDriverService.createDefaultService(capabilities);
+				driver = new PhantomJSDriver(service, capabilities);
+			}
 
-            driver.manage().deleteAllCookies();
-            driver.manage().window().setSize(DEFAULT_WINDOW_SIZE);
-            initFluent(driver).withDefaultUrl(defaultUrl());
-        }
+			driver.manage().deleteAllCookies();
+			driver.manage().window().setSize(DEFAULT_WINDOW_SIZE);
+			initFluent(driver).withDefaultUrl(defaultUrl());
+		}
 
-        @Override
-        protected void succeeded(Description description) {
-            snapshotFile(description).delete();
-        }
+		@Override
+		protected void succeeded(Description description) {
+			snapshotFile(description).delete();
+		}
 
-        @Override
-        protected void failed(Throwable e, Description description) {
-            takeScreenShot(snapshotFile(description).getAbsolutePath());
-        }
+		@Override
+		protected void failed(Throwable e, Description description) {
+			takeScreenShot(snapshotFile(description).getAbsolutePath());
+		}
 
-        private File snapshotFile(Description description) {
-            return new File("snapshots", description.getMethodName() + ".png");
-        }
-    };
+		private File snapshotFile(Description description) {
+			return new File("snapshots", description.getMethodName() + ".png");
+		}
+	};
 
-    public String defaultUrl() {
-        return "http://127.0.0.1:9090";
-    }
+	public String defaultUrl() {
+		return "http://127.0.0.1:9090";
+	}
 }

@@ -1,6 +1,6 @@
 /*
  * [The "BSD licence"]
- * Copyright (c) 2013 Dandelion
+ * Copyright (c) 2013-2014 Dandelion
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without
@@ -42,7 +42,7 @@ public abstract class HtmlTag {
 	 * Plain old HTML <code>id</code> attribute.
 	 */
 	protected String id;
-	
+
 	/**
 	 * Plain old HTML <code>class</code> attribute.
 	 */
@@ -53,10 +53,10 @@ public abstract class HtmlTag {
 	 */
 	protected StringBuffer cssStyle;
 
-    protected Map<String, String> attributes;
-    private String[] attributesOnlyName;
+	protected Map<String, String> attributes;
+	private String[] attributesOnlyName;
 
-    /**
+	/**
 	 * Render the tag in HTML code.
 	 * 
 	 * @return the HTML code corresponding to the tag.
@@ -70,7 +70,7 @@ public abstract class HtmlTag {
 	public void setId(String id) {
 		this.id = id;
 	}
-	
+
 	public StringBuffer getCssClass() {
 		return cssClass;
 	}
@@ -91,7 +91,7 @@ public abstract class HtmlTag {
 		if (this.cssClass == null) {
 			this.cssClass = new StringBuffer();
 		}
-        this.cssClass.append(" ");
+		this.cssClass.append(" ");
 		this.cssClass.append(cssClass);
 	}
 
@@ -100,41 +100,41 @@ public abstract class HtmlTag {
 			this.cssStyle = new StringBuffer();
 		}
 		this.cssStyle.append(cssStyle);
-        if(!cssStyle.endsWith(";")) {
-            this.cssStyle.append(";");
-        }
+		if (!cssStyle.endsWith(";")) {
+			this.cssStyle.append(";");
+		}
 	}
 
-    public void addAttributes(Map<String, String> attributes) {
-        this.attributes = attributes;
-    }
+	public void addAttributes(Map<String, String> attributes) {
+		this.attributes = attributes;
+	}
 
-    public void addAttributesOnlyName(String... attributesOnlyName) {
-        this.attributesOnlyName = attributesOnlyName;
-    }
+	public void addAttributesOnlyName(String... attributesOnlyName) {
+		this.attributesOnlyName = attributesOnlyName;
+	}
 
-    protected String attributesToHtml() {
-        StringBuilder html = new StringBuilder();
-        if(attributes != null) {
-            for(Map.Entry<String, String> attribute:attributes.entrySet()) {
-                html.append(" ");
-                html.append(attribute.getKey());
-                html.append("=\"");
-                html.append(attribute.getValue());
-                html.append("\"");
-            }
-        }
-        return html.toString();
-    }
+	protected String attributesToHtml() {
+		StringBuilder html = new StringBuilder();
+		if (attributes != null) {
+			for (Map.Entry<String, String> attribute : attributes.entrySet()) {
+				html.append(" ");
+				html.append(attribute.getKey());
+				html.append("=\"");
+				html.append(attribute.getValue());
+				html.append("\"");
+			}
+		}
+		return html.toString();
+	}
 
-    public String attributesOnlyNameToHtml() {
-        StringBuilder html = new StringBuilder();
-        if(attributesOnlyName != null) {
-            for(String attribute:attributesOnlyName) {
-                html.append(" ");
-                html.append(attribute);
-            }
-        }
-        return html.toString();
-    }
+	public String attributesOnlyNameToHtml() {
+		StringBuilder html = new StringBuilder();
+		if (attributesOnlyName != null) {
+			for (String attribute : attributesOnlyName) {
+				html.append(" ");
+				html.append(attribute);
+			}
+		}
+		return html.toString();
+	}
 }

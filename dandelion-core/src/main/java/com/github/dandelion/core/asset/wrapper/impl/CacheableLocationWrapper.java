@@ -1,6 +1,6 @@
 /*
  * [The "BSD licence"]
- * Copyright (c) 2013 Dandelion
+ * Copyright (c) 2013-2014 Dandelion
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -32,8 +32,8 @@ package com.github.dandelion.core.asset.wrapper.impl;
 
 import static com.github.dandelion.core.asset.cache.AssetCacheSystem.generateCacheKey;
 import static com.github.dandelion.core.asset.cache.AssetCacheSystem.storeContent;
-import static com.github.dandelion.core.asset.web.AssetServlet.DANDELION_ASSETS_URL;
 import static com.github.dandelion.core.asset.web.AssetRequestContext.get;
+import static com.github.dandelion.core.asset.web.AssetServlet.DANDELION_ASSETS_URL;
 
 import java.util.Map;
 

@@ -1,6 +1,6 @@
 /*
  * [The "BSD licence"]
- * Copyright (c) 2013 Dandelion
+ * Copyright (c) 2013-2014 Dandelion
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -32,21 +32,21 @@ package com.github.dandelion.thymeleaf.dialect;
 import com.github.dandelion.thymeleaf.util.AttributeName;
 
 public enum AssetsAttributeName implements AttributeName {
-    /** Add scopes to the page */
-    SCOPES("assets-scopes"),
-    /** Exclude scopes from the page */
-    EXCLUDED_SCOPES("assets-excludedScopes"),
-    /** Exclude Assets from the page */
-    EXCLUDED_ASSETS("assets-excludedAssets");
+	/** Add scopes to the page */
+	SCOPES("assets-scopes"),
+	/** Exclude scopes from the page */
+	EXCLUDED_SCOPES("assets-excludedScopes"),
+	/** Exclude Assets from the page */
+	EXCLUDED_ASSETS("assets-excludedAssets");
 
-    private String attribute;
+	private String attribute;
 
-    private AssetsAttributeName(String attribute) {
-        this.attribute = attribute;
-    }
+	private AssetsAttributeName(String attribute) {
+		this.attribute = attribute;
+	}
 
-    @Override
-    public String getAttribute() {
-        return attribute;
-    }
+	@Override
+	public String getAttribute() {
+		return attribute;
+	}
 }

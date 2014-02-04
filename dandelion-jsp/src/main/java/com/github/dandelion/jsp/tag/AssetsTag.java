@@ -1,6 +1,6 @@
 /*
  * [The "BSD licence"]
- * Copyright (c) 2013 Dandelion
+ * Copyright (c) 2013-2014 Dandelion
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -30,58 +30,55 @@
 
 package com.github.dandelion.jsp.tag;
 
-import com.github.dandelion.core.asset.web.AssetRequestContext;
-
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.TagSupport;
+
+import com.github.dandelion.core.asset.web.AssetRequestContext;
 
 /**
  * <p>
  * JSP tag in charge of generating necessary HTML <code>script</code> and
  * <code>link</code> tags.
- *
+ * 
  * <p>
  * Usage :
- *
+ * 
  * <pre>
  * &lt;dandelion:assets scopes="..." /&gt;
  * </pre>
  */
 public class AssetsTag extends TagSupport {
 	private String scopes;
-    private String excludedScopes;
-    private String excludedAssets;
+	private String excludedScopes;
+	private String excludedAssets;
 
 	public int doEndTag() throws JspException {
-        AssetRequestContext
-                .get(pageContext.getRequest())
-                .addScopes(getScopes())
-                .excludeScopes(getExcludedScopes())
-                .excludeAssets(getExcludedAssets());
+		AssetRequestContext.get(pageContext.getRequest()).addScopes(getScopes()).excludeScopes(getExcludedScopes())
+				.excludeAssets(getExcludedAssets());
 		return EVAL_PAGE;
 	}
 
-    public String getScopes() {
-        return scopes;
-    }
+	public String getScopes() {
+		return scopes;
+	}
 
-    public void setScopes(String scopes) {
-        this.scopes = scopes;
-    }
+	public void setScopes(String scopes) {
+		this.scopes = scopes;
+	}
 
-    public String getExcludedScopes() {
-        return excludedScopes;
-    }
+	public String getExcludedScopes() {
+		return excludedScopes;
+	}
 
-    public void setExcludedScopes(String excludedScopes) {
-        this.excludedScopes = excludedScopes;
-    }
+	public void setExcludedScopes(String excludedScopes) {
+		this.excludedScopes = excludedScopes;
+	}
 
-    public String getExcludedAssets() {
-        return excludedAssets;
-    }
+	public String getExcludedAssets() {
+		return excludedAssets;
+	}
 
-    public void setExcludedAssets(String excludedAssets) {
-        this.excludedAssets = excludedAssets;
-    }
+	public void setExcludedAssets(String excludedAssets) {
+		this.excludedAssets = excludedAssets;
+	}
 }

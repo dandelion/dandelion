@@ -6,8 +6,8 @@ import org.junit.Test;
 
 public class AssetCacheTest {
 
-    @Test
-    public void should_load_another_cache_system() {
-        assertThat(AssetCacheSystem.getCacheName()).isEqualTo(new AnotherAssetCache().getCacheName());
-    }
+	@Test
+	public void should_load_another_cache_system() {
+		assertThat(AssetCacheSystem.getCacheName()).isEqualTo(new AnotherAssetCache().getCacheName());
+	}
 }

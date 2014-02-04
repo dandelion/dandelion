@@ -1,6 +1,6 @@
 /*
  * [The "BSD licence"]
- * Copyright (c) 2013 Dandelion
+ * Copyright (c) 2013-2014 Dandelion
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -37,19 +37,19 @@ import org.springframework.mock.web.MockHttpServletRequest;
 
 public class ResourceUtilsTest {
 
-    @Test
-    public void should_get_content_from_url() {
-        MockHttpServletRequest request = new MockHttpServletRequest();
+	@Test
+	public void should_get_content_from_url() {
+		MockHttpServletRequest request = new MockHttpServletRequest();
 
-        String content = ResourceUtils.getContentFromUrl(request, "http://dandelion.github.io", true);
-        assertThat(content).isNotEqualTo("");
-    }
+		String content = ResourceUtils.getContentFromUrl(request, "http://dandelion.github.io", true);
+		assertThat(content).isNotEqualTo("");
+	}
 
-    @Test
-    public void should_get_content_from_url_with_protocol_relative() {
-        MockHttpServletRequest request = new MockHttpServletRequest();
+	@Test
+	public void should_get_content_from_url_with_protocol_relative() {
+		MockHttpServletRequest request = new MockHttpServletRequest();
 
-        String content = ResourceUtils.getContentFromUrl(request, "//dandelion.github.io", true);
-        assertThat(content).isNotEqualTo("");
-    }
+		String content = ResourceUtils.getContentFromUrl(request, "//dandelion.github.io", true);
+		assertThat(content).isNotEqualTo("");
+	}
 }

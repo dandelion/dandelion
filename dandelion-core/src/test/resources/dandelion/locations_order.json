@@ -11,7 +11,8 @@
                 "remote": "remoteURL",
                 "local": "localURL"
             }
-        },{
+        },
+        {
             "name": "asset2",
             "version": "1",
             "type": "js",
@@ -20,7 +21,8 @@
                 "other": "otherURL",
                 "local": "localURL"
             }
-        } ,{
+        } ,
+        {
             "name": "asset3",
             "version": "1",
             "type": "js",

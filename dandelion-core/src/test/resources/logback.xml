@@ -8,10 +8,10 @@
       </encoder>
    </appender>
 
-   <logger name="com.github.dandelion" level="DEBUG" />
+   <logger name="com.github.dandelion" level="DEBUG"/>
 
    <root level="DEBUG">
-      <appender-ref ref="STDOUT" />
+      <appender-ref ref="STDOUT"/>
    </root>
 
 </configuration>

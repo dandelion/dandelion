@@ -1,6 +1,6 @@
 /*
  * [The "BSD licence"]
- * Copyright (c) 2013 Dandelion
+ * Copyright (c) 2013-2014 Dandelion
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -189,8 +189,7 @@ public final class ResourceScanner {
 
 				resourcePaths.addAll(scanForResourcePathsInFileSystem(folder, classpathPhysicalRoot, recursive));
 			}
-			else if ("jar".equals(url.getProtocol()) 
-					|| "zip".equals(url.getProtocol()) // Weblogic
+			else if ("jar".equals(url.getProtocol()) || "zip".equals(url.getProtocol()) // Weblogic
 					|| "wsjar".equals(url.getProtocol())) // Websphere
 			{
 

@@ -1,6 +1,6 @@
 /*
  * [The "BSD licence"]
- * Copyright (c) 2013 Dandelion
+ * Copyright (c) 2013-2014 Dandelion
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -36,18 +36,18 @@ import org.junit.Test;
 
 public class ScriptTagTest {
 
-    @Test
-    public void should_have_correct_html_rendering() {
-        assertThat(new ScriptTag().toHtml()).isEqualTo("<script></script>");
-        assertThat(new ScriptTag("url").toHtml()).isEqualTo("<script src=\"url\"></script>");
-    }
+	@Test
+	public void should_have_correct_html_rendering() {
+		assertThat(new ScriptTag().toHtml()).isEqualTo("<script></script>");
+		assertThat(new ScriptTag("url").toHtml()).isEqualTo("<script src=\"url\"></script>");
+	}
 
-    @Test
-    public void should_have_full_access_to_the_tag() {
-        ScriptTag tag = new ScriptTag("url");
-        assertThat(tag.getSrc()).isEqualTo("url");
+	@Test
+	public void should_have_full_access_to_the_tag() {
+		ScriptTag tag = new ScriptTag("url");
+		assertThat(tag.getSrc()).isEqualTo("url");
 
-        tag.setSrc("anotherUrl");
-        assertThat(tag.getSrc()).isEqualTo("anotherUrl");
-    }
+		tag.setSrc("anotherUrl");
+		assertThat(tag.getSrc()).isEqualTo("anotherUrl");
+	}
 }

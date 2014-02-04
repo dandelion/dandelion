@@ -1,6 +1,6 @@
 /*
  * [The "BSD licence"]
- * Copyright (c) 2013 Dandelion
+ * Copyright (c) 2013-2014 Dandelion
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -40,20 +40,23 @@ import com.github.dandelion.core.asset.Asset;
 import com.github.dandelion.core.asset.AssetType;
 
 public class ClasspathLocationWrapperTest {
-    ClasspathLocationWrapper wrapper = new ClasspathLocationWrapper();
+	ClasspathLocationWrapper wrapper = new ClasspathLocationWrapper();
 
-    @Test
-    public void should_can_wrap_location_and_get_it() {
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        request.setRequestURI("/context/page.html");
-        request.setContextPath("/context");
+	@Test
+	public void should_can_wrap_location_and_get_it() {
+		MockHttpServletRequest request = new MockHttpServletRequest();
+		request.setRequestURI("/context/page.html");
+		request.setContextPath("/context");
 
-        Asset asset = new Asset("asset-classpath", "1.0", AssetType.js, singletonMap(wrapper.getLocationKey(), "com/github/dandelion/core/asset/wrapper/impl/asset.js"));
-        String location = wrapper.getWrappedLocation(asset, request);
-        assertThat(location).isEqualTo("http://localhost:80/context/dandelion-assets/f9d126fdc5489f63a5ae1eae859a6ef030948539-asset-classpath.js");
+		Asset asset = new Asset("asset-classpath", "1.0", AssetType.js, singletonMap(wrapper.getLocationKey(),
+				"com/github/dandelion/core/asset/wrapper/impl/asset.js"));
+		String location = wrapper.getWrappedLocation(asset, request);
+		assertThat(location)
+				.isEqualTo(
+                        "http://localhost:80/context/dandelion-assets/f9d126fdc5489f63a5ae1eae859a6ef030948539-asset-classpath.js");
 
-        asset = new Asset("asset-classpath", "1.0", AssetType.js, singletonMap(wrapper.getLocationKey(), location));
-        String content = wrapper.getWrappedContent(asset, request);
-        assertThat(content).isEqualTo("/* content */");
-    }
+		asset = new Asset("asset-classpath", "1.0", AssetType.js, singletonMap(wrapper.getLocationKey(), location));
+		String content = wrapper.getWrappedContent(asset, request);
+		assertThat(content).isEqualTo("/* content */");
+	}
 }

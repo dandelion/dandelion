@@ -9,7 +9,8 @@
             "locations": {
                 "unknownLocation": "URL"
             }
-        },{
+        },
+        {
             "name": "asset2",
             "version": "1",
             "type": "js",

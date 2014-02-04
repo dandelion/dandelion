@@ -1,6 +1,6 @@
 /*
  * [The "BSD licence"]
- * Copyright (c) 2013 Dandelion
+ * Copyright (c) 2013-2014 Dandelion
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -43,27 +43,31 @@ import com.github.dandelion.core.asset.AssetType;
 import com.github.dandelion.core.asset.web.AssetRequestContext;
 
 public class DelegatedLocationWrapperTest {
-    DelegatedLocationWrapper wrapper = new DelegatedLocationWrapper();
+	DelegatedLocationWrapper wrapper = new DelegatedLocationWrapper();
 
-    @Test
-    public void should_can_wrap_location_and_get_it() {
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        request.setRequestURI("/context/page.html");
-        request.setContextPath("/context");
+	@Test
+	public void should_can_wrap_location_and_get_it() {
+		MockHttpServletRequest request = new MockHttpServletRequest();
+		request.setRequestURI("/context/page.html");
+		request.setContextPath("/context");
 
-        AssetRequestContext.get(request).addParameter("asset-delegated", DelegatedLocationWrapper.DELEGATED_CONTENT_PARAM, new DelegatedContent() {
-            @Override
-            public String getContent(HttpServletRequest request) {
-                return "/* content */";
-            }
-        });
+		AssetRequestContext.get(request).addParameter("asset-delegated",
+				DelegatedLocationWrapper.DELEGATED_CONTENT_PARAM, new DelegatedContent() {
+					@Override
+					public String getContent(HttpServletRequest request) {
+						return "/* content */";
+					}
+				});
 
-        Asset asset = new Asset("asset-delegated", "1.0", AssetType.js, singletonMap(wrapper.getLocationKey(), "asset.js"));
-        String location = wrapper.getWrappedLocation(asset, request);
-        assertThat(location).isEqualTo("http://localhost:80/context/dandelion-assets/0cf3fbac07aa31f38153ba45eca0c943d627ba8b-asset-delegated.js");
+		Asset asset = new Asset("asset-delegated", "1.0", AssetType.js, singletonMap(wrapper.getLocationKey(),
+				"asset.js"));
+		String location = wrapper.getWrappedLocation(asset, request);
+		assertThat(location)
+				.isEqualTo(
+                        "http://localhost:80/context/dandelion-assets/0cf3fbac07aa31f38153ba45eca0c943d627ba8b-asset-delegated.js");
 
-        asset = new Asset("asset-delegated", "1.0", AssetType.js, singletonMap(wrapper.getLocationKey(), location));
-        String content = wrapper.getWrappedContent(asset, request);
-        assertThat(content).isEqualTo("/* content */");
-    }
+		asset = new Asset("asset-delegated", "1.0", AssetType.js, singletonMap(wrapper.getLocationKey(), location));
+		String content = wrapper.getWrappedContent(asset, request);
+		assertThat(content).isEqualTo("/* content */");
+	}
 }

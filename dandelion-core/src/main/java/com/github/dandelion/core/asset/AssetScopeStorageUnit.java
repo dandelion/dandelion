@@ -1,6 +1,6 @@
 /*
  * [The "BSD licence"]
- * Copyright (c) 2013 Dandelion
+ * Copyright (c) 2013-2014 Dandelion
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -36,20 +36,24 @@ import java.util.List;
  * Container of assets associated to a scope and its parent scope
  */
 class AssetScopeStorageUnit {
-    String scope;
-    String parentScope;
-    List<Asset> assets;
-    String rootParentScope;
-    int storagePosition = -1;
+	String scope;
+	String parentScope;
+	List<Asset> assets;
+	String rootParentScope;
+	int storagePosition = -1;
 
-    /**
-     * A new container is a scope with his parent scope and a empty list of assets
-     * @param scope scope of assets
-     * @param parentScope parent of scope
-     */
-    public AssetScopeStorageUnit(String scope, String parentScope) {
-        this.scope = scope;
-        this.parentScope = parentScope;
-        this.assets = new ArrayList<Asset>();
-    }
+	/**
+	 * A new container is a scope with his parent scope and a empty list of
+	 * assets
+	 * 
+	 * @param scope
+	 *            scope of assets
+	 * @param parentScope
+	 *            parent of scope
+	 */
+	public AssetScopeStorageUnit(String scope, String parentScope) {
+		this.scope = scope;
+		this.parentScope = parentScope;
+		this.assets = new ArrayList<Asset>();
+	}
 }

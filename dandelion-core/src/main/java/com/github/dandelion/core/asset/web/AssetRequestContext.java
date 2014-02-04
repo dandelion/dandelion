@@ -1,6 +1,6 @@
 /*
  * [The "BSD licence"]
- * Copyright (c) 2013 Dandelion
+ * Copyright (c) 2013-2014 Dandelion
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -30,12 +30,7 @@
 
 package com.github.dandelion.core.asset.web;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import javax.servlet.ServletRequest;
 
@@ -52,7 +47,7 @@ import com.github.dandelion.core.config.Configuration;
  * @since 0.10.0
  */
 public class AssetRequestContext {
-	
+
 	private List<String> scopes;
 	private List<String> excludedScopes;
 	private List<String> excludedAssets;
@@ -91,7 +86,7 @@ public class AssetRequestContext {
 	 * @return this context
 	 */
 	public AssetRequestContext excludeScopes(String scopes) {
-		if (scopes == null || scopes.isEmpty()){
+		if (scopes == null || scopes.isEmpty()) {
 			return this;
 		}
 		return excludeScopes(scopes.split(","));

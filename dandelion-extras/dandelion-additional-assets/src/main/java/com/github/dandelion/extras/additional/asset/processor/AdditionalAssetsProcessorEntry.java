@@ -1,6 +1,6 @@
 /*
  * [The "BSD licence"]
- * Copyright (c) 2013 Dandelion
+ * Copyright (c) 2013-2014 Dandelion
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -30,6 +30,15 @@
 
 package com.github.dandelion.extras.additional.asset.processor;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.github.dandelion.core.DevMode;
 import com.github.dandelion.core.asset.Asset;
 import com.github.dandelion.core.asset.AssetStack;
@@ -37,68 +46,63 @@ import com.github.dandelion.core.asset.processor.spi.AssetProcessorEntry;
 import com.github.dandelion.core.asset.web.AssetRequestContext;
 import com.github.dandelion.core.asset.wrapper.spi.AssetLocationWrapper;
 import com.github.dandelion.core.config.Configuration;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Asset Processor Entry for "additional_assets" location key
  */
 public class AdditionalAssetsProcessorEntry extends AssetProcessorEntry {
-    // Logger
-    private static final Logger LOG = LoggerFactory.getLogger(AdditionalAssetsProcessorEntry.class);
+	// Logger
+	private static final Logger LOG = LoggerFactory.getLogger(AdditionalAssetsProcessorEntry.class);
 
-    public static final String ADDITIONAL_ASSETS_ENABLED_KEY = "dandelion.addition.assets.enabled";
-    private boolean additionalAssetsEnabled = true;
+	public static final String ADDITIONAL_ASSETS_ENABLED_KEY = "dandelion.addition.assets.enabled";
+	private boolean additionalAssetsEnabled = true;
 
-    public AdditionalAssetsProcessorEntry() {
-        this.additionalAssetsEnabled = Boolean.TRUE.toString().equals(
-                Configuration.getProperty(ADDITIONAL_ASSETS_ENABLED_KEY, Boolean.toString(additionalAssetsEnabled)));
+	public AdditionalAssetsProcessorEntry() {
+		this.additionalAssetsEnabled = Boolean.TRUE.toString().equals(
+				Configuration.getProperty(ADDITIONAL_ASSETS_ENABLED_KEY, Boolean.toString(additionalAssetsEnabled)));
 
-        if(DevMode.enabled()) {
-            this.additionalAssetsEnabled = false;
-        }
+		if (DevMode.enabled()) {
+			this.additionalAssetsEnabled = false;
+		}
 
-        LOG.info("Dandelion Additional Asset is {}", additionalAssetsEnabled?"enabled":"disabled");
-    }
+		LOG.info("Dandelion Additional Asset is {}", additionalAssetsEnabled ? "enabled" : "disabled");
+	}
 
-    @Override
-    public int getRank() {
-        return 100;
-    }
+	@Override
+	public int getRank() {
+		return 100;
+	}
 
-    @Override
-    public List<Asset> process(List<Asset> assets, HttpServletRequest request) {
-        if(!additionalAssetsEnabled) {
-            return assets;
-        }
+	@Override
+	public List<Asset> process(List<Asset> assets, HttpServletRequest request) {
+		if (!additionalAssetsEnabled) {
+			return assets;
+		}
 
-        List<Asset> processedAssets = new ArrayList<Asset>();
-        for(Asset asset:assets) {
-            if(asset.getLocations().size() == 1 && asset.getLocations().containsKey(getProcessorKey())) {
-                Map<String, Object> parameters = AssetRequestContext.get(request).getParameters(asset.getName());
-                Map<String, AssetLocationWrapper> wrappers = AssetStack.getAssetsLocationWrappers();
-                for(Map.Entry<String, Object> entry:parameters.entrySet()) {
-                    Asset additionalAsset = asset.clone(true);
-                    additionalAsset.getLocations().put(entry.getKey(), entry.getValue().toString());
-                    if(wrappers.containsKey(entry.getKey())) {
-                        additionalAsset.getLocations().put(entry.getKey(), wrappers.get(entry.getKey()).getWrappedLocation(additionalAsset, request));
-                    }
-                    processedAssets.add(additionalAsset);
-                }
-            } else {
-                processedAssets.add(asset);
-            }
-        }
-        return processedAssets;
-    }
+		List<Asset> processedAssets = new ArrayList<Asset>();
+		for (Asset asset : assets) {
+			if (asset.getLocations().size() == 1 && asset.getLocations().containsKey(getProcessorKey())) {
+				Map<String, Object> parameters = AssetRequestContext.get(request).getParameters(asset.getName());
+				Map<String, AssetLocationWrapper> wrappers = AssetStack.getAssetsLocationWrappers();
+				for (Map.Entry<String, Object> entry : parameters.entrySet()) {
+					Asset additionalAsset = asset.clone(true);
+					additionalAsset.getLocations().put(entry.getKey(), entry.getValue().toString());
+					if (wrappers.containsKey(entry.getKey())) {
+						additionalAsset.getLocations().put(entry.getKey(),
+								wrappers.get(entry.getKey()).getWrappedLocation(additionalAsset, request));
+					}
+					processedAssets.add(additionalAsset);
+				}
+			}
+			else {
+				processedAssets.add(asset);
+			}
+		}
+		return processedAssets;
+	}
 
-    @Override
-    public String getProcessorKey() {
-        return "additional_assets";
-    }
+	@Override
+	public String getProcessorKey() {
+		return "additional_assets";
+	}
 }

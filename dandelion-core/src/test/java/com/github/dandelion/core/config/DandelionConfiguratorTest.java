@@ -1,6 +1,6 @@
 /*
  * [The "BSD licence"]
- * Copyright (c) 2012 Dandelion
+ * Copyright (c) 2013-2014 Dandelion
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without
@@ -38,24 +38,25 @@ import org.junit.Test;
 public class DandelionConfiguratorTest {
 
 	@Before
-	public void before(){
+	public void before() {
 		System.clearProperty(ConfigurationLoader.DANDELION_CONFLOADER_CLASS);
 	}
-	
+
 	@Test
 	public void should_use_StandardConfigurationLoader_by_default() {
 		assertThat(DandelionConfigurator.getConfigurationLoader()).isInstanceOf(StandardConfigurationLoader.class);
 	}
-	
+
 	@Test
-	public void should_use_another_configution_loader_using_system_property(){
-		System.setProperty(ConfigurationLoader.DANDELION_CONFLOADER_CLASS, "com.github.dandelion.core.config.ConfigurationFakeLoader");
+	public void should_use_another_configution_loader_using_system_property() {
+		System.setProperty(ConfigurationLoader.DANDELION_CONFLOADER_CLASS,
+				"com.github.dandelion.core.config.ConfigurationFakeLoader");
 		assertThat(DandelionConfigurator.getConfigurationLoader()).isInstanceOf(ConfigurationFakeLoader.class);
 		System.clearProperty(ConfigurationLoader.DANDELION_CONFLOADER_CLASS);
 	}
-	
+
 	@After
-	public void after(){
+	public void after() {
 		DandelionConfigurator.clear();
 	}
 }

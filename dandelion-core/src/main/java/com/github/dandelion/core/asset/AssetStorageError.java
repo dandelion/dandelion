@@ -1,6 +1,6 @@
 /*
  * [The "BSD licence"]
- * Copyright (c) 2013 Dandelion
+ * Copyright (c) 2013-2014 Dandelion
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -35,46 +35,47 @@ import com.github.dandelion.core.DandelionError;
  * Possible Errors for 'Assets Storage'
  */
 public enum AssetStorageError implements DandelionError {
-    /**
-     * An asset can't be added twice in the same scope (same name but different versions)
-     */
-    ASSET_ALREADY_EXISTS_IN_SCOPE(100),
-    /**
-     * An asset can't be added with a 'Detached Scope',
-     * 'Detached Scope' is only allowed as a Parent Scope
-     */
-    DETACHED_SCOPE_NOT_ALLOWED(101),
-    /**
-     * An asset can't have a couple of Scope/Parent Scope
-     * when its scope is already associated to another parent scope
-     */
-    PARENT_SCOPE_INCOMPATIBILITY(102),
-    /**
-     * An asset can't have a parent scope that doesn't already exist
-     */
-    UNDEFINED_PARENT_SCOPE(103),
-    /**
-     * A location can't be used twice in the same scope by a similar asset
-     */
-    ASSET_LOCATION_ALREADY_EXISTS_IN_SCOPE(104),
-    /**
-     * A attribute can't be used twice in the same scope by a similar asset
-     */
-    ASSET_ATTRIBUTE_ALREADY_EXISTS_IN_SCOPE(105),
-    /**
-     * A DOM position must be equals for merging two assets with same name
-     */
-    ASSET_DOM_POSITION_ALREADY_EXISTS_IN_SCOPE(106);
+	/**
+	 * An asset can't be added twice in the same scope (same name but different
+	 * versions)
+	 */
+	ASSET_ALREADY_EXISTS_IN_SCOPE(100),
+	/**
+	 * An asset can't be added with a 'Detached Scope', 'Detached Scope' is only
+	 * allowed as a Parent Scope
+	 */
+	DETACHED_SCOPE_NOT_ALLOWED(101),
+	/**
+	 * An asset can't have a couple of Scope/Parent Scope when its scope is
+	 * already associated to another parent scope
+	 */
+	PARENT_SCOPE_INCOMPATIBILITY(102),
+	/**
+	 * An asset can't have a parent scope that doesn't already exist
+	 */
+	UNDEFINED_PARENT_SCOPE(103),
+	/**
+	 * A location can't be used twice in the same scope by a similar asset
+	 */
+	ASSET_LOCATION_ALREADY_EXISTS_IN_SCOPE(104),
+	/**
+	 * A attribute can't be used twice in the same scope by a similar asset
+	 */
+	ASSET_ATTRIBUTE_ALREADY_EXISTS_IN_SCOPE(105),
+	/**
+	 * A DOM position must be equals for merging two assets with same name
+	 */
+	ASSET_DOM_POSITION_ALREADY_EXISTS_IN_SCOPE(106);
 
-    private final int number;
+	private final int number;
 
-    private AssetStorageError(int number) {
-        this.number = number;
-    }
+	private AssetStorageError(int number) {
+		this.number = number;
+	}
 
-    @Override
-    public int getNumber() {
-        return number;
-    }
+	@Override
+	public int getNumber() {
+		return number;
+	}
 
 }

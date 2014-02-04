@@ -1,6 +1,6 @@
 /*
  * [The "BSD licence"]
- * Copyright (c) 2013 Dandelion
+ * Copyright (c) 2013-2014 Dandelion
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without
@@ -40,60 +40,60 @@ public class LinkTag extends HtmlTag {
 	 * Plain old HTML <code>href</code> attribute.
 	 */
 	private String href;
-    /**
-     * Plain old HTML <code>rel</code> attribute (by default 'stylesheet').
-     */
-    private String rel = "stylesheet";
+	/**
+	 * Plain old HTML <code>rel</code> attribute (by default 'stylesheet').
+	 */
+	private String rel = "stylesheet";
 
-
-    public LinkTag(){
+	public LinkTag() {
 	}
-	
-	public LinkTag(String href){
+
+	public LinkTag(String href) {
 		this.href = href;
 	}
 
-    public LinkTag(String href, String rel){
-        this(href);
-        this.rel = rel;
-    }
-	
+	public LinkTag(String href, String rel) {
+		this(href);
+		this.rel = rel;
+	}
+
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public String toHtml(){
+	public String toHtml() {
 		StringBuffer html = new StringBuffer();
 		html.append("<link rel=\"");
-        html.append(this.rel);
-        html.append("\"");
-		
-		if(this.href != null){
+		html.append(this.rel);
+		html.append("\"");
+
+		if (this.href != null) {
 			html.append(" href=\"");
 			html.append(this.href);
 			html.append("\"");
 		}
 
-        html.append(attributesToHtml());
-        html.append(attributesOnlyNameToHtml());
-		
+		html.append(attributesToHtml());
+		html.append(attributesOnlyNameToHtml());
+
 		html.append("/>");
-		
+
 		return html.toString();
 	}
-	
+
 	public String getHref() {
 		return href;
 	}
+
 	public void setHref(String href) {
 		this.href = href;
 	}
 
-    public String getRel() {
-        return rel;
-    }
+	public String getRel() {
+		return rel;
+	}
 
-    public void setRel(String rel) {
-        this.rel = rel;
-    }
+	public void setRel(String rel) {
+		this.rel = rel;
+	}
 }

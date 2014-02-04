@@ -1,6 +1,6 @@
 /*
  * [The "BSD licence"]
- * Copyright (c) 2013 Dandelion
+ * Copyright (c) 2013-2014 Dandelion
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -36,22 +36,22 @@ import org.junit.Test;
 
 public class LinkTagTest {
 
-    @Test
-    public void should_have_correct_html_rendering() {
-        assertThat(new LinkTag().toHtml()).isEqualTo("<link rel=\"stylesheet\"/>");
-        assertThat(new LinkTag("url").toHtml()).isEqualTo("<link rel=\"stylesheet\" href=\"url\"/>");
-        assertThat(new LinkTag("url", "rel").toHtml()).isEqualTo("<link rel=\"rel\" href=\"url\"/>");
-    }
+	@Test
+	public void should_have_correct_html_rendering() {
+		assertThat(new LinkTag().toHtml()).isEqualTo("<link rel=\"stylesheet\"/>");
+		assertThat(new LinkTag("url").toHtml()).isEqualTo("<link rel=\"stylesheet\" href=\"url\"/>");
+		assertThat(new LinkTag("url", "rel").toHtml()).isEqualTo("<link rel=\"rel\" href=\"url\"/>");
+	}
 
-    @Test
-    public void should_have_full_access_to_the_tag() {
-        LinkTag tag = new LinkTag("url", "rel");
-        assertThat(tag.getHref()).isEqualTo("url");
-        assertThat(tag.getRel()).isEqualTo("rel");
+	@Test
+	public void should_have_full_access_to_the_tag() {
+		LinkTag tag = new LinkTag("url", "rel");
+		assertThat(tag.getHref()).isEqualTo("url");
+		assertThat(tag.getRel()).isEqualTo("rel");
 
-        tag.setHref("anotherHref");
-        tag.setRel("anotherRel");
-        assertThat(tag.getHref()).isEqualTo("anotherHref");
-        assertThat(tag.getRel()).isEqualTo("anotherRel");
-    }
+		tag.setHref("anotherHref");
+		tag.setRel("anotherRel");
+		assertThat(tag.getHref()).isEqualTo("anotherHref");
+		assertThat(tag.getRel()).isEqualTo("anotherRel");
+	}
 }

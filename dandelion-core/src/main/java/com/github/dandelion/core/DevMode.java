@@ -1,6 +1,6 @@
 /*
  * [The "BSD licence"]
- * Copyright (c) 2013 Dandelion
+ * Copyright (c) 2013-2014 Dandelion
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -37,7 +37,7 @@ package com.github.dandelion.core;
  * @author Thibault Duchateau
  */
 public final class DevMode {
-	
+
 	public final static String DANDELION_DEV_MODE = "dandelion.dev.mode";
 	private static boolean devMode = false;
 
