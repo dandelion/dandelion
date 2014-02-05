@@ -303,6 +303,11 @@ public class AssetConfigurator {
 			if (!excludedAssets.contains(asset.getName())) {
 				LOG.debug("Stored {} as child of {}", asset.getName(), component.getScope());
 				_assets.add(asset);
+                for(Map.Entry<String, String> entry:asset.getLocations().entrySet()) {
+                    if(!assetsLocationWrappers.containsKey(entry.getKey())) {
+                        LOG.warn("Asset {} have a location {} without {} wrapper", asset.getName(), entry.getValue(), entry.getKey());
+                    }
+                }
 			}
 			else {
 				LOG.debug("{} is excluded", asset.getName());
