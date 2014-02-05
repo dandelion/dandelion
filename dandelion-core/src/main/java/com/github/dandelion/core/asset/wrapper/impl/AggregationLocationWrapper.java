@@ -34,7 +34,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import com.github.dandelion.core.asset.Asset;
-import com.github.dandelion.core.asset.processor.impl.AssetAggregationProcessorEntry;
+import com.github.dandelion.core.asset.processor.impl.AssetAggregationProcessor;
 
 /**
  * 
@@ -49,7 +49,7 @@ public class AggregationLocationWrapper extends CacheableLocationWrapper {
 	 */
 	@Override
 	public String getLocationKey() {
-		return AssetAggregationProcessorEntry.AGGREGATION;
+		return AssetAggregationProcessor.AGGREGATION;
 	}
 
 	/**

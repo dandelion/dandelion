@@ -34,13 +34,13 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.github.dandelion.core.asset.processor.spi.AssetProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.github.dandelion.core.DevMode;
 import com.github.dandelion.core.asset.Asset;
 import com.github.dandelion.core.asset.AssetStack;
-import com.github.dandelion.core.asset.processor.spi.AssetProcessorEntry;
 
 /**
  * <p>
@@ -49,10 +49,10 @@ import com.github.dandelion.core.asset.processor.spi.AssetProcessorEntry;
  * @author Romain Lespinasse
  * @since 0.10.0
  */
-public class AssetLocationProcessorEntry extends AssetProcessorEntry {
+public class AssetLocationProcessor extends AssetProcessor {
 
 	// Logger
-	private static final Logger LOG = LoggerFactory.getLogger(AssetLocationProcessorEntry.class);
+	private static final Logger LOG = LoggerFactory.getLogger(AssetLocationProcessor.class);
 
 	@Override
 	public String getProcessorKey() {

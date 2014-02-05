@@ -36,17 +36,17 @@ import java.util.ServiceLoader;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.github.dandelion.core.asset.processor.impl.AssetLocationProcessor;
+import com.github.dandelion.core.asset.processor.spi.AssetProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.github.dandelion.core.asset.Asset;
-import com.github.dandelion.core.asset.processor.impl.AssetLocationProcessorEntry;
-import com.github.dandelion.core.asset.processor.spi.AssetProcessorEntry;
 
 /**
  * <p>
  * System in charge of discovering all implementations of
- * {@link AssetProcessorEntry} available in the classpath.
+ * {@link com.github.dandelion.core.asset.processor.spi.AssetProcessor} available in the classpath.
  * 
  * @author Romain Lespinasse
  * @since 0.10.0
@@ -56,10 +56,10 @@ public final class AssetProcessorSystem {
 	// Logger
 	private static final Logger LOG = LoggerFactory.getLogger(AssetProcessorSystem.class);
 
-	private static ServiceLoader<AssetProcessorEntry> assetProcessorServiceLoader = ServiceLoader
-			.load(AssetProcessorEntry.class);
-	private static List<AssetProcessorEntry> entries = new ArrayList<AssetProcessorEntry>();
-	private static AssetProcessorEntry starter;
+	private static ServiceLoader<AssetProcessor> assetProcessorServiceLoader = ServiceLoader
+			.load(AssetProcessor.class);
+	private static List<AssetProcessor> processors = new ArrayList<AssetProcessor>();
+	private static AssetProcessor starter;
 
 	private AssetProcessorSystem() {
 	}
@@ -75,27 +75,27 @@ public final class AssetProcessorSystem {
 			return;
 		}
 
-		for (AssetProcessorEntry ape : assetProcessorServiceLoader) {
-			entries.add(ape);
+		for (AssetProcessor ape : assetProcessorServiceLoader) {
+			processors.add(ape);
 			LOG.info("Asset processor found: {}", ape.getClass().getSimpleName());
 		}
 
-		Collections.sort(entries);
+		Collections.sort(processors);
 
-		AssetProcessorEntry processorEntry = new AssetLocationProcessorEntry();
-		LOG.info("Dandelion Assets Processor Entry starter treat {}", processorEntry.getProcessorKey());
+		AssetProcessor processorEntry = new AssetLocationProcessor();
+		LOG.info("Dandelion Assets Processor starter treat {}", processorEntry.getProcessorKey());
 
-		AssetProcessorEntry lastEntry = processorEntry;
-		for (AssetProcessorEntry ape : entries) {
+		AssetProcessor lastEntry = processorEntry;
+		for (AssetProcessor ape : processors) {
 			lastEntry.setNextEntry(ape);
 			lastEntry = ape;
 			LOG.info("Assets processor entry [rank: {}, processorKey: {}]", ape.getRank(), ape.getProcessorKey());
 		}
 
-		starter = processorEntry;
+        starter = processorEntry;
 	}
 
-	public static AssetProcessorEntry getStarter() {
+	public static AssetProcessor getStarter() {
 		initialize();
 		return starter;
 	}

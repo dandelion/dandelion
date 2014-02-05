@@ -42,13 +42,13 @@ import com.github.dandelion.core.asset.Asset;
  * @author Romain Lespinasse
  * @since 0.10.0
  */
-public abstract class AssetProcessorEntry implements Comparable<AssetProcessorEntry> {
+public abstract class AssetProcessor implements Comparable<AssetProcessor> {
 
-	private AssetProcessorEntry nextEntry;
+	private AssetProcessor nextEntry;
 
 	public abstract int getRank();
 
-	public void setNextEntry(AssetProcessorEntry nextEntry) {
+	public void setNextEntry(AssetProcessor nextEntry) {
 		this.nextEntry = nextEntry;
 	}
 
@@ -62,7 +62,7 @@ public abstract class AssetProcessorEntry implements Comparable<AssetProcessorEn
 	public abstract String getProcessorKey();
 
 	@Override
-	public int compareTo(AssetProcessorEntry entry) {
+	public int compareTo(AssetProcessor entry) {
 		return getRank() - entry.getRank();
 	}
 }

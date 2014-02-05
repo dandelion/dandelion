@@ -34,12 +34,12 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import com.github.dandelion.core.asset.Asset;
-import com.github.dandelion.core.asset.processor.impl.AssetCompressionProcessorEntry;
+import com.github.dandelion.core.asset.processor.impl.AssetCompressionProcessor;
 
 public class CompressionLocationWrapper extends CacheableLocationWrapper {
 	@Override
 	public String getLocationKey() {
-		return AssetCompressionProcessorEntry.COMPRESSION;
+		return AssetCompressionProcessor.COMPRESSION;
 	}
 
 	@Override

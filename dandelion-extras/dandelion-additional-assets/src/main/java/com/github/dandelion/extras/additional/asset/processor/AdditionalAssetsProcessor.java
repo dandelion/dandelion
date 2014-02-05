@@ -36,13 +36,13 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.github.dandelion.core.asset.processor.spi.AssetProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.github.dandelion.core.DevMode;
 import com.github.dandelion.core.asset.Asset;
 import com.github.dandelion.core.asset.AssetStack;
-import com.github.dandelion.core.asset.processor.spi.AssetProcessorEntry;
 import com.github.dandelion.core.asset.web.AssetRequestContext;
 import com.github.dandelion.core.asset.wrapper.spi.AssetLocationWrapper;
 import com.github.dandelion.core.config.Configuration;
@@ -50,14 +50,14 @@ import com.github.dandelion.core.config.Configuration;
 /**
  * Asset Processor Entry for "additional_assets" location key
  */
-public class AdditionalAssetsProcessorEntry extends AssetProcessorEntry {
+public class AdditionalAssetsProcessor extends AssetProcessor {
 	// Logger
-	private static final Logger LOG = LoggerFactory.getLogger(AdditionalAssetsProcessorEntry.class);
+	private static final Logger LOG = LoggerFactory.getLogger(AdditionalAssetsProcessor.class);
 
 	public static final String ADDITIONAL_ASSETS_ENABLED_KEY = "dandelion.addition.assets.enabled";
 	private boolean additionalAssetsEnabled = true;
 
-	public AdditionalAssetsProcessorEntry() {
+	public AdditionalAssetsProcessor() {
 		this.additionalAssetsEnabled = Boolean.TRUE.toString().equals(
 				Configuration.getProperty(ADDITIONAL_ASSETS_ENABLED_KEY, Boolean.toString(additionalAssetsEnabled)));
 

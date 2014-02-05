@@ -40,6 +40,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.github.dandelion.core.asset.processor.spi.AssetProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,7 +48,6 @@ import com.github.dandelion.core.DevMode;
 import com.github.dandelion.core.asset.Asset;
 import com.github.dandelion.core.asset.AssetStack;
 import com.github.dandelion.core.asset.AssetType;
-import com.github.dandelion.core.asset.processor.spi.AssetProcessorEntry;
 import com.github.dandelion.core.asset.wrapper.spi.AssetLocationWrapper;
 import com.github.dandelion.core.config.Configuration;
 import com.github.dandelion.core.utils.RequestUtils;
@@ -61,22 +61,18 @@ import com.github.dandelion.core.utils.ResourceUtils;
  * @author Romain Lespinasse
  * @since 0.10.0
  */
-public class AssetAggregationProcessorEntry extends AssetProcessorEntry {
+public class AssetAggregationProcessor extends AssetProcessor {
 
 	// Logger
-	private static final Logger LOG = LoggerFactory.getLogger(AssetAggregationProcessorEntry.class);
+	private static final Logger LOG = LoggerFactory.getLogger(AssetAggregationProcessor.class);
 
 	public static final String AGGREGATION = "aggregation";
 	public static final String AGGREGATION_ENABLED_KEY = "dandelion.aggregation.enabled";
 	private boolean aggregationEnabled = false;
 
-	public AssetAggregationProcessorEntry() {
+	public AssetAggregationProcessor() {
 		this.aggregationEnabled = Boolean.TRUE.toString().equals(
 				Configuration.getProperty(AGGREGATION_ENABLED_KEY, Boolean.toString(aggregationEnabled)));
-
-		if (DevMode.enabled()) {
-			this.aggregationEnabled = false;
-		}
 
 		LOG.info("Dandelion Asset Aggregation is {}", aggregationEnabled ? "enabled" : "disabled");
 	}
