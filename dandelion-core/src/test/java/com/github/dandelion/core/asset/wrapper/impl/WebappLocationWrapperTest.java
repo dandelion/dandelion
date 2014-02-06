@@ -34,6 +34,7 @@ import static java.util.Collections.singletonMap;
 import static org.fest.assertions.Assertions.assertThat;
 
 import java.io.File;
+import java.net.MalformedURLException;
 
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -56,9 +57,9 @@ public class WebappLocationWrapperTest {
 	}
 
 	@Test
-	public void should_can_get_wrapped_content() {
-		String filePath = new File("src/test/resources/com/github/dandelion/core/asset/wrapper/impl/asset.js")
-				.getAbsolutePath();
+	public void should_can_get_wrapped_content() throws MalformedURLException {
+		String filePath = new File("src/test/resources/com/github/dandelion/core/asset/wrapper/impl/asset.js").toURI()
+				.toURL().getPath();
 		Asset asset = new Asset("asset-webapp", "1.0", AssetType.js, singletonMap(wrapper.getLocationKey(), "file://"
 				+ filePath));
 		String content = wrapper.getWrappedContent(asset, null);
