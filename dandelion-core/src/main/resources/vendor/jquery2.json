@@ -1,0 +1,14 @@
+{
+    "scope" : "jquery2",
+    "parent": "none",
+    "assets": [
+		{
+		    "name": "jquery2-js",
+		    "version": "2.1.0",
+		    "type": "js",
+		    "locations": {
+		        "cdn": "//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.0/jquery.js"
+		    }
+		}
+    ]
+}
