@@ -30,61 +30,24 @@
 
 package com.github.dandelion.core.asset.wrapper.impl;
 
-import javax.servlet.http.HttpServletRequest;
-
-import com.github.dandelion.core.asset.Asset;
-import com.github.dandelion.core.utils.RequestUtils;
-import com.github.dandelion.core.utils.ResourceUtils;
+import com.github.dandelion.core.asset.wrapper.spi.AssetLocationWrapper;
 
 /**
  * <p>
- * Location wrapper for assets that use {@code webapp} as a location key.
+ * Abstract base class for all {@link AssetLocationWrapper}.
  * 
- * <p>
- * Basically, a "webapp asset" is an asset stored inside a web application
- * folder.
- * 
- * @author Romain Lespinasse
- * @since 0.2.0
+ * @author Thibault Duchateau
+ * @since 0.10.0
  */
-public class WebappLocationWrapper extends BaseLocationWrapper {
+public abstract class BaseLocationWrapper implements AssetLocationWrapper {
 
-	public WebappLocationWrapper() {
-		active = true;
+	protected boolean active;
+
+	public boolean isActive() {
+		return active;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public String getLocationKey() {
-		return "webapp";
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public String getWrappedLocation(Asset asset, HttpServletRequest request) {
-		String location = asset.getLocations().get(getLocationKey());
-		String base = RequestUtils.getBaseUrl(request);
-		boolean pathLocation = location.startsWith("/");
-		boolean pathBase = base.endsWith("/");
-		if (pathLocation && pathBase) {
-			location = location.substring(1);
-		}
-		else if (!pathLocation && !pathBase) {
-			location = "/" + location;
-		}
-		return base + location;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public String getWrappedContent(Asset asset, HttpServletRequest request) {
-		String location = asset.getLocations().get(getLocationKey());
-		return ResourceUtils.getContentFromUrl(request, location, true);
+	public void setActive(boolean active) {
+		this.active = active;
 	}
 }

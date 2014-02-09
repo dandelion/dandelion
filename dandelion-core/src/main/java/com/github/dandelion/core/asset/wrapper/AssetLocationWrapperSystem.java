@@ -66,7 +66,7 @@ public final class AssetLocationWrapperSystem {
 		List<AssetLocationWrapper> alws = new ArrayList<AssetLocationWrapper>();
 		for (AssetLocationWrapper alw : locationWrapperServiceLoader) {
 			alws.add(alw);
-			LOG.info("Asset location wrapper found: {}", alw.getLocationKey());
+			LOG.info("Asset location wrapper found: {} ({})", alw.getLocationKey(), alw.isActive() ? "active" : "inactive");
 		}
 
 		wrappers = alws;

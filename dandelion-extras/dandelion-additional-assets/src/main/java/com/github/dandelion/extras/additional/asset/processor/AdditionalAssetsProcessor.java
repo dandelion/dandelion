@@ -83,7 +83,7 @@ public class AdditionalAssetsProcessor extends AssetProcessor {
 		for (Asset asset : assets) {
 			if (asset.getLocations().size() == 1 && asset.getLocations().containsKey(getProcessorKey())) {
 				Map<String, Object> parameters = AssetRequestContext.get(request).getParameters(asset.getName());
-				Map<String, AssetLocationWrapper> wrappers = AssetStack.getAssetsLocationWrappers();
+				Map<String, AssetLocationWrapper> wrappers = AssetStack.getAssetLocationWrappers();
 				for (Map.Entry<String, Object> entry : parameters.entrySet()) {
 					Asset additionalAsset = asset.clone(true);
 					additionalAsset.getLocations().put(entry.getKey(), entry.getValue().toString());

@@ -31,16 +31,18 @@ package com.github.dandelion.core.asset.processor.impl;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import com.github.dandelion.core.asset.processor.spi.AssetProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.github.dandelion.core.DevMode;
 import com.github.dandelion.core.asset.Asset;
 import com.github.dandelion.core.asset.AssetStack;
+import com.github.dandelion.core.asset.processor.spi.AssetProcessor;
+import com.github.dandelion.core.asset.wrapper.spi.AssetLocationWrapper;
 
 /**
  * <p>
@@ -71,22 +73,22 @@ public class AssetLocationProcessor extends AssetProcessor {
 		for (Asset asset : assets) {
 			// no available locations = no locations
 			if (asset.getLocations().isEmpty()) {
-				LOG.warn("no available locations for {}.", asset.toString());
+				LOG.warn("No available location for {}", asset.toString());
 				continue;
 			}
 
 			String locationKey = null;
 			if (asset.getLocations().size() == 1) {
 				// use the unique location if needed
-				LOG.debug("only one location {}, automatically used.", asset.toString());
+				LOG.debug("Only one location found for {}, automatically used", asset.toString());
 				for (String _locationKey : asset.getLocations().keySet()) {
 					locationKey = _locationKey;
 				}
 			}
 			else {
 				// otherwise search for the first match in authorized locations
-				LOG.debug("search the right location for {}.", asset.toString());
-				for (String searchedLocationKey : AssetStack.getAssetsLocations()) {
+				LOG.debug("Search for the right location for {}", asset.toString());
+				for (String searchedLocationKey : AssetStack.getAssetLocations()) {
 					if (asset.getLocations().containsKey(searchedLocationKey)) {
 						String location = asset.getLocations().get(searchedLocationKey);
 						if (location != null && !location.isEmpty()) {
@@ -100,16 +102,17 @@ public class AssetLocationProcessor extends AssetProcessor {
 
 			// And if any location was found = no locations
 			if (locationKey == null) {
-				LOG.warn("any location match the asked locations {} for {}.", AssetStack.getAssetsLocations(),
-						asset.toString());
+				LOG.warn("No location matches the requested location ({}) for the asset {} among {}.", locationKey,
+						asset.toString(), AssetStack.getAssetLocations());
 				continue;
 			}
 
 			// Otherwise check for wrapper
 			String location;
-			if (AssetStack.getAssetsLocationWrappers().containsKey(locationKey)) {
+			Map<String, AssetLocationWrapper> wrappers = AssetStack.getAssetLocationWrappers();
+			if (wrappers.containsKey(locationKey) && wrappers.get(locationKey).isActive()) {
 				LOG.debug("use location wrapper for {} on {}.", locationKey, asset);
-				location = AssetStack.getAssetsLocationWrappers().get(locationKey).getWrappedLocation(asset, request);
+				location = wrappers.get(locationKey).getWrappedLocation(asset, request);
 			}
 			else {
 				location = asset.getLocations().get(locationKey);

@@ -69,4 +69,17 @@ public interface AssetLocationWrapper {
 	 * @return the content of location
 	 */
 	String getWrappedContent(Asset asset, HttpServletRequest request);
+
+	/**
+	 * @return {@code true} if the location wrapper is active, otherwise @
+	 *         false} .
+	 */
+	boolean isActive();
+
+	/**
+	 * Setter for the active property.
+	 * 
+	 * @param active
+	 */
+	void setActive(boolean active);
 }

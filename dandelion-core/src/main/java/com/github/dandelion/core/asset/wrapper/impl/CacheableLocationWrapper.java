@@ -47,13 +47,18 @@ import com.github.dandelion.core.utils.RequestUtils;
 
 /**
  * <p>
- * Base for all {@link AssetLocationWrapper} byt with caching faculty.
+ * Abstract base class for all {@link AssetLocationWrapper} that need to cache
+ * the asset.
+ * 
+ * <p>
+ * Once the asset retrieved, Dandelion will use the {@link AssetCacheSystem} to
+ * store the asset in the configured cache.
  * 
  * @author Romain Lespinasse
  * @author Thibault Duchateau
  * @since 0.2.0
  */
-public abstract class CacheableLocationWrapper implements AssetLocationWrapper {
+public abstract class CacheableLocationWrapper extends BaseLocationWrapper {
 
 	/**
 	 * {@inheritDoc}

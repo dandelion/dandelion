@@ -40,6 +40,13 @@ import javax.servlet.http.HttpServletRequest;
 import com.github.dandelion.core.asset.processor.AssetProcessorSystem;
 import com.github.dandelion.core.asset.wrapper.spi.AssetLocationWrapper;
 
+/**
+ * 
+ * TODO
+ * 
+ * @author Romain Lespinasse
+ * @author Thibault Duchateau
+ */
 public class AssetStack {
 	
     static AssetConfigurator assetConfigurator;
@@ -91,7 +98,7 @@ public class AssetStack {
      *
      * @return locations of Assets
      */
-    public static List<String> getAssetsLocations() {
+    public static List<String> getAssetLocations() {
         initializeIfNeeded();
         return assetConfigurator.assetsLocations;
     }
@@ -103,11 +110,22 @@ public class AssetStack {
      *
      * @return wrappers for locations of Assets
      */
-    public static Map<String, AssetLocationWrapper> getAssetsLocationWrappers() {
+    public static Map<String, AssetLocationWrapper> getAssetLocationWrappers() {
         initializeIfNeeded();
         return assetConfigurator.assetsLocationWrappers;
     }
-
+    
+	/**
+	 * Returns the implementation of {@link AssetLocationWrapper} corresponding
+	 * to the given location key.
+	 * 
+	 * @return the location wrapper.
+	 */
+	public static AssetLocationWrapper getAssetLocationWrapper(String locationKey) {
+		initializeIfNeeded();
+		return assetConfigurator.assetsLocationWrappers.get(locationKey);
+	}
+    
     /**
      * Prepare Assets of Scopes for rendering
      * @param scopes scopes of assets

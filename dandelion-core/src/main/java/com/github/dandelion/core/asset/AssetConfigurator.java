@@ -39,6 +39,8 @@ import org.slf4j.LoggerFactory;
 import com.github.dandelion.core.DandelionException;
 import com.github.dandelion.core.asset.loader.AssetLoaderSystem;
 import com.github.dandelion.core.asset.loader.spi.AssetLoader;
+import com.github.dandelion.core.asset.processor.impl.AssetAggregationProcessor;
+import com.github.dandelion.core.asset.processor.impl.AssetCompressionProcessor;
 import com.github.dandelion.core.asset.wrapper.AssetLocationWrapperSystem;
 import com.github.dandelion.core.asset.wrapper.spi.AssetLocationWrapper;
 import com.github.dandelion.core.config.Configuration;
@@ -93,7 +95,11 @@ public class AssetConfigurator {
 
 		assetLoaders = AssetLoaderSystem.getLoaders();
 		assetsLocationWrappers = AssetLocationWrapperSystem.getWrappersWithKey();
-
+		
+		if (new AssetCompressionProcessor().isCompressionEnabled()
+				|| new AssetAggregationProcessor().isAggregationEnabled()) {
+			activateLocationWrapper("cdn");
+		}
 		processAssetsLoading(true);
 	}
 
@@ -132,6 +138,12 @@ public class AssetConfigurator {
 		clearAllAssetsProcessElements();
 	}
 
+	void activateLocationWrapper(String locationKey){
+		if (assetsLocationWrappers.containsKey(locationKey)) {
+			assetsLocationWrappers.get(locationKey).setActive(true);
+			LOG.debug("Asset location wrapper with the key {} is enabled", locationKey);
+		}
+    }
 	private void repairOrphanParentScope() {
 		Set<String> orphans = new HashSet<String>();
 		for (String parentScope : parentScopesByScope.values()) {

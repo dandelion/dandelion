@@ -38,13 +38,27 @@ import org.webjars.WebJarAssetLocator;
 
 import com.github.dandelion.core.asset.Asset;
 import com.github.dandelion.core.asset.wrapper.impl.CacheableLocationWrapper;
+import com.github.dandelion.core.asset.wrapper.spi.AssetLocationWrapper;
 import com.github.dandelion.core.utils.ResourceUtils;
 
 /**
- * Assets Location Wrapper for Webjars
+ * <p>
+ * Location wrapper for assets that use {@code webjars} as a location key.
+ * 
+ * <p>
+ * This {@link AssetLocationWrapper} uses the {@link WebJarAssetLocator} to
+ * locate assets in the classpath before getting their content.
+ * 
+ * @author Romain Lespinasse
+ * @author Thibault Duchateau
+ * @since 0.10.0
  */
 public class WebjarsLocationWrapper extends CacheableLocationWrapper {
 	private static WebJarAssetLocator locator = new WebJarAssetLocator();
+
+	public WebjarsLocationWrapper() {
+		this.active = true;
+	}
 
 	/**
 	 * {@inheritDoc}

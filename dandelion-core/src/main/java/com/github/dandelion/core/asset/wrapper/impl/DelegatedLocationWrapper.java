@@ -39,18 +39,23 @@ import com.github.dandelion.core.asset.web.AssetRequestContext;
 
 /**
  * <p>
- * Location wrapper for {@code delegated} assets.
+ * Location wrapper for assets that use {@code delegated} as a location key.
  * 
  * <p>
- * Basically, a "delegated asset" is an asset that is generated programmatically
+ * Basically, a "delegated asset" is an asset that is created programmatically
  * and provided by the {@link AssetRequestContext}.
  * 
  * @author Romain Lespinasse
  * @since 0.2.0
  */
 public class DelegatedLocationWrapper extends CacheableLocationWrapper {
+	
 	public static final String DELEGATED_CONTENT_PARAM = "DELEGATED_CONTENT";
 
+	public DelegatedLocationWrapper(){
+		active = true;
+	}
+	
 	/**
 	 * {@inheritDoc}
 	 */

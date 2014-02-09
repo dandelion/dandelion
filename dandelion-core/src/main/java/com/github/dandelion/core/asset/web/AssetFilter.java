@@ -91,8 +91,6 @@ public class AssetFilter implements Filter {
 			AssetRequestContext context = AssetRequestContext.get(request);
 
 			if (isDandelionApplyable(context, wrapper)) {
-				LOG.debug("Dandelion Assets Generation apply on this request {}", request.getRequestURL().toString());
-
 				List<Asset> assets = AssetStack.prepareAssetsFor(request, context.getScopes(true),
 						context.getExcludedAssets());
 

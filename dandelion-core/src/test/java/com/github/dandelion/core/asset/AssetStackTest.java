@@ -57,7 +57,7 @@ public class AssetStackTest {
 
 	@Test
 	public void should_load_the_assets_locations() {
-		assertThat(AssetStack.getAssetsLocations()).contains("remote");
+		assertThat(AssetStack.getAssetLocations()).contains("remote");
 	}
 
 	@Test

@@ -46,8 +46,8 @@ public final class ResourceUtils {
 
 	private static final Logger LOG = LoggerFactory.getLogger(ResourceUtils.class);
 
-	private static final int DEFAULT_BUFFER_SIZE = 1024 * 4;
 	public static final String PROTOCOL_RELATIVE_PREFIX = "//";
+	private static final int DEFAULT_BUFFER_SIZE = 1024 * 4;
 
 	public static InputStream getFileFromClasspath(String pathToFile) {
 		return Thread.currentThread().getContextClassLoader().getResourceAsStream(pathToFile);
@@ -84,11 +84,12 @@ public final class ResourceUtils {
 
 	public static String getContentFromUrl(HttpServletRequest request, String url, boolean neverFail) {
 		try {
-			String realUrl = url;
-			if (realUrl.startsWith(PROTOCOL_RELATIVE_PREFIX)) {
-				realUrl = request.isSecure() ? "https:" : "http:" + realUrl;
+			
+			if (url.startsWith(PROTOCOL_RELATIVE_PREFIX)) {
+				url = request.isSecure() ? "https:" : "http:" + url;
 			}
-			URL urlLocation = new URL(realUrl);
+
+			URL urlLocation = new URL(url);
 			return ResourceUtils.getContentFromInputStream(urlLocation.openStream());
 		}
 		catch (IOException e) {

@@ -40,14 +40,13 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import com.github.dandelion.core.asset.processor.spi.AssetProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.github.dandelion.core.DevMode;
 import com.github.dandelion.core.asset.Asset;
 import com.github.dandelion.core.asset.AssetStack;
 import com.github.dandelion.core.asset.AssetType;
+import com.github.dandelion.core.asset.processor.spi.AssetProcessor;
 import com.github.dandelion.core.asset.wrapper.spi.AssetLocationWrapper;
 import com.github.dandelion.core.config.Configuration;
 import com.github.dandelion.core.utils.RequestUtils;
@@ -131,7 +130,7 @@ public class AssetAggregationProcessor extends AssetProcessor {
 	private void cacheAggregatedContent(HttpServletRequest request, String context, AssetType type,
 			List<Asset> typedAssets, String generatedAssetKey) {
 
-		Map<String, AssetLocationWrapper> wrappers = AssetStack.getAssetsLocationWrappers();
+		Map<String, AssetLocationWrapper> wrappers = AssetStack.getAssetLocationWrappers();
 		StringBuilder aggregatedContent = new StringBuilder();
 
 		for (Asset asset : typedAssets) {
@@ -160,5 +159,9 @@ public class AssetAggregationProcessor extends AssetProcessor {
 			key.append(asset.getAssetKey()).append("|");
 		}
 		return key.toString();
+	}
+
+	public boolean isAggregationEnabled() {
+		return aggregationEnabled;
 	}
 }

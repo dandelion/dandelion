@@ -42,7 +42,7 @@ import com.github.dandelion.core.utils.ResourceUtils;
 
 /**
  * <p>
- * Location wrapper for {@code templated} assets.
+ * Location wrapper for assets that use {@code templated} as a location key.
  * 
  * <p>
  * Basically, a "templated asset" is an asset that can contain one or more
@@ -57,6 +57,7 @@ public class TemplatedLocationWrapper extends CacheableLocationWrapper {
 
 	public TemplatedLocationWrapper() {
 		cache = new HashMap<String, String>();
+		active = true;
 	}
 
 	/**

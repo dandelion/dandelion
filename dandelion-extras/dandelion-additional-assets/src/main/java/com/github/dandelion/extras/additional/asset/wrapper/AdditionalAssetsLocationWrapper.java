@@ -36,12 +36,17 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.github.dandelion.core.asset.Asset;
 import com.github.dandelion.core.asset.web.AssetRequestContext;
-import com.github.dandelion.core.asset.wrapper.spi.AssetLocationWrapper;
+import com.github.dandelion.core.asset.wrapper.impl.BaseLocationWrapper;
 
 /**
  * Location Wrapper for "additional_assets"
  */
-public class AdditionalAssetsLocationWrapper implements AssetLocationWrapper {
+public class AdditionalAssetsLocationWrapper extends BaseLocationWrapper {
+
+	public AdditionalAssetsLocationWrapper() {
+		this.active = true;
+	}
+
 	@Override
 	public String getLocationKey() {
 		return "additional_assets";

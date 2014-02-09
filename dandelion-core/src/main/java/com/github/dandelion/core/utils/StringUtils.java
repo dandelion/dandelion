@@ -396,4 +396,59 @@ public class StringUtils {
 			return null;
 		}
 	}
+
+	/**
+	 * <p>
+	 * Counts how many times the substring appears in the larger string.
+	 * </p>
+	 * 
+	 * <p>
+	 * A {@code null} or empty ("") String input returns {@code 0}.
+	 * </p>
+	 * 
+	 * <pre>
+	 * StringUtils.countMatches(null, *)       = 0
+	 * StringUtils.countMatches("", *)         = 0
+	 * StringUtils.countMatches("abba", null)  = 0
+	 * StringUtils.countMatches("abba", "")    = 0
+	 * StringUtils.countMatches("abba", "a")   = 2
+	 * StringUtils.countMatches("abba", "ab")  = 1
+	 * StringUtils.countMatches("abba", "xxx") = 0
+	 * </pre>
+	 * 
+	 * @param str
+	 *            the CharSequence to check, may be null
+	 * @param sub
+	 *            the substring to count, may be null
+	 * @return the number of occurrences, 0 if either CharSequence is
+	 *         {@code null}
+	 */
+	public static int countMatches(CharSequence str, CharSequence sub) {
+		if ((str == null || str.length() == 0) || (sub == null || sub.length() == 0)) {
+			return 0;
+		}
+		int count = 0;
+		int idx = 0;
+		while ((idx = indexOf(str, sub, idx)) != -1) {
+			count++;
+			idx += sub.length();
+		}
+		return count;
+	}
+
+	/**
+	 * Used by the indexOf(CharSequence methods) as a green implementation of
+	 * indexOf.
+	 * 
+	 * @param cs
+	 *            the {@code CharSequence} to be processed
+	 * @param searchChar
+	 *            the {@code CharSequence} to be searched for
+	 * @param start
+	 *            the start index
+	 * @return the index where the search sequence was found
+	 */
+	public static int indexOf(CharSequence cs, CharSequence searchChar, int start) {
+		return cs.toString().indexOf(searchChar.toString(), start);
+	}
 }
