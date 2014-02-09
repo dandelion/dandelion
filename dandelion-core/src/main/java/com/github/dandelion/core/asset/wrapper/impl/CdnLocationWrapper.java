@@ -41,8 +41,10 @@ import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.github.dandelion.core.DandelionException;
 import com.github.dandelion.core.asset.Asset;
 import com.github.dandelion.core.asset.AssetType;
+import com.github.dandelion.core.asset.wrapper.AssetLocationWrapperError;
 import com.github.dandelion.core.utils.ResourceUtils;
 import com.github.dandelion.core.utils.StringUtils;
 
@@ -159,8 +161,7 @@ public class CdnLocationWrapper extends CacheableLocationWrapper {
 			}
 		}
 		catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new DandelionException(AssetLocationWrapperError.ASSET_RELATIVE_PATHS);
 		}
 		finally {
 			try {
@@ -168,14 +169,16 @@ public class CdnLocationWrapper extends CacheableLocationWrapper {
 					reader.close();
 			}
 			catch (IOException e) {
-				//
+				// Should never happen
+				throw new DandelionException(AssetLocationWrapperError.ASSET_RELATIVE_PATHS);
 			}
 			try {
 				if (writer != null)
 					writer.close();
 			}
 			catch (IOException e) {
-				//
+				// Should never happen
+				throw new DandelionException(AssetLocationWrapperError.ASSET_RELATIVE_PATHS);
 			}
 		}
 
