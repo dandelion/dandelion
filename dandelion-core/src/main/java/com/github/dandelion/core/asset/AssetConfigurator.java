@@ -40,7 +40,7 @@ import com.github.dandelion.core.DandelionException;
 import com.github.dandelion.core.asset.loader.AssetLoaderSystem;
 import com.github.dandelion.core.asset.loader.spi.AssetLoader;
 import com.github.dandelion.core.asset.processor.impl.AssetAggregationProcessor;
-import com.github.dandelion.core.asset.processor.impl.AssetCompressionProcessor;
+import com.github.dandelion.core.asset.processor.impl.AssetMinificationProcessor;
 import com.github.dandelion.core.asset.wrapper.AssetLocationWrapperSystem;
 import com.github.dandelion.core.asset.wrapper.spi.AssetLocationWrapper;
 import com.github.dandelion.core.config.Configuration;
@@ -96,7 +96,7 @@ public class AssetConfigurator {
 		assetLoaders = AssetLoaderSystem.getLoaders();
 		assetsLocationWrappers = AssetLocationWrapperSystem.getWrappersWithKey();
 		
-		if (new AssetCompressionProcessor().isCompressionEnabled()
+		if (new AssetMinificationProcessor().isMinificationEnabled()
 				|| new AssetAggregationProcessor().isAggregationEnabled()) {
 			activateLocationWrapper("cdn");
 		}

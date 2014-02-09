@@ -34,7 +34,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import com.github.dandelion.core.asset.Asset;
-import com.github.dandelion.core.asset.processor.impl.AssetCompressionProcessor;
+import com.github.dandelion.core.asset.processor.impl.AssetMinificationProcessor;
 
 /**
  * <p>
@@ -43,15 +43,15 @@ import com.github.dandelion.core.asset.processor.impl.AssetCompressionProcessor;
  * @author Romain Lespinasse
  * @since 0.10.0
  */
-public class CompressionLocationWrapper extends CacheableLocationWrapper {
+public class MinificationLocationWrapper extends CacheableLocationWrapper {
 	
-	public CompressionLocationWrapper(){
+	public MinificationLocationWrapper(){
 		active = true;
 	}
 	
 	@Override
 	public String getLocationKey() {
-		return AssetCompressionProcessor.COMPRESSION;
+		return AssetMinificationProcessor.MINIFICATION;
 	}
 
 	@Override

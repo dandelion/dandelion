@@ -32,8 +32,8 @@ package com.github.dandelion.core.asset.wrapper.impl;
 
 import org.junit.Test;
 
-public class CompressionLocationWrapperTest {
-	CompressionLocationWrapper wrapper = new CompressionLocationWrapper();
+public class MinificationLocationWrapperTest {
+	MinificationLocationWrapper wrapper = new MinificationLocationWrapper();
 
 	@Test(expected = IllegalStateException.class)
 	public void should_cant_wrap_aggregation_location() {
