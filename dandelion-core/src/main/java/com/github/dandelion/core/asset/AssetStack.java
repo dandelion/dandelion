@@ -48,73 +48,74 @@ import com.github.dandelion.core.asset.wrapper.spi.AssetLocationWrapper;
  * @author Thibault Duchateau
  */
 public class AssetStack {
-	
-    static AssetConfigurator assetConfigurator;
-    static AssetStorage assetStorage;
 
-    /**
-     * Initialize Assets only if needed
-     */
-    static void initializeIfNeeded() {
-        if(assetStorage == null) {
-            initializeStorageIfNeeded();
-        }
-        if(assetConfigurator == null) {
-            initializeConfiguratorIfNeeded();
-        }
-    }
+	static AssetConfigurator assetConfigurator;
+	static AssetStorage assetStorage;
 
-    /**
-     * Initialize Assets Configurator only if needed
-     */
-    synchronized private static void initializeConfiguratorIfNeeded() {
-        if(assetConfigurator == null) {
-            assetConfigurator = new AssetConfigurator(assetStorage);
-            assetConfigurator.initialize();
-        }
-    }
+	/**
+	 * Initialize Assets only if needed
+	 */
+	static void initializeIfNeeded() {
+		if (assetStorage == null) {
+			initializeStorageIfNeeded();
+		}
+		if (assetConfigurator == null) {
+			initializeConfiguratorIfNeeded();
+		}
+	}
 
-    /**
-     * Initialize Assets Storage only if needed
-     */
-    synchronized private static void initializeStorageIfNeeded() {
-        if(assetStorage == null) {
-            assetStorage = new AssetStorage();
-        }
-    }
+	/**
+	 * Initialize Assets Configurator only if needed
+	 */
+	synchronized private static void initializeConfiguratorIfNeeded() {
+		if (assetConfigurator == null) {
+			assetConfigurator = new AssetConfigurator(assetStorage);
+			assetConfigurator.initialize();
+		}
+	}
 
-    /**
-     * Check if the Asset Stack is empty
-     * @return <code>true</code> if the stack is empty
-     */
-    public static boolean isEmpty() {
-        return assetStorage.containsAnyAsset();
-    }
+	/**
+	 * Initialize Assets Storage only if needed
+	 */
+	synchronized private static void initializeStorageIfNeeded() {
+		if (assetStorage == null) {
+			assetStorage = new AssetStorage();
+		}
+	}
 
-    /**
-     * Get Configured Locations of Assets<br/>
-     *
-     * Configured by assets.locations in 'dandelion/*.properties'
-     *
-     * @return locations of Assets
-     */
-    public static List<String> getAssetLocations() {
-        initializeIfNeeded();
-        return assetConfigurator.assetsLocations;
-    }
+	/**
+	 * Check if the Asset Stack is empty
+	 * 
+	 * @return <code>true</code> if the stack is empty
+	 */
+	public static boolean isEmpty() {
+		return assetStorage.containsAnyAsset();
+	}
 
-    /**
-     * Get Configured Wrappers for Locations of Assets<br/>
-     *
-     * Configured by assets.locations in 'dandelion/*.properties'
-     *
-     * @return wrappers for locations of Assets
-     */
-    public static Map<String, AssetLocationWrapper> getAssetLocationWrappers() {
-        initializeIfNeeded();
-        return assetConfigurator.assetsLocationWrappers;
-    }
-    
+	/**
+	 * Get Configured Locations of Assets<br/>
+	 * 
+	 * Configured by assets.locations in 'dandelion/*.properties'
+	 * 
+	 * @return locations of Assets
+	 */
+	public static List<String> getAssetLocations() {
+		initializeIfNeeded();
+		return assetConfigurator.assetsLocations;
+	}
+
+	/**
+	 * Get Configured Wrappers for Locations of Assets<br/>
+	 * 
+	 * Configured by assets.locations in 'dandelion/*.properties'
+	 * 
+	 * @return wrappers for locations of Assets
+	 */
+	public static Map<String, AssetLocationWrapper> getAssetLocationWrappers() {
+		initializeIfNeeded();
+		return assetConfigurator.assetsLocationWrappers;
+	}
+
 	/**
 	 * Returns the implementation of {@link AssetLocationWrapper} corresponding
 	 * to the given location key.
@@ -125,97 +126,113 @@ public class AssetStack {
 		initializeIfNeeded();
 		return assetConfigurator.assetsLocationWrappers.get(locationKey);
 	}
-    
-    /**
-     * Prepare Assets of Scopes for rendering
-     * @param scopes scopes of assets
-     * @param request http request
-     * @return Prepared Assets of scopes
-     */
-    public static List<Asset> prepareAssetsFor(HttpServletRequest request, String[] scopes, String[] excludeAssetsName) {
-        return AssetProcessorSystem.process(excludeByName(assetsFor(scopes), excludeAssetsName), request);
-    }
 
-    /**
-     * Find Assets for Scopes
-     * @param scopes scopes of assets
-     * @return Assets of scopes
-     */
-    public static List<Asset> assetsFor(String ... scopes) {
-        initializeIfNeeded();
-        return assetStorage.assetsFor(scopes);
-    }
+	/**
+	 * Prepare assets stored inside the given bundles for the rendering/
+	 * 
+	 * @param bundles
+	 *            bundles of assets
+	 * @param request
+	 *            http request
+	 * @return Prepared Assets of bundles
+	 */
+	public static List<Asset> prepareAssetsFor(HttpServletRequest request, String[] bundles, String[] excludeAssetsName) {
+		return AssetProcessorSystem.process(excludeByName(assetsFor(bundles), excludeAssetsName), request);
+	}
 
-    /**
-     * Find Assets for Scopes
-     * @param scopes scopes of assets
-     * @return Assets of scopes
-     */
-    public static List<Asset> assetsFor(Collection<String> scopes) {
-        initializeIfNeeded();
-        return assetStorage.assetsFor(scopes.toArray(new String[]{}));
-    }
-    
-    /**
-     * Check if any asset is contains in some scopes
-     * @param scopes scopes of assets
-     * @param assetNameFilter exclude assets names
-     * @return <code>true</code> if any asset is found
-     */
-    public static boolean existsAssetsFor(String[] scopes, String[] assetNameFilter) {
-        return !excludeByName(assetsFor(scopes), assetNameFilter).isEmpty();
-    }
+	/**
+	 * Find Assets for bundles.
+	 * 
+	 * @param bundles
+	 *            Bundle of assets
+	 * @return Assets of bundles
+	 */
+	public static List<Asset> assetsFor(String... bundles) {
+		initializeIfNeeded();
+		return assetStorage.assetsFor(bundles);
+	}
 
-    /**
-     * @param assets assets to filter
-     * @param filters exclude assets names
-     * @return a filtered list of assets
-     */
-    public static List<Asset> excludeByName(List<Asset> assets, String... filters) {
-        List<Asset> _assets = new ArrayList<Asset>();
-        List<String> _filters = new ArrayList<String>();
-        for(String filter:filters) {
-            _filters.add(filter.toLowerCase());
-        }
-        for(Asset _asset:assets) {
-            if(!_filters.contains(_asset.getName().toLowerCase())
-                    && !_filters.contains(_asset.getAssetKey().toLowerCase())) {
-                _assets.add(_asset);
-            }
-        }
-        return _assets;
-    }
+	/**
+	 * Find Assets for bundles
+	 * 
+	 * @param bundles
+	 *            bundles of assets
+	 * @return Assets of bundles
+	 */
+	public static List<Asset> assetsFor(Collection<String> bundles) {
+		initializeIfNeeded();
+		return assetStorage.assetsFor(bundles.toArray(new String[] {}));
+	}
 
-    /**
-     * @param assets assets to filter
-     * @param filters filtered assets dom position
-     * @return a filtered list of assets
-     */
-    public static List<Asset> filterByDOMPosition(List<Asset> assets, AssetDOMPosition... filters) {
-        List<Asset> _assets = new ArrayList<Asset>();
-        List<AssetDOMPosition> _filters = new ArrayList<AssetDOMPosition>(Arrays.asList(filters));
-        for(Asset _asset:assets) {
-            AssetDOMPosition position = _asset.getDom() == null?_asset.getType().getDefaultDom():_asset.getDom();
-            if(_filters.contains(position)) {
-                _assets.add(_asset);
-            }
-        }
-        return _assets;
-    }
+	/**
+	 * Check if any asset is contains in some bundles.
+	 * 
+	 * @param bundles
+	 *            Bundles of assets.
+	 * @param assetNameFilter
+	 *            exclude assets names
+	 * @return <code>true</code> if any asset is found
+	 */
+	public static boolean existsAssetsFor(String[] bundles, String[] assetNameFilter) {
+		return !excludeByName(assetsFor(bundles), assetNameFilter).isEmpty();
+	}
 
-    /**
-     * @param assets assets to filter
-     * @param filters filtered assets type
-     * @return a filtered list of assets
-     */
-    public static List<Asset> filterByType(List<Asset> assets, AssetType... filters) {
-        List<Asset> _assets = new ArrayList<Asset>();
-        List<AssetType> _filters = new ArrayList<AssetType>(Arrays.asList(filters));
-        for(Asset _asset:assets) {
-            if(_filters.contains(_asset.getType())) {
-                _assets.add(_asset);
-            }
-        }
-        return _assets;
-    }
+	/**
+	 * @param assets
+	 *            assets to filter
+	 * @param filters
+	 *            exclude assets names
+	 * @return a filtered list of assets
+	 */
+	public static List<Asset> excludeByName(List<Asset> assets, String... filters) {
+		List<Asset> _assets = new ArrayList<Asset>();
+		List<String> _filters = new ArrayList<String>();
+		for (String filter : filters) {
+			_filters.add(filter.toLowerCase());
+		}
+		for (Asset _asset : assets) {
+			if (!_filters.contains(_asset.getName().toLowerCase())
+					&& !_filters.contains(_asset.getAssetKey().toLowerCase())) {
+				_assets.add(_asset);
+			}
+		}
+		return _assets;
+	}
+
+	/**
+	 * @param assets
+	 *            assets to filter
+	 * @param filters
+	 *            filtered assets dom position
+	 * @return a filtered list of assets
+	 */
+	public static List<Asset> filterByDOMPosition(List<Asset> assets, AssetDOMPosition... filters) {
+		List<Asset> _assets = new ArrayList<Asset>();
+		List<AssetDOMPosition> _filters = new ArrayList<AssetDOMPosition>(Arrays.asList(filters));
+		for (Asset _asset : assets) {
+			AssetDOMPosition position = _asset.getDom() == null ? _asset.getType().getDefaultDom() : _asset.getDom();
+			if (_filters.contains(position)) {
+				_assets.add(_asset);
+			}
+		}
+		return _assets;
+	}
+
+	/**
+	 * @param assets
+	 *            assets to filter
+	 * @param filters
+	 *            filtered assets type
+	 * @return a filtered list of assets
+	 */
+	public static List<Asset> filterByType(List<Asset> assets, AssetType... filters) {
+		List<Asset> _assets = new ArrayList<Asset>();
+		List<AssetType> _filters = new ArrayList<AssetType>(Arrays.asList(filters));
+		for (Asset _asset : assets) {
+			if (_filters.contains(_asset.getType())) {
+				_assets.add(_asset);
+			}
+		}
+		return _assets;
+	}
 }

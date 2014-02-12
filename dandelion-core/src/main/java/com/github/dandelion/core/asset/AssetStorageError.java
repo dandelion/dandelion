@@ -35,37 +35,38 @@ import com.github.dandelion.core.DandelionError;
  * Possible Errors for 'Assets Storage'
  */
 public enum AssetStorageError implements DandelionError {
+	
 	/**
-	 * An asset can't be added twice in the same scope (same name but different
+	 * An asset can't be added twice in the same bundle (same name but different
 	 * versions)
 	 */
-	ASSET_ALREADY_EXISTS_IN_SCOPE(100),
+	ASSET_ALREADY_EXISTS_IN_BUNDLE(100),
 	/**
-	 * An asset can't be added with a 'Detached Scope', 'Detached Scope' is only
-	 * allowed as a Parent Scope
+	 * An asset can't be added with a 'Detached bundle', 'Detached bundle' is
+	 * only allowed as a Parent bundle.
 	 */
-	DETACHED_SCOPE_NOT_ALLOWED(101),
+	DETACHED_BUNDLE_NOT_ALLOWED(101),
 	/**
-	 * An asset can't have a couple of Scope/Parent Scope when its scope is
-	 * already associated to another parent scope
+	 * An asset can't have a couple of bundle/parent bundle when its bundle is
+	 * already associated to another parent bundle
 	 */
-	PARENT_SCOPE_INCOMPATIBILITY(102),
+	PARENT_BUNDLE_INCOMPATIBILITY(102),
 	/**
-	 * An asset can't have a parent scope that doesn't already exist
+	 * An asset can't have a parent bundle that doesn't already exist
 	 */
-	UNDEFINED_PARENT_SCOPE(103),
+	UNDEFINED_PARENT_BUNDLE(103),
 	/**
-	 * A location can't be used twice in the same scope by a similar asset
+	 * A location can't be used twice in the same bundle by a similar asset
 	 */
-	ASSET_LOCATION_ALREADY_EXISTS_IN_SCOPE(104),
+	ASSET_LOCATION_ALREADY_EXISTS_IN_BUNDLE(104),
 	/**
-	 * A attribute can't be used twice in the same scope by a similar asset
+	 * A attribute can't be used twice in the same bundle by a similar asset
 	 */
-	ASSET_ATTRIBUTE_ALREADY_EXISTS_IN_SCOPE(105),
+	ASSET_ATTRIBUTE_ALREADY_EXISTS_IN_BUNDLE(105),
 	/**
 	 * A DOM position must be equals for merging two assets with same name
 	 */
-	ASSET_DOM_POSITION_ALREADY_EXISTS_IN_SCOPE(106);
+	ASSET_DOM_POSITION_ALREADY_EXISTS_IN_BUNDLE(106);
 
 	private final int number;
 
@@ -77,5 +78,4 @@ public enum AssetStorageError implements DandelionError {
 	public int getNumber() {
 		return number;
 	}
-
 }

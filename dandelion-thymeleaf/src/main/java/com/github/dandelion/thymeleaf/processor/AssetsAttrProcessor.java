@@ -66,11 +66,11 @@ public class AssetsAttrProcessor extends DandelionAttrProcessor {
 		HttpServletRequest request = ArgumentsUtil.getWebContext(arguments).getHttpServletRequest();
 		AssetRequestContext context = AssetRequestContext.get(request);
 		switch (assetsAttributeName) {
-		case SCOPES:
-			context.addScopes(element.getAttributeValue(attributeName));
+		case BUNDLES:
+			context.addBundles(element.getAttributeValue(attributeName));
 			break;
-		case EXCLUDED_SCOPES:
-			context.excludeScopes(element.getAttributeValue(attributeName));
+		case EXCLUDED_BUNDLES:
+			context.excludeBundles(element.getAttributeValue(attributeName));
 			break;
 		case EXCLUDED_ASSETS:
 			context.excludeAssets(element.getAttributeValue(attributeName));

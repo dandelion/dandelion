@@ -35,12 +35,12 @@ import java.util.*;
 import javax.servlet.ServletRequest;
 
 import com.github.dandelion.core.asset.web.data.AssetName;
-import com.github.dandelion.core.asset.web.data.AssetScope;
+import com.github.dandelion.core.asset.web.data.AssetBundle;
 import com.github.dandelion.core.config.Configuration;
 
 /**
  * <p>
- * Request context used to store all needed assets by scopes loaded within a
+ * Request context used to store all needed assets by bundle loaded within a
  * page.
  * 
  * @author Romain Lespinasse
@@ -48,14 +48,14 @@ import com.github.dandelion.core.config.Configuration;
  */
 public class AssetRequestContext {
 
-	private List<String> scopes;
-	private List<String> excludedScopes;
+	private List<String> bundles;
+	private List<String> excludedBundles;
 	private List<String> excludedAssets;
 	private Map<String, Map<String, Object>> parameters;
 
 	private AssetRequestContext() {
-		this.scopes = new ArrayList<String>();
-		this.excludedScopes = new ArrayList<String>();
+		this.bundles = new ArrayList<String>();
+		this.excludedBundles = new ArrayList<String>();
 		this.excludedAssets = new ArrayList<String>();
 		this.parameters = new HashMap<String, Map<String, Object>>();
 	}
@@ -71,49 +71,49 @@ public class AssetRequestContext {
 		Object attribute = servletRequest.getAttribute(AssetRequestContext.class.getCanonicalName());
 		if (attribute == null || !(attribute instanceof AssetRequestContext)) {
 			attribute = new AssetRequestContext();
-			((AssetRequestContext) attribute).addScopes(Configuration.getProperties().getProperty(
-					"assets.active.scopes"));
+			((AssetRequestContext) attribute).addBundles(Configuration.getProperties().getProperty(
+					"assets.active.bundles"));
 			servletRequest.setAttribute(AssetRequestContext.class.getCanonicalName(), attribute);
 		}
 		return AssetRequestContext.class.cast(attribute);
 	}
 
 	/**
-	 * Fluent exclude for scopes
+	 * Fluent exclude for bundles.
 	 * 
-	 * @param scopes
-	 *            scopes (separated by comma)
+	 * @param bundles
+	 *            Comma-separated bundles to exclude.
 	 * @return this context
 	 */
-	public AssetRequestContext excludeScopes(String scopes) {
-		if (scopes == null || scopes.isEmpty()) {
+	public AssetRequestContext excludeBundles(String bundles) {
+		if (bundles == null || bundles.isEmpty()) {
 			return this;
 		}
-		return excludeScopes(scopes.split(","));
+		return excludeBundles(bundles.split(","));
 	}
 
 	/**
-	 * Fluent exclude for scopes
+	 * Fluent exclude for bundles.
 	 * 
-	 * @param scopes
-	 *            scopes
+	 * @param bundles
+	 *            bundles
 	 * @return this context
 	 */
-	private AssetRequestContext excludeScopes(String... scopes) {
-		this.excludedScopes.addAll(Arrays.asList(scopes));
+	private AssetRequestContext excludeBundles(String... bundles) {
+		this.excludedBundles.addAll(Arrays.asList(bundles));
 		return this;
 	}
 
 	/**
 	 * Fluent exclude for scopes
 	 * 
-	 * @param scopes
+	 * @param bundles
 	 *            scopes
 	 * @return this context
 	 */
-	private AssetRequestContext excludeScopes(AssetScope... scopes) {
-		for (AssetScope scope : scopes) {
-			excludeScope(scope);
+	private AssetRequestContext excludeBundles(AssetBundle... bundles) {
+		for (AssetBundle bundle : bundles) {
+			excludeBundle(bundle);
 		}
 		return this;
 	}
@@ -121,13 +121,13 @@ public class AssetRequestContext {
 	/**
 	 * Fluent exclude for scopes (as Object with toString())
 	 * 
-	 * @param scopes
+	 * @param bundles
 	 *            scopes
 	 * @return this context
 	 */
-	private AssetRequestContext excludeScopes(Object... scopes) {
-		for (Object scope : scopes) {
-			excludeScope(scope);
+	private AssetRequestContext excludeBundles(Object... bundles) {
+		for (Object bundle : bundles) {
+			excludeBundle(bundle);
 		}
 		return this;
 	}
@@ -135,36 +135,36 @@ public class AssetRequestContext {
 	/**
 	 * Fluent exclude for scope
 	 * 
-	 * @param scope
+	 * @param bundle
 	 *            scope
 	 * @return this context
 	 */
-	private AssetRequestContext excludeScope(String scope) {
-		this.excludedScopes.add(scope);
+	private AssetRequestContext excludeBundle(String bundle) {
+		this.excludedBundles.add(bundle);
 		return this;
 	}
 
 	/**
 	 * Fluent exclude for scope
 	 * 
-	 * @param scope
+	 * @param bundle
 	 *            scope
 	 * @return this context
 	 */
-	private AssetRequestContext excludeScope(AssetScope scope) {
-		this.excludedScopes.add(scope.toString());
+	private AssetRequestContext excludeBundle(AssetBundle bundle) {
+		this.excludedBundles.add(bundle.toString());
 		return this;
 	}
 
 	/**
 	 * Fluent exclude for scope (as Object with toString())
 	 * 
-	 * @param scope
+	 * @param bundle
 	 *            scope
 	 * @return this context
 	 */
-	private AssetRequestContext excludeScope(Object scope) {
-		this.excludedScopes.add(scope.toString());
+	private AssetRequestContext excludeBundle(Object bundle) {
+		this.excludedBundles.add(bundle.toString());
 		return this;
 	}
 
@@ -258,40 +258,40 @@ public class AssetRequestContext {
 	}
 
 	/**
-	 * Fluent adder for scopes
+	 * Fluent adder for bundles.
 	 * 
-	 * @param scopes
-	 *            scopes (separated by comma)
+	 * @param bundles
+	 *            A string containing comma-separated bundles.
 	 * @return this context
 	 */
-	public AssetRequestContext addScopes(String scopes) {
-		if (scopes == null || scopes.isEmpty())
+	public AssetRequestContext addBundles(String bundles) {
+		if (bundles == null || bundles.isEmpty())
 			return this;
-		return addScopes(scopes.split(","));
+		return addBundles(bundles.split(","));
 	}
 
 	/**
 	 * Fluent adder for scopes
 	 * 
-	 * @param scopes
+	 * @param bundles
 	 *            scopes
 	 * @return this context
 	 */
-	public AssetRequestContext addScopes(String... scopes) {
-		this.scopes.addAll(Arrays.asList(scopes));
+	public AssetRequestContext addBundles(String... bundles) {
+		this.bundles.addAll(Arrays.asList(bundles));
 		return this;
 	}
 
 	/**
 	 * Fluent adder for scopes
 	 * 
-	 * @param scopes
+	 * @param bundles
 	 *            scopes
 	 * @return this context
 	 */
-	public AssetRequestContext addScopes(AssetScope... scopes) {
-		for (AssetScope scope : scopes) {
-			addScope(scope);
+	public AssetRequestContext addBundles(AssetBundle... bundles) {
+		for (AssetBundle bundle : bundles) {
+			addBundle(bundle);
 		}
 		return this;
 	}
@@ -299,13 +299,13 @@ public class AssetRequestContext {
 	/**
 	 * Fluent adder for scopes (as Object with toString())
 	 * 
-	 * @param scopes
+	 * @param bundles
 	 *            scopes
 	 * @return this context
 	 */
-	public AssetRequestContext addScopes(Object... scopes) {
-		for (Object scope : scopes) {
-			addScope(scope);
+	public AssetRequestContext addBundles(Object... bundles) {
+		for (Object bundle : bundles) {
+			addBundle(bundle);
 		}
 		return this;
 	}
@@ -313,13 +313,13 @@ public class AssetRequestContext {
 	/**
 	 * Fluent adder for scopes (as Object with toString())
 	 * 
-	 * @param scopes
+	 * @param bundles
 	 *            scopes
 	 * @return this context
 	 */
-	public AssetRequestContext addScopes(Enum<?>... scopes) {
-		for (Enum<?> scope : scopes) {
-			addScope(scope);
+	public AssetRequestContext addBundles(Enum<?>... bundles) {
+		for (Enum<?> bundle : bundles) {
+			addBundle(bundle);
 		}
 		return this;
 	}
@@ -327,67 +327,67 @@ public class AssetRequestContext {
 	/**
 	 * Fluent adder for scope
 	 * 
-	 * @param scope
+	 * @param bundle
 	 *            scope
 	 * @return this context
 	 */
-	public AssetRequestContext addScope(String scope) {
-		this.scopes.add(scope);
+	public AssetRequestContext addBundle(String bundle) {
+		this.bundles.add(bundle);
 		return this;
 	}
 
 	/**
 	 * Fluent adder for scope
 	 * 
-	 * @param scope
+	 * @param bundle
 	 *            scope
 	 * @return this context
 	 */
-	public AssetRequestContext addScope(AssetScope scope) {
-		addScope(scope.toString());
+	public AssetRequestContext addBundle(AssetBundle bundle) {
+		addBundle(bundle.toString());
 		return this;
 	}
 
 	/**
 	 * Fluent adder for scope (as Object with toString())
 	 * 
-	 * @param scope
+	 * @param bundle
 	 *            scope
 	 * @return this context
 	 */
-	public AssetRequestContext addScope(Object scope) {
-		addScope(scope.toString());
+	public AssetRequestContext addBundle(Object bundle) {
+		addBundle(bundle.toString());
 		return this;
 	}
 
 	/**
 	 * Fluent adder for scope (as Object with toString())
 	 * 
-	 * @param scope
+	 * @param bundle
 	 *            scope
 	 * @return this context
 	 */
-	public AssetRequestContext addScope(Enum<?> scope) {
-		addScope(scope.toString().toLowerCase().replace("_", "-"));
+	public AssetRequestContext addBundle(Enum<?> bundle) {
+		addBundle(bundle.toString().toLowerCase().replace("_", "-"));
 		return this;
 	}
 
 	/**
 	 * @return all stored scopes in this context
 	 */
-	public String[] getScopes(boolean withoutExcludedScopes) {
-		List<String> _scopes = new ArrayList<String>(scopes);
-		if (withoutExcludedScopes) {
-			_scopes.removeAll(excludedScopes);
+	public String[] getBundles(boolean withoutExcludedBundles) {
+		List<String> _bundles = new ArrayList<String>(bundles);
+		if (withoutExcludedBundles) {
+			_bundles.removeAll(excludedBundles);
 		}
-		return _scopes.toArray(new String[_scopes.size()]);
+		return _bundles.toArray(new String[_bundles.size()]);
 	}
 
 	/**
 	 * @return all scopes to remove
 	 */
-	public String[] getExcludedScopes() {
-		return excludedScopes.toArray(new String[excludedScopes.size()]);
+	public String[] getExcludedBundles() {
+		return excludedBundles.toArray(new String[excludedBundles.size()]);
 	}
 
 	/**

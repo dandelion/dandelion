@@ -1,5 +1,5 @@
 {
-    "scope": "locations_order",
+    "bundle": "locations_order",
     "parent": "none",
     "assets": [
         {

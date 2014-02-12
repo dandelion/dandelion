@@ -62,7 +62,7 @@ public class AssetStackTest {
 
 	@Test
 	public void should_be_the_remote_url_for_all_assets() {
-		List<Asset> assets = AssetStack.prepareAssetsFor(request, new String[] { "default", "detachedScope", "plugin1",
+		List<Asset> assets = AssetStack.prepareAssetsFor(request, new String[] { "default", "detachedBundle", "plugin1",
 				"plugin2" }, new String[0]);
 		assertThat(assets).hasSize(6);
 		for (Asset asset : assets) {
@@ -71,7 +71,7 @@ public class AssetStackTest {
 	}
 
 	@Test
-	public void should_contains_assets_for_scope() {
+	public void should_contains_assets_for_bundle() {
 		assertThat(
 				AssetStack.existsAssetsFor(new String[] { "plugin1", "plugin2", "plugin1addon2", "plugin3addon" },
 						new String[0])).isTrue();
@@ -79,7 +79,7 @@ public class AssetStackTest {
 
 	@Test
 	public void should_exclude_assets_by_name() {
-		List<Asset> assets = AssetStack.assetsFor("detachedScope");
+		List<Asset> assets = AssetStack.assetsFor("detachedBundle");
 		assertThat(AssetStack.excludeByName(assets, "asset3addon")).hasSize(1);
 		assertThat(AssetStack.excludeByName(assets, "asset1")).hasSize(0);
 		assertThat(AssetStack.excludeByName(assets, "asset1.css")).hasSize(1);

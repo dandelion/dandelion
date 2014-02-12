@@ -1,5 +1,5 @@
 {
-    "scope": "plugin3addon",
+    "bundle": "plugin3addon",
     "parent": "plugin3",
     "assets": [
         {

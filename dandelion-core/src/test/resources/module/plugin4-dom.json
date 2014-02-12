@@ -1,6 +1,6 @@
 {
     "parent": "none",
-    "scope": "plugin4",
+    "bundle": "plugin4",
     "assets": [
         {
             "name": "asset4",

@@ -53,12 +53,12 @@ public class AssetConfiguratorTest {
 	}
 
 	@Test
-	public void should_load_default_scope() {
+	public void should_load_default_bundle() {
 		assertThat(assetConfigurator.assetStorage.assetsFor()).hasSize(1);
 	}
 
 	@Test
-	public void should_load_other_scopes() {
+	public void should_load_other_bundles() {
 		assertThat(assetConfigurator.assetStorage.assetsFor("plugin1")).hasSize(3);
 		assertThat(assetConfigurator.assetStorage.assetsFor("plugin2")).hasSize(3);
 		assertThat(assetConfigurator.assetStorage.assetsFor("plugin1addon")).hasSize(4);
@@ -73,9 +73,9 @@ public class AssetConfiguratorTest {
 	}
 
 	@Test
-	public void should_manage_asset_with_empty_parent_scope() {
-		List<Asset> assets = assetConfigurator.assetStorage.assetsFor("scope_base", "empty_scope_as_parent");
-		assertThat(assets).hasSize(1).onProperty("version").containsOnly("empty_scope_as_parent");
+	public void should_manage_asset_with_empty_parent_bundle() {
+		List<Asset> assets = assetConfigurator.assetStorage.assetsFor("bundle_base", "empty_bundle_as_parent");
+		assertThat(assets).hasSize(1).onProperty("version").containsOnly("empty_bundle_as_parent");
 	}
 
 	@Test

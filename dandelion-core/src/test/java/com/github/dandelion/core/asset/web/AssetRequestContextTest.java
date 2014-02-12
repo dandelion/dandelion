@@ -9,28 +9,28 @@ import org.springframework.mock.web.MockHttpServletRequest;
 public class AssetRequestContextTest {
 
 	@Test
-	public void should_store_scopes() {
+	public void should_store_bundles() {
 		MockHttpServletRequest request = new MockHttpServletRequest();
 
 		AssetRequestContext context = AssetRequestContext.get(request);
-		context.addScopes("scope1,scope2");
-		assertThat(context.getScopes(false)).hasSize(2).contains("scope1", "scope2");
+		context.addBundles("bundle1,bundle2");
+		assertThat(context.getBundles(false)).hasSize(2).contains("bundle1", "bundle2");
 
-		context.addScopes("scope3", "scope4");
-		assertThat(context.getScopes(false)).hasSize(4).contains("scope3", "scope4");
+		context.addBundles("bundle3", "bundle4");
+		assertThat(context.getBundles(false)).hasSize(4).contains("bundle3", "bundle4");
 	}
 
 	@Test
-	public void should_exclude_scopes() {
+	public void should_exclude_bundles() {
 		MockHttpServletRequest request = new MockHttpServletRequest();
 
 		AssetRequestContext context = AssetRequestContext.get(request);
-		context.addScopes("scope1,scope2,scope3,scope4");
-		context.excludeScopes("scope2,scope4");
+		context.addBundles("bundle1,bundle2,bundle3,bundle4");
+		context.excludeBundles("bundle2,bundle4");
 
-		assertThat(context.getExcludedScopes()).contains("scope2", "scope4");
-		assertThat(context.getScopes(false)).hasSize(4).contains("scope2", "scope4");
-		assertThat(context.getScopes(true)).hasSize(2).contains("scope1", "scope3");
+		assertThat(context.getExcludedBundles()).contains("bundle2", "bundle4");
+		assertThat(context.getBundles(false)).hasSize(4).contains("bundle2", "bundle4");
+		assertThat(context.getBundles(true)).hasSize(2).contains("bundle1", "bundle3");
 	}
 
 	@Test
@@ -61,11 +61,11 @@ public class AssetRequestContextTest {
 		MockHttpServletRequest request = new MockHttpServletRequest();
 
 		AssetRequestContext context = AssetRequestContext.get(request);
-		context.addScopes("");
-		assertThat(context.getScopes(false)).isEmpty();
+		context.addBundles("");
+		assertThat(context.getBundles(false)).isEmpty();
 
 		String nullValue = null;
-		context.addScopes(nullValue);
-		assertThat(context.getScopes(false)).isEmpty();
+		context.addBundles(nullValue);
+		assertThat(context.getBundles(false)).isEmpty();
 	}
 }

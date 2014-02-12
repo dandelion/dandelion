@@ -1,6 +1,6 @@
 {
     "parent": "none",
-    "scope": "plugin5",
+    "bundle": "plugin5",
     "assets": [
         {
             "name": "asset5",

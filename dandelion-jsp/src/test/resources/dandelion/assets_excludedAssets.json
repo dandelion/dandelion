@@ -1,5 +1,5 @@
 {
-    "scope": "assets_excludedAssets",
+    "bundle": "assets_excludedAssets",
     "assets": [
         {
             "name": "assets_excludedAssets_1",

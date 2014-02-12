@@ -36,12 +36,12 @@ import com.github.dandelion.core.DandelionException;
 /**
  * Tree Storage Units for Assets<br/>
  * <p/>
- * An asset is stored by its scope.<br/>
- * All scopes have a parent except for ROOT parent (aka Root Scope).<br/>
- * An asset can be accessed by its scope.<br/>
+ * An asset is stored inside a bundle.<br/>
+ * All bundles have a parent except for ROOT parent (aka "root bundle").<br/>
+ * An asset can be accessed by bundle.<br/>
  */
 public final class AssetStorage {
-	static final int ASSET_SCOPE_STORAGE_POSITION = 1000;
+	static final int ASSET_BUNDLE_STORAGE_POSITION = 1000;
 
 	private enum StorageCommand {
 		INSERT, MERGE
@@ -50,117 +50,120 @@ public final class AssetStorage {
 	/**
 	 * Assets Storage Units
 	 */
-	private Map<String, AssetScopeStorageUnit> storage;
+	private Map<String, AssetBundleStorageUnit> storage;
 
 	/**
-	 * Define the Root Scope string representation
+	 * Root bundle string representation
 	 */
-	public static final String MASTER_SCOPE = "master_scope_" + System.currentTimeMillis();
+	public static final String MASTER_BUNDLE = "master_bundle_" + System.currentTimeMillis();
 
 	/**
-	 * Define the Root Scope string representation
+	 * Root bundle string representation
 	 */
-	public static final String ROOT_SCOPE = "default";
+	public static final String ROOT_BUNDLE = "default";
 
 	/**
-	 * Define the Detached Scope string representation
+	 * Detached bundle string representation
 	 */
-	public static final String DETACHED_PARENT_SCOPE = "none";
+	public static final String DETACHED_PARENT_BUNDLE = "none";
 
 	/**
 	 * Assets Storage Utility
 	 */
 	AssetStorage() {
 		// initialize storage
-		storage = new HashMap<String, AssetScopeStorageUnit>();
+		storage = new HashMap<String, AssetBundleStorageUnit>();
 		// initialize root storage unit
-		AssetScopeStorageUnit rootUnit = new AssetScopeStorageUnit(ROOT_SCOPE, MASTER_SCOPE);
-		rootUnit.rootParentScope = ROOT_SCOPE;
+		AssetBundleStorageUnit rootUnit = new AssetBundleStorageUnit(ROOT_BUNDLE, MASTER_BUNDLE);
+		rootUnit.rootParentBundle = ROOT_BUNDLE;
 		rootUnit.storagePosition = 0;
-		storage.put(ROOT_SCOPE, rootUnit);
+		storage.put(ROOT_BUNDLE, rootUnit);
 		// initialize detached storage unit
-		AssetScopeStorageUnit detachedUnit = new AssetScopeStorageUnit(DETACHED_PARENT_SCOPE, MASTER_SCOPE);
-		detachedUnit.rootParentScope = DETACHED_PARENT_SCOPE;
+		AssetBundleStorageUnit detachedUnit = new AssetBundleStorageUnit(DETACHED_PARENT_BUNDLE, MASTER_BUNDLE);
+		detachedUnit.rootParentBundle = DETACHED_PARENT_BUNDLE;
 		detachedUnit.storagePosition = 0;
-		storage.put(DETACHED_PARENT_SCOPE, detachedUnit);
+		storage.put(DETACHED_PARENT_BUNDLE, detachedUnit);
 	}
 
 	/**
-	 * Store an Asset in Root Scope as his scope
+	 * Stores an asset in the root bundle.
 	 * 
 	 * @param asset
 	 *            asset to store
 	 */
 	public void store(Asset asset) {
-		store(asset, ROOT_SCOPE, MASTER_SCOPE);
+		store(asset, ROOT_BUNDLE, MASTER_BUNDLE);
 	}
 
 	/**
-	 * Store an Asset in his scope (with Root Scope as parent)
+	 * Stores the given asset in the given bundle (with the root bundle as
+	 * parent).
 	 * 
 	 * @param asset
-	 *            asset to store
-	 * @param scope
-	 *            scope of this asset
+	 *            The asset to store.
+	 * @param bundle
+	 *            The bundle in which to store the asset.
 	 */
-	public void store(Asset asset, String scope) {
-		store(asset, scope, ROOT_SCOPE);
+	public void store(Asset asset, String bundle) {
+		store(asset, bundle, ROOT_BUNDLE);
 	}
 
 	/**
-	 * Store an Asset in his scope
+	 * Stores the given asset in the given bundle (with the given parent
+	 * bundle).
 	 * 
 	 * @param asset
-	 *            asset to store
-	 * @param scope
-	 *            scope of this asset
-	 * @param parentScope
-	 *            parent of the scope
+	 *            The asset to store.
+	 * @param bundle
+	 *            The bundle in which to store the asset.
+	 * @param parentBundle
+	 *            The parent bundle.
 	 */
-	public void store(Asset asset, String scope, String parentScope) {
+	public void store(Asset asset, String bundle, String parentBundle) {
+
 		// don't store if we found invalid asset
 		if (asset == null || !asset.isValid())
 			return;
 
-		if (DETACHED_PARENT_SCOPE.equalsIgnoreCase(scope)) {
-			throw new DandelionException(AssetStorageError.DETACHED_SCOPE_NOT_ALLOWED).set("detachedScope",
-                    DETACHED_PARENT_SCOPE);
+		if (DETACHED_PARENT_BUNDLE.equalsIgnoreCase(bundle)) {
+			throw new DandelionException(AssetStorageError.DETACHED_BUNDLE_NOT_ALLOWED).set("detachedBundle",
+					DETACHED_PARENT_BUNDLE);
 		}
-		AssetScopeStorageUnit scopeUnit = getStorageUnit(scope, parentScope);
-		insertAsset(asset, scopeUnit);
+		AssetBundleStorageUnit bundleUnit = getStorageUnit(bundle, parentBundle);
+		insertAsset(asset, bundleUnit);
 	}
 
 	/**
-	 * Retrieve the assets for a groups of scopes.
+	 * Retrieves the assets for a groups of bundles.
 	 * 
-	 * @param scopes
-	 *            scopes of needed assets
-	 * @return the list of assets for scopes
+	 * @param bundles
+	 *            Bundles in which assets are retrieved.
+	 * @return the list of assets stored inside the given bundles.
 	 */
-	public List<Asset> assetsFor(String... scopes) {
-		List<Asset> assets = new ArrayList<Asset>(assetsMapFor(scopes).values());
+	public List<Asset> assetsFor(String... bundles) {
+		List<Asset> assets = new ArrayList<Asset>(assetsMapFor(bundles).values());
 		Collections.sort(assets, assetStoragePositionComparator);
 		return assets;
 	}
 
 	/**
-	 * Store an asset in the Storage Unit of this scope
+	 * Store an asset in the Storage Unit of this bundle.
 	 * 
 	 * @param asset
 	 *            asset to store
-	 * @param scopeUnit
-	 *            storage unit of the asset's scope
+	 * @param bundleUnit
+	 *            storage unit of the asset's bundle.
 	 */
-	private void insertAsset(Asset asset, AssetScopeStorageUnit scopeUnit) {
-		StorageCommand command = checkAssetStorageIncompatibility(asset, scopeUnit);
+	private void insertAsset(Asset asset, AssetBundleStorageUnit bundleUnit) {
+		StorageCommand command = checkAssetStorageIncompatibility(asset, bundleUnit);
 		switch (command) {
 		case INSERT:
 			// set up position in the storage and the storage unit
-			asset.storagePosition = scopeUnit.storagePosition * ASSET_SCOPE_STORAGE_POSITION + scopeUnit.assets.size();
-			scopeUnit.assets.add(asset);
+			asset.storagePosition = bundleUnit.storagePosition * ASSET_BUNDLE_STORAGE_POSITION + bundleUnit.assets.size();
+			bundleUnit.assets.add(asset);
 			break;
 		case MERGE:
-			Asset originalAsset = scopeUnit.assets.get(scopeUnit.assets.indexOf(asset));
+			Asset originalAsset = bundleUnit.assets.get(bundleUnit.assets.indexOf(asset));
 			combineAsset(originalAsset, asset);
 			break;
 		default:
@@ -168,17 +171,17 @@ public final class AssetStorage {
 		}
 	}
 
-	private StorageCommand checkAssetStorageIncompatibility(Asset asset, AssetScopeStorageUnit scopeUnit) {
+	private StorageCommand checkAssetStorageIncompatibility(Asset asset, AssetBundleStorageUnit bundleUnit) {
 		// the asset can be store if he isn't store already
-		if (!scopeUnit.assets.contains(asset)) {
+		if (!bundleUnit.assets.contains(asset)) {
 			return StorageCommand.INSERT;
 		}
 		// if not, we check if he can be merge
-		Asset originalAsset = scopeUnit.assets.get(scopeUnit.assets.indexOf(asset));
+		Asset originalAsset = bundleUnit.assets.get(bundleUnit.assets.indexOf(asset));
 
 		// he can be merge if the versions are equals
 		if (!originalAsset.getVersion().equals(asset.getVersion())) {
-			throw new DandelionException(AssetStorageError.ASSET_ALREADY_EXISTS_IN_SCOPE).set("originalAsset", asset);
+			throw new DandelionException(AssetStorageError.ASSET_ALREADY_EXISTS_IN_BUNDLE).set("originalAsset", asset);
 		}
 
 		// he can be merge if the locations can be merge
@@ -190,8 +193,8 @@ public final class AssetStorage {
 			}
 		}
 		if (!locationsInError.isEmpty()) {
-			throw new DandelionException(AssetStorageError.ASSET_LOCATION_ALREADY_EXISTS_IN_SCOPE).set("locations",
-                    locationsInError).set("asset", asset);
+			throw new DandelionException(AssetStorageError.ASSET_LOCATION_ALREADY_EXISTS_IN_BUNDLE).set("locations",
+					locationsInError).set("asset", asset);
 		}
 
 		// he can be merge if the attributes can be merge
@@ -203,14 +206,14 @@ public final class AssetStorage {
 			}
 		}
 		if (!attributesInError.isEmpty()) {
-			throw new DandelionException(AssetStorageError.ASSET_ATTRIBUTE_ALREADY_EXISTS_IN_SCOPE).set("attributes",
-                    attributesInError).set("asset", asset);
+			throw new DandelionException(AssetStorageError.ASSET_ATTRIBUTE_ALREADY_EXISTS_IN_BUNDLE).set("attributes",
+					attributesInError).set("asset", asset);
 		}
 
 		// he can be merge if the DOM position can be merge
 		if (originalAsset.getDom() != null && asset.getDom() != null && originalAsset.getDom() != asset.getDom()) {
-			throw new DandelionException(AssetStorageError.ASSET_DOM_POSITION_ALREADY_EXISTS_IN_SCOPE).set(
-                    "domPosition", originalAsset.getDom()).set("asset", asset);
+			throw new DandelionException(AssetStorageError.ASSET_DOM_POSITION_ALREADY_EXISTS_IN_BUNDLE).set(
+					"domPosition", originalAsset.getDom()).set("asset", asset);
 		}
 		return StorageCommand.MERGE;
 	}
@@ -244,88 +247,89 @@ public final class AssetStorage {
 		}
 	}
 
-	void setupEmptyParentScope(String scope) {
-		getStorageUnit(scope, ROOT_SCOPE);
+	void setupEmptyParentBundle(String bundle) {
+		getStorageUnit(bundle, ROOT_BUNDLE);
 	}
 
-	void setupEmptyScope(String scope, String parentScope) {
-		getStorageUnit(scope, parentScope);
+	void setupEmptyBundle(String bundle, String parentBundle) {
+		getStorageUnit(bundle, parentBundle);
 	}
 
-	private AssetScopeStorageUnit getStorageUnit(String scope, String parentScope) {
-		scope = scope.toLowerCase();
-		parentScope = parentScope.toLowerCase();
-		AssetScopeStorageUnit scopeUnit;
-		if (storage.containsKey(scope)) {
-			AssetScopeStorageUnit storedScopeUnit = storage.get(scope);
-			checkParentScopeIncompatibility(parentScope, storedScopeUnit);
-			scopeUnit = storedScopeUnit;
+	private AssetBundleStorageUnit getStorageUnit(String bundle, String parentBundle) {
+		bundle = bundle.toLowerCase();
+		parentBundle = parentBundle.toLowerCase();
+		AssetBundleStorageUnit bundleUnit;
+		if (storage.containsKey(bundle)) {
+			AssetBundleStorageUnit storedBundleUnit = storage.get(bundle);
+			checkParentBundleIncompatibility(parentBundle, storedBundleUnit);
+			bundleUnit = storedBundleUnit;
 		}
 		else {
-			// create a new empty scope
-			checkUnknownParentScope(parentScope);
-			scopeUnit = new AssetScopeStorageUnit(scope, parentScope);
-			AssetScopeStorageUnit parentScopeUnit = storage.get(parentScope);
-			scopeUnit.rootParentScope = parentScopeUnit.rootParentScope;
-			scopeUnit.storagePosition = parentScopeUnit.storagePosition + 1;
-			storage.put(scope, scopeUnit);
+			// create a new empty bundle
+			checkUnknownParentBundle(parentBundle);
+			bundleUnit = new AssetBundleStorageUnit(bundle, parentBundle);
+			AssetBundleStorageUnit parentBundleUnit = storage.get(parentBundle);
+			bundleUnit.rootParentBundle = parentBundleUnit.rootParentBundle;
+			bundleUnit.storagePosition = parentBundleUnit.storagePosition + 1;
+			storage.put(bundle, bundleUnit);
 		}
-		return scopeUnit;
+		return bundleUnit;
 	}
 
 	/**
-	 * Check if an asset have a known parent scope
+	 * Checks if a bundle is known among all existing asset storage units.
 	 * 
-	 * @param parentScope
-	 *            parent scope to check
+	 * @param parentBundle
+	 *            The bundle to check.
 	 */
-	private void checkUnknownParentScope(String parentScope) {
-		if (!storage.containsKey(parentScope) && !DETACHED_PARENT_SCOPE.equalsIgnoreCase(parentScope)) {
-			throw new DandelionException(AssetStorageError.UNDEFINED_PARENT_SCOPE).set("parentScope", parentScope);
+	private void checkUnknownParentBundle(String parentBundle) {
+		if (!storage.containsKey(parentBundle) && !DETACHED_PARENT_BUNDLE.equalsIgnoreCase(parentBundle)) {
+			throw new DandelionException(AssetStorageError.UNDEFINED_PARENT_BUNDLE).set("parentBundle", parentBundle);
 		}
 	}
 
 	/**
-	 * Check if an asset don't have a couple of Scope/Parent Scope identical to
-	 * the couple Scope/Another parent scope
+	 * Check if an asset don't have a couple of bundle/Parent bundle identical to
+	 * the couple bundle/Another parent bundle
 	 * 
-	 * @param parentScope
-	 *            parent scope to check
-	 * @param storedAssetScopeStorageUnit
+	 * @param parentBundle
+	 *            parent bundle to check
+	 * @param storedAssetBundleStorageUnit
 	 *            stored storage unit
 	 */
-	private void checkParentScopeIncompatibility(String parentScope, AssetScopeStorageUnit storedAssetScopeStorageUnit) {
-		if (!storedAssetScopeStorageUnit.parentScope.equalsIgnoreCase(parentScope)) {
-			throw new DandelionException(AssetStorageError.PARENT_SCOPE_INCOMPATIBILITY).set("scope",
-                    storedAssetScopeStorageUnit.scope).set("parentScope", storedAssetScopeStorageUnit.parentScope);
+	private void checkParentBundleIncompatibility(String parentBundle,
+			AssetBundleStorageUnit storedAssetBundleStorageUnit) {
+		if (!storedAssetBundleStorageUnit.parentBundle.equalsIgnoreCase(parentBundle)) {
+			throw new DandelionException(AssetStorageError.PARENT_BUNDLE_INCOMPATIBILITY).set("bundle",
+					storedAssetBundleStorageUnit.bundle).set("parentBundle", storedAssetBundleStorageUnit.parentBundle);
 		}
 	}
 
 	/**
-	 * Retrieve the assets (as map) for a groups of scopes.
+	 * Retrieve the assets (as map) for a groups of bundles.
 	 * 
-	 * @param scopes
-	 *            scopes of needed assets
-	 * @return the map of assets for scopes (key is the Asset#getAssetKey)
+	 * @param bundles
+	 *            bundles of needed assets
+	 * @return the map of assets for bundles (key is the Asset#getAssetKey)
 	 */
-	private Map<String, Asset> assetsMapFor(String... scopes) {
-		if (scopes.length == 0) {
-			scopes = new String[] { ROOT_SCOPE };
+	private Map<String, Asset> assetsMapFor(String... bundles) {
+		if (bundles.length == 0) {
+			bundles = new String[] { ROOT_BUNDLE };
 		}
 		Map<String, Asset> assetsMap = new HashMap<String, Asset>();
-		for (String scope : scopes) {
-			Map<String, Asset> scopedAssetsMap = new HashMap<String, Asset>();
-			AssetScopeStorageUnit assetScope = storage.get(scope.toLowerCase());
-			if (assetScope != null) {
-				for (Asset asset : assetScope.assets) {
-					String key = asset.getAssetKey() + "_" + assetScope.rootParentScope;
-					scopedAssetsMap.put(key, Asset.class.cast(asset.clone(false)));
+		for (String bundle : bundles) {
+			Map<String, Asset> bundledAssetsMap = new HashMap<String, Asset>();
+			AssetBundleStorageUnit assetBundle = storage.get(bundle.toLowerCase());
+			if (assetBundle != null) {
+				for (Asset asset : assetBundle.assets) {
+					String key = asset.getAssetKey() + "_" + assetBundle.rootParentBundle;
+					bundledAssetsMap.put(key, Asset.class.cast(asset.clone(false)));
 				}
 
-				if (!MASTER_SCOPE.equalsIgnoreCase(assetScope.parentScope)) {
-					mergeAssets(scopedAssetsMap, assetsMapFor(assetScope.parentScope));
+				if (!MASTER_BUNDLE.equalsIgnoreCase(assetBundle.parentBundle)) {
+					mergeAssets(bundledAssetsMap, assetsMapFor(assetBundle.parentBundle));
 				}
-				mergeAssets(assetsMap, scopedAssetsMap);
+				mergeAssets(assetsMap, bundledAssetsMap);
 			}
 		}
 		return assetsMap;
@@ -400,7 +404,7 @@ public final class AssetStorage {
 	 * @return <code>true</code> if one (or more) asset is store
 	 */
 	public boolean containsAnyAsset() {
-		for (AssetScopeStorageUnit unit : storage.values()) {
+		for (AssetBundleStorageUnit unit : storage.values()) {
 			if (!unit.assets.isEmpty()) {
 				return false;
 			}

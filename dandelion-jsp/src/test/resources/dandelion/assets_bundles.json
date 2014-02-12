@@ -1,0 +1,32 @@
+{
+    "bundle": "assets_bundles",
+    "assets": [
+        {
+            "name": "assets_bundles_1",
+            "version": "1",
+            "type": "js",
+            "locations": {
+                "cdn": "assets_bundles_1_remoteURL",
+                "classpath": "assets_bundles_1_localPath"
+            }
+        },
+        {
+            "name": "assets_bundles_2",
+            "version": "1",
+            "type": "js",
+            "locations": {
+                "cdn": "assets_bundles_2_remoteURL",
+                "classpath": "assets_bundles_2_localPath"
+            }
+        },
+        {
+            "name": "assets_bundles_3",
+            "version": "1",
+            "type": "css",
+            "locations": {
+                "cdn": "assets_bundles_3_remoteURL",
+                "classpath": "assets_bundles_3_localPath"
+            }
+        }
+    ]
+}

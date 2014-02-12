@@ -41,14 +41,14 @@
       <tag-class>com.github.dandelion.jsp.tag.AssetsTag</tag-class>
       <body-content>empty</body-content>
       <attribute>
-         <description>List of requested scopes (comma separated)</description>
-         <name>scopes</name>
+         <description>List of requested bundles (comma separated)</description>
+         <name>bundles</name>
          <required>false</required>
          <rtexprvalue>true</rtexprvalue>
       </attribute>
       <attribute>
-         <description>List of excluded scopes (comma separated)</description>
-         <name>excludedScopes</name>
+         <description>List of excluded bundles (comma separated)</description>
+         <name>excludedBundles</name>
          <required>false</required>
          <rtexprvalue>true</rtexprvalue>
       </attribute>

@@ -1,5 +1,5 @@
 {
-    "scope": "plugin2",
+    "bundle": "plugin2",
     "override": true,
     "assets": [
         {

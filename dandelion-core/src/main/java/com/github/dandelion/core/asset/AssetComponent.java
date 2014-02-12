@@ -33,30 +33,30 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Definition of a set of assets link to Scope/Parent Scope
+ * Definition of a set of assets link to bundle/Parent bundle.
  */
 public class AssetComponent {
 
-	private String scope = AssetStorage.ROOT_SCOPE;
-	private String parent = AssetStorage.ROOT_SCOPE;
+	private String bundle = AssetStorage.ROOT_BUNDLE;
+	private String parent = AssetStorage.ROOT_BUNDLE;
 	private boolean override = false;
 	private List<Asset> assets = new ArrayList<Asset>();
 
 	public AssetComponent() {
 	}
 
-	public AssetComponent(String scope, String parent, List<Asset> assets) {
-		this.scope = scope;
+	public AssetComponent(String bundle, String parent, List<Asset> assets) {
+		this.bundle = bundle;
 		this.parent = parent;
 		this.assets = assets;
 	}
 
-	public String getScope() {
-		return scope;
+	public String getBundle() {
+		return bundle;
 	}
 
-	public void setScope(String scope) {
-		this.scope = scope;
+	public void setBundle(String bundle) {
+		this.bundle = bundle;
 	}
 
 	public List<Asset> getAssets() {
@@ -85,7 +85,7 @@ public class AssetComponent {
 
 	@Override
 	public String toString() {
-		return "AssetComponent [scope=" + scope + ", parent=" + parent + ", override=" + override + ", assets="
+		return "AssetComponent [bundle=" + bundle + ", parent=" + parent + ", override=" + override + ", assets="
 				+ assets + "]";
 	}
 }

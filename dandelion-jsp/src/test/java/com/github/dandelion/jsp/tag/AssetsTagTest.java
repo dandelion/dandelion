@@ -50,15 +50,15 @@ public class AssetsTagTest extends PhantomJsTest {
 	}
 
 	@Test
-	public void assets_scopes() {
-		goTo("/assets_scopes.jsp");
+	public void assets_bundles() {
+		goTo("/assets_bundles.jsp");
 		assertThat(text("link")).hasSize(1);
 		assertThat(text("script")).hasSize(2);
 	}
 
 	@Test
-	public void assets_excludedScopes() {
-		goTo("/assets_excludedScopes.jsp");
+	public void assets_excludedBundles() {
+		goTo("/assets_excludedBundles.jsp");
 		assertThat(text("script")).hasSize(0);
 	}
 

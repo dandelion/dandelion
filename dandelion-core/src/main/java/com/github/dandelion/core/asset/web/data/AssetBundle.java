@@ -30,8 +30,8 @@
 package com.github.dandelion.core.asset.web.data;
 
 /**
- * Representation of a asset scope
+ * Representation of an asset bundle.
  */
-public interface AssetScope {
+public interface AssetBundle {
 	String toString();
 }

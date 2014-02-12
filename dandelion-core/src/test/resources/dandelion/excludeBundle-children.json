@@ -1,9 +1,9 @@
 {
-    "scope": "excludedScope-child",
-    "parent": "excludedScope",
+    "bundle": "excludedBundle-child",
+    "parent": "excludedBundle",
     "assets": [
         {
-            "name": "excludedScope-child",
+            "name": "excludedBundle-child",
             "version": "1",
             "type": "js",
             "locations": {

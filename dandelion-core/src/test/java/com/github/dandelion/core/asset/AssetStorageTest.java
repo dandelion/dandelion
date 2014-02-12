@@ -90,14 +90,14 @@ public class AssetStorageTest {
 	}
 
 	@Test
-	public void should_store_asset_in_default_scope() {
+	public void should_store_asset_in_default_bundle() {
 		assetStorage.store(asset);
 
 		assertThat(assetStorage.assetsFor("default")).hasSize(1).contains(asset);
 	}
 
 	@Test
-	public void should_store_assets_in_default_scope() {
+	public void should_store_assets_in_default_bundle() {
 		assetStorage.store(asset);
 		assetStorage.store(asset2);
 
@@ -105,7 +105,7 @@ public class AssetStorageTest {
 	}
 
 	@Test
-	public void should_access_to_assets_without_any_scope() {
+	public void should_access_to_assets_without_any_bundle() {
 		assetStorage.store(asset);
 		assetStorage.store(asset2);
 
@@ -113,7 +113,7 @@ public class AssetStorageTest {
 	}
 
 	@Test
-	public void should_store_asset_in_another_scope() {
+	public void should_store_asset_in_another_bundle() {
 		assetStorage.store(asset);
 		assetStorage.store(asset2);
 		assetStorage.store(asset3, "another");
@@ -122,7 +122,7 @@ public class AssetStorageTest {
 	}
 
 	@Test
-	public void should_store_assets_in_another_level_scope() {
+	public void should_store_assets_in_another_level_bundle() {
 		assetStorage.store(asset);
 		assetStorage.store(asset2);
 		assetStorage.store(asset3, "another");
@@ -132,24 +132,24 @@ public class AssetStorageTest {
 	}
 
 	@Test
-	public void should_not_store_assets_with_same_scope_but_not_parent_scopes() {
+	public void should_not_store_assets_with_same_bundle_but_not_parent_bundles() {
 		expectedEx.expect(DandelionException.class);
-		expectedEx.expect(new DandelionExceptionMatcher(AssetStorageError.PARENT_SCOPE_INCOMPATIBILITY).set("scope",
-                "same_scope").set("parentScope", "parent_scope"));
+		expectedEx.expect(new DandelionExceptionMatcher(AssetStorageError.PARENT_BUNDLE_INCOMPATIBILITY).set("bundle",
+                "same_bundle").set("parentBundle", "parent_bundle"));
 
-		assetStorage.store(asset, "parent_scope");
-		assetStorage.store(asset2, "another_parent_scope");
-		assetStorage.store(asset3, "same_scope", "parent_scope");
-		assetStorage.store(asset4, "same_scope", "another_parent_scope");
+		assetStorage.store(asset, "parent_bundle");
+		assetStorage.store(asset2, "another_parent_bundle");
+		assetStorage.store(asset3, "same_bundle", "parent_bundle");
+		assetStorage.store(asset4, "same_bundle", "another_parent_bundle");
 	}
 
 	@Test
-	public void should_not_store_asset_with_unknown_parent_scope() {
+	public void should_not_store_asset_with_unknown_parent_bundle() {
 		expectedEx.expect(DandelionException.class);
-		expectedEx.expect(new DandelionExceptionMatcher(AssetStorageError.UNDEFINED_PARENT_SCOPE).set("parentScope",
-                "unknown_parent_scope"));
+		expectedEx.expect(new DandelionExceptionMatcher(AssetStorageError.UNDEFINED_PARENT_BUNDLE).set("parentBundle",
+                "unknown_parent_bundle"));
 
-		assetStorage.store(asset, "scope", "unknown_parent_scope");
+		assetStorage.store(asset, "bundle", "unknown_parent_bundle");
 	}
 
 	@Test
@@ -161,11 +161,11 @@ public class AssetStorageTest {
 	}
 
 	@Test
-	public void should_store_empty_scope_by_workaround() {
+	public void should_store_empty_bundle_by_workaround() {
 		assetStorage.store(asset);
-		assetStorage.setupEmptyParentScope("empty_scope");
-		assetStorage.store(asset2, "not_empty_scope", "empty_scope");
-		assertThat(assetStorage.assetsFor("not_empty_scope")).hasSize(2).contains(asset, asset2);
+		assetStorage.setupEmptyParentBundle("empty_bundle");
+		assetStorage.store(asset2, "not_empty_bundle", "empty_bundle");
+		assertThat(assetStorage.assetsFor("not_empty_bundle")).hasSize(2).contains(asset, asset2);
 	}
 
 	@Test
@@ -179,7 +179,7 @@ public class AssetStorageTest {
 	@Test
 	public void should_detect_conflicts_before_storage() {
 		expectedEx.expect(DandelionException.class);
-		expectedEx.expect(new DandelionExceptionMatcher(AssetStorageError.ASSET_ALREADY_EXISTS_IN_SCOPE).set(
+		expectedEx.expect(new DandelionExceptionMatcher(AssetStorageError.ASSET_ALREADY_EXISTS_IN_BUNDLE).set(
                 "originalAsset", asset));
 
 		assetStorage.store(asset);
@@ -189,10 +189,10 @@ public class AssetStorageTest {
 	@Test
 	public void should_manage_conflicts_on_demand() {
 		assetStorage.store(asset2);
-		assetStorage.store(asset, "scope");
-		assetStorage.store(assetConflict, "another_scope");
+		assetStorage.store(asset, "bundle");
+		assetStorage.store(assetConflict, "another_bundle");
 
-		assertThat(assetStorage.assetsFor("scope", "another_scope")).hasSize(2).contains(asset, asset2);
+		assertThat(assetStorage.assetsFor("bundle", "another_bundle")).hasSize(2).contains(asset, asset2);
 	}
 
 	@Test
@@ -204,38 +204,38 @@ public class AssetStorageTest {
 		assetStorage.store(asset4);
 		assetStorage.store(asset2);
 		assetStorage.store(asset3);
-		assetStorage.store(assetPriority, "scope");
+		assetStorage.store(assetPriority, "bundle");
 
-		assertThat(assetStorage.assetsFor("scope")).hasSize(4).containsSequence(assetPriority, asset4, asset2, asset3);
+		assertThat(assetStorage.assetsFor("bundle")).hasSize(4).containsSequence(assetPriority, asset4, asset2, asset3);
 	}
 
 	@Test
-	public void should_manage_detached_scope() {
-		Asset assetWithDetachedScope = new Asset("detached", "version", AssetType.js, locations);
+	public void should_manage_detached_bundle() {
+		Asset assetWithDetachedBundle = new Asset("detached", "version", AssetType.js, locations);
 
 		assetStorage.store(asset);
-		assetStorage.store(assetWithDetachedScope, "scope", "none");
+		assetStorage.store(assetWithDetachedBundle, "bundle", "none");
 
-		assertThat(assetStorage.assetsFor("scope")).hasSize(1).contains(assetWithDetachedScope);
-		assertThat(assetStorage.assetsFor("default", "scope")).hasSize(2).contains(assetWithDetachedScope, asset);
+		assertThat(assetStorage.assetsFor("bundle")).hasSize(1).contains(assetWithDetachedBundle);
+		assertThat(assetStorage.assetsFor("default", "bundle")).hasSize(2).contains(assetWithDetachedBundle, asset);
 	}
 
 	@Test
-	public void should_detach_scope_not_override_other_assets() {
-		Asset assetWithDetachedScope = new Asset("name", "version", AssetType.js, locations);
+	public void should_detach_bundle_not_override_other_assets() {
+		Asset assetWithDetachedBundle = new Asset("name", "version", AssetType.js, locations);
 
 		assetStorage.store(asset);
-		assetStorage.store(assetWithDetachedScope, "scope", "none");
+		assetStorage.store(assetWithDetachedBundle, "bundle", "none");
 
-		assertThat(assetStorage.assetsFor("scope")).hasSize(1).contains(assetWithDetachedScope);
-		assertThat(assetStorage.assetsFor("default", "scope")).hasSize(2).contains(assetWithDetachedScope, asset);
+		assertThat(assetStorage.assetsFor("bundle")).hasSize(1).contains(assetWithDetachedBundle);
+		assertThat(assetStorage.assetsFor("default", "bundle")).hasSize(2).contains(assetWithDetachedBundle, asset);
 	}
 
 	@Test
-	public void should_not_allow_the_usage_of_detached_scope_as_a_scope() {
+	public void should_not_allow_the_usage_of_detached_bundle_as_a_bundle() {
 		expectedEx.expect(DandelionException.class);
-		expectedEx.expect(new DandelionExceptionMatcher(AssetStorageError.DETACHED_SCOPE_NOT_ALLOWED).set(
-                "detachedScope", "none"));
+		expectedEx.expect(new DandelionExceptionMatcher(AssetStorageError.DETACHED_BUNDLE_NOT_ALLOWED).set(
+                "detachedBundle", "none"));
 
 		assetStorage.store(asset, "none");
 	}
@@ -261,7 +261,7 @@ public class AssetStorageTest {
 		Asset assetClone = new Asset(asset.getName(), asset.getVersion(), asset.getType(), assetCloneLocations);
 
 		expectedEx.expect(DandelionException.class);
-		expectedEx.expect(new DandelionExceptionMatcher(AssetStorageError.ASSET_LOCATION_ALREADY_EXISTS_IN_SCOPE).set(
+		expectedEx.expect(new DandelionExceptionMatcher(AssetStorageError.ASSET_LOCATION_ALREADY_EXISTS_IN_BUNDLE).set(
                 "locations", list("remote")).set("asset", assetClone));
 
 		assetStorage.store(asset);

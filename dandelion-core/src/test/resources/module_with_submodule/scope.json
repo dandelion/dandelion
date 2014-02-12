@@ -1,5 +1,5 @@
 {
-    "scope": "scope",
+    "bundle": "bundle",
     "assets": [
         {
             "name": "asset1",

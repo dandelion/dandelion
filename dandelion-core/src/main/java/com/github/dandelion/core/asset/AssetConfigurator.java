@@ -70,14 +70,14 @@ public class AssetConfigurator {
 	AssetStorage assetStorage;
 	List<AssetLoader> assetLoaders;
 	List<String> assetsLocations;
-	List<String> excludedScopes;
+	List<String> excludedBundles;
 	List<String> excludedAssets;
 	Map<String, AssetLocationWrapper> assetsLocationWrappers;
 
-	private Map<String, List<Asset>> assetsByScope = new HashMap<String, List<Asset>>();
-	private Map<String, List<String>> scopesByParentScope = new HashMap<String, List<String>>();
-	private Map<String, String> parentScopesByScope = new HashMap<String, String>();
-	private Map<String, List<Asset>> overrideAssetsByScope = new HashMap<String, List<Asset>>();
+	private Map<String, List<Asset>> assetsByBundle = new HashMap<String, List<Asset>>();
+	private Map<String, List<String>> bundlesByParentBundle = new HashMap<String, List<String>>();
+	private Map<String, String> parentBundlesByBundle = new HashMap<String, String>();
+	private Map<String, List<Asset>> overrideAssetsByBundle = new HashMap<String, List<Asset>>();
 
 	AssetConfigurator(AssetStorage assetStorage) {
 		this.assetStorage = assetStorage;
@@ -90,7 +90,7 @@ public class AssetConfigurator {
 		Properties configuration = Configuration.getProperties();
 
 		assetsLocations = setPropertyAsList(configuration.getProperty("assets.locations"), ",");
-		excludedScopes = setPropertyAsList(configuration.getProperty("assets.excluded.scopes"), ",");
+		excludedBundles = setPropertyAsList(configuration.getProperty("assets.excluded.bundles"), ",");
 		excludedAssets = setPropertyAsList(configuration.getProperty("assets.excluded.assets"), ",");
 
 		assetLoaders = AssetLoaderSystem.getLoaders();
@@ -110,8 +110,8 @@ public class AssetConfigurator {
 		if (assetsLocations == null) {
 			assetsLocations = setPropertyAsList("cdn,classpath", ",");
 		}
-		if (excludedScopes == null) {
-			excludedScopes = new ArrayList<String>();
+		if (excludedBundles == null) {
+			excludedBundles = new ArrayList<String>();
 		}
 		if (excludedAssets == null) {
 			excludedAssets = new ArrayList<String>();
@@ -129,11 +129,11 @@ public class AssetConfigurator {
 			prepareAssetsLoading(assetLoader.loadAssets());
 		}
 
-		repairOrphanParentScope();
-		overrideAssetsByScope();
+		repairOrphanParentBundle();
+		overrideAssetsByBundle();
 
-		storeAssetsFromScope(ROOT_SCOPE, null);
-		storeAssetsFromScope(DETACHED_PARENT_SCOPE, null);
+		storeAssetsFromBundle(ROOT_BUNDLE, null);
+		storeAssetsFromBundle(DETACHED_PARENT_BUNDLE, null);
 
 		clearAllAssetsProcessElements();
 	}
@@ -144,32 +144,32 @@ public class AssetConfigurator {
 			LOG.debug("Asset location wrapper with the key {} is enabled", locationKey);
 		}
     }
-	private void repairOrphanParentScope() {
+	private void repairOrphanParentBundle() {
 		Set<String> orphans = new HashSet<String>();
-		for (String parentScope : parentScopesByScope.values()) {
-			if (!ROOT_SCOPE.equalsIgnoreCase(parentScope) && !DETACHED_PARENT_SCOPE.equalsIgnoreCase(parentScope)
-					&& !parentScopesByScope.containsKey(parentScope)) {
-				orphans.add(parentScope);
+		for (String parentBundle : parentBundlesByBundle.values()) {
+			if (!ROOT_BUNDLE.equalsIgnoreCase(parentBundle) && !DETACHED_PARENT_BUNDLE.equalsIgnoreCase(parentBundle)
+					&& !parentBundlesByBundle.containsKey(parentBundle)) {
+				orphans.add(parentBundle);
 			}
 		}
 		if (!orphans.isEmpty()) {
-			if (!scopesByParentScope.containsKey(ROOT_SCOPE)) {
-				scopesByParentScope.put(ROOT_SCOPE, new ArrayList<String>());
+			if (!bundlesByParentBundle.containsKey(ROOT_BUNDLE)) {
+				bundlesByParentBundle.put(ROOT_BUNDLE, new ArrayList<String>());
 			}
 			for (String orphan : orphans) {
-				parentScopesByScope.put(orphan, ROOT_SCOPE);
-				scopesByParentScope.get(ROOT_SCOPE).add(orphan);
+				parentBundlesByBundle.put(orphan, ROOT_BUNDLE);
+				bundlesByParentBundle.get(ROOT_BUNDLE).add(orphan);
 			}
 		}
 	}
 
 	/**
-	 * Override all assets of a scope by `override` assets
+	 * Override all assets of a bundle by `override` assets
 	 */
-	private void overrideAssetsByScope() {
-		for (Map.Entry<String, List<Asset>> entry : assetsByScope.entrySet()) {
-			if (overrideAssetsByScope.containsKey(entry.getKey())) {
-				entry.setValue(overrideAssetsByScope.get(entry.getKey()));
+	private void overrideAssetsByBundle() {
+		for (Map.Entry<String, List<Asset>> entry : assetsByBundle.entrySet()) {
+			if (overrideAssetsByBundle.containsKey(entry.getKey())) {
+				entry.setValue(overrideAssetsByBundle.get(entry.getKey()));
 			}
 		}
 	}
@@ -178,31 +178,31 @@ public class AssetConfigurator {
 	 * Prepare Assets Loading by
 	 * 
 	 * <ul>
-	 * <li>link a scope to all his assets</li>
-	 * <li>link a scope to his parent scope</li>
-	 * <li>link a parent scope to all his scopes</li>
+	 * <li>link a bundle to all his assets</li>
+	 * <li>link a bundle to his parent bundle</li>
+	 * <li>link a parent bundle to all his bundles</li>
 	 * </ul>
 	 * 
 	 * @param components
 	 *            components to analyze
 	 */
 	private void prepareAssetsLoading(List<AssetComponent> components) {
-		LOG.debug("Excludes scopes are {}", excludedScopes);
-		LOG.debug("Excludes assets are {}", excludedAssets);
+		LOG.debug("Excluded bundles are {}", excludedBundles);
+		LOG.debug("Excluded assets are {}", excludedAssets);
 
 		for (AssetComponent component : components) {
 			LOG.debug("Prepare {}", component);
 
-			if (!excludedScopes.contains(component.getScope()) && !excludedScopes.contains(component.getParent())) {
-				LOG.debug("Scope {} and his parent {} are not in excludes scopes", component.getScope(),
+			if (!excludedBundles.contains(component.getBundle()) && !excludedBundles.contains(component.getParent())) {
+				LOG.debug("Bundle {} and his parent {} are not excluded", component.getBundle(),
 						component.getParent());
 
 				if (component.isOverride()) {
 					prepareOverrideAssets(component);
 				}
 				else {
-					prepareParentScope(component);
-					prepareScope(component);
+					prepareParentBundle(component);
+					prepareBundle(component);
 					prepareAssets(component);
 				}
 			}
@@ -210,28 +210,28 @@ public class AssetConfigurator {
 	}
 
 	/**
-	 * Store assets from scope
+	 * Store assets from bundle.
 	 * 
-	 * @param scope
-	 *            scope to store
+	 * @param bundle
+	 *            bundles to store
 	 */
-	private void storeAssetsFromScope(String scope, String parentScope) {
-		if (assetsByScope.containsKey(scope)) {
-			List<Asset> _assets = assetsByScope.get(scope);
-			if (_assets.isEmpty() && parentScope != null) {
-				assetStorage.setupEmptyScope(scope, parentScope);
+	private void storeAssetsFromBundle(String bundle, String parentBundle) {
+		if (assetsByBundle.containsKey(bundle)) {
+			List<Asset> _assets = assetsByBundle.get(bundle);
+			if (_assets.isEmpty() && parentBundle != null) {
+				assetStorage.setupEmptyBundle(bundle, parentBundle);
 			}
 			else {
 				for (Asset _asset : _assets) {
-					storeAsset(_asset, scope, parentScopesByScope.get(scope));
+					storeAsset(_asset, bundle, parentBundlesByBundle.get(bundle));
 				}
 			}
 		}
 
-		if (scopesByParentScope.containsKey(scope)) {
-			List<String> _scopes = scopesByParentScope.get(scope);
-			for (String _scope : _scopes) {
-				storeAssetsFromScope(_scope, scope);
+		if (bundlesByParentBundle.containsKey(bundle)) {
+			List<String> _bundles = bundlesByParentBundle.get(bundle);
+			for (String _bundle : _bundles) {
+				storeAssetsFromBundle(_bundle, bundle);
 			}
 		}
 	}
@@ -241,22 +241,22 @@ public class AssetConfigurator {
 	 * 
 	 * @param asset
 	 *            asset to store
-	 * @param scope
-	 *            scope of this asset
-	 * @param parentScope
-	 *            parent of this scope
+	 * @param bundle
+	 *            bundle of this asset
+	 * @param parentBundle
+	 *            parent of this bundle
 	 */
-	private void storeAsset(Asset asset, String scope, String parentScope) {
-		LOG.debug("Stored '{}' in scope '{}/{}'", asset, scope, parentScope);
+	private void storeAsset(Asset asset, String bundle, String parentBundle) {
+		LOG.debug("Stored '{}' in bundle '{}/{}'", asset, bundle, parentBundle);
 		try {
-			assetStorage.store(asset, scope, parentScope);
+			assetStorage.store(asset, bundle, parentBundle);
 		}
 		catch (DandelionException e) {
 			LOG.debug(e.getLocalizedMessage());
-			if (e.getErrorCode() == AssetStorageError.UNDEFINED_PARENT_SCOPE) {
-				LOG.debug("To avoid any configuration problem, a scope '{}' with no assets is created", parentScope);
-				assetStorage.setupEmptyParentScope(parentScope);
-				storeAsset(asset, scope, parentScope);
+			if (e.getErrorCode() == AssetStorageError.UNDEFINED_PARENT_BUNDLE) {
+				LOG.debug("To avoid any configuration problem, a bundle '{}' with no assets is created", parentBundle);
+				assetStorage.setupEmptyParentBundle(parentBundle);
+				storeAsset(asset, bundle, parentBundle);
 			}
 		}
 	}
@@ -266,10 +266,10 @@ public class AssetConfigurator {
 	 */
 	void clearAllAssetsProcessElements() {
 		LOG.debug("Clearing all assets process elements");
-		assetsByScope.clear();
-		scopesByParentScope.clear();
-		parentScopesByScope.clear();
-		overrideAssetsByScope.clear();
+		assetsByBundle.clear();
+		bundlesByParentBundle.clear();
+		parentBundlesByBundle.clear();
+		overrideAssetsByBundle.clear();
 	}
 
 	private List<String> setPropertyAsList(String values, String delimiter) {
@@ -278,42 +278,42 @@ public class AssetConfigurator {
 		return Arrays.asList(values.split(delimiter));
 	}
 
-	private void prepareScope(AssetComponent component) {
-		if (ROOT_SCOPE.equalsIgnoreCase(component.getScope())) {
-			LOG.debug("{} is the root scope", component.getScope());
+	private void prepareBundle(AssetComponent component) {
+		if (ROOT_BUNDLE.equalsIgnoreCase(component.getBundle())) {
+			LOG.debug("{} is the root bundle", component.getBundle());
 			return;
 		}
-		if (!scopesByParentScope.containsKey(component.getParent())) {
-			scopesByParentScope.put(component.getParent(), new ArrayList<String>());
+		if (!bundlesByParentBundle.containsKey(component.getParent())) {
+			bundlesByParentBundle.put(component.getParent(), new ArrayList<String>());
 		}
-		List<String> _scopes = scopesByParentScope.get(component.getParent());
+		List<String> _bundles = bundlesByParentBundle.get(component.getParent());
 
-		if (!_scopes.contains(component.getScope())) {
-			LOG.debug("Stored {} as child of {}", component.getScope(), component.getParent());
-			_scopes.add(component.getScope());
+		if (!_bundles.contains(component.getBundle())) {
+			LOG.debug("Stored {} as child of {}", component.getBundle(), component.getParent());
+			_bundles.add(component.getBundle());
 		}
 		else {
-			LOG.debug("{} is already a child of {}", component.getScope(), component.getParent());
+			LOG.debug("{} is already a child of {}", component.getBundle(), component.getParent());
 		}
 	}
 
-	private void prepareParentScope(AssetComponent component) {
-		LOG.debug("Stored {} as parent of {}", component.getParent(), component.getScope());
-		if (ROOT_SCOPE.equalsIgnoreCase(component.getParent()) && ROOT_SCOPE.equalsIgnoreCase(component.getScope())) {
-			component.setParent(MASTER_SCOPE);
+	private void prepareParentBundle(AssetComponent component) {
+		LOG.debug("Stored {} as parent of {}", component.getParent(), component.getBundle());
+		if (ROOT_BUNDLE.equalsIgnoreCase(component.getParent()) && ROOT_BUNDLE.equalsIgnoreCase(component.getBundle())) {
+			component.setParent(MASTER_BUNDLE);
 		}
-		parentScopesByScope.put(component.getScope(), component.getParent());
+		parentBundlesByBundle.put(component.getBundle(), component.getParent());
 	}
 
 	private void prepareAssets(AssetComponent component) {
-		if (!assetsByScope.containsKey(component.getScope())) {
-			assetsByScope.put(component.getScope(), new ArrayList<Asset>());
+		if (!assetsByBundle.containsKey(component.getBundle())) {
+			assetsByBundle.put(component.getBundle(), new ArrayList<Asset>());
 		}
-		List<Asset> _assets = assetsByScope.get(component.getScope());
+		List<Asset> _assets = assetsByBundle.get(component.getBundle());
 
 		for (Asset asset : component.getAssets()) {
 			if (!excludedAssets.contains(asset.getName())) {
-				LOG.debug("Stored {} as child of {}", asset.getName(), component.getScope());
+				LOG.debug("Stored {} as child of {}", asset.getName(), component.getBundle());
 				_assets.add(asset);
                 for(Map.Entry<String, String> entry:asset.getLocations().entrySet()) {
                     if(assetsLocationWrappers == null || !assetsLocationWrappers.containsKey(entry.getKey())) {
@@ -335,6 +335,6 @@ public class AssetConfigurator {
 				_assets.add(asset);
 			}
 		}
-		overrideAssetsByScope.put(component.getScope(), _assets);
+		overrideAssetsByBundle.put(component.getBundle(), _assets);
 	}
 }

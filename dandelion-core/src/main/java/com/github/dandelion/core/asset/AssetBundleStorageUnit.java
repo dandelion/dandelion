@@ -33,27 +33,27 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Container of assets associated to a scope and its parent scope
+ * Container of assets associated to a bundle and its parent bundle.
  */
-class AssetScopeStorageUnit {
-	String scope;
-	String parentScope;
+class AssetBundleStorageUnit {
+	String bundle;
+	String parentBundle;
 	List<Asset> assets;
-	String rootParentScope;
+	String rootParentBundle;
 	int storagePosition = -1;
 
 	/**
-	 * A new container is a scope with his parent scope and a empty list of
+	 * A new container is a bundle with his parent bundle and a empty list of
 	 * assets
 	 * 
-	 * @param scope
-	 *            scope of assets
-	 * @param parentScope
-	 *            parent of scope
+	 * @param bundle
+	 *            bundle of assets
+	 * @param parentBundle
+	 *            parent of bundle
 	 */
-	public AssetScopeStorageUnit(String scope, String parentScope) {
-		this.scope = scope;
-		this.parentScope = parentScope;
+	public AssetBundleStorageUnit(String bundle, String parentBundle) {
+		this.bundle = bundle;
+		this.parentBundle = parentBundle;
 		this.assets = new ArrayList<Asset>();
 	}
 }

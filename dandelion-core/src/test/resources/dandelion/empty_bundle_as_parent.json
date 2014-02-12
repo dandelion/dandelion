@@ -1,10 +1,10 @@
 {
-    "scope": "empty_scope_as_parent",
-    "parent": "empty_scope",
+    "bundle": "empty_bundle_as_parent",
+    "parent": "empty_bundle",
     "assets": [
         {
             "name": "asset",
-            "version": "empty_scope_as_parent",
+            "version": "empty_bundle_as_parent",
             "type": "js",
             "locations": {
                 "cdn": "http://cdn.url/"

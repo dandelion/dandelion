@@ -1,5 +1,5 @@
 {
-    "scope": "plugin1addon2",
+    "bundle": "plugin1addon2",
     "parent": "plugin1",
     "assets": [
         {

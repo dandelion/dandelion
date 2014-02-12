@@ -91,7 +91,7 @@ public class AssetFilter implements Filter {
 			AssetRequestContext context = AssetRequestContext.get(request);
 
 			if (isDandelionApplyable(context, wrapper)) {
-				List<Asset> assets = AssetStack.prepareAssetsFor(request, context.getScopes(true),
+				List<Asset> assets = AssetStack.prepareAssetsFor(request, context.getBundles(true),
 						context.getExcludedAssets());
 
 				html = generateHeadAssets(assets, html);
@@ -157,7 +157,7 @@ public class AssetFilter implements Filter {
 		if (wrapper.getContentType() == null || !wrapper.getContentType().contains("text/html")) {
 			return false;
 		}
-		else if (!AssetStack.existsAssetsFor(context.getScopes(false), context.getExcludedAssets())) {
+		else if (!AssetStack.existsAssetsFor(context.getBundles(false), context.getExcludedAssets())) {
 			return false;
 		}
 		return true;

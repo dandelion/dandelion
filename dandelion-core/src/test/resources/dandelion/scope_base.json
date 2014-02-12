@@ -1,10 +1,10 @@
 {
-    "scope": "scope_base",
+    "bundle": "bundle_base",
     "parent": "none",
     "assets": [
         {
             "name": "asset",
-            "version": "scope_base",
+            "version": "bundle_base",
             "type": "js",
             "locations": {
                 "cdn": "http://cdn.url/"

@@ -44,34 +44,36 @@ import com.github.dandelion.core.asset.web.AssetRequestContext;
  * Usage :
  * 
  * <pre>
- * &lt;dandelion:assets scopes="..." /&gt;
+ * &lt;dandelion:assets bundles="..." /&gt;
  * </pre>
  */
 public class AssetsTag extends TagSupport {
-	private String scopes;
-	private String excludedScopes;
+
+	private static final long serialVersionUID = -417156851675582892L;
+	private String bundles;
+	private String excludedBundles;
 	private String excludedAssets;
 
 	public int doEndTag() throws JspException {
-		AssetRequestContext.get(pageContext.getRequest()).addScopes(getScopes()).excludeScopes(getExcludedScopes())
+		AssetRequestContext.get(pageContext.getRequest()).addBundles(getBundles()).excludeBundles(getExcludedBundles())
 				.excludeAssets(getExcludedAssets());
 		return EVAL_PAGE;
 	}
 
-	public String getScopes() {
-		return scopes;
+	public String getBundles() {
+		return bundles;
 	}
 
-	public void setScopes(String scopes) {
-		this.scopes = scopes;
+	public void setBundles(String bundles) {
+		this.bundles = bundles;
 	}
 
-	public String getExcludedScopes() {
-		return excludedScopes;
+	public String getExcludedBundles() {
+		return excludedBundles;
 	}
 
-	public void setExcludedScopes(String excludedScopes) {
-		this.excludedScopes = excludedScopes;
+	public void setExcludedBundles(String excludedBundles) {
+		this.excludedBundles = excludedBundles;
 	}
 
 	public String getExcludedAssets() {

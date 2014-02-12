@@ -8,18 +8,18 @@
          namespace-strict="false"
          class="com.github.dandelion.thymeleaf.dialect.DandelionDialect">
 
-   <attribute-processor name="assets-scopes">
+   <attribute-processor name="assets-bundles">
       <documentation>
          <![CDATA[
-            <p>Comma-separated list of scopes to load in the current request.</p>
+            <p>Comma-separated list of bundles to load in the current request.</p>
          ]]>
       </documentation>
    </attribute-processor>
 
-   <attribute-processor name="assets-excludedScopes">
+   <attribute-processor name="assets-excludedBundles">
       <documentation>
          <![CDATA[
-            <p>Comma-separated list of scopes to exclude from the current request.</p>
+            <p>Comma-separated list of bundles to exclude from the current request.</p>
          ]]>
       </documentation>
    </attribute-processor>
