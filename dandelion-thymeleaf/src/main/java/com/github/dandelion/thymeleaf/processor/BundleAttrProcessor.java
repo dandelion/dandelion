@@ -29,43 +29,58 @@
  */
 package com.github.dandelion.thymeleaf.processor;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.Element;
 import org.thymeleaf.processor.ProcessorResult;
-import org.thymeleaf.processor.attr.AbstractAttrProcessor;
+
+import com.github.dandelion.core.asset.web.AssetRequestContext;
+import com.github.dandelion.thymeleaf.dialect.BundleAttributeNames;
+import com.github.dandelion.thymeleaf.dialect.DandelionDialect;
+import com.github.dandelion.thymeleaf.util.ArgumentsUtil;
+import com.github.dandelion.thymeleaf.util.AttributesUtil;
 
 /**
- * Base for all Dandelion attribute processors.
+ * Attribute processor for all attributes present in
+ * {@link BundleAttributeNames}.
  * 
  * @author Romain Lespinasse
+ * @author Thibault Duchateau
  * @since 0.10.0
  */
-public abstract class DandelionAttrProcessor extends AbstractAttrProcessor {
+public class BundleAttrProcessor extends DandelionAttrProcessor {
 
-	public DandelionAttrProcessor(String attributeName) {
+	public BundleAttrProcessor(String attributeName) {
 		super(attributeName);
 	}
 
 	@Override
-	protected ProcessorResult processAttribute(Arguments arguments, Element element, String attributeName) {
-		ProcessorResult processorResult = doProcessAttribute(arguments, element, attributeName);
-		element.removeAttribute(attributeName);
-		return processorResult;
+	public int getPrecedence() {
+		return DandelionDialect.HIGHEST_PRECEDENCE;
 	}
 
-	@Override
-	public abstract int getPrecedence();
-
 	/**
-	 * Process the Attribute
-	 * 
-	 * @param arguments
-	 *            Thymeleaf arguments
-	 * @param element
-	 *            Element of the attribute
-	 * @param attributeName
-	 *            attribute name
-	 * @return result of process
+	 * {@inheritDoc}
 	 */
-	protected abstract ProcessorResult doProcessAttribute(Arguments arguments, Element element, String attributeName);
+	@Override
+	protected ProcessorResult doProcessAttribute(Arguments arguments, Element element, String attributeName) {
+
+		String strippedAttributeName = AttributesUtil.stripPrefix(attributeName, DandelionDialect.DIALECT_PREFIX);
+		BundleAttributeNames assetsAttributeName = (BundleAttributeNames) AttributesUtil.find(strippedAttributeName,
+				BundleAttributeNames.values());
+
+		HttpServletRequest request = ArgumentsUtil.getWebContext(arguments).getHttpServletRequest();
+		AssetRequestContext context = AssetRequestContext.get(request);
+		switch (assetsAttributeName) {
+		case INCLUDE:
+			context.addBundles(element.getAttributeValue(attributeName));
+			break;
+		case EXCLUDE:
+			context.excludeBundles(element.getAttributeValue(attributeName));
+			break;
+		}
+
+		return ProcessorResult.ok();
+	}
 }

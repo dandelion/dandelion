@@ -27,45 +27,49 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.github.dandelion.thymeleaf.processor;
 
-import org.thymeleaf.Arguments;
-import org.thymeleaf.dom.Element;
-import org.thymeleaf.processor.ProcessorResult;
-import org.thymeleaf.processor.attr.AbstractAttrProcessor;
+package com.github.dandelion.jsp.tag;
+
+import javax.servlet.jsp.JspException;
+import javax.servlet.jsp.tagext.TagSupport;
+
+import com.github.dandelion.core.asset.web.AssetRequestContext;
 
 /**
- * Base for all Dandelion attribute processors.
+ * <p>
+ * JSP tag for manipulating the asset stack by adding or excluding bundles from
+ * it.
  * 
- * @author Romain Lespinasse
- * @since 0.10.0
+ * <p>
+ * Usage :
+ * 
+ * <pre>
+ * &lt;dandelion:bundle include="..." exclude="..." /&gt;
+ * </pre>
  */
-public abstract class DandelionAttrProcessor extends AbstractAttrProcessor {
+public class BundleTag extends TagSupport {
 
-	public DandelionAttrProcessor(String attributeName) {
-		super(attributeName);
-	}
-
-	@Override
-	protected ProcessorResult processAttribute(Arguments arguments, Element element, String attributeName) {
-		ProcessorResult processorResult = doProcessAttribute(arguments, element, attributeName);
-		element.removeAttribute(attributeName);
-		return processorResult;
-	}
-
-	@Override
-	public abstract int getPrecedence();
+	private static final long serialVersionUID = -417156851675582892L;
 
 	/**
-	 * Process the Attribute
-	 * 
-	 * @param arguments
-	 *            Thymeleaf arguments
-	 * @param element
-	 *            Element of the attribute
-	 * @param attributeName
-	 *            attribute name
-	 * @return result of process
+	 * Tag attributes
 	 */
-	protected abstract ProcessorResult doProcessAttribute(Arguments arguments, Element element, String attributeName);
+	// Bundles to include in the asset stack
+	private String include;
+
+	// Bundles to exclude from the asset stack
+	private String exclude;
+
+	public int doEndTag() throws JspException {
+		AssetRequestContext.get(pageContext.getRequest()).addBundles(include).excludeBundles(exclude);
+		return EVAL_PAGE;
+	}
+
+	public void setInclude(String include) {
+		this.include = include;
+	}
+
+	public void setExclude(String exclude) {
+		this.exclude = exclude;
+	}
 }

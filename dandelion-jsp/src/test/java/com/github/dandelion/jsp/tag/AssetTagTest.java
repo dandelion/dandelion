@@ -27,45 +27,37 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.github.dandelion.thymeleaf.processor;
 
-import org.thymeleaf.Arguments;
-import org.thymeleaf.dom.Element;
-import org.thymeleaf.processor.ProcessorResult;
-import org.thymeleaf.processor.attr.AbstractAttrProcessor;
+package com.github.dandelion.jsp.tag;
 
-/**
- * Base for all Dandelion attribute processors.
- * 
- * @author Romain Lespinasse
- * @since 0.10.0
- */
-public abstract class DandelionAttrProcessor extends AbstractAttrProcessor {
+import static org.fest.assertions.Assertions.assertThat;
 
-	public DandelionAttrProcessor(String attributeName) {
-		super(attributeName);
+import java.io.File;
+
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.junit.Test;
+
+import com.github.dandelion.core.config.StandardConfigurationLoader;
+import com.github.dandelion.jsp.PhantomJsTest;
+
+public class AssetTagTest extends PhantomJsTest {
+
+	@BeforeClass
+	public static void setup() {
+		String propertiesPath = new File("src/test/resources/dandelion/").getAbsolutePath();
+		System.setProperty(StandardConfigurationLoader.DANDELION_CONFIGURATION, propertiesPath);
 	}
 
-	@Override
-	protected ProcessorResult processAttribute(Arguments arguments, Element element, String attributeName) {
-		ProcessorResult processorResult = doProcessAttribute(arguments, element, attributeName);
-		element.removeAttribute(attributeName);
-		return processorResult;
+	@Test
+	public void assets_excludedAssets() {
+		goTo("/exclude_asset.jsp");
+		assertThat(text("script")).hasSize(1);
+		assertThat(text("link")).hasSize(1);
 	}
 
-	@Override
-	public abstract int getPrecedence();
-
-	/**
-	 * Process the Attribute
-	 * 
-	 * @param arguments
-	 *            Thymeleaf arguments
-	 * @param element
-	 *            Element of the attribute
-	 * @param attributeName
-	 *            attribute name
-	 * @return result of process
-	 */
-	protected abstract ProcessorResult doProcessAttribute(Arguments arguments, Element element, String attributeName);
+	@AfterClass
+	public static void tearDown() {
+		System.clearProperty(StandardConfigurationLoader.DANDELION_CONFIGURATION);
+	}
 }

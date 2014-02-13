@@ -27,45 +27,30 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.github.dandelion.thymeleaf.processor;
+package com.github.dandelion.thymeleaf.dialect;
 
-import org.thymeleaf.Arguments;
-import org.thymeleaf.dom.Element;
-import org.thymeleaf.processor.ProcessorResult;
-import org.thymeleaf.processor.attr.AbstractAttrProcessor;
+import com.github.dandelion.core.asset.Asset;
+import com.github.dandelion.thymeleaf.util.AttributeName;
 
 /**
- * Base for all Dandelion attribute processors.
+ * Attributes used by the {@link DandelionDialect} when dealing with
+ * {@link Asset}.
  * 
- * @author Romain Lespinasse
+ * @author Thibault Duchateau
  * @since 0.10.0
  */
-public abstract class DandelionAttrProcessor extends AbstractAttrProcessor {
+public enum AssetAttributeNames implements AttributeName {
 
-	public DandelionAttrProcessor(String attributeName) {
-		super(attributeName);
+	EXCLUDE("asset-exclude");
+
+	private String attribute;
+
+	private AssetAttributeNames(String attribute) {
+		this.attribute = attribute;
 	}
 
 	@Override
-	protected ProcessorResult processAttribute(Arguments arguments, Element element, String attributeName) {
-		ProcessorResult processorResult = doProcessAttribute(arguments, element, attributeName);
-		element.removeAttribute(attributeName);
-		return processorResult;
+	public String getAttribute() {
+		return attribute;
 	}
-
-	@Override
-	public abstract int getPrecedence();
-
-	/**
-	 * Process the Attribute
-	 * 
-	 * @param arguments
-	 *            Thymeleaf arguments
-	 * @param element
-	 *            Element of the attribute
-	 * @param attributeName
-	 *            attribute name
-	 * @return result of process
-	 */
-	protected abstract ProcessorResult doProcessAttribute(Arguments arguments, Element element, String attributeName);
 }

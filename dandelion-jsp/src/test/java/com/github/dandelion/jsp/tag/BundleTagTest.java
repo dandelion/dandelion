@@ -27,27 +27,43 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.github.dandelion.thymeleaf.dialect;
 
-import com.github.dandelion.thymeleaf.util.AttributeName;
+package com.github.dandelion.jsp.tag;
 
-public enum AssetsAttributeName implements AttributeName {
-	
-	/** Add bundles to the page */
-	BUNDLES("assets-bundles"),
-	/** Exclude scopes from the page */
-	EXCLUDED_BUNDLES("assets-excludedBundles"),
-	/** Exclude Assets from the page */
-	EXCLUDED_ASSETS("assets-excludedAssets");
+import static org.fest.assertions.Assertions.assertThat;
 
-	private String attribute;
+import java.io.File;
 
-	private AssetsAttributeName(String attribute) {
-		this.attribute = attribute;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.junit.Test;
+
+import com.github.dandelion.core.config.StandardConfigurationLoader;
+import com.github.dandelion.jsp.PhantomJsTest;
+
+public class BundleTagTest extends PhantomJsTest {
+
+	@BeforeClass
+	public static void setup() {
+		String propertiesPath = new File("src/test/resources/dandelion/").getAbsolutePath();
+		System.setProperty(StandardConfigurationLoader.DANDELION_CONFIGURATION, propertiesPath);
 	}
 
-	@Override
-	public String getAttribute() {
-		return attribute;
+	@Test
+	public void assets_bundles() {
+		goTo("/include_bundle.jsp");
+		assertThat(text("link")).hasSize(1);
+		assertThat(text("script")).hasSize(2);
+	}
+
+	@Test
+	public void assets_excludedBundles() {
+		goTo("/exclude_bundle.jsp");
+		assertThat(text("script")).hasSize(0);
+	}
+
+	@AfterClass
+	public static void tearDown() {
+		System.clearProperty(StandardConfigurationLoader.DANDELION_CONFIGURATION);
 	}
 }

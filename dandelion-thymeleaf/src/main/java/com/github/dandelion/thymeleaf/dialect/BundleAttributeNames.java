@@ -27,49 +27,32 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+package com.github.dandelion.thymeleaf.dialect;
 
-package com.github.dandelion.jsp.tag;
+import com.github.dandelion.core.asset.web.data.AssetBundle;
+import com.github.dandelion.thymeleaf.util.AttributeName;
 
-import static org.fest.assertions.Assertions.assertThat;
+/**
+ * Attributes used by the {@link DandelionDialect} when dealing with
+ * {@link AssetBundle}.
+ * 
+ * @author Thibault Duchateau
+ * @since 0.10.0
+ */
+public enum BundleAttributeNames implements AttributeName {
 
-import java.io.File;
+	INCLUDE("bundle-include"),
 
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+	EXCLUDE("bundle-exclude");
 
-import com.github.dandelion.core.config.StandardConfigurationLoader;
-import com.github.dandelion.jsp.PhantomJsTest;
+	private String attribute;
 
-public class AssetsTagTest extends PhantomJsTest {
-
-	@BeforeClass
-	public static void setup() {
-		String propertiesPath = new File("src/test/resources/dandelion/").getAbsolutePath();
-		System.setProperty(StandardConfigurationLoader.DANDELION_CONFIGURATION, propertiesPath);
+	private BundleAttributeNames(String attribute) {
+		this.attribute = attribute;
 	}
 
-	@Test
-	public void assets_bundles() {
-		goTo("/assets_bundles.jsp");
-		assertThat(text("link")).hasSize(1);
-		assertThat(text("script")).hasSize(2);
-	}
-
-	@Test
-	public void assets_excludedBundles() {
-		goTo("/assets_excludedBundles.jsp");
-		assertThat(text("script")).hasSize(0);
-	}
-
-	@Test
-	public void assets_excludedAssets() {
-		goTo("/assets_excludedAssets.jsp");
-		assertThat(text("script")).hasSize(1);
-	}
-
-	@AfterClass
-	public static void tearDown() {
-		System.clearProperty(StandardConfigurationLoader.DANDELION_CONFIGURATION);
+	@Override
+	public String getAttribute() {
+		return attribute;
 	}
 }

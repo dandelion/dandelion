@@ -1,8 +1,8 @@
 {
-    "bundle": "assets_excludedBundles",
+    "bundle": "exclude-bundle",
     "assets": [
         {
-            "name": "assets_excludedBundles_1",
+            "name": "excluded-assets1",
             "version": "1",
             "type": "js",
             "locations": {
@@ -11,7 +11,7 @@
             }
         },
         {
-            "name": "assets_excludedBundles_2",
+            "name": "excluded-assets2",
             "version": "1",
             "type": "js",
             "locations": {

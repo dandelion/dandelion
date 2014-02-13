@@ -36,23 +36,28 @@ import org.thymeleaf.dom.Element;
 import org.thymeleaf.processor.ProcessorResult;
 
 import com.github.dandelion.core.asset.web.AssetRequestContext;
-import com.github.dandelion.thymeleaf.dialect.AssetsAttributeName;
+import com.github.dandelion.thymeleaf.dialect.AssetAttributeNames;
 import com.github.dandelion.thymeleaf.dialect.DandelionDialect;
 import com.github.dandelion.thymeleaf.util.ArgumentsUtil;
 import com.github.dandelion.thymeleaf.util.AttributesUtil;
 
 /**
- * Processor for all attribute names for 'Assets' feature
+ * Attribute processor for all attributes present in
+ * {@link AssetAttributeNames}.
+ * 
+ * @author Romain Lespinasse
+ * @author Thibault Duchateau
+ * @since 0.10.0
  */
-public class AssetsAttrProcessor extends DandelionAttrProcessor {
+public class AssetAttrProcessor extends DandelionAttrProcessor {
 
-	public AssetsAttrProcessor(String attributeName) {
+	public AssetAttrProcessor(String attributeName) {
 		super(attributeName);
 	}
 
 	@Override
 	public int getPrecedence() {
-		return DandelionDialect.HIGHEST_PRECEDENCE;
+		return DandelionDialect.HIGHEST_PRECEDENCE + 1;
 	}
 
 	/**
@@ -60,19 +65,15 @@ public class AssetsAttrProcessor extends DandelionAttrProcessor {
 	 */
 	@Override
 	protected ProcessorResult doProcessAttribute(Arguments arguments, Element element, String attributeName) {
+		
 		String strippedAttributeName = AttributesUtil.stripPrefix(attributeName, DandelionDialect.DIALECT_PREFIX);
-		AssetsAttributeName assetsAttributeName = (AssetsAttributeName) AttributesUtil.find(strippedAttributeName,
-				AssetsAttributeName.values());
+		AssetAttributeNames assetsAttributeName = (AssetAttributeNames) AttributesUtil.find(strippedAttributeName,
+				AssetAttributeNames.values());
+		
 		HttpServletRequest request = ArgumentsUtil.getWebContext(arguments).getHttpServletRequest();
 		AssetRequestContext context = AssetRequestContext.get(request);
 		switch (assetsAttributeName) {
-		case BUNDLES:
-			context.addBundles(element.getAttributeValue(attributeName));
-			break;
-		case EXCLUDED_BUNDLES:
-			context.excludeBundles(element.getAttributeValue(attributeName));
-			break;
-		case EXCLUDED_ASSETS:
+		case EXCLUDE:
 			context.excludeAssets(element.getAttributeValue(attributeName));
 			break;
 		}

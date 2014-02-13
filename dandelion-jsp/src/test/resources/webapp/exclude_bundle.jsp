@@ -6,6 +6,6 @@
 <head>
 </head>
 <body>
-<dandelion:assets bundles="assets_excludedScopes" excludedBundles="assets_excludedScopes"/>
+<dandelion:bundle include="exclude-bundle" excluded="exclude-bundle"/>
 </body>
 </html>

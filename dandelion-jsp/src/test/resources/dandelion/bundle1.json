@@ -1,8 +1,8 @@
 {
-    "bundle": "assets_bundles",
+    "bundle": "bundle1",
     "assets": [
         {
-            "name": "assets_bundles_1",
+            "name": "asset1",
             "version": "1",
             "type": "js",
             "locations": {
@@ -11,7 +11,7 @@
             }
         },
         {
-            "name": "assets_bundles_2",
+            "name": "asset2",
             "version": "1",
             "type": "js",
             "locations": {
@@ -20,7 +20,7 @@
             }
         },
         {
-            "name": "assets_bundles_3",
+            "name": "asset3",
             "version": "1",
             "type": "css",
             "locations": {

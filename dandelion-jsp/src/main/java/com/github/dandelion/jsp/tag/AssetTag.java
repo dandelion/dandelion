@@ -37,50 +37,31 @@ import com.github.dandelion.core.asset.web.AssetRequestContext;
 
 /**
  * <p>
- * JSP tag in charge of generating necessary HTML <code>script</code> and
- * <code>link</code> tags.
+ * JSP tag for manipulating the asset stack by excluding assets from it.
  * 
  * <p>
  * Usage :
  * 
  * <pre>
- * &lt;dandelion:assets bundles="..." /&gt;
+ * &lt;dandelion:asset exclude="..." /&gt;
  * </pre>
  */
-public class AssetsTag extends TagSupport {
+public class AssetTag extends TagSupport {
 
 	private static final long serialVersionUID = -417156851675582892L;
-	private String bundles;
-	private String excludedBundles;
-	private String excludedAssets;
+
+	/**
+	 * Tag attributes
+	 */
+	// Assets to exclude from the asset stack
+	private String exclude;
 
 	public int doEndTag() throws JspException {
-		AssetRequestContext.get(pageContext.getRequest()).addBundles(getBundles()).excludeBundles(getExcludedBundles())
-				.excludeAssets(getExcludedAssets());
+		AssetRequestContext.get(pageContext.getRequest()).excludeAssets(exclude);
 		return EVAL_PAGE;
 	}
 
-	public String getBundles() {
-		return bundles;
-	}
-
-	public void setBundles(String bundles) {
-		this.bundles = bundles;
-	}
-
-	public String getExcludedBundles() {
-		return excludedBundles;
-	}
-
-	public void setExcludedBundles(String excludedBundles) {
-		this.excludedBundles = excludedBundles;
-	}
-
-	public String getExcludedAssets() {
-		return excludedAssets;
-	}
-
-	public void setExcludedAssets(String excludedAssets) {
-		this.excludedAssets = excludedAssets;
+	public void setExclude(String exclude) {
+		this.exclude = exclude;
 	}
 }

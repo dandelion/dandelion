@@ -35,14 +35,15 @@ import java.util.Set;
 import org.thymeleaf.dialect.AbstractDialect;
 import org.thymeleaf.processor.IProcessor;
 
-import com.github.dandelion.thymeleaf.processor.AssetsAttrProcessor;
+import com.github.dandelion.thymeleaf.processor.AssetAttrProcessor;
+import com.github.dandelion.thymeleaf.processor.BundleAttrProcessor;
 
 /**
- * Thymeleaf Dialect for dandelion
- * <ul>
- * <li>Prefix : ddl</li>
- * <li>Namespace : http://www.thymeleaf.org/dandelion</li>
- * </ul>
+ * <p>
+ * Thymeleaf Dialect for Dandelion.
+ * 
+ * @author Romain Lespinasse
+ * @author Thibault Duchateau
  */
 public class DandelionDialect extends AbstractDialect {
 
@@ -62,9 +63,9 @@ public class DandelionDialect extends AbstractDialect {
 	public Set<IProcessor> getProcessors() {
 		final Set<IProcessor> processors = new HashSet<IProcessor>();
 
-		// processors for the 'Assets' feature
-		for (AssetsAttributeName attr : AssetsAttributeName.values()) {
-			processors.add(new AssetsAttrProcessor(attr.getAttribute()));
+		for (AssetAttributeNames attr : AssetAttributeNames.values()) {
+			processors.add(new BundleAttrProcessor(attr.getAttribute()));
+			processors.add(new AssetAttrProcessor(attr.getAttribute()));
 		}
 
 		return processors;
