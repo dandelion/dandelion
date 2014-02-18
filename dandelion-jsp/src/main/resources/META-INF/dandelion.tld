@@ -70,7 +70,7 @@
             </p>
          ]]>
          </description>
-         <name>names</name>
+         <name>exclude</name>
          <required>false</required>
          <rtexprvalue>true</rtexprvalue>
       </attribute>
