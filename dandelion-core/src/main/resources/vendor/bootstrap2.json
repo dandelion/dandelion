@@ -12,7 +12,7 @@
         },
         {
             "name": "bootstrap2-css",
-            "version": "2.3.0",
+            "version": "2.3.2",
             "type": "css",
             "locations": {
                 "cdn": "//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap.css"
