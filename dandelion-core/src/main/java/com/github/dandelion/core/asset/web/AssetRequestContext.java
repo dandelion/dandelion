@@ -72,7 +72,7 @@ public class AssetRequestContext {
 		if (attribute == null || !(attribute instanceof AssetRequestContext)) {
 			attribute = new AssetRequestContext();
 			((AssetRequestContext) attribute).addBundles(Configuration.getProperties().getProperty(
-					"assets.active.bundles"));
+					"bundles.include"));
 			servletRequest.setAttribute(AssetRequestContext.class.getCanonicalName(), attribute);
 		}
 		return AssetRequestContext.class.cast(attribute);
