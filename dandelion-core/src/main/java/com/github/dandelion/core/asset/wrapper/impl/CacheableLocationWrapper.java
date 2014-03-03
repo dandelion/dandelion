@@ -44,6 +44,7 @@ import com.github.dandelion.core.asset.Asset;
 import com.github.dandelion.core.asset.cache.AssetCacheSystem;
 import com.github.dandelion.core.asset.wrapper.spi.AssetLocationWrapper;
 import com.github.dandelion.core.utils.RequestUtils;
+import com.github.dandelion.core.utils.UrlUtils;
 
 /**
  * <p>
@@ -79,7 +80,7 @@ public abstract class CacheableLocationWrapper extends BaseLocationWrapper {
 			storeContent(context, location, asset.getName(), asset.getType(), content);
 		}
 
-		return RequestUtils.getBaseUrl(request) + DANDELION_ASSETS_URL + cacheKey;
+		return UrlUtils.getProcessedUrl(DANDELION_ASSETS_URL + cacheKey, request, null);
 	}
 
 	/**
