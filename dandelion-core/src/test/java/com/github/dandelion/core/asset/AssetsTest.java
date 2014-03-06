@@ -62,7 +62,7 @@ public class AssetsTest {
 	
 	@Test
 	public void should_return_all_processed_assets_by_bundle_names() {
-		Set<Asset> assets = Assets.assetsFor(request, "bundle1", "bundle2", "bundle3");
+		Set<Asset> assets = Assets.assetsFor(request, null, "bundle1", "bundle2", "bundle3");
 		assertThat(assets).hasSize(3);
 	}
 	

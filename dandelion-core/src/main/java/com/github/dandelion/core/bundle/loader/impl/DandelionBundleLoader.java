@@ -43,7 +43,7 @@ import com.github.dandelion.core.bundle.loader.spi.BundleLoader;
 /**
  * <p>
  * Bundle loader used to load bundles defined by users inside the
- * {@code /dandelion} folder and all subfolders.
+ * {@code dandelion} folder (and all subfolders) of the classpath.
  * 
  * <p>
  * This loader is intended to load only "user bundles" and therefore all

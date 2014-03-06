@@ -40,9 +40,8 @@ import com.github.dandelion.core.bundle.Bundle;
 
 /**
  * <p>
- * Bundle loader used to load vendor bundles, i.e. bundles containing vendor's
- * librairies. Those bundles are scanned inside the {@code /dandelion/vendor}
- * folder and all subfolders.
+ * Bundle loader used to load bundles defined by users inside the
+ * {@code dandelion/vendor} folder (and all subfolders) of the classpath.
  * 
  * @author Thibault Duchateau
  * @since 0.10.0

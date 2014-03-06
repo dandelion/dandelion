@@ -30,6 +30,7 @@
 package com.github.dandelion.core.asset;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -128,22 +129,27 @@ public final class Assets {
 	 *            exclude assets names
 	 * @return a filtered list of assets
 	 */
-	public static List<Asset> excludeByName(List<Asset> assets, String... filters) {
-		List<Asset> _assets = new ArrayList<Asset>();
+	public static Set<Asset> excludeByName(Set<Asset> assets, String... filters) {
+		Set<Asset> _assets = new HashSet<Asset>();
 		List<String> _filters = new ArrayList<String>();
-		for (String filter : filters) {
-			_filters.add(filter.toLowerCase());
-		}
-		for (Asset _asset : assets) {
-			if (!_filters.contains(_asset.getName().toLowerCase())
-					&& !_filters.contains(_asset.getAssetKey().toLowerCase())) {
-				_assets.add(_asset);
+		
+		if(filters != null){
+			for (String filter : filters) {
+				_filters.add(filter.toLowerCase());
 			}
 		}
+
+		for (Asset asset : assets) {
+			if (!_filters.contains(asset.getName().toLowerCase())
+					&& !_filters.contains(asset.getAssetKey().toLowerCase())) {
+				_assets.add(asset);
+			}
+		}
+		
 		return _assets;
 	}
 
-	public static Set<Asset> assetsFor(HttpServletRequest request, String... bundleNames) {
+	public static Set<Asset> assetsFor(HttpServletRequest request, String[] excludedAssets, String... bundleNames) {
 		initializeIfNeeded();
 
 		Set<Asset> assets = new LinkedHashSet<Asset>();
@@ -158,26 +164,30 @@ public final class Assets {
 			}
 		}
 
+		assets = excludeByName(assets, excludedAssets);
 		return processedAssets(assets, request);
 	}
 
 	public static Set<Asset> assetsFor(HttpServletRequest request, String bundleName) {
 		initializeIfNeeded();
-
 		String[] bundleNames = new String[] { bundleName };
-		return assetsFor(request, bundleNames);
+		String[] excludedAssets = AssetRequestContext.get(request).getExcludedAssets();
+		return assetsFor(request, excludedAssets, bundleNames);
 	}
 
 	public static Set<Asset> assetsFor(HttpServletRequest request, AssetDOMPosition position) {
 		initializeIfNeeded();
 		Set<Asset> assets = assetsFor(position, AssetRequestContext.get(request).getBundles(true));
+		String[] excludedAssets = AssetRequestContext.get(request).getExcludedAssets();
+		assets = excludeByName(assets, excludedAssets);
 		return AssetProcessorSystem.process(assets, request);
 	}
 
 	public static Set<Asset> assetsFor(HttpServletRequest request) {
 		initializeIfNeeded();
 		String[] bundleNames = AssetRequestContext.get(request).getBundles(true);
-		return assetsFor(request, bundleNames);
+		String[] excludedAssets = AssetRequestContext.get(request).getExcludedAssets();
+		return assetsFor(request, excludedAssets, bundleNames);
 	}
 
 	public static BundleStorage getStorage() {
@@ -201,9 +211,22 @@ public final class Assets {
 		return retval;
 	}
 
+	
+	/**
+	 * <p>
+	 * Returns {@code true} if at least one asset needs to be display for the
+	 * current request.
+	 * <p>
+	 * Note that asset locations are not processed in order to improve
+	 * performance.
+	 * 
+	 * @param request
+	 * @return
+	 */
 	public static boolean existsAssetsFor(HttpServletRequest request) {
 		initializeIfNeeded();
-		Set<Asset> assets = assetsFor(request, AssetRequestContext.get(request).getBundles(false));
+		Set<Asset> assets = assetsFor(request, AssetRequestContext.get(request).getExcludedAssets(),
+				AssetRequestContext.get(request).getBundles(false));
 		return !assets.isEmpty();
 	}
 

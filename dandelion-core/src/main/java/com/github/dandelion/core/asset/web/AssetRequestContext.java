@@ -176,8 +176,9 @@ public class AssetRequestContext {
 	 * @return this context
 	 */
 	public AssetRequestContext excludeAssets(String assetNames) {
-		if (assetNames == null || assetNames.isEmpty())
+		if (assetNames == null || assetNames.isEmpty()) {
 			return this;
+		}
 		return excludeAssets(assetNames.split(","));
 	}
 
