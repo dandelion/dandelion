@@ -14,8 +14,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.github.dandelion.core.asset.web.AssetServlet;
-import com.github.dandelion.core.asset.web.HtmlUtil;
 import com.github.dandelion.core.asset.web.data.AssetContent;
+import com.github.dandelion.core.utils.HtmlUtils;
 
 /**
  * <p>
@@ -37,10 +37,10 @@ public class AssetController {
 	@RequestMapping(value = "{assetKey:.+}")
 	public ResponseEntity<String> renderAsset(@PathVariable String assetKey, HttpServletResponse response)
 			throws IOException {
-		AssetContent assetContent = HtmlUtil.getAssetContent(assetKey);
+		AssetContent assetContent = HtmlUtils.getAssetContent(assetKey);
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.parseMediaType(assetContent.getContentType()));
-		headers.setCacheControl(HtmlUtil.getCacheControl());
+		headers.setCacheControl(HtmlUtils.getCacheControl());
 		headers.setContentLength(assetContent.getContent().getBytes().length);
 		return new ResponseEntity<String>(assetContent.getContent(), headers, HttpStatus.OK);
 	}

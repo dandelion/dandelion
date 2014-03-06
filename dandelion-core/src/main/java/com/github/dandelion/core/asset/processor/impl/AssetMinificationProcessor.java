@@ -35,10 +35,10 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.Writer;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
+import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -48,7 +48,7 @@ import org.slf4j.LoggerFactory;
 
 import com.github.dandelion.core.DandelionException;
 import com.github.dandelion.core.asset.Asset;
-import com.github.dandelion.core.asset.AssetStack;
+import com.github.dandelion.core.asset.Assets;
 import com.github.dandelion.core.asset.cache.AssetCacheSystem;
 import com.github.dandelion.core.asset.processor.spi.AssetProcessor;
 import com.github.dandelion.core.asset.wrapper.spi.AssetLocationWrapper;
@@ -61,7 +61,7 @@ import com.yahoo.platform.yui.compressor.JavaScriptCompressor;
 /**
  * <p>
  * Processor entry in charge of compressing all assets present in the
- * {@link AssetStack}.
+ * {@link Assets}.
  * 
  * <p>
  * This processor entry is based on YUI Compressor.
@@ -115,7 +115,7 @@ public class AssetMinificationProcessor extends AssetProcessor {
 	}
 
 	@Override
-	public List<Asset> process(List<Asset> assets, HttpServletRequest request) {
+	public Set<Asset> process(Set<Asset> assets, HttpServletRequest request) {
 		if (!minificationEnabled) {
 			return assets;
 		}
@@ -124,7 +124,7 @@ public class AssetMinificationProcessor extends AssetProcessor {
 		context = context.replaceAll("\\?", "_").replaceAll("&", "_");
 
 		String baseUrl = RequestUtils.getBaseUrl(request);
-		List<Asset> compressedAssets = new ArrayList<Asset>();
+		Set<Asset> compressedAssets = new LinkedHashSet<Asset>();
 		for (Asset asset : assets) {
 			for (String location : asset.getLocations().values()) {
 				String cacheKey = AssetCacheSystem.generateCacheKey(context, location, MINIFICATION, asset.getType());
@@ -207,7 +207,7 @@ public class AssetMinificationProcessor extends AssetProcessor {
 	}
 
 	private String extractContent(Asset asset, HttpServletRequest request) {
-		Map<String, AssetLocationWrapper> wrappers = AssetStack.getAssetLocationWrappers();
+		Map<String, AssetLocationWrapper> wrappers = Assets.getAssetLocationWrappers();
 		StringBuilder groupContent = new StringBuilder();
 
 		for (Map.Entry<String, String> location : asset.getLocations().entrySet()) {

@@ -161,7 +161,7 @@ public class CdnLocationWrapper extends CacheableLocationWrapper {
 			}
 		}
 		catch (IOException e) {
-			throw new DandelionException(AssetLocationWrapperError.ASSET_RELATIVE_PATHS);
+			throw DandelionException.wrap(e, AssetLocationWrapperError.ASSET_RELATIVE_PATHS);
 		}
 		finally {
 			try {
@@ -170,7 +170,7 @@ public class CdnLocationWrapper extends CacheableLocationWrapper {
 			}
 			catch (IOException e) {
 				// Should never happen
-				throw new DandelionException(AssetLocationWrapperError.ASSET_RELATIVE_PATHS);
+				throw DandelionException.wrap(e, AssetLocationWrapperError.ASSET_RELATIVE_PATHS);
 			}
 			try {
 				if (writer != null)
@@ -178,7 +178,7 @@ public class CdnLocationWrapper extends CacheableLocationWrapper {
 			}
 			catch (IOException e) {
 				// Should never happen
-				throw new DandelionException(AssetLocationWrapperError.ASSET_RELATIVE_PATHS);
+				throw DandelionException.wrap(e, AssetLocationWrapperError.ASSET_RELATIVE_PATHS);
 			}
 		}
 

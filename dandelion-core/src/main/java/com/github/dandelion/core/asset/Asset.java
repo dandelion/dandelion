@@ -56,14 +56,15 @@ import java.util.Map;
  */
 public class Asset {
 
-	String name;
-	String version;
-	AssetType type;
-	AssetDOMPosition dom;
-	Map<String, String> locations;
-	Map<String, String> attributes;
-	String[] attributesOnlyName;
-	int storagePosition = -1;
+	private String name;
+	private String version;
+	private AssetType type;
+	private AssetDOMPosition dom;
+	private String finalLocation;
+	private Map<String, String> locations;
+	private Map<String, String> attributes;
+	private String[] attributesOnlyName;
+//	private int storagePosition = -1;
 
 	/**
 	 * Declare an empty asset
@@ -90,14 +91,19 @@ public class Asset {
 		this.locations = locations;
 	}
 
-	protected Asset(String name, String version, AssetType type, AssetDOMPosition dom, Map<String, String> locations,
-			int storagePosition) {
+	protected Asset(String name, String version, AssetType type, AssetDOMPosition dom, String location) {
 		this.name = name;
 		this.version = version;
 		this.type = type;
 		this.dom = dom;
-		this.locations = locations;
-		this.storagePosition = storagePosition;
+		this.finalLocation = location;
+		this.locations = new HashMap<String, String>();
+	}
+
+	public Asset(String name, String version, AssetType type) {
+		this.name = name;
+		this.version = version;
+		this.type = type;
 	}
 
 	public String getName() {
@@ -122,6 +128,14 @@ public class Asset {
 
 	public void setType(AssetType type) {
 		this.type = type;
+	}
+
+	public String getLocation() {
+		return finalLocation;
+	}
+
+	public void setLocation(String finalLocation) {
+		this.finalLocation = finalLocation;
 	}
 
 	public AssetDOMPosition getDom() {
@@ -169,22 +183,42 @@ public class Asset {
 		return name != null && version != null && type != null && locations != null;
 	}
 
-	@Override
-	public boolean equals(Object o) {
-		if (this == o)
-			return true;
-		if (o == null || getClass() != o.getClass())
-			return false;
 
-		Asset asset = (Asset) o;
-		return !(name != null ? !name.equals(asset.name) : asset.name != null) && type == asset.type;
-	}
 
 	@Override
 	public int hashCode() {
-		int result = name != null ? name.hashCode() : 0;
-		result = 31 * result + (type != null ? type.hashCode() : 0);
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((name == null) ? 0 : name.hashCode());
+		result = prime * result + ((type == null) ? 0 : type.hashCode());
+		result = prime * result + ((version == null) ? 0 : version.hashCode());
 		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Asset other = (Asset) obj;
+		if (name == null) {
+			if (other.name != null)
+				return false;
+		}
+		else if (!name.equals(other.name))
+			return false;
+		if (type != other.type)
+			return false;
+		if (version == null) {
+			if (other.version != null)
+				return false;
+		}
+		else if (!version.equals(other.version))
+			return false;
+		return true;
 	}
 
 	/**
@@ -193,16 +227,15 @@ public class Asset {
 	@Override
 	public String toString() {
 		return "Asset [name=" + name + ", version=" + version + ", type=" + type + (dom != null ? ", dom=" + dom : "")
-				+ ", locations=[" + locations + "]";
+				+ ", locations=[" + locations + "], " + "location=" + finalLocation;
 	}
 
 	public String getAssetKey() {
 		return name + "." + type;
 	}
 
-	public Asset clone(boolean withoutLocations) {
-		return new Asset(name, version, type, dom, withoutLocations ? new HashMap<String, String>() : locations,
-				storagePosition);
+	public Asset clone() {
+		return new Asset(name, version, type, dom, finalLocation);
 	}
 
 	public void addAttribute(String attributeName, String attributeValue) {

@@ -53,7 +53,7 @@ public class ClasspathLocationWrapperTest {
 		String location = wrapper.getWrappedLocation(asset, request);
 		assertThat(location)
 				.isEqualTo(
-                        "http://localhost:80/context/dandelion-assets/f9d126fdc5489f63a5ae1eae859a6ef030948539-asset-classpath.js");
+                        "/context/dandelion-assets/f9d126fdc5489f63a5ae1eae859a6ef030948539-asset-classpath.js");
 
 		asset = new Asset("asset-classpath", "1.0", AssetType.js, singletonMap(wrapper.getLocationKey(), location));
 		String content = wrapper.getWrappedContent(asset, request);

@@ -1,0 +1,22 @@
+{
+    "bundle": "bundle3",
+    "assets": [
+               {
+                   "name": "a3_1",
+                   "version": "1",
+                   "type": "js",
+                   "locations": {
+                       "cdn": "//some.cdn/asset3_1",
+                       "webapp": "/localPath"
+                   }
+               },
+               {
+                   "name": "a3_2",
+                   "version": "1",
+                   "type": "css",
+                   "locations": {
+                       "webapp": "/localPath"
+                   }
+               }
+           ]
+}

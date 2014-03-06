@@ -30,12 +30,11 @@
 package com.github.dandelion.core.utils;
 
 import static org.fest.assertions.Assertions.assertThat;
+import static org.fest.util.Collections.set;
 
 import java.io.IOException;
-import java.util.Arrays;
 
 import org.junit.Test;
-
 public class ResourceScannerTest {
 
 	@Test
@@ -88,7 +87,7 @@ public class ResourceScannerTest {
 
 	@Test
 	public void should_filter_resources_with_excluded_folder() throws IOException {
-		assertThat(ResourceScanner.findResourcePaths("scanning", Arrays.asList("scanning/subfolder"), null, null, true))
+		assertThat(ResourceScanner.findResourcePaths("scanning", set("scanning/subfolder"), null, null, true))
 				.hasSize(5);
 	}
 

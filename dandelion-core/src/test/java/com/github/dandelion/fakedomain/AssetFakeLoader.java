@@ -30,20 +30,22 @@
 package com.github.dandelion.fakedomain;
 
 import static org.fest.util.Collections.list;
+import static org.fest.util.Collections.set;
 
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
 import com.github.dandelion.core.asset.Asset;
-import com.github.dandelion.core.asset.AssetComponent;
 import com.github.dandelion.core.asset.AssetType;
-import com.github.dandelion.core.asset.loader.spi.AssetLoader;
+import com.github.dandelion.core.bundle.Bundle;
+import com.github.dandelion.core.bundle.loader.spi.BundleLoader;
 
-public class AssetFakeLoader implements AssetLoader {
+public class AssetFakeLoader implements BundleLoader {
+	
 	@Override
-	public List<AssetComponent> loadAssets() {
+	public List<Bundle> loadBundles() {
 		Map<String, String> locations = new HashMap<String, String>();
 		locations.put("remote", "remoteURL");
 		locations.put("local", "localPath");
@@ -52,8 +54,8 @@ public class AssetFakeLoader implements AssetLoader {
 		locations.put("local", "localPath2");
 
 		return list(
-				new AssetComponent("default", "default", new ArrayList<Asset>()),
-				new AssetComponent("fake", "default", list(new Asset("name", "version", AssetType.js, locations),
+				new Bundle("default", new HashSet<Asset>()),
+				new Bundle("fake", set(new Asset("name", "version", AssetType.js, locations),
 						new Asset("name2", "version2", AssetType.js, locations2))));
 	}
 

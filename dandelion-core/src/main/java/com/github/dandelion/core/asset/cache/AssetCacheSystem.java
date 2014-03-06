@@ -51,24 +51,20 @@ import com.github.dandelion.core.utils.Sha1Utils;
  * @author Thibault Duchateau
  * @since 0.10.0
  */
-public class AssetCacheSystem {
+public final class AssetCacheSystem {
 
-	// Logger
 	private static final Logger LOG = LoggerFactory.getLogger(AssetCacheSystem.class);
 
 	private static ServiceLoader<AssetCache> assetCacheServiceLoader = ServiceLoader.load(AssetCache.class);
 	private static AssetCache assetCache;
 
-	private AssetCacheSystem() {
-	}
-
-	private static void initializeAssetCache() {
+	private static void initializeIfNeeded() {
 		if (assetCache == null) {
-			initializeAssetsCacheIfNeeded();
+			initializeAssetsCache();
 		}
 	}
 
-	synchronized private static void initializeAssetsCacheIfNeeded() {
+	private static synchronized void initializeAssetsCache() {
 		if (assetCache != null) {
 			return;
 		}
@@ -114,14 +110,14 @@ public class AssetCacheSystem {
 	}
 
 	public static String getContent(String cacheKey) {
-		initializeAssetCache();
+		initializeIfNeeded();
 		LOG.debug("Content retrieved with the key {}", cacheKey);
 		return assetCache.getContent(cacheKey);
 	}
 
 	public static String storeContent(String context, String location, String resourceName, AssetType type,
 			String content) {
-		initializeAssetCache();
+		initializeIfNeeded();
 		String generatedKey = generateCacheKey(context, location, resourceName, type);
 		LOG.debug("Content stored under the key {}", generatedKey);
 		assetCache.storeContent(generatedKey, content);
@@ -129,7 +125,13 @@ public class AssetCacheSystem {
 	}
 
 	public static String getCacheName() {
-		initializeAssetCache();
+		initializeIfNeeded();
 		return assetCache.getCacheName();
+	}
+
+	/**
+	 * Prevents instantiation.
+	 */
+	private AssetCacheSystem() {
 	}
 }

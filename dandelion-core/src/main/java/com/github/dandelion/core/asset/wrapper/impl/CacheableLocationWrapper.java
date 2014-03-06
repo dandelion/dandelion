@@ -77,6 +77,15 @@ public abstract class CacheableLocationWrapper extends BaseLocationWrapper {
 		if (content == null || DevMode.enabled()) {
 			Map<String, Object> parameters = get(request).getParameters(asset.getName());
 			content = getContent(asset, location, parameters, request);
+			
+			// Apply replacement if parameters are provided
+			if(!parameters.isEmpty()){
+				for (Map.Entry<String, Object> entry : parameters.entrySet()) {
+					content = content.replace(entry.getKey(), entry.getValue().toString());
+				}
+			}
+			
+			// Finally store the final content in cache
 			storeContent(context, location, asset.getName(), asset.getType(), content);
 		}
 
@@ -89,7 +98,7 @@ public abstract class CacheableLocationWrapper extends BaseLocationWrapper {
 	@Override
 	public String getWrappedContent(Asset asset, HttpServletRequest request) {
 		String location = asset.getLocations().get(getLocationKey());
-		String prefixCacheKey = RequestUtils.getBaseUrl(request) + DANDELION_ASSETS_URL;
+		String prefixCacheKey = UrlUtils.getProcessedUrl(DANDELION_ASSETS_URL, request, null);
 		String cacheKey = location.replaceAll(prefixCacheKey, "");
 		return AssetCacheSystem.getContent(cacheKey);
 	}

@@ -29,9 +29,9 @@
  */
 package com.github.dandelion.core.asset.processor.impl;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -40,7 +40,7 @@ import org.slf4j.LoggerFactory;
 
 import com.github.dandelion.core.DevMode;
 import com.github.dandelion.core.asset.Asset;
-import com.github.dandelion.core.asset.AssetStack;
+import com.github.dandelion.core.asset.Assets;
 import com.github.dandelion.core.asset.processor.spi.AssetProcessor;
 import com.github.dandelion.core.asset.wrapper.spi.AssetLocationWrapper;
 
@@ -67,8 +67,8 @@ public class AssetLocationProcessor extends AssetProcessor {
 	}
 
 	@Override
-	public List<Asset> process(List<Asset> assets, HttpServletRequest request) {
-		List<Asset> _assets = new ArrayList<Asset>();
+	public Set<Asset> process(Set<Asset> assets, HttpServletRequest request) {
+		Set<Asset> _assets = new LinkedHashSet<Asset>();
 
 		for (Asset asset : assets) {
 			// no available locations = no locations
@@ -88,7 +88,7 @@ public class AssetLocationProcessor extends AssetProcessor {
 			else {
 				// otherwise search for the first match in authorized locations
 				LOG.debug("Search for the right location for {}", asset.toString());
-				for (String searchedLocationKey : AssetStack.getAssetLocations()) {
+				for (String searchedLocationKey : Assets.getAssetLocations()) {
 					if (asset.getLocations().containsKey(searchedLocationKey)) {
 						String location = asset.getLocations().get(searchedLocationKey);
 						if (location != null && !location.isEmpty()) {
@@ -103,13 +103,13 @@ public class AssetLocationProcessor extends AssetProcessor {
 			// And if any location was found = no locations
 			if (locationKey == null) {
 				LOG.warn("No location matches the requested location ({}) for the asset {} among {}.", locationKey,
-						asset.toString(), AssetStack.getAssetLocations());
+						asset.toString(), Assets.getAssetLocations());
 				continue;
 			}
 
 			// Otherwise check for wrapper
 			String location;
-			Map<String, AssetLocationWrapper> wrappers = AssetStack.getAssetLocationWrappers();
+			Map<String, AssetLocationWrapper> wrappers = Assets.getAssetLocationWrappers();
 			if (wrappers.containsKey(locationKey) && wrappers.get(locationKey).isActive()) {
 				LOG.debug("use location wrapper for {} on {}.", locationKey, asset);
 				location = wrappers.get(locationKey).getWrappedLocation(asset, request);
@@ -123,10 +123,12 @@ public class AssetLocationProcessor extends AssetProcessor {
 				continue;
 			}
 
-			Asset wrappedAsset = asset.clone(true);
+			asset.setLocation(location);
+			Asset wrappedAsset = asset.clone();
+			wrappedAsset.setLocation(location);
 			wrappedAsset.getLocations().put(locationKey, location);
 			if (DevMode.enabled()) {
-				debugAttributes(wrappedAsset, locationKey, false);
+				debugAttributes(asset, locationKey, false);
 			}
 			_assets.add(wrappedAsset);
 

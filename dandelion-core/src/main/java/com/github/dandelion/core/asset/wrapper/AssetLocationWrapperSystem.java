@@ -37,43 +37,44 @@ import org.slf4j.LoggerFactory;
 import com.github.dandelion.core.asset.wrapper.spi.AssetLocationWrapper;
 
 /**
- * System in charge of discovering all implementations of
- * {@link AssetLocationWrapper} available in the classpath.
+ * <p>
+ * System in charge of discovering all providers of {@link AssetLocationWrapper}
+ * available in the classpath.
  * 
  * @author Romain Lespinasse
+ * @author Thibault Duchateau
  * @since 0.10.0
  */
 public final class AssetLocationWrapperSystem {
 
-	// Logger
 	private static final Logger LOG = LoggerFactory.getLogger(AssetLocationWrapperSystem.class);
 
-	private static ServiceLoader<AssetLocationWrapper> locationWrapperServiceLoader = ServiceLoader
-			.load(AssetLocationWrapper.class);
+	private static ServiceLoader<AssetLocationWrapper> lwServiceLoader = ServiceLoader.load(AssetLocationWrapper.class);
 	private static List<AssetLocationWrapper> wrappers;
 
-	private static void initialize() {
+	private static void initializeIfNeeded() {
 		if (wrappers == null) {
-			initializeIfNeeded();
+			initialize();
 		}
 	}
 
-	synchronized private static void initializeIfNeeded() {
+	private synchronized static void initialize() {
 		if (wrappers != null) {
 			return;
 		}
 
 		List<AssetLocationWrapper> alws = new ArrayList<AssetLocationWrapper>();
-		for (AssetLocationWrapper alw : locationWrapperServiceLoader) {
+		for (AssetLocationWrapper alw : lwServiceLoader) {
 			alws.add(alw);
-			LOG.info("Asset location wrapper found: {} ({})", alw.getLocationKey(), alw.isActive() ? "active" : "inactive");
+			LOG.info("Asset location wrapper found: {} ({})", alw.getLocationKey(), alw.isActive() ? "active"
+					: "inactive");
 		}
 
 		wrappers = alws;
 	}
 
 	public static List<AssetLocationWrapper> getWrappers() {
-		initialize();
+		initializeIfNeeded();
 		return wrappers;
 	}
 
@@ -83,5 +84,11 @@ public final class AssetLocationWrapperSystem {
 			wrappers.put(wrapper.getLocationKey(), wrapper);
 		}
 		return wrappers;
+	}
+
+	/**
+	 * Prevents instantiation.
+	 */
+	private AssetLocationWrapperSystem() {
 	}
 }

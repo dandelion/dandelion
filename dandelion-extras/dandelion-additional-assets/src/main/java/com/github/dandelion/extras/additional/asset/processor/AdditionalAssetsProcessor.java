@@ -30,19 +30,19 @@
 
 package com.github.dandelion.extras.additional.asset.processor;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
-import com.github.dandelion.core.asset.processor.spi.AssetProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.github.dandelion.core.DevMode;
 import com.github.dandelion.core.asset.Asset;
-import com.github.dandelion.core.asset.AssetStack;
+import com.github.dandelion.core.asset.Assets;
+import com.github.dandelion.core.asset.processor.spi.AssetProcessor;
 import com.github.dandelion.core.asset.web.AssetRequestContext;
 import com.github.dandelion.core.asset.wrapper.spi.AssetLocationWrapper;
 import com.github.dandelion.core.config.Configuration;
@@ -74,16 +74,16 @@ public class AdditionalAssetsProcessor extends AssetProcessor {
 	}
 
 	@Override
-	public List<Asset> process(List<Asset> assets, HttpServletRequest request) {
+	public Set<Asset> process(Set<Asset> assets, HttpServletRequest request) {
 		if (!additionalAssetsEnabled) {
 			return assets;
 		}
 
-		List<Asset> processedAssets = new ArrayList<Asset>();
+		Set<Asset> processedAssets = new LinkedHashSet<Asset>();
 		for (Asset asset : assets) {
 			if (asset.getLocations().size() == 1 && asset.getLocations().containsKey(getProcessorKey())) {
 				Map<String, Object> parameters = AssetRequestContext.get(request).getParameters(asset.getName());
-				Map<String, AssetLocationWrapper> wrappers = AssetStack.getAssetLocationWrappers();
+				Map<String, AssetLocationWrapper> wrappers = Assets.getAssetLocationWrappers();
 				for (Map.Entry<String, Object> entry : parameters.entrySet()) {
 					Asset additionalAsset = asset.clone(true);
 					additionalAsset.getLocations().put(entry.getKey(), entry.getValue().toString());

@@ -29,7 +29,7 @@
  */
 package com.github.dandelion.core.asset.processor.spi;
 
-import java.util.List;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -52,12 +52,12 @@ public abstract class AssetProcessor implements Comparable<AssetProcessor> {
 		this.nextEntry = nextEntry;
 	}
 
-	public List<Asset> doProcess(List<Asset> assets, HttpServletRequest request) {
-		List<Asset> _assets = process(assets, request);
+	public Set<Asset> doProcess(Set<Asset> assets, HttpServletRequest request) {
+		Set<Asset> _assets = process(assets, request);
 		return nextEntry == null ? _assets : nextEntry.doProcess(_assets, request);
 	}
 
-	public abstract List<Asset> process(List<Asset> assets, HttpServletRequest request);
+	public abstract Set<Asset> process(Set<Asset> assets, HttpServletRequest request);
 
 	public abstract String getProcessorKey();
 

@@ -43,7 +43,7 @@ import com.github.dandelion.core.asset.AssetType;
 import com.github.dandelion.core.asset.web.AssetRequestContext;
 
 public class DelegatedLocationWrapperTest {
-	DelegatedLocationWrapper wrapper = new DelegatedLocationWrapper();
+	DelegateLocationWrapper wrapper = new DelegateLocationWrapper();
 
 	@Test
 	public void should_can_wrap_location_and_get_it() {
@@ -52,7 +52,7 @@ public class DelegatedLocationWrapperTest {
 		request.setContextPath("/context");
 
 		AssetRequestContext.get(request).addParameter("asset-delegated",
-				DelegatedLocationWrapper.DELEGATED_CONTENT_PARAM, new DelegatedContent() {
+				DelegateLocationWrapper.DELEGATED_CONTENT_PARAM, new DelegatedContent() {
 					@Override
 					public String getContent(HttpServletRequest request) {
 						return "/* content */";
@@ -64,7 +64,7 @@ public class DelegatedLocationWrapperTest {
 		String location = wrapper.getWrappedLocation(asset, request);
 		assertThat(location)
 				.isEqualTo(
-                        "http://localhost:80/context/dandelion-assets/0cf3fbac07aa31f38153ba45eca0c943d627ba8b-asset-delegated.js");
+                        "/context/dandelion-assets/0cf3fbac07aa31f38153ba45eca0c943d627ba8b-asset-delegated.js");
 
 		asset = new Asset("asset-delegated", "1.0", AssetType.js, singletonMap(wrapper.getLocationKey(), location));
 		String content = wrapper.getWrappedContent(asset, request);

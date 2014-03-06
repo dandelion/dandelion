@@ -33,15 +33,16 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.ServiceLoader;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
-import com.github.dandelion.core.asset.processor.impl.AssetLocationProcessor;
-import com.github.dandelion.core.asset.processor.spi.AssetProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.github.dandelion.core.asset.Asset;
+import com.github.dandelion.core.asset.processor.impl.AssetLocationProcessor;
+import com.github.dandelion.core.asset.processor.spi.AssetProcessor;
 
 /**
  * <p>
@@ -60,9 +61,6 @@ public final class AssetProcessorSystem {
 			.load(AssetProcessor.class);
 	private static List<AssetProcessor> processors = new ArrayList<AssetProcessor>();
 	private static AssetProcessor starter;
-
-	private AssetProcessorSystem() {
-	}
 
 	private static void initialize() {
 		if (starter == null) {
@@ -100,7 +98,13 @@ public final class AssetProcessorSystem {
 		return starter;
 	}
 
-	public static List<Asset> process(List<Asset> assets, HttpServletRequest request) {
+	public static Set<Asset> process(Set<Asset> assets, HttpServletRequest request) {
 		return getStarter().doProcess(assets, request);
+	}
+	
+	/**
+	 * Prevents instantiation.
+	 */
+	private AssetProcessorSystem() {
 	}
 }

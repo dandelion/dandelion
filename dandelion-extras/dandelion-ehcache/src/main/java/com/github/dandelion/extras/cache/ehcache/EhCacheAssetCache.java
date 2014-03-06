@@ -81,7 +81,6 @@ import com.github.dandelion.core.utils.StringUtils;
  */
 public class EhCacheAssetCache implements AssetCache {
 
-	// Logger
 	private static final Logger LOG = LoggerFactory.getLogger(EhCacheAssetCache.class);
 
 	private Cache cache;
@@ -95,7 +94,7 @@ public class EhCacheAssetCache implements AssetCache {
 		if (StringUtils.isNotBlank(cacheManagerName)) {
 			cacheManager = CacheManager.getCacheManager(cacheManagerName);
 		}
-		// Or create one
+		// Otherwise create one
 		else {
 			InputStream stream = null;
 

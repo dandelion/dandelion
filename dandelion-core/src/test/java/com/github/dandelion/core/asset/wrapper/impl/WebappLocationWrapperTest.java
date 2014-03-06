@@ -51,9 +51,9 @@ public class WebappLocationWrapperTest {
 		request.setRequestURI("/context/page.html");
 		request.setContextPath("/context");
 
-		Asset asset = new Asset("asset-webapp", "1.0", AssetType.js, singletonMap(wrapper.getLocationKey(), "asset.js"));
+		Asset asset = new Asset("asset-webapp", "1.0", AssetType.js, singletonMap(wrapper.getLocationKey(), "/assets/js/asset.js"));
 		String location = wrapper.getWrappedLocation(asset, request);
-		assertThat(location).isEqualTo("http://localhost:80/context/asset.js");
+		assertThat(location).isEqualTo("/context/assets/js/asset.js");
 	}
 
 	@Test

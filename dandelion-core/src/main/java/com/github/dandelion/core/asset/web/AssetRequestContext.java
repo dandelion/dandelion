@@ -44,6 +44,7 @@ import com.github.dandelion.core.config.Configuration;
  * page.
  * 
  * @author Romain Lespinasse
+ * @author Thibault Duchateau
  * @since 0.10.0
  */
 public class AssetRequestContext {
@@ -71,8 +72,7 @@ public class AssetRequestContext {
 		Object attribute = servletRequest.getAttribute(AssetRequestContext.class.getCanonicalName());
 		if (attribute == null || !(attribute instanceof AssetRequestContext)) {
 			attribute = new AssetRequestContext();
-			((AssetRequestContext) attribute).addBundles(Configuration.getProperties().getProperty(
-					"bundles.include"));
+			((AssetRequestContext) attribute).addBundles(Configuration.getProperties().getProperty("bundle.include"));
 			servletRequest.setAttribute(AssetRequestContext.class.getCanonicalName(), attribute);
 		}
 		return AssetRequestContext.class.cast(attribute);
@@ -265,8 +265,9 @@ public class AssetRequestContext {
 	 * @return this context
 	 */
 	public AssetRequestContext addBundles(String bundles) {
-		if (bundles == null || bundles.isEmpty())
+		if (bundles == null || bundles.isEmpty()) {
 			return this;
+		}
 		return addBundles(bundles.split(","));
 	}
 
@@ -574,7 +575,6 @@ public class AssetRequestContext {
 	 *            context.getParameterValue(...) )
 	 * @return the value of the parameter, or <code>null</code> value
 	 */
-	@SuppressWarnings("unchecked")
 	public <T> T getParameterValue(AssetName assetName, String parameter) {
 		return getParameterValue(assetName.toString(), parameter);
 	}
@@ -592,8 +592,14 @@ public class AssetRequestContext {
 	 *            context.getParameterValue(...) )
 	 * @return the value of the parameter, or <code>null</code> value
 	 */
-	@SuppressWarnings("unchecked")
 	public <T> T getParameterValue(Object assetName, String parameter) {
 		return getParameterValue(assetName.toString(), parameter);
+	}
+
+	public void clear() {
+		this.bundles = new ArrayList<String>();
+		this.excludedBundles = new ArrayList<String>();
+		this.excludedAssets = new ArrayList<String>();
+		this.parameters = new HashMap<String, Map<String, Object>>();
 	}
 }

@@ -42,6 +42,7 @@ import org.slf4j.LoggerFactory;
 
 import com.github.dandelion.core.asset.cache.AssetCacheSystem;
 import com.github.dandelion.core.asset.web.data.AssetContent;
+import com.github.dandelion.core.utils.HtmlUtils;
 
 /**
  * <p>
@@ -66,9 +67,9 @@ public class AssetServlet extends HttpServlet {
 		getLogger().debug("Dandelion Asset servlet captured GET request {}", request.getRequestURI());
 
 		String assetKey = request.getRequestURL().substring(request.getRequestURL().lastIndexOf("/") + 1);
-		AssetContent assetContent = HtmlUtil.getAssetContent(assetKey);
+		AssetContent assetContent = HtmlUtils.getAssetContent(assetKey);
 
-		response.setHeader("Cache-Control", HtmlUtil.getCacheControl());
+		response.setHeader("Cache-Control", HtmlUtils.getCacheControl());
 		response.setContentType(assetContent.getContentType());
 
 		PrintWriter writer = response.getWriter();

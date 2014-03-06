@@ -33,10 +33,10 @@ import static com.github.dandelion.core.asset.cache.AssetCacheSystem.generateCac
 import static com.github.dandelion.core.asset.cache.AssetCacheSystem.storeContent;
 import static com.github.dandelion.core.asset.web.AssetServlet.DANDELION_ASSETS_URL;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
+import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -44,8 +44,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.github.dandelion.core.asset.Asset;
-import com.github.dandelion.core.asset.AssetStack;
 import com.github.dandelion.core.asset.AssetType;
+import com.github.dandelion.core.asset.AssetUtils;
+import com.github.dandelion.core.asset.Assets;
 import com.github.dandelion.core.asset.processor.spi.AssetProcessor;
 import com.github.dandelion.core.asset.wrapper.spi.AssetLocationWrapper;
 import com.github.dandelion.core.config.Configuration;
@@ -55,7 +56,7 @@ import com.github.dandelion.core.utils.ResourceUtils;
 /**
  * <p>
  * Processor entry in charge of aggregating all assets present in the
- * {@link AssetStack}.
+ * {@link Assets}.
  * 
  * @author Romain Lespinasse
  * @since 0.10.0
@@ -87,7 +88,7 @@ public class AssetAggregationProcessor extends AssetProcessor {
 	}
 
 	@Override
-	public List<Asset> process(List<Asset> assets, HttpServletRequest request) {
+	public Set<Asset> process(Set<Asset> assets, HttpServletRequest request) {
 		if (!aggregationEnabled) {
 			return assets;
 		}
@@ -97,10 +98,12 @@ public class AssetAggregationProcessor extends AssetProcessor {
 
 		String baseUrl = RequestUtils.getBaseUrl(request);
 
-		List<Asset> aggregatedAssets = new ArrayList<Asset>();
+		Set<Asset> aggregatedAssets = new LinkedHashSet<Asset>();
 		for (AssetType type : AssetType.values()) {
 			LOG.debug("Aggregation for asset type {}", type.name());
-			List<Asset> typedAssets = AssetStack.filterByType(assets, type);
+			
+			// TODO supprimer la boucle sur AssetType.values()
+			Set<Asset> typedAssets = AssetUtils.filterByType(assets, type);
 
 			if (typedAssets.isEmpty()) {
 				LOG.debug("No asset for type {}", type.name());
@@ -128,9 +131,9 @@ public class AssetAggregationProcessor extends AssetProcessor {
 	}
 
 	private void cacheAggregatedContent(HttpServletRequest request, String context, AssetType type,
-			List<Asset> typedAssets, String generatedAssetKey) {
+			Set<Asset> typedAssets, String generatedAssetKey) {
 
-		Map<String, AssetLocationWrapper> wrappers = AssetStack.getAssetLocationWrappers();
+		Map<String, AssetLocationWrapper> wrappers = Assets.getAssetLocationWrappers();
 		StringBuilder aggregatedContent = new StringBuilder();
 
 		for (Asset asset : typedAssets) {
@@ -152,7 +155,7 @@ public class AssetAggregationProcessor extends AssetProcessor {
 		storeContent(context, generatedAssetKey, AGGREGATION, type, aggregatedContent.toString());
 	}
 
-	private String generateAggregationKey(List<Asset> assets) {
+	private String generateAggregationKey(Set<Asset> assets) {
 		StringBuilder key = new StringBuilder();
 
 		for (Asset asset : assets) {

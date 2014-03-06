@@ -37,7 +37,6 @@ import java.net.URLConnection;
 import java.net.URLDecoder;
 import java.util.Enumeration;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
@@ -106,7 +105,7 @@ public final class ResourceScanner {
 	 * @throws IOException
 	 *             if something goes wrong during the scanning.
 	 */
-	public static Set<String> findResourcePaths(String location, List<String> excludedPaths, String nameFilter,
+	public static Set<String> findResourcePaths(String location, Set<String> excludedPaths, String nameFilter,
 			boolean recursive) throws IOException {
 		return scanForResourcePaths(location, excludedPaths, nameFilter, null, null, recursive);
 	}
@@ -131,7 +130,7 @@ public final class ResourceScanner {
 	 * @throws IOException
 	 *             if something goes wrong during the scanning.
 	 */
-	public static Set<String> findResourcePaths(String location, List<String> excludedPaths, String prefixFilter,
+	public static Set<String> findResourcePaths(String location, Set<String> excludedPaths, String prefixFilter,
 			String suffixFilter, boolean recursive) throws IOException {
 		return scanForResourcePaths(location, excludedPaths, null, prefixFilter, suffixFilter, recursive);
 	}
@@ -162,7 +161,7 @@ public final class ResourceScanner {
 	 *             supported. This may happen with the JBoss VFS which is still
 	 *             not supported.
 	 */
-	private static Set<String> scanForResourcePaths(String location, List<String> excludedPaths, String nameFilter,
+	private static Set<String> scanForResourcePaths(String location, Set<String> excludedPaths, String nameFilter,
 			String prefixFilter, String suffixFilter, boolean recursive) throws IOException {
 
 		LOG.trace("Scanning for resources at '{}'...", location);
@@ -201,7 +200,7 @@ public final class ResourceScanner {
 		}
 
 		LOG.debug("{} resources found before filtering", resourcePaths.size());
-		return filterResourcePaths(resourcePaths, excludedPaths, nameFilter, prefixFilter, suffixFilter);
+		return filterResourcePaths(location, resourcePaths, excludedPaths, nameFilter, prefixFilter, suffixFilter);
 	}
 
 	/**
@@ -289,21 +288,29 @@ public final class ResourceScanner {
 	 * @param path
 	 *            The path name that must not be present in the list of excluded
 	 *            paths.
+	 * @param authorizedLocation
+	 *            Current location being scanned by the scanner.
 	 * @param excludedPaths
 	 *            List of paths which will be excluded during the classpath
 	 *            scanning.
 	 * @return {@code true} if the path is authorized, otherwise {@code false}.
 	 */
-	private static boolean isPathAuthorized(String path, List<String> excludedPaths) {
+	private static boolean isPathAuthorized(String resourcePath, String authorizedLocation, Set<String> excludedPaths) {
+
 		if (excludedPaths != null) {
 			for (String excludedFolder : excludedPaths) {
-				if (path.contains(excludedFolder)) {
+				if (resourcePath.startsWith(excludedFolder)) {
 					return false;
 				}
 			}
+			return true;
 		}
-
-		return true;
+		else if (resourcePath.startsWith(authorizedLocation)) {
+			return true;
+		}
+		else {
+			return false;
+		}
 	}
 
 	/**
@@ -331,14 +338,14 @@ public final class ResourceScanner {
 	 *            The suffix condition to be applied on the resource name;
 	 * @return A set of resource paths that match the given conditions.
 	 */
-	private static Set<String> filterResourcePaths(Set<String> resourcePaths, List<String> excludedPaths,
-			String nameFilter, String prefixFilter, String suffixFilter) {
+	private static Set<String> filterResourcePaths(String location, Set<String> resourcePaths,
+			Set<String> excludedPaths, String nameFilter, String prefixFilter, String suffixFilter) {
 		Set<String> filteredResources = new HashSet<String>();
 
 		LOG.debug("Filtering scanned resources");
 		for (String resourcePath : resourcePaths) {
 
-			if (isPathAuthorized(resourcePath, excludedPaths)) {
+			if (isPathAuthorized(resourcePath, location, excludedPaths)) {
 
 				String resourceName = resourcePath.substring(resourcePath.lastIndexOf("/") + 1);
 
@@ -372,5 +379,11 @@ public final class ResourceScanner {
 
 		LOG.debug("{} resources found after filtering", filteredResources.size());
 		return filteredResources;
+	}
+
+	/**
+	 * Prevents instantiation.
+	 */
+	private ResourceScanner() {
 	}
 }

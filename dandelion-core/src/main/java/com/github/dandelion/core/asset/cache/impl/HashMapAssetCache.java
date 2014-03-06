@@ -39,6 +39,9 @@ import com.github.dandelion.core.asset.cache.spi.AssetCache;
  * Service provider for {@link AssetCache} that uses a simple
  * {@link ConcurrentHashMap} as a store.
  * 
+ * <p>
+ * Note that this implementation is not cluster-safe.
+ * 
  * @author Romain Lespinasse
  * @since 0.10.0
  */

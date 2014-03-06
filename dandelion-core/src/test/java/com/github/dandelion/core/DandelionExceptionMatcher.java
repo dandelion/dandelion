@@ -38,7 +38,8 @@ import org.hamcrest.Description;
 /**
  * Matcher for test {@link DandelionException}
  */
-public class DandelionExceptionMatcher extends BaseMatcher {
+public class DandelionExceptionMatcher extends BaseMatcher<DandelionError> {
+	
 	DandelionError error;
 	private Map<String, Object> parameters = new HashMap<String, Object>();
 

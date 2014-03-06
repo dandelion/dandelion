@@ -1,0 +1,14 @@
+{
+    "bundle": "bundle2",
+    "assets": [
+               {
+                   "name": "a2_1",
+                   "version": "1",
+                   "type": "js",
+                   "locations": {
+                       "cdn": "//some.cdn/asset2_1",
+                       "webapp": "/localPath"
+                   }
+               }
+           ]
+}

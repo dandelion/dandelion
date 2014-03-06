@@ -84,8 +84,8 @@ public final class ResourceUtils {
 
 	public static String getContentFromUrl(HttpServletRequest request, String url, boolean neverFail) {
 		try {
-			
-			if (url.startsWith(PROTOCOL_RELATIVE_PREFIX)) {
+
+			if (UrlUtils.isProtocolRelative(url)) {
 				url = request.isSecure() ? "https:" : "http:" + url;
 			}
 
@@ -94,12 +94,18 @@ public final class ResourceUtils {
 		}
 		catch (IOException e) {
 			DandelionException de = DandelionException.wrap(e, ResourceError.CONTENT_CANT_BE_READ_FROM_URL).set("url",
-                    url);
+					url);
 			if (neverFail) {
 				LOG.debug(de.getLocalizedMessage(), de);
 				return "";
 			}
 			throw de;
 		}
+	}
+
+	/**
+	 * Prevents instantiation.
+	 */
+	private ResourceUtils() {
 	}
 }

@@ -33,8 +33,8 @@ package com.github.dandelion.core.asset.wrapper.impl;
 import javax.servlet.http.HttpServletRequest;
 
 import com.github.dandelion.core.asset.Asset;
-import com.github.dandelion.core.utils.RequestUtils;
 import com.github.dandelion.core.utils.ResourceUtils;
+import com.github.dandelion.core.utils.UrlUtils;
 
 /**
  * <p>
@@ -67,16 +67,7 @@ public class WebappLocationWrapper extends BaseLocationWrapper {
 	@Override
 	public String getWrappedLocation(Asset asset, HttpServletRequest request) {
 		String location = asset.getLocations().get(getLocationKey());
-		String base = RequestUtils.getBaseUrl(request);
-		boolean pathLocation = location.startsWith("/");
-		boolean pathBase = base.endsWith("/");
-		if (pathLocation && pathBase) {
-			location = location.substring(1);
-		}
-		else if (!pathLocation && !pathBase) {
-			location = "/" + location;
-		}
-		return base + location;
+		return UrlUtils.getProcessedUrl(location, request, null);
 	}
 
 	/**
