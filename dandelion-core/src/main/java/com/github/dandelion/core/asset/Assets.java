@@ -130,7 +130,7 @@ public final class Assets {
 	 * @return a filtered list of assets
 	 */
 	public static Set<Asset> excludeByName(Set<Asset> assets, String... filters) {
-		Set<Asset> _assets = new HashSet<Asset>();
+		Set<Asset> _assets = new LinkedHashSet<Asset>();
 		List<String> _filters = new ArrayList<String>();
 		
 		if(filters != null){
