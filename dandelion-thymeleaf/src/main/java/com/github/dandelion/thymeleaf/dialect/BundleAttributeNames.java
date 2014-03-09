@@ -29,12 +29,12 @@
  */
 package com.github.dandelion.thymeleaf.dialect;
 
-import com.github.dandelion.core.asset.web.data.AssetBundle;
+import com.github.dandelion.core.bundle.Bundle;
 import com.github.dandelion.thymeleaf.util.AttributeName;
 
 /**
  * Attributes used by the {@link DandelionDialect} when dealing with
- * {@link AssetBundle}.
+ * {@link Bundle}s.
  * 
  * @author Thibault Duchateau
  * @since 0.10.0

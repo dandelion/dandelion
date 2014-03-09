@@ -30,18 +30,59 @@
 
 package com.github.dandelion.core.asset.web;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import javax.servlet.ServletRequest;
+import javax.servlet.http.HttpServletRequest;
 
-import com.github.dandelion.core.asset.web.data.AssetName;
-import com.github.dandelion.core.asset.web.data.AssetBundle;
 import com.github.dandelion.core.config.Configuration;
 
 /**
  * <p>
- * Request context used to store all needed assets by bundle loaded within a
- * page.
+ * Main entry point for manipulating the assets graph of the given
+ * {@link HttpServletRequest}.
+ * 
+ * <p>
+ * The assets graph can be manipulated in many ways:
+ * <ul>
+ * <li>By adding/removing bundle(s) (using the bundle names) <br/>
+ * For example:
+ * 
+ * <pre>
+ * AssetRequestContext.get(request).addBundle(&quot;myBundle&quot;);
+ * </pre>
+ * 
+ * or
+ * 
+ * <pre>
+ * AssetRequestContext.get(request).addBundles(&quot;myBundle1&quot;, &quot;myBundle2&quot;);
+ * </pre>
+ * 
+ * </li>
+ * <li>By excluding asset(s) (using the asset names) <br/>
+ * For example:
+ * 
+ * <pre>
+ * AssetRequestContext.get(request).addBundle(&quot;myBundle1&quot;).excludeAsset(&quot;assetName1&quot;);
+ * </pre>
+ * 
+ * </li>
+ * <li>By parameterizing asset(s). <br/>
+ * For example:
+ * 
+ * <pre>
+ * AssetRequestContext.get(request).addBundle(&quot;myBundle1&quot;).addParameter(&quot;assetName1&quot;, &quot;paramName1&quot;, &quot;paramValue1&quot;);
+ * </pre>
+ * 
+ * </li>
+ * </ul>
+ * </p>
  * 
  * @author Romain Lespinasse
  * @author Thibault Duchateau
@@ -79,11 +120,115 @@ public class AssetRequestContext {
 	}
 
 	/**
-	 * Fluent exclude for bundles.
+	 * <p>
+	 * Adds the given comma-separated bundle(s) to the current
+	 * {@link AssetRequestContext}.
 	 * 
 	 * @param bundles
-	 *            Comma-separated bundles to exclude.
-	 * @return this context
+	 *            A comma-separated list of bundles.
+	 * @return the current {@link AssetRequestContext}.
+	 */
+	public AssetRequestContext addBundles(String bundles) {
+		if (bundles == null || bundles.isEmpty()) {
+			return this;
+		}
+		return addBundles(bundles.split(","));
+	}
+
+	/**
+	 * <p>
+	 * Adds the given bundle array to the current {@link AssetRequestContext}.
+	 * 
+	 * @param bundles
+	 *            An array containing the bundle names.
+	 * @return the current {@link AssetRequestContext}.
+	 */
+	public AssetRequestContext addBundles(String... bundles) {
+		this.bundles.addAll(Arrays.asList(bundles));
+		return this;
+	}
+
+	/**
+	 * <p>
+	 * Adds the given collection of bundles to the current
+	 * {@link AssetRequestContext}.
+	 * 
+	 * @param bundles
+	 *            A collection of bundle names.
+	 * @return the current {@link AssetRequestContext}.
+	 */
+	public AssetRequestContext addBundles(Collection<String> bundles) {
+		for (String bundle : bundles) {
+			addBundle(bundle);
+		}
+		return this;
+	}
+
+	/**
+	 * <p>
+	 * Adds the given array of enum to the current {@link AssetRequestContext}.
+	 * <p>
+	 * All enums are first processed by replacing "_" by "-" and by lowercasing
+	 * its value.
+	 * 
+	 * @param bundles
+	 *            An array containing the enums.
+	 * @return the current {@link AssetRequestContext}.
+	 */
+	public AssetRequestContext addBundles(Enum<?>... bundles) {
+		for (Enum<?> bundle : bundles) {
+			addBundle(bundle);
+		}
+		return this;
+	}
+
+	/**
+	 * <p>
+	 * Adds the given bundle name to the current {@link AssetRequestContext}.
+	 * 
+	 * @param bundle
+	 *            The bundle name to add.
+	 * @return the current {@link AssetRequestContext#}
+	 */
+	public AssetRequestContext addBundle(String bundle) {
+		this.bundles.add(bundle.trim());
+		return this;
+	}
+
+	/**
+	 * <p>
+	 * Adds the given enum (representing a bundle name) to the current
+	 * {@link AssetRequestContext}.
+	 * 
+	 * @param bundle
+	 *            The enum to add.
+	 * @return the current {@link AssetRequestContext}.
+	 */
+	public AssetRequestContext addBundle(Enum<?> bundle) {
+		addBundle(bundle.toString().toLowerCase().replace("_", "-"));
+		return this;
+	}
+
+	/**
+	 * @return all bundle names stored in the current
+	 *         {@link AssetRequestContext}.
+	 */
+	public String[] getBundles(boolean withoutExcludedBundles) {
+		List<String> _bundles = new ArrayList<String>(bundles);
+		if (withoutExcludedBundles) {
+			_bundles.removeAll(excludedBundles);
+		}
+		return _bundles.toArray(new String[_bundles.size()]);
+	}
+
+	/**
+	 * <p>
+	 * Excludes a comma-separated list of bundle names from the current
+	 * {@link AssetRequestContext}.
+	 * 
+	 * @param bundles
+	 *            A comma-separated list of bundle names to exclude.
+	 * @return the current {@link AssetRequestContext}.
 	 */
 	public AssetRequestContext excludeBundles(String bundles) {
 		if (bundles == null || bundles.isEmpty()) {
@@ -101,70 +246,6 @@ public class AssetRequestContext {
 	 */
 	private AssetRequestContext excludeBundles(String... bundles) {
 		this.excludedBundles.addAll(Arrays.asList(bundles));
-		return this;
-	}
-
-	/**
-	 * Fluent exclude for scopes
-	 * 
-	 * @param bundles
-	 *            scopes
-	 * @return this context
-	 */
-	private AssetRequestContext excludeBundles(AssetBundle... bundles) {
-		for (AssetBundle bundle : bundles) {
-			excludeBundle(bundle);
-		}
-		return this;
-	}
-
-	/**
-	 * Fluent exclude for scopes (as Object with toString())
-	 * 
-	 * @param bundles
-	 *            scopes
-	 * @return this context
-	 */
-	private AssetRequestContext excludeBundles(Object... bundles) {
-		for (Object bundle : bundles) {
-			excludeBundle(bundle);
-		}
-		return this;
-	}
-
-	/**
-	 * Fluent exclude for scope
-	 * 
-	 * @param bundle
-	 *            scope
-	 * @return this context
-	 */
-	private AssetRequestContext excludeBundle(String bundle) {
-		this.excludedBundles.add(bundle);
-		return this;
-	}
-
-	/**
-	 * Fluent exclude for scope
-	 * 
-	 * @param bundle
-	 *            scope
-	 * @return this context
-	 */
-	private AssetRequestContext excludeBundle(AssetBundle bundle) {
-		this.excludedBundles.add(bundle.toString());
-		return this;
-	}
-
-	/**
-	 * Fluent exclude for scope (as Object with toString())
-	 * 
-	 * @param bundle
-	 *            scope
-	 * @return this context
-	 */
-	private AssetRequestContext excludeBundle(Object bundle) {
-		this.excludedBundles.add(bundle.toString());
 		return this;
 	}
 
@@ -195,197 +276,6 @@ public class AssetRequestContext {
 	}
 
 	/**
-	 * Fluent exclude for asset names
-	 * 
-	 * @param assetNames
-	 *            asset names
-	 * @return this context
-	 */
-	private AssetRequestContext excludeAssets(AssetName... assetNames) {
-		for (Object asset : assetNames) {
-			excludeAsset(asset);
-		}
-		return this;
-	}
-
-	/**
-	 * Fluent exclude for asset names (as Object with toString())
-	 * 
-	 * @param assetNames
-	 *            asset names
-	 * @return this context
-	 */
-	private AssetRequestContext excludeAssets(Object... assetNames) {
-		for (Object asset : assetNames) {
-			excludeAsset(asset);
-		}
-		return this;
-	}
-
-	/**
-	 * Fluent exclude for asset name
-	 * 
-	 * @param assetName
-	 *            asset name
-	 * @return this context
-	 */
-	private AssetRequestContext excludeAsset(String assetName) {
-		this.excludedAssets.add(assetName);
-		return this;
-	}
-
-	/**
-	 * Fluent exclude for asset name
-	 * 
-	 * @param assetName
-	 *            asset name
-	 * @return this context
-	 */
-	private AssetRequestContext excludeAsset(AssetName assetName) {
-		this.excludedAssets.add(assetName.toString());
-		return this;
-	}
-
-	/**
-	 * Fluent exclude for asset name (as Object with toString())
-	 * 
-	 * @param assetName
-	 *            asset name
-	 * @return this context
-	 */
-	private AssetRequestContext excludeAsset(Object assetName) {
-		this.excludedAssets.add(assetName.toString());
-		return this;
-	}
-
-	/**
-	 * Fluent adder for bundles.
-	 * 
-	 * @param bundles
-	 *            A string containing comma-separated bundles.
-	 * @return this context
-	 */
-	public AssetRequestContext addBundles(String bundles) {
-		if (bundles == null || bundles.isEmpty()) {
-			return this;
-		}
-		return addBundles(bundles.split(","));
-	}
-
-	/**
-	 * Fluent adder for scopes
-	 * 
-	 * @param bundles
-	 *            scopes
-	 * @return this context
-	 */
-	public AssetRequestContext addBundles(String... bundles) {
-		this.bundles.addAll(Arrays.asList(bundles));
-		return this;
-	}
-
-	/**
-	 * Fluent adder for scopes
-	 * 
-	 * @param bundles
-	 *            scopes
-	 * @return this context
-	 */
-	public AssetRequestContext addBundles(AssetBundle... bundles) {
-		for (AssetBundle bundle : bundles) {
-			addBundle(bundle);
-		}
-		return this;
-	}
-
-	/**
-	 * Fluent adder for scopes (as Object with toString())
-	 * 
-	 * @param bundles
-	 *            scopes
-	 * @return this context
-	 */
-	public AssetRequestContext addBundles(Object... bundles) {
-		for (Object bundle : bundles) {
-			addBundle(bundle);
-		}
-		return this;
-	}
-
-	/**
-	 * Fluent adder for scopes (as Object with toString())
-	 * 
-	 * @param bundles
-	 *            scopes
-	 * @return this context
-	 */
-	public AssetRequestContext addBundles(Enum<?>... bundles) {
-		for (Enum<?> bundle : bundles) {
-			addBundle(bundle);
-		}
-		return this;
-	}
-
-	/**
-	 * Fluent adder for scope
-	 * 
-	 * @param bundle
-	 *            scope
-	 * @return this context
-	 */
-	public AssetRequestContext addBundle(String bundle) {
-		this.bundles.add(bundle);
-		return this;
-	}
-
-	/**
-	 * Fluent adder for scope
-	 * 
-	 * @param bundle
-	 *            scope
-	 * @return this context
-	 */
-	public AssetRequestContext addBundle(AssetBundle bundle) {
-		addBundle(bundle.toString());
-		return this;
-	}
-
-	/**
-	 * Fluent adder for scope (as Object with toString())
-	 * 
-	 * @param bundle
-	 *            scope
-	 * @return this context
-	 */
-	public AssetRequestContext addBundle(Object bundle) {
-		addBundle(bundle.toString());
-		return this;
-	}
-
-	/**
-	 * Fluent adder for scope (as Object with toString())
-	 * 
-	 * @param bundle
-	 *            scope
-	 * @return this context
-	 */
-	public AssetRequestContext addBundle(Enum<?> bundle) {
-		addBundle(bundle.toString().toLowerCase().replace("_", "-"));
-		return this;
-	}
-
-	/**
-	 * @return all stored scopes in this context
-	 */
-	public String[] getBundles(boolean withoutExcludedBundles) {
-		List<String> _bundles = new ArrayList<String>(bundles);
-		if (withoutExcludedBundles) {
-			_bundles.removeAll(excludedBundles);
-		}
-		return _bundles.toArray(new String[_bundles.size()]);
-	}
-
-	/**
 	 * @return all scopes to remove
 	 */
 	public String[] getExcludedBundles() {
@@ -412,21 +302,6 @@ public class AssetRequestContext {
 	 */
 	public AssetRequestContext addParameter(String assetName, String parameter, Object value) {
 		return addParameter(assetName, parameter, value, false);
-	}
-
-	/**
-	 * Add a parameter value on a specific asset name
-	 * 
-	 * @param assetName
-	 *            asset name
-	 * @param parameter
-	 *            parameter
-	 * @param value
-	 *            value
-	 * @return this context
-	 */
-	public AssetRequestContext addParameter(AssetName assetName, String parameter, Object value) {
-		return addParameter(assetName.toString(), parameter, value, false);
 	}
 
 	/**
@@ -473,23 +348,6 @@ public class AssetRequestContext {
 	}
 
 	/**
-	 * Add a parameter value on a specific asset name
-	 * 
-	 * @param assetName
-	 *            asset name
-	 * @param parameter
-	 *            parameter
-	 * @param value
-	 *            value
-	 * @param replaceIfExists
-	 *            replace the parameter if he exists already
-	 * @return this context
-	 */
-	public AssetRequestContext addParameter(AssetName assetName, String parameter, Object value, boolean replaceIfExists) {
-		return addParameter(assetName.toString(), parameter, value, replaceIfExists);
-	}
-
-	/**
 	 * Add a parameter value on a specific asset name (as Object with
 	 * toString())
 	 * 
@@ -522,17 +380,6 @@ public class AssetRequestContext {
 	}
 
 	/**
-	 * Get the parameters for a asset name
-	 * 
-	 * @param assetName
-	 *            asset name
-	 * @return the parameter of the asset name, or empty map
-	 */
-	public Map<String, Object> getParameters(AssetName assetName) {
-		return getParameters(assetName.toString());
-	}
-
-	/**
 	 * Get the parameters for a asset name (as Object with toString())
 	 * 
 	 * @param assetName
@@ -562,22 +409,6 @@ public class AssetRequestContext {
 			return null;
 		}
 		return (T) values.get(parameter);
-	}
-
-	/**
-	 * Get the value of the parameter for the asset name
-	 * 
-	 * @param assetName
-	 *            asset name
-	 * @param parameter
-	 *            parameter
-	 * @param <T>
-	 *            type of the value (aka TypeOfValue value =
-	 *            context.getParameterValue(...) )
-	 * @return the value of the parameter, or <code>null</code> value
-	 */
-	public <T> T getParameterValue(AssetName assetName, String parameter) {
-		return getParameterValue(assetName.toString(), parameter);
 	}
 
 	/**
