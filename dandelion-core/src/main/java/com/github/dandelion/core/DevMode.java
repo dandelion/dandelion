@@ -45,7 +45,7 @@ public final class DevMode {
 		devMode = Boolean.TRUE.toString().equals(System.getProperty(DANDELION_DEV_MODE, Boolean.toString(devMode)));
 	}
 
-	public static boolean enabled() {
+	public static boolean isEnabled() {
 		return devMode;
 	}
 

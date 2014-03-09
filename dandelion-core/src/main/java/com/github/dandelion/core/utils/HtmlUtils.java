@@ -59,7 +59,7 @@ public class HtmlUtils {
 		}
 
 		String _cacheControl = Configuration.getProperty(CACHE_CONTROL);
-		if (DevMode.enabled() || _cacheControl == null || _cacheControl.isEmpty()) {
+		if (DevMode.isEnabled() || _cacheControl == null || _cacheControl.isEmpty()) {
 			_cacheControl = DEFAULT_CACHE_CONTROL;
 		}
 		cacheControl = _cacheControl;

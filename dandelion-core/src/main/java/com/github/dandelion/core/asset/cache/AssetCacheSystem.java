@@ -36,6 +36,7 @@ import java.util.ServiceLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.github.dandelion.core.DevMode;
 import com.github.dandelion.core.asset.AssetType;
 import com.github.dandelion.core.asset.cache.impl.HashMapAssetCache;
 import com.github.dandelion.core.asset.cache.spi.AssetCache;
@@ -59,15 +60,12 @@ public final class AssetCacheSystem {
 	private static AssetCache assetCache;
 
 	private static void initializeIfNeeded() {
-		if (assetCache == null) {
+		if (assetCache == null || DevMode.isEnabled()) {
 			initializeAssetsCache();
 		}
 	}
 
 	private static synchronized void initializeAssetsCache() {
-		if (assetCache != null) {
-			return;
-		}
 
 		Map<String, AssetCache> caches = new HashMap<String, AssetCache>();
 		for (AssetCache ac : assetCacheServiceLoader) {

@@ -158,9 +158,11 @@ public class GraphViewer {
 			this.name = a.getName();
 			this.version = a.getVersion();
 			this.type = a.getType().toString();
-			for (Entry<String, String> locationEntry : a.getLocations().entrySet()) {
-				this.location = locationEntry.getKey();
-				this.url = locationEntry.getValue();
+			if(a.getLocations() != null){
+				for (Entry<String, String> locationEntry : a.getLocations().entrySet()) {
+					this.location = locationEntry.getKey();
+					this.url = locationEntry.getValue();
+				}
 			}
 		}
 

@@ -74,7 +74,7 @@ public abstract class CacheableLocationWrapper extends BaseLocationWrapper {
 		String cacheKey = generateCacheKey(context, location, asset.getName(), asset.getType());
 		String content = AssetCacheSystem.getContent(cacheKey);
 
-		if (content == null || DevMode.enabled()) {
+		if (content == null || DevMode.isEnabled()) {
 			Map<String, Object> parameters = get(request).getParameters(asset.getName());
 			content = getContent(asset, location, parameters, request);
 			

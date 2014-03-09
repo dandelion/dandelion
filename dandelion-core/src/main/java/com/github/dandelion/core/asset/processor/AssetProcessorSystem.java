@@ -40,6 +40,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.github.dandelion.core.DevMode;
 import com.github.dandelion.core.asset.Asset;
 import com.github.dandelion.core.asset.processor.impl.AssetLocationProcessor;
 import com.github.dandelion.core.asset.processor.spi.AssetProcessor;
@@ -62,16 +63,13 @@ public final class AssetProcessorSystem {
 	private static List<AssetProcessor> processors = new ArrayList<AssetProcessor>();
 	private static AssetProcessor starter;
 
-	private static void initialize() {
-		if (starter == null) {
-			initializeIfNeeded();
+	private static void initializeIfNeeded() {
+		if (starter == null || DevMode.isEnabled()) {
+			initialize();
 		}
 	}
 
-	synchronized private static void initializeIfNeeded() {
-		if (starter != null) {
-			return;
-		}
+	private static synchronized void initialize() {
 
 		for (AssetProcessor ape : assetProcessorServiceLoader) {
 			processors.add(ape);
@@ -94,7 +92,7 @@ public final class AssetProcessorSystem {
 	}
 
 	public static AssetProcessor getStarter() {
-		initialize();
+		initializeIfNeeded();
 		return starter;
 	}
 

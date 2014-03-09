@@ -30,7 +30,6 @@
 package com.github.dandelion.core.asset;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -38,7 +37,9 @@ import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.github.dandelion.core.DevMode;
 import com.github.dandelion.core.asset.processor.AssetProcessorSystem;
+import com.github.dandelion.core.asset.processor.spi.AssetProcessor;
 import com.github.dandelion.core.asset.web.AssetRequestContext;
 import com.github.dandelion.core.asset.wrapper.spi.AssetLocationWrapper;
 import com.github.dandelion.core.bundle.Bundle;
@@ -62,11 +63,10 @@ public final class Assets {
 	 * Initialize Assets only if needed
 	 */
 	public static void initializeIfNeeded() {
-		if (bundleStorage == null) {
+		if (bundleStorage == null || DevMode.isEnabled()) {
 			initializeBundleStorage();
-			;
 		}
-		if (assetConfigurator == null) {
+		if (assetConfigurator == null || DevMode.isEnabled()) {
 			initializeAssetConfigurator();
 		}
 	}
@@ -132,8 +132,8 @@ public final class Assets {
 	public static Set<Asset> excludeByName(Set<Asset> assets, String... filters) {
 		Set<Asset> _assets = new LinkedHashSet<Asset>();
 		List<String> _filters = new ArrayList<String>();
-		
-		if(filters != null){
+
+		if (filters != null) {
 			for (String filter : filters) {
 				_filters.add(filter.toLowerCase());
 			}
@@ -145,7 +145,7 @@ public final class Assets {
 				_assets.add(asset);
 			}
 		}
-		
+
 		return _assets;
 	}
 
@@ -211,7 +211,6 @@ public final class Assets {
 		return retval;
 	}
 
-	
 	/**
 	 * <p>
 	 * Returns {@code true} if at least one asset needs to be display for the
@@ -230,6 +229,17 @@ public final class Assets {
 		return !assets.isEmpty();
 	}
 
+	/**
+	 * Applies the {@link AssetProcessor} chain to the passed set of
+	 * {@link Asset}s.
+	 * 
+	 * @param assetsToProcess
+	 *            The set of {@link Asset} to process with the active
+	 *            {@link AssetProcessor}.
+	 * @param request
+	 *            The current {@link HttpServletRequest}.
+	 * @return a new set of processed {@link Asset}.
+	 */
 	private static Set<Asset> processedAssets(Set<Asset> assetsToProcess, HttpServletRequest request) {
 		return AssetProcessorSystem.process(assetsToProcess, request);
 	}

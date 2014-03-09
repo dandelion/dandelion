@@ -54,14 +54,11 @@ public final class AssetLocationWrapperSystem {
 
 	private static void initializeIfNeeded() {
 		if (wrappers == null) {
-			initialize();
+			initializeLocationWrappers();
 		}
 	}
 
-	private synchronized static void initialize() {
-		if (wrappers != null) {
-			return;
-		}
+	private synchronized static void initializeLocationWrappers() {
 
 		List<AssetLocationWrapper> alws = new ArrayList<AssetLocationWrapper>();
 		for (AssetLocationWrapper alw : lwServiceLoader) {

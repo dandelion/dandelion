@@ -70,17 +70,11 @@ public class AssetConfigurator {
 
 	private static final Logger LOG = LoggerFactory.getLogger(AssetConfigurator.class);
 
-//	private AssetStorage assetStorage;
 	private List<BundleLoader> bundleLoaders;
 	private List<String> assetsLocations;
 	private List<String> excludedBundles;
 	private List<String> excludedAssets;
 	private Map<String, AssetLocationWrapper> assetsLocationWrappers;
-
-//	private Map<String, List<Asset>> assetsByBundle = new HashMap<String, List<Asset>>();
-//	private Map<String, List<String>> bundlesByParentBundle = new HashMap<String, List<String>>();
-//	private Map<String, String> parentBundlesByBundle = new HashMap<String, String>();
-//	private Map<String, List<Asset>> overrideAssetsByBundle = new HashMap<String, List<Asset>>();
 
 	public AssetConfigurator() {
 	}

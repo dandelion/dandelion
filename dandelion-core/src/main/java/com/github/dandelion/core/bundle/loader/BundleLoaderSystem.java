@@ -36,6 +36,7 @@ import java.util.ServiceLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.github.dandelion.core.DevMode;
 import com.github.dandelion.core.bundle.BundleDag;
 import com.github.dandelion.core.bundle.loader.impl.DandelionBundleLoader;
 import com.github.dandelion.core.bundle.loader.impl.VendorBundleLoader;
@@ -64,15 +65,12 @@ public final class BundleLoaderSystem {
 	private static List<BundleLoader> loaders;
 
 	private static void initializeIfNeeded() {
-		if (loaders == null) {
+		if (loaders == null || DevMode.isEnabled()) {
 			initialize();
 		}
 	}
 
 	private static synchronized void initialize() {
-		if (loaders != null) {
-			return;
-		}
 
 		VendorBundleLoader vendorLoader = new VendorBundleLoader();
 		DandelionBundleLoader dandelionLoader = new DandelionBundleLoader();

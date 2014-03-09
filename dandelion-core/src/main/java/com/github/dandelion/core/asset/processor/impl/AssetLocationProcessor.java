@@ -127,7 +127,7 @@ public class AssetLocationProcessor extends AssetProcessor {
 			Asset wrappedAsset = asset.clone();
 			wrappedAsset.setLocation(location);
 			wrappedAsset.getLocations().put(locationKey, location);
-			if (DevMode.enabled()) {
+			if (DevMode.isEnabled()) {
 				debugAttributes(asset, locationKey, false);
 			}
 			_assets.add(wrappedAsset);
