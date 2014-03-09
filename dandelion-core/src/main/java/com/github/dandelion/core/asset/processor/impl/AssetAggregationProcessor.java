@@ -43,15 +43,15 @@ import javax.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.github.dandelion.core.Beta;
 import com.github.dandelion.core.asset.Asset;
 import com.github.dandelion.core.asset.AssetType;
 import com.github.dandelion.core.asset.AssetUtils;
 import com.github.dandelion.core.asset.Assets;
 import com.github.dandelion.core.asset.processor.spi.AssetProcessor;
-import com.github.dandelion.core.asset.wrapper.spi.AssetLocationWrapper;
 import com.github.dandelion.core.config.Configuration;
-import com.github.dandelion.core.utils.RequestUtils;
 import com.github.dandelion.core.utils.ResourceUtils;
+import com.github.dandelion.core.utils.UrlUtils;
 
 /**
  * <p>
@@ -61,6 +61,7 @@ import com.github.dandelion.core.utils.ResourceUtils;
  * @author Romain Lespinasse
  * @since 0.10.0
  */
+@Beta
 public class AssetAggregationProcessor extends AssetProcessor {
 
 	// Logger
@@ -93,10 +94,8 @@ public class AssetAggregationProcessor extends AssetProcessor {
 			return assets;
 		}
 
-		String context = RequestUtils.getCurrentUrl(request, true);
+		String context = UrlUtils.getBaseUrl(request).toString();
 		context = context.replaceAll("\\?", "_").replaceAll("&", "_");
-
-		String baseUrl = RequestUtils.getBaseUrl(request);
 
 		Set<Asset> aggregatedAssets = new LinkedHashSet<Asset>();
 		for (AssetType type : AssetType.values()) {
@@ -118,7 +117,7 @@ public class AssetAggregationProcessor extends AssetProcessor {
 			LOG.debug("Cache updated with aggregated assets for the type {} (key={})", type.name(), aggregationKey);
 			cacheAggregatedContent(request, context, type, typedAssets, aggregationKey);
 
-			String accessLocation = baseUrl + DANDELION_ASSETS_URL + cacheKey;
+			String accessLocation = UrlUtils.getBaseUrl(request) + DANDELION_ASSETS_URL + cacheKey;
 
 			Map<String, String> locations = new HashMap<String, String>();
 			locations.put(AGGREGATION, accessLocation);
@@ -133,23 +132,23 @@ public class AssetAggregationProcessor extends AssetProcessor {
 	private void cacheAggregatedContent(HttpServletRequest request, String context, AssetType type,
 			Set<Asset> typedAssets, String generatedAssetKey) {
 
-		Map<String, AssetLocationWrapper> wrappers = Assets.getAssetLocationWrappers();
+//		Map<String, AssetLocationWrapper> wrappers = Assets.getAssetLocationWrappers();
 		StringBuilder aggregatedContent = new StringBuilder();
 
 		for (Asset asset : typedAssets) {
-			for (Map.Entry<String, String> location : asset.getLocations().entrySet()) {
-				AssetLocationWrapper wrapper = wrappers.get(location.getKey());
+//			for (Map.Entry<String, String> location : asset.getLocations().entrySet()) {
+//				AssetLocationWrapper wrapper = wrappers.get(location.getKey());
 				String content;
-				if (wrapper != null) {
-					content = wrapper.getWrappedContent(asset, request);
-				}
-				else {
-					content = ResourceUtils.getContentFromUrl(request, location.getValue(), true);
-				}
+//				if (wrapper != null) {
+//					content = wrapper.getWrappedContent(asset, request);
+//				}
+//				else {
+					content = ResourceUtils.getContentFromUrl(request, asset.getLocation(), true);
+//				}
 				if (content != null) {
 					aggregatedContent.append(content).append("\n");
 				}
-			}
+//			}
 		}
 
 		storeContent(context, generatedAssetKey, AGGREGATION, type, aggregatedContent.toString());

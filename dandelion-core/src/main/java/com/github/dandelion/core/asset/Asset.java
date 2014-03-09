@@ -91,6 +91,13 @@ public class Asset {
 		this.locations = locations;
 	}
 
+	public Asset(String name, String version, AssetType type, String location) {
+		this.name = name;
+		this.version = version;
+		this.type = type;
+		this.finalLocation = location;
+	}
+	
 	protected Asset(String name, String version, AssetType type, AssetDOMPosition dom, String location) {
 		this.name = name;
 		this.version = version;

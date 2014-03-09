@@ -35,7 +35,6 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.Writer;
-import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
@@ -46,6 +45,7 @@ import org.mozilla.javascript.EvaluatorException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.github.dandelion.core.Beta;
 import com.github.dandelion.core.DandelionException;
 import com.github.dandelion.core.asset.Asset;
 import com.github.dandelion.core.asset.Assets;
@@ -53,8 +53,8 @@ import com.github.dandelion.core.asset.cache.AssetCacheSystem;
 import com.github.dandelion.core.asset.processor.spi.AssetProcessor;
 import com.github.dandelion.core.asset.wrapper.spi.AssetLocationWrapper;
 import com.github.dandelion.core.config.Configuration;
-import com.github.dandelion.core.utils.RequestUtils;
 import com.github.dandelion.core.utils.ResourceUtils;
+import com.github.dandelion.core.utils.UrlUtils;
 import com.yahoo.platform.yui.compressor.CssCompressor;
 import com.yahoo.platform.yui.compressor.JavaScriptCompressor;
 
@@ -67,8 +67,10 @@ import com.yahoo.platform.yui.compressor.JavaScriptCompressor;
  * This processor entry is based on YUI Compressor.
  * 
  * @author Romain Lespinasse
+ * @author Thibault Duchateau
  * @since 0.10.0
  */
+@Beta
 public class AssetMinificationProcessor extends AssetProcessor {
 
 	// Logger
@@ -92,8 +94,9 @@ public class AssetMinificationProcessor extends AssetProcessor {
 				Configuration.getProperty(MINIFICATION_JS_MUNGE, Boolean.toString(minificationEnabled)));
 		this.jsPreserveSemiColons = Boolean.TRUE.toString().equals(
 				Configuration.getProperty(MINIFICATION_JS_PRESERVE_SEMICOLONS, Boolean.toString(minificationEnabled)));
-		this.jsDisableOptimizations = Boolean.TRUE.toString().equals(
-				Configuration.getProperty(MINIFICATION_JS_DISABLE_OPTIMIZATIONS, Boolean.toString(minificationEnabled)));
+		this.jsDisableOptimizations = Boolean.TRUE.toString()
+				.equals(Configuration.getProperty(MINIFICATION_JS_DISABLE_OPTIMIZATIONS,
+						Boolean.toString(minificationEnabled)));
 
 		LOG.info("Asset minification is {}", minificationEnabled ? "enabled" : "disabled");
 		if (minificationEnabled) {
@@ -120,29 +123,25 @@ public class AssetMinificationProcessor extends AssetProcessor {
 			return assets;
 		}
 
-		String context = RequestUtils.getCurrentUrl(request, true);
+		String context = UrlUtils.getBaseUrl(request).toString();
 		context = context.replaceAll("\\?", "_").replaceAll("&", "_");
 
-		String baseUrl = RequestUtils.getBaseUrl(request);
 		Set<Asset> compressedAssets = new LinkedHashSet<Asset>();
+
 		for (Asset asset : assets) {
-			for (String location : asset.getLocations().values()) {
-				String cacheKey = AssetCacheSystem.generateCacheKey(context, location, MINIFICATION, asset.getType());
+			String cacheKey = AssetCacheSystem.generateCacheKey(context, asset.getLocation(), asset.getName() + "-min",
+					asset.getType());
 
-				// Updates the cache in order for the compressed content to be
-				// retrieved by the servlet
-				LOG.debug("Cache updated with minified assets (key={})", asset.getAssetKey());
-				cacheCompressedContent(request, context, location, asset, cacheKey);
+			// Updates the cache in order for the compressed content to be
+			// retrieved by the servlet
+			LOG.debug("Cache updated with minified assets (key={})", asset.getAssetKey());
+			cacheCompressedContent(request, context, asset.getLocation(), asset, cacheKey);
 
-				String accessLocation = baseUrl + DANDELION_ASSETS_URL + cacheKey;
+			String newLocation = UrlUtils.getBaseUrl(request) + DANDELION_ASSETS_URL + cacheKey;
 
-				Map<String, String> locations = new HashMap<String, String>();
-				locations.put(MINIFICATION, accessLocation);
-
-				compressedAssets.add(new Asset(cacheKey, MINIFICATION, asset.getType(), locations));
-				LOG.debug("New asset created with name {}, version {}, type {}, locations [{}={}]", cacheKey,
-						MINIFICATION, asset.getType(), MINIFICATION, accessLocation);
-			}
+			Asset minifiedAsset = new Asset(asset.getName() + "-min", asset.getVersion(), asset.getType(), newLocation);
+			compressedAssets.add(minifiedAsset);
+			LOG.debug("New minified asset created: {}", minifiedAsset);
 		}
 		return compressedAssets;
 	}
