@@ -30,6 +30,7 @@
 package com.github.dandelion.core.bundle;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -168,16 +169,20 @@ public class BundleDag {
 	public List<String> bundlesFor(String bundleName) {
 		Bundle vertex = getVertex(bundleName);
 
-		List<String> retValue;
-
-		if (vertex.isLeaf()) {
-			retValue = new ArrayList<String>(1);
-			retValue.add(bundleName);
+		if(vertex != null){
+			List<String> retval;
+			
+			if (vertex.isLeaf()) {
+				retval = new ArrayList<String>(1);
+				retval.add(bundleName);
+			}
+			else {
+				retval = TopologicalSorter.sort(vertex);
+			}
+			
+			return retval;
 		}
-		else {
-			retValue = TopologicalSorter.sort(vertex);
-		}
 
-		return retValue;
+		return Collections.emptyList();
 	}
 }
