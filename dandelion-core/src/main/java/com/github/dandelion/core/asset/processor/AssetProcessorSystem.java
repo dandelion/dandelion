@@ -40,7 +40,6 @@ import javax.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.github.dandelion.core.DevMode;
 import com.github.dandelion.core.asset.Asset;
 import com.github.dandelion.core.asset.processor.impl.AssetLocationProcessor;
 import com.github.dandelion.core.asset.processor.spi.AssetProcessor;
@@ -48,7 +47,8 @@ import com.github.dandelion.core.asset.processor.spi.AssetProcessor;
 /**
  * <p>
  * System in charge of discovering all implementations of
- * {@link com.github.dandelion.core.asset.processor.spi.AssetProcessor} available in the classpath.
+ * {@link com.github.dandelion.core.asset.processor.spi.AssetProcessor}
+ * available in the classpath.
  * 
  * @author Romain Lespinasse
  * @since 0.10.0
@@ -58,20 +58,22 @@ public final class AssetProcessorSystem {
 	// Logger
 	private static final Logger LOG = LoggerFactory.getLogger(AssetProcessorSystem.class);
 
-	private static ServiceLoader<AssetProcessor> assetProcessorServiceLoader = ServiceLoader
-			.load(AssetProcessor.class);
+	private static ServiceLoader<AssetProcessor> apServiceLoader = ServiceLoader.load(AssetProcessor.class);
 	private static List<AssetProcessor> processors = new ArrayList<AssetProcessor>();
 	private static AssetProcessor starter;
 
 	private static void initializeIfNeeded() {
-		if (starter == null || DevMode.isEnabled()) {
-			initialize();
+		if (starter == null) {
+			initializeAssetProcessors();
 		}
 	}
 
-	private static synchronized void initialize() {
+	synchronized private static void initializeAssetProcessors() {
+		if (starter != null) {
+			return;
+		}
 
-		for (AssetProcessor ape : assetProcessorServiceLoader) {
+		for (AssetProcessor ape : apServiceLoader) {
 			processors.add(ape);
 			LOG.info("Asset processor found: {}", ape.getClass().getSimpleName());
 		}
@@ -88,7 +90,7 @@ public final class AssetProcessorSystem {
 			LOG.info("Assets processor entry [rank: {}, processorKey: {}]", ape.getRank(), ape.getProcessorKey());
 		}
 
-        starter = processorEntry;
+		starter = processorEntry;
 	}
 
 	public static AssetProcessor getStarter() {
@@ -99,7 +101,7 @@ public final class AssetProcessorSystem {
 	public static Set<Asset> process(Set<Asset> assets, HttpServletRequest request) {
 		return getStarter().doProcess(assets, request);
 	}
-	
+
 	/**
 	 * Prevents instantiation.
 	 */
