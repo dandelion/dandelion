@@ -37,7 +37,7 @@ import javax.servlet.http.HttpServletResponse;
 
 /**
  * <p>
- * Utilites that deal with URLs.
+ * Utilities that deal with URLs.
  * 
  * @author Thibault Duchateau
  * @since 0.10.0
@@ -85,7 +85,7 @@ public class UrlUtils {
 	public static String getProcessedUrl(String url, HttpServletRequest request, HttpServletResponse response) {
 		String processedUrl = null;
 
-		if (isContextRelative(url, request)) {
+		if (isContextRelative(url, request) && !url.startsWith(request.getContextPath())) {
 			processedUrl = request.getContextPath() + url;
 		}
 		else if (isServerRelative(url)) {
@@ -116,14 +116,14 @@ public class UrlUtils {
 	}
 
 	public static boolean isContextRelative(String url, HttpServletRequest request) {
-		return url.startsWith("/") && !url.startsWith("//") && !url.startsWith(request.getContextPath());
+		return url.startsWith("/") && !url.startsWith("//");
 	}
 
 	public static boolean isServerRelative(String url) {
 		return url.startsWith("~/");
 	}
 
-	public static boolean isProtocolRelative(String url){
+	public static boolean isProtocolRelative(String url) {
 		return url.startsWith("//");
 	}
 
@@ -148,6 +148,54 @@ public class UrlUtils {
 			// + "to the URL " + url);
 			e.printStackTrace();
 			// TODO
+		}
+	}
+
+	/**
+	 * <p>
+	 * Returns the base URL, with the context path included by default.
+	 * 
+	 * <p>
+	 * For Example, for an URL like
+	 * {@code http://domain.com:port/context/foo/bar}, this function returns
+	 * {@code http://domain.com:port/context}.
+	 * 
+	 * @param request
+	 *            The {@link HttpServletRequest} from which to extract the base
+	 *            URL.
+	 * @return the base URL of the current request.
+	 */
+	public static String getBaseUrl(HttpServletRequest request) {
+		return getBaseUrl(request, true);
+	}
+
+	/**
+	 * <p>
+	 * Returns the base URL, containing the context path or not depending on the
+	 * {@code withContextPath} param.
+	 * 
+	 * <p>
+	 * For Example, for an URL like
+	 * {@code http://domain.com:port/context/foo/bar}, this function returns
+	 * {@code http://domain.com:port/context}.
+	 * 
+	 * @param request
+	 *            The {@link HttpServletRequest} from which to extract the base
+	 *            URL.
+	 * @param withContextPath
+	 *            {@code true} to include the context path, {@code false}
+	 *            otherwise.
+	 * @return the base URL of the current request.
+	 */
+	public static String getBaseUrl(HttpServletRequest request, boolean withContextPath) {
+		if (request.getRequestURI().equals("/") || request.getRequestURI().equals("")) {
+			return request.getRequestURL().toString();
+		}
+		if (withContextPath) {
+			return request.getRequestURL().toString().replace(request.getRequestURI(), request.getContextPath());
+		}
+		else {
+			return request.getRequestURL().toString().replace(request.getRequestURI(), "");
 		}
 	}
 }

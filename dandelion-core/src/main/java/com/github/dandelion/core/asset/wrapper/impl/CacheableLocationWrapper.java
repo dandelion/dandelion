@@ -43,7 +43,6 @@ import com.github.dandelion.core.DevMode;
 import com.github.dandelion.core.asset.Asset;
 import com.github.dandelion.core.asset.cache.AssetCacheSystem;
 import com.github.dandelion.core.asset.wrapper.spi.AssetLocationWrapper;
-import com.github.dandelion.core.utils.RequestUtils;
 import com.github.dandelion.core.utils.UrlUtils;
 
 /**
@@ -68,7 +67,8 @@ public abstract class CacheableLocationWrapper extends BaseLocationWrapper {
 	public String getWrappedLocation(Asset asset, HttpServletRequest request) {
 
 		String location = asset.getLocations().get(getLocationKey());
-		String context = RequestUtils.getCurrentUrl(request, true);
+		
+		String context = UrlUtils.getBaseUrl(request).toString();
 		context = context.replaceAll("\\?", "_").replaceAll("&", "_");
 
 		String cacheKey = generateCacheKey(context, location, asset.getName(), asset.getType());

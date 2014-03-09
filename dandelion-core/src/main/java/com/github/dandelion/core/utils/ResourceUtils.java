@@ -84,9 +84,11 @@ public final class ResourceUtils {
 
 	public static String getContentFromUrl(HttpServletRequest request, String url, boolean neverFail) {
 		try {
-
 			if (UrlUtils.isProtocolRelative(url)) {
 				url = request.isSecure() ? "https:" : "http:" + url;
+			}
+			if (UrlUtils.isContextRelative(url, request)) {
+				url = UrlUtils.getBaseUrl(request, false) + url;
 			}
 
 			URL urlLocation = new URL(url);
