@@ -4,7 +4,7 @@ import static org.fest.assertions.Assertions.assertThat;
 
 import java.util.Set;
 
-import org.junit.BeforeClass;
+import org.junit.Before;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 
@@ -16,8 +16,8 @@ public class AssetsTest {
 	private static AssetRequestContext context;
 	private static final String CONTEXT_PATH = "/contextPath";
 	
-	@BeforeClass
-	public static void setup() {
+	@Before
+	public void setup() {
 		request = new MockHttpServletRequest();
 		request.setContextPath(CONTEXT_PATH);
 		context = AssetRequestContext.get(request);
@@ -27,14 +27,12 @@ public class AssetsTest {
 	public void should_return_false_for_a_bundle_without_asset(){
 		context.addBundles("bundle1");
 		assertThat(Assets.existsAssetsFor(request)).isFalse();
-		context.clear();
 	}
 	
 	@Test
 	public void should_return_true_for_a_bundle_with_assets(){
 		context.addBundles("bundle2");
 		assertThat(Assets.existsAssetsFor(request)).isTrue();
-		context.clear();
 	}
 	
 	/**
@@ -62,6 +60,7 @@ public class AssetsTest {
 	
 	@Test
 	public void should_return_all_processed_assets_by_bundle_names() {
+		context.addBundles("bundle1", "bundle2", "bundle3");
 		Set<Asset> assets = Assets.assetsFor(request, null, "bundle1", "bundle2", "bundle3");
 		assertThat(assets).hasSize(3);
 	}

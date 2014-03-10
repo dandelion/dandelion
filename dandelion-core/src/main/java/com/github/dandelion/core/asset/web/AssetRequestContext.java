@@ -427,11 +427,4 @@ public class AssetRequestContext {
 	public <T> T getParameterValue(Object assetName, String parameter) {
 		return getParameterValue(assetName.toString(), parameter);
 	}
-
-	public void clear() {
-		this.bundles = new ArrayList<String>();
-		this.excludedBundles = new ArrayList<String>();
-		this.excludedAssets = new ArrayList<String>();
-		this.parameters = new HashMap<String, Map<String, Object>>();
-	}
 }
