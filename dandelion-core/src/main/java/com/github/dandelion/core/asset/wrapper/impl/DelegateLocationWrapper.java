@@ -39,7 +39,7 @@ import com.github.dandelion.core.asset.web.AssetRequestContext;
 
 /**
  * <p>
- * Location wrapper for assets that use {@code delegated} as a location key.
+ * Location wrapper for assets that use {@code delegate} as a location key.
  * 
  * <p>
  * Basically, a "delegated asset" is an asset that is created programmatically

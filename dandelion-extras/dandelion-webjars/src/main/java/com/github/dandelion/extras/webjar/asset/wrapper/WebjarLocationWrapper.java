@@ -28,7 +28,7 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package com.github.dandelion.extras.webjars.asset.wrapper;
+package com.github.dandelion.extras.webjar.asset.wrapper;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -64,13 +64,13 @@ import com.github.dandelion.core.utils.StringUtils;
  * @author Thibault Duchateau
  * @since 0.10.0
  */
-public class WebjarsLocationWrapper extends CacheableLocationWrapper {
+public class WebjarLocationWrapper extends CacheableLocationWrapper {
 	
 	private static WebJarAssetLocator locator = new WebJarAssetLocator();
 	private static Pattern pattern = Pattern.compile("url\\((.*)\\)", Pattern.CASE_INSENSITIVE);
 	private HttpServletRequest request;
 
-	public WebjarsLocationWrapper() {
+	public WebjarLocationWrapper() {
 		this.active = true;
 	}
 
@@ -79,7 +79,7 @@ public class WebjarsLocationWrapper extends CacheableLocationWrapper {
 	 */
 	@Override
 	public String getLocationKey() {
-		return "webjars";
+		return "webjar";
 	}
 
 	/**
