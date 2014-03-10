@@ -41,6 +41,7 @@ public class AssetsTest {
 	 */
 	@Test
 	public void should_return_all_processed_assets_by_bundle_name() {
+		context.addBundles("bundle1", "bundle2", "bundle3");
 		
 		Set<Asset> assetsB1 = Assets.assetsFor(request, "bundle1");
 		assertThat(assetsB1).isEmpty();

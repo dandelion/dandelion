@@ -34,6 +34,7 @@ import static org.fest.assertions.Assertions.assertThat;
 import java.io.File;
 import java.util.Properties;
 
+import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -71,5 +72,10 @@ public class StandardConfigurationLoaderTest {
 
 		assertThat(userProperties).isNotNull().hasSize(1);
 		assertThat(userProperties.getProperty("assets.locations")).isEqualTo("other,remote,local");
+	}
+	
+	@AfterClass
+	public static void teardown() {
+		System.clearProperty(StandardConfigurationLoader.DANDELION_CONFIGURATION);
 	}
 }
