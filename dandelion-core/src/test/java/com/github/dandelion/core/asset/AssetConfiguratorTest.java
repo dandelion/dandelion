@@ -29,19 +29,10 @@
  */
 package com.github.dandelion.core.asset;
 
-import static com.github.dandelion.core.asset.AssetDOMPosition.body;
-import static com.github.dandelion.core.asset.AssetDOMPosition.head;
 import static org.fest.assertions.Assertions.assertThat;
-import static org.fest.util.Collections.list;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
-
-import com.github.dandelion.core.bundle.loader.spi.BundleLoader;
-import com.github.dandelion.fakedomain.AssetFakeLoader;
 
 public class AssetConfiguratorTest {
 	

@@ -58,25 +58,53 @@ public class UrlUtils {
 	 */
 	public static StringBuilder getCurrentUri(HttpServletRequest request) {
 
-		StringBuilder currentUrl = new StringBuilder();
+		StringBuilder currentUri = new StringBuilder();
 
 		// Get request URI
 		if (request.getAttribute(FORWARD_REQUEST_URI_ATTRIBUTE) != null) {
-			currentUrl.append(request.getAttribute(FORWARD_REQUEST_URI_ATTRIBUTE));
+			currentUri.append(request.getAttribute(FORWARD_REQUEST_URI_ATTRIBUTE));
 		}
 		else if (request.getAttribute(INCLUDE_REQUEST_URI_ATTRIBUTE) != null) {
-			currentUrl.append(request.getAttribute(INCLUDE_REQUEST_URI_ATTRIBUTE));
+			currentUri.append(request.getAttribute(INCLUDE_REQUEST_URI_ATTRIBUTE));
 		}
 		else {
-			currentUrl.append(request.getRequestURI());
+			currentUri.append(request.getRequestURI());
 		}
 
 		// Get request parameters
 		if (request.getAttribute(FORWARD_QUERY_STRING_ATTRIBUTE) != null) {
-			currentUrl.append("?").append(request.getAttribute(FORWARD_QUERY_STRING_ATTRIBUTE));
+			currentUri.append("?").append(request.getAttribute(FORWARD_QUERY_STRING_ATTRIBUTE));
 		}
 		else if (request.getQueryString() != null) {
-			currentUrl.append("?").append(request.getQueryString());
+			currentUri.append("?").append(request.getQueryString());
+		}
+
+		return currentUri;
+	}
+
+	/**
+	 * <P>
+	 * Return the current URL, with or without query parameters, depending on
+	 * the {@code perserveParameters} parameter.
+	 * 
+	 * @param request
+	 *            The current {@link HttpServletRequest}.
+	 * @param preserveParameters
+	 *            preserve the url parameters.
+	 * @return a String containing the current URL.
+	 */
+	public static StringBuilder getCurrentUrl(HttpServletRequest request, boolean preserveParameters) {
+		
+		StringBuilder currentUrl = new StringBuilder(request.getRequestURL());
+		
+		// Get request parameters
+		if(preserveParameters){
+			if (request.getAttribute(FORWARD_QUERY_STRING_ATTRIBUTE) != null) {
+				currentUrl.append("?").append(request.getAttribute(FORWARD_QUERY_STRING_ATTRIBUTE));
+			}
+			else if (request.getQueryString() != null) {
+				currentUrl.append("?").append(request.getQueryString());
+			}
 		}
 
 		return currentUrl;

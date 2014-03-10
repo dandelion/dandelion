@@ -68,7 +68,7 @@ public abstract class CacheableLocationWrapper extends BaseLocationWrapper {
 
 		String location = asset.getLocations().get(getLocationKey());
 		
-		String context = UrlUtils.getBaseUrl(request).toString();
+		String context = UrlUtils.getCurrentUrl(request, true).toString();
 		context = context.replaceAll("\\?", "_").replaceAll("&", "_");
 
 		String cacheKey = generateCacheKey(context, location, asset.getName(), asset.getType());

@@ -123,7 +123,7 @@ public class AssetMinificationProcessor extends AssetProcessor {
 			return assets;
 		}
 
-		String context = UrlUtils.getBaseUrl(request).toString();
+		String context = UrlUtils.getCurrentUrl(request, true).toString();
 		context = context.replaceAll("\\?", "_").replaceAll("&", "_");
 
 		Set<Asset> compressedAssets = new LinkedHashSet<Asset>();

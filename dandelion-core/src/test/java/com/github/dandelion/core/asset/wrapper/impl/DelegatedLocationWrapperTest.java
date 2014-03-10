@@ -64,7 +64,7 @@ public class DelegatedLocationWrapperTest {
 		String location = wrapper.getWrappedLocation(asset, request);
 		assertThat(location)
 				.isEqualTo(
-                        "/context/dandelion-assets/2d0fdffad35accbbb3509b44a5d41d2f3a91b27b-asset-delegated.js");
+                        "/context/dandelion-assets/0cf3fbac07aa31f38153ba45eca0c943d627ba8b-asset-delegated.js");
 
 		asset = new Asset("asset-delegated", "1.0", AssetType.js, singletonMap(wrapper.getLocationKey(), location));
 		String content = wrapper.getWrappedContent(asset, request);
