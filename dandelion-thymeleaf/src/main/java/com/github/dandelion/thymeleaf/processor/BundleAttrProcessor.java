@@ -73,10 +73,10 @@ public class BundleAttrProcessor extends DandelionAttrProcessor {
 		HttpServletRequest request = ArgumentsUtil.getWebContext(arguments).getHttpServletRequest();
 		AssetRequestContext context = AssetRequestContext.get(request);
 		switch (assetsAttributeName) {
-		case INCLUDE:
+		case INCLUDES:
 			context.addBundles(element.getAttributeValue(attributeName));
 			break;
-		case EXCLUDE:
+		case EXCLUDES:
 			context.excludeBundles(element.getAttributeValue(attributeName));
 			break;
 		}

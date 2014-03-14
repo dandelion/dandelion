@@ -41,7 +41,7 @@ import com.github.dandelion.thymeleaf.util.AttributeName;
  */
 public enum AssetAttributeNames implements AttributeName {
 
-	EXCLUDE("asset-exclude");
+	EXCLUDES("asset-excludes");
 
 	private String attribute;
 

@@ -29,7 +29,6 @@
  */
 package com.github.dandelion.thymeleaf.dialect;
 
-import com.github.dandelion.core.bundle.Bundle;
 import com.github.dandelion.thymeleaf.util.AttributeName;
 
 /**
@@ -41,9 +40,8 @@ import com.github.dandelion.thymeleaf.util.AttributeName;
  */
 public enum BundleAttributeNames implements AttributeName {
 
-	INCLUDE("bundle-include"),
-
-	EXCLUDE("bundle-exclude");
+	INCLUDES("bundle-includes"),
+	EXCLUDES("bundle-excludes");
 
 	private String attribute;
 

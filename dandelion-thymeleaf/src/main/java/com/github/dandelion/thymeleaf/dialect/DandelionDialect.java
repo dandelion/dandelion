@@ -64,10 +64,13 @@ public class DandelionDialect extends AbstractDialect {
 		final Set<IProcessor> processors = new HashSet<IProcessor>();
 
 		for (AssetAttributeNames attr : AssetAttributeNames.values()) {
-			processors.add(new BundleAttrProcessor(attr.getAttribute()));
 			processors.add(new AssetAttrProcessor(attr.getAttribute()));
 		}
 
+		for (BundleAttributeNames attr : BundleAttributeNames.values()) {
+			processors.add(new BundleAttrProcessor(attr.getAttribute()));
+		}
+		
 		return processors;
 	}
 }
