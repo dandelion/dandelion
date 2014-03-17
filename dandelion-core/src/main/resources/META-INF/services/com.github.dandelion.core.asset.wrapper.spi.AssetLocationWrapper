@@ -1,6 +1,0 @@
-com.github.dandelion.core.asset.wrapper.impl.AggregationLocationWrapper
-com.github.dandelion.core.asset.wrapper.impl.MinificationLocationWrapper
-com.github.dandelion.core.asset.wrapper.impl.ClasspathLocationWrapper
-com.github.dandelion.core.asset.wrapper.impl.DelegateLocationWrapper
-com.github.dandelion.core.asset.wrapper.impl.WebappLocationWrapper
-com.github.dandelion.core.asset.wrapper.impl.CdnLocationWrapper

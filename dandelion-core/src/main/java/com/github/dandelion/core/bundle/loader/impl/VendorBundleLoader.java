@@ -36,7 +36,8 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.github.dandelion.core.bundle.Bundle;
+import com.github.dandelion.core.bundle.loader.spi.AbstractBundleLoader;
+import com.github.dandelion.core.storage.BundleStorageUnit;
 
 /**
  * <p>
@@ -71,7 +72,7 @@ public class VendorBundleLoader extends AbstractBundleLoader {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public List<Bundle> loadBundles() {
+	public List<BundleStorageUnit> loadBundles() {
 		return super.loadBundles();
 	}
 

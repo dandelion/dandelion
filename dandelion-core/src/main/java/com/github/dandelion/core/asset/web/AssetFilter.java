@@ -44,10 +44,12 @@ import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.github.dandelion.core.DevMode;
 import com.github.dandelion.core.asset.Asset;
-import com.github.dandelion.core.asset.AssetDOMPosition;
+import com.github.dandelion.core.asset.AssetDomPosition;
 import com.github.dandelion.core.asset.Assets;
 import com.github.dandelion.core.html.HtmlTag;
+import com.github.dandelion.core.monitoring.GraphViewer;
 import com.github.dandelion.core.utils.HtmlUtils;
 
 /**
@@ -61,7 +63,6 @@ import com.github.dandelion.core.utils.HtmlUtils;
  */
 public class AssetFilter implements Filter {
 
-	// Logger
 	private static Logger LOG = LoggerFactory.getLogger(AssetFilter.class);
 
 	public static final String DANDELION_ASSET_FILTER_STATE = "dandelionAssetFilterState";
@@ -87,9 +88,10 @@ public class AssetFilter implements Filter {
 		HttpServletResponse response = (HttpServletResponse) serlvetResponse;
 
 		// Override the response with the graph viewer
-		if(request.getParameter(DANDELION_SHOW_GRAPH) != null){
-			GraphViewer gv = new GraphViewer();
-			gv.displayCurrentGrapth(request, response, filterChain);
+		if(DevMode.isEnabled() && request.getParameter(DANDELION_SHOW_GRAPH) != null){
+			GraphViewer graphViewer = new GraphViewer();
+			response.getWriter().println(graphViewer.getView(request, response, filterChain));
+			response.getWriter().close();
 			return;
 		}
 		
@@ -105,7 +107,7 @@ public class AssetFilter implements Filter {
 
 			if (isDandelionApplyable(request, context, wrapper)) {
 				
-				Set<Asset> assetsHead = Assets.assetsFor(request, AssetDOMPosition.head);
+				Set<Asset> assetsHead = Assets.assetsFor(request, AssetDomPosition.head);
 				if (!assetsHead.isEmpty()) {
 					StringBuilder htmlHead = new StringBuilder();
 					for (Asset asset : assetsHead) {
@@ -117,7 +119,7 @@ public class AssetFilter implements Filter {
 					html = html.replace("</head>", htmlHead + "\n</head>");
 				}
 				
-				Set<Asset> assetsBody = Assets.assetsFor(request, AssetDOMPosition.body);
+				Set<Asset> assetsBody = Assets.assetsFor(request, AssetDomPosition.body);
 				if (!assetsBody.isEmpty()) {
 					StringBuilder htmlBody = new StringBuilder();
 					for (Asset asset : assetsBody) {

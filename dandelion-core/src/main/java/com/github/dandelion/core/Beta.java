@@ -47,6 +47,10 @@ import java.lang.annotation.Target;
  * or performance of the API in question, only the fact that it is not
  * "API-frozen."
  * 
+ * <p>
+ * This annotation has been kindly borrowed from the <a
+ * href="https://code.google.com/p/guava-libraries/">Guava project</a>.
+ * 
  * @author Thibault Duchateau
  * @since 0.10.0
  */

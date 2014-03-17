@@ -44,21 +44,27 @@ import com.github.dandelion.core.html.LinkTag;
 import com.github.dandelion.core.html.ScriptTag;
 
 /**
- * Utilities on Html tags creation
+ * <p>
+ * Collection of utilities to ease working with HTML tags.
+ * 
+ * @author Thibault Duchateau
+ * @since 0.2.0
  */
 public class HtmlUtils {
 	private static Logger LOG = LoggerFactory.getLogger(HtmlUtils.class);
 
-	public static final String DEFAULT_CACHE_CONTROL = "no-cache";
+	// public static final String DEFAULT_CACHE_CONTROL = "no-cache";
+	public static final String DEFAULT_CACHE_CONTROL = "public, max-age=315360000";
+
 	private static final String CACHE_CONTROL = "assets.servlet.cache.control";
 	private static String cacheControl;
 
-	synchronized private static void initializeCacheControl() {
+	private static synchronized void initializeCacheControl() {
 		if (cacheControl != null) {
 			return;
 		}
 
-		String _cacheControl = Configuration.getProperty(CACHE_CONTROL);
+		String _cacheControl = Configuration.get(CACHE_CONTROL);
 		if (DevMode.isEnabled() || _cacheControl == null || _cacheControl.isEmpty()) {
 			_cacheControl = DEFAULT_CACHE_CONTROL;
 		}
@@ -76,10 +82,12 @@ public class HtmlUtils {
 		HtmlTag tag;
 		switch (asset.getType()) {
 		case css:
-			tag = new LinkTag(asset.getLocation());
+			System.out.println("asset.getFinalLocation() = " + asset.getFinalLocation());
+			tag = new LinkTag(asset.getFinalLocation());
 			break;
 		case js:
-			tag = new ScriptTag(asset.getLocation());
+			System.out.println("asset.getFinalLocation() = " + asset.getFinalLocation());
+			tag = new ScriptTag(asset.getFinalLocation());
 			break;
 		default:
 			tag = null;

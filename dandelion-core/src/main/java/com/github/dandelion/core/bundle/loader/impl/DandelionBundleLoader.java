@@ -36,14 +36,15 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.github.dandelion.core.bundle.Bundle;
 import com.github.dandelion.core.bundle.loader.BundleLoaderSystem;
+import com.github.dandelion.core.bundle.loader.spi.AbstractBundleLoader;
 import com.github.dandelion.core.bundle.loader.spi.BundleLoader;
+import com.github.dandelion.core.storage.BundleStorageUnit;
 
 /**
  * <p>
- * Bundle loader used to load bundles defined by users inside the
- * {@code dandelion} folder (and all subfolders) of the classpath.
+ * Bundle loader used to load {@link BundleStorageUnit}s defined by users inside
+ * the {@code dandelion} folder (and all subfolders) of the classpath.
  * 
  * <p>
  * This loader is intended to load only "user bundles" and therefore all
@@ -57,6 +58,7 @@ import com.github.dandelion.core.bundle.loader.spi.BundleLoader;
 public class DandelionBundleLoader extends AbstractBundleLoader {
 
 	private static final Logger LOG = LoggerFactory.getLogger(DandelionBundleLoader.class);
+	public static final String SCANNING_PATH = "dandelion";
 
 	/**
 	 * {@inheritDoc}
@@ -71,14 +73,14 @@ public class DandelionBundleLoader extends AbstractBundleLoader {
 	 */
 	@Override
 	public String getPath() {
-		return "dandelion";
+		return SCANNING_PATH;
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public List<Bundle> loadBundles() {
+	public List<BundleStorageUnit> loadBundles() {
 		return super.loadBundles();
 	}
 

@@ -33,7 +33,8 @@ import java.util.Iterator;
 import java.util.Random;
 
 /**
- * Utility class used when dealing with Strings.
+ * <p>
+ * Collection of utilities to ease working with {@link String}.
  * 
  * @author Thibault Duchateau
  * @author Romain Lespinasse

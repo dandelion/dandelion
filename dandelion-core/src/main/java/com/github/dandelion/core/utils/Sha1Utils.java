@@ -44,6 +44,7 @@ import org.slf4j.LoggerFactory;
  * The {@link MessageDigest} for SHA1 is loaded at the first use.
  * 
  * @author Romain Lespinasse
+ * @since 0.10.0
  */
 public final class Sha1Utils {
 

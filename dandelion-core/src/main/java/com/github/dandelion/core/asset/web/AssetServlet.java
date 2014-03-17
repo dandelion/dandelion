@@ -46,9 +46,10 @@ import com.github.dandelion.core.utils.HtmlUtils;
 
 /**
  * <p>
- * Dandelion servlet that intercepts the request and renders the appropriate web
- * resource stored in the configured {@link AssetCacheSystem}.
+ * Dandelion servlet in charge of serving the assets stored in the configured
+ * {@link AssetCacheSystem}.
  * 
+ * @author Thibault Duchateau
  * @author Romain Lespinasse
  * @since 0.10.0
  */

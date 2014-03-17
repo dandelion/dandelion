@@ -39,6 +39,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.github.dandelion.core.DandelionException;
+import com.github.dandelion.core.DevMode;
 import com.github.dandelion.core.utils.PropertiesUtils;
 import com.github.dandelion.core.utils.ResourceScanner;
 import com.github.dandelion.core.utils.StringUtils;
@@ -115,8 +116,10 @@ public class StandardConfigurationLoader implements ConfigurationLoader {
 			}
 		}
 		catch (IOException e) {
-			throw DandelionException.wrap(e, ConfigurationError.DEFAULT_CONFIGURATION_LOADING).set("default name",
-					DANDELION_DEFAULT + "." + DANDELION_PROPERTIES);
+			StringBuilder sb = new StringBuilder("Unable to load the default configuration file ");
+			sb.append(DANDELION_DEFAULT + "." + DANDELION_PROPERTIES);
+			sb.append(".");
+			throw new DandelionException(sb.toString(), e);
 		}
 		finally {
 			if (propertiesStream != null) {
@@ -142,6 +145,9 @@ public class StandardConfigurationLoader implements ConfigurationLoader {
 		LOG.debug("Loading user configuration...");
 
 		ResourceBundle userBundle = null;
+		if(DevMode.isEnabled()){
+			ResourceBundle.clearCache();
+		}
 
 		// First check if the resource bundle is externalized
 		if (StringUtils.isNotBlank(System.getProperty(DANDELION_CONFIGURATION))) {

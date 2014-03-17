@@ -29,9 +29,11 @@
  */
 package com.github.dandelion.core.utils;
 
+
 /**
  * <p>
- * Utility class used to detects whether some libraries are available or not.
+ * Collection of utilities to ease detecting whether some libraries are
+ * available or not.
  * 
  * @author Thibault Duchateau
  * @since 0.10.0
@@ -39,7 +41,6 @@ package com.github.dandelion.core.utils;
 public final class LibraryDetector {
 
 	private static Boolean jstlAvailable;
-
 	private static Boolean thymeleafAvailable;
 
 	/**

@@ -30,45 +30,73 @@
 package com.github.dandelion.core.asset;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.github.dandelion.core.asset.locator.spi.AssetLocator;
+import com.github.dandelion.core.storage.AssetStorageUnit;
+
 /**
  * <p>
- * Definition of an asset which contains the following properties:
- * <ul>
- * <li>Name (aka Key)</li>
- * <li>Version</li>
- * <li>Type (js vs css)</li>
- * <li>DOM location (head vs body)</li>
- * <li>Possible locations:
- * <ul>
- * <li>Remote access (aka CDN, Static Content Server, Any url)</li>
- * <li>Local access (classpath)</li>
- * </ul>
- * </li>
- * <li>HTML Attributes (key/value)</li>
- * <li>HTML Attributes (only name)</li>
- * </ul>
+ * Representation of an asset.
+ * 
+ * <p>
+ * Contrary to a {@link AssetStorageUnit}, an {@link Asset} contains more fields
+ * because it has been resolved by the {@link AssetMapper}.
  * 
  * @author Romain Lespinasse
+ * @author Thibault Duchateau
  */
 public class Asset {
 
+	/**
+	 * Arbitrary name given to the asset.
+	 */
 	private String name;
-	private String version;
-	private AssetType type;
-	private AssetDOMPosition dom;
-	private String finalLocation;
-	private Map<String, String> locations;
-	private Map<String, String> attributes;
-	private String[] attributesOnlyName;
-//	private int storagePosition = -1;
 
 	/**
-	 * Declare an empty asset
+	 * Version of the asset.
 	 */
+	private String version;
+
+	/**
+	 * Type of the asset.
+	 */
+	private AssetType type;
+
+	/**
+	 * Position where the asset must be injected.
+	 */
+	private AssetDomPosition dom;
+
+	/**
+	 * Key of the locator used to get the asset.
+	 */
+	private String configLocationKey;
+
+	/**
+	 * Raw location of the asset, corresponding to the selected location key.
+	 */
+	private String configLocation;
+
+	/**
+	 * Computed location of the asset, using the right {@link AssetLocator}.
+	 */
+	private String finalLocation;
+
+	/**
+	 * Various HTML attributes of the HTML tag.
+	 */
+	private Map<String, String> attributes;
+
+	/**
+	 * Various HTML attributes which only needs names.
+	 */
+	private String[] attributesOnlyName;
+
+	// Internal attribute
+	private String cacheKey;
+
 	public Asset() {
 	}
 
@@ -88,7 +116,6 @@ public class Asset {
 		this.name = name;
 		this.version = version;
 		this.type = type;
-		this.locations = locations;
 	}
 
 	public Asset(String name, String version, AssetType type, String location) {
@@ -97,20 +124,28 @@ public class Asset {
 		this.type = type;
 		this.finalLocation = location;
 	}
-	
-	protected Asset(String name, String version, AssetType type, AssetDOMPosition dom, String location) {
+
+	protected Asset(String name, String version, AssetType type, AssetDomPosition dom, String location) {
 		this.name = name;
 		this.version = version;
 		this.type = type;
 		this.dom = dom;
 		this.finalLocation = location;
-		this.locations = new HashMap<String, String>();
 	}
 
 	public Asset(String name, String version, AssetType type) {
 		this.name = name;
 		this.version = version;
 		this.type = type;
+	}
+
+	public Asset(AssetStorageUnit asu) {
+		this.name = asu.getName();
+		this.type = asu.getType();
+		this.version = asu.getVersion();
+		this.dom = asu.getDom();
+		this.attributes = asu.getAttributes();
+		this.attributesOnlyName = asu.getAttributesOnlyName();
 	}
 
 	public String getName() {
@@ -137,33 +172,41 @@ public class Asset {
 		this.type = type;
 	}
 
-	public String getLocation() {
+	public String getConfigLocation() {
+		return configLocation;
+	}
+
+	public void setConfigLocation(String configLocation) {
+		this.configLocation = configLocation;
+	}
+
+	public String getConfigLocationKey() {
+		return configLocationKey;
+	}
+
+	public void setConfigLocationKey(String configLocationKey) {
+		this.configLocationKey = configLocationKey;
+	}
+
+	public String getFinalLocation() {
 		return finalLocation;
 	}
 
-	public void setLocation(String finalLocation) {
+	public void setFinalLocation(String finalLocation) {
 		this.finalLocation = finalLocation;
 	}
 
-	public AssetDOMPosition getDom() {
+	public AssetDomPosition getDom() {
 		return dom;
 	}
 
-	public void setDom(AssetDOMPosition dom) {
+	public void setDom(AssetDomPosition dom) {
 		this.dom = dom;
 	}
 
-	public Map<String, String> getLocations() {
-		return locations;
-	}
-
-	public void setLocations(Map<String, String> locations) {
-		this.locations = locations;
-	}
-
 	public Map<String, String> getAttributes() {
-		if (attributes == null)
-			return Collections.emptyMap();
+		// if (attributes == null)
+		// return Collections.emptyMap();
 		return attributes;
 	}
 
@@ -187,10 +230,8 @@ public class Asset {
 	 * @return <code>true</code> if the asset is valid
 	 */
 	public boolean isValid() {
-		return name != null && version != null && type != null && locations != null;
+		return name != null && version != null && type != null && finalLocation != null;
 	}
-
-
 
 	@Override
 	public int hashCode() {
@@ -198,7 +239,6 @@ public class Asset {
 		int result = 1;
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
 		result = prime * result + ((type == null) ? 0 : type.hashCode());
-		result = prime * result + ((version == null) ? 0 : version.hashCode());
 		return result;
 	}
 
@@ -219,22 +259,7 @@ public class Asset {
 			return false;
 		if (type != other.type)
 			return false;
-		if (version == null) {
-			if (other.version != null)
-				return false;
-		}
-		else if (!version.equals(other.version))
-			return false;
 		return true;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public String toString() {
-		return "Asset [name=" + name + ", version=" + version + ", type=" + type + (dom != null ? ", dom=" + dom : "")
-				+ ", locations=[" + locations + "], " + "location=" + finalLocation;
 	}
 
 	public String getAssetKey() {
@@ -261,5 +286,24 @@ public class Asset {
 			Arrays.copyOf(attributesOnlyName, attributesOnlyName.length + 1);
 			attributesOnlyName[attributesOnlyName.length] = attributeName;
 		}
+	}
+
+	public String getCacheKey() {
+		return cacheKey;
+	}
+
+	public void setCacheKey(String cacheKey) {
+		this.cacheKey = cacheKey;
+	}
+
+	@Override
+	public String toString() {
+		return "Asset [name=" + name + ", version=" + version + ", type=" + type + ", dom=" + dom + ", configLocation="
+				+ configLocation + ", configLocationKey=" + configLocationKey + ", finalLocation=" + finalLocation
+				+ ", attributes=" + attributes + ", attributesOnlyName=" + Arrays.toString(attributesOnlyName) + "]";
+	}
+
+	public String toLog() {
+		return name + " (" + type + ", v" + version + ")";
 	}
 }

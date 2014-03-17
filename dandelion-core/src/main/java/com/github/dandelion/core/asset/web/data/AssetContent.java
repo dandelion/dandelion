@@ -30,6 +30,7 @@
 package com.github.dandelion.core.asset.web.data;
 
 public class AssetContent {
+
 	private String content;
 	private String contentType;
 

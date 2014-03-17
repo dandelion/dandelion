@@ -33,7 +33,7 @@ import java.util.*;
 
 /**
  * <p>
- * Utility class used when dealing with Properties.
+ * Collection of utilities to ease working with {@link Properties}.
  * 
  * @author Romain Lespinasse
  * @author Thibault Duchateau
@@ -78,5 +78,11 @@ public class PropertiesUtils {
 			}
 		}
 		return properties;
+	}
+
+	public static List<String> propertyAsList(String values, String delimiter) {
+		if (values == null || values.isEmpty())
+			return null;
+		return Arrays.asList(values.split(delimiter));
 	}
 }

@@ -43,9 +43,10 @@ import java.util.zip.ZipInputStream;
 
 /**
  * <p>
- * Utility class used when dealing with Java classes.
+ * Collection of utilities to ease working with reflection.
  * 
  * @author Thibault Duchateau
+ * @since 0.10.0
  */
 public class ClassUtils {
 

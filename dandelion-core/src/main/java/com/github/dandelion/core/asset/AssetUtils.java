@@ -1,6 +1,6 @@
 /*
  * [The "BSD licence"]
- * Copyright (c) 2013 Dandelion
+ * Copyright (c) 2013-2014 Dandelion
  * All rights reserved.
  * 
  * Redistribution and use in source and binary forms, with or without
@@ -35,26 +35,91 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
+import com.github.dandelion.core.storage.AssetStorageUnit;
+
+/**
+ * <p>
+ * Some utilities to deal with {@link Asset}s and {@link AssetStorageUnit}s.
+ * 
+ * @author Thibault Duchateau
+ * @since 0.10.0
+ */
 public final class AssetUtils {
 
 	/**
-	 * @param assets
-	 *            assets to filter
+	 * <p>
+	 * Filters the given set of {@link AssetStorageUnit} using the given array
+	 * of {@link AssetType}.
+	 * 
+	 * @param asus
+	 *            The set of {@link AssetStorageUnit} to filter.
 	 * @param filters
-	 *            filtered assets type
-	 * @return a filtered list of assets
+	 *            Types of asset used to filter.
+	 * @return a filtered collection of {@link AssetStorageUnit}.
 	 */
-	public static Set<Asset> filterByType(Set<Asset> assets, AssetType... filters) {
-		Set<Asset> _assets = new LinkedHashSet<Asset>();
-		List<AssetType> _filters = new ArrayList<AssetType>(Arrays.asList(filters));
-		for (Asset _asset : assets) {
-			if (_filters.contains(_asset.getType())) {
-				_assets.add(_asset);
+	public static Set<AssetStorageUnit> filtersByType(Set<AssetStorageUnit> asus, AssetType... filters) {
+		Set<AssetStorageUnit> retval = new LinkedHashSet<AssetStorageUnit>();
+		List<AssetType> types = new ArrayList<AssetType>(Arrays.asList(filters));
+		for (AssetStorageUnit asu : asus) {
+			if (types.contains(asu.getType())) {
+				retval.add(asu);
 			}
 		}
-		return _assets;
+		return retval;
 	}
-	
+
+	/**
+	 * <p>
+	 * Filters the given set of {@link AssetStorageUnit} by removing all
+	 * elements whose name is present in the given array of excluded asset
+	 * names.
+	 * 
+	 * @param asus
+	 *            The collection of {@link AssetStorageUnit} to filter.
+	 * @param excludedAssetNames
+	 *            The collection of asset names to exclude from the collection.
+	 * @return a filtered collection of {@link AssetStorageUnit}.
+	 */
+	public static Set<AssetStorageUnit> filtersByName(Set<AssetStorageUnit> asus, String[] excludedAssetNames) {
+
+		List<String> excludedAssetNameList = Arrays.asList(excludedAssetNames);
+
+		Set<AssetStorageUnit> filteredAsus = new LinkedHashSet<AssetStorageUnit>();
+		for (AssetStorageUnit asu : asus) {
+
+			if (!excludedAssetNameList.contains(asu.getName().trim().toLowerCase())) {
+				filteredAsus.add(asu);
+			}
+		}
+
+		return filteredAsus;
+	}
+
+	/**
+	 * <p>
+	 * Filters the given set of {@link AssetStorageUnit} using the given
+	 * {@link AssetDomPosition}.
+	 * 
+	 * @param asus
+	 *            The set of {@link AssetStorageUnit} to filter.
+	 * @param desiredPosition
+	 *            The DOM position used to filter.
+	 * @return a filtered collection of {@link AssetStorageUnit}.
+	 */
+	public static Set<AssetStorageUnit> filtersByDomPosition(Set<AssetStorageUnit> asus,
+			AssetDomPosition desiredPosition) {
+		Set<AssetStorageUnit> filteredAsus = new LinkedHashSet<AssetStorageUnit>();
+		for (AssetStorageUnit asu : asus) {
+
+			AssetDomPosition assetPosition = asu.getDom() == null ? asu.getType().getDefaultDom() : asu.getDom();
+			if (assetPosition.equals(desiredPosition)) {
+				filteredAsus.add(asu);
+			}
+		}
+
+		return filteredAsus;
+	}
+
 	/**
 	 * Prevents instantiation;
 	 */

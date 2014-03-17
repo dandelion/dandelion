@@ -37,16 +37,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.github.dandelion.core.DevMode;
-import com.github.dandelion.core.bundle.BundleDag;
 import com.github.dandelion.core.bundle.loader.impl.DandelionBundleLoader;
 import com.github.dandelion.core.bundle.loader.impl.VendorBundleLoader;
 import com.github.dandelion.core.bundle.loader.spi.BundleLoader;
 import com.github.dandelion.core.config.Configuration;
+import com.github.dandelion.core.storage.BundleDag;
 
 /**
  * <p>
- * System in charge of discovering all providers of {@link BundleLoader}
- * available in the classpath and intializing the loaders.
+ * System in charge of discovering, initializing and manipulating all providers
+ * of {@link BundleLoader} available in the classpath.
  * 
  * <p>
  * The order in which all {@link BundleLoader} are stored is important here: all
@@ -82,7 +82,7 @@ public final class BundleLoaderSystem {
 
 		// Then all bundles of the components present in the classpath
 		for (BundleLoader bl : blServiceLoader) {
-			if (!"false".equalsIgnoreCase(Configuration.getProperty("bundle.loader." + bl.getName() + ".active"))) {
+			if (!"false".equalsIgnoreCase(Configuration.get("bundle.loader." + bl.getName() + ".active"))) {
 				bundleLoaders.add(bl);
 				LOG.info("Active bundle loader found: {}", bl.getClass().getSimpleName());
 			}

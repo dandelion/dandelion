@@ -88,7 +88,7 @@ public class EhCacheAssetCache implements AssetCache {
 	public EhCacheAssetCache() {
 
 		CacheManager cacheManager = null;
-		String cacheManagerName = Configuration.getProperty("assets.cache.manager");
+		String cacheManagerName = Configuration.getAssetCacheManagerName();
 
 		// First try to get an existing CacheManager
 		if (StringUtils.isNotBlank(cacheManagerName)) {
@@ -98,7 +98,7 @@ public class EhCacheAssetCache implements AssetCache {
 		else {
 			InputStream stream = null;
 
-			String cacheConfigurationPath = Configuration.getProperty("assets.cache.configuration");
+			String cacheConfigurationPath = Configuration.getAssetCacheConfigurationLocation();
 
 			if (StringUtils.isBlank(cacheConfigurationPath)) {
 				try {
@@ -143,5 +143,10 @@ public class EhCacheAssetCache implements AssetCache {
 	@Override
 	public void storeContent(String cacheKey, String cacheContent) {
 		cache.put(new Element(cacheKey, cacheContent));
+	}
+
+	@Override
+	public void remove(String cacheKey) {
+		cache.remove(cacheKey);
 	}
 }

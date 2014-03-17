@@ -31,7 +31,7 @@ package com.github.dandelion.core.utils;
 
 /**
  * <p>
- * Utility class used when dealing with Enums.
+ * Collection of utilities to ease working with enumerations.
  * 
  * @author Thibault Duchateau
  * @since 0.10.0

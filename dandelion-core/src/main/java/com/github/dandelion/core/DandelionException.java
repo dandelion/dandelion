@@ -29,71 +29,39 @@
  */
 package com.github.dandelion.core;
 
-import java.text.MessageFormat;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.ResourceBundle;
 
 /**
- * Main exception inside the Dandelion framework.
+ * <p>
+ * Main exception of the Dandelion framework.
  * 
+ * @author Thibault Duchateau
  * @author Romain Lespinasse
+ * @since 0.10.0
  */
 public class DandelionException extends RuntimeException {
 
 	private static final long serialVersionUID = -1854486123698434827L;
 
 	/**
-	 * Error Code of this Exception
-	 */
-	private DandelionError errorCode;
-
-	/**
 	 * Parameters of this Exception
 	 */
 	private Map<String, Object> parameters = new LinkedHashMap<String, Object>();
 
-	/**
-	 * @param errorCode
-	 *            Domain-Specific Error
-	 */
-	public DandelionException(DandelionError errorCode) {
-		super();
-		this.errorCode = errorCode;
+	public DandelionException(String message, Throwable cause) {
+		super(message, cause);
+		// TODO Auto-generated constructor stub
 	}
 
-	/**
-	 * Create the Bundle Key for a Dandelion Error
-	 * 
-	 * @param error
-	 *            Dandelion Error
-	 * @return a valid Bundle Key
-	 */
-	public static String createBundleKey(DandelionError error) {
-		return error.getClass().getSimpleName() + "__" + error.getNumber();
+	public DandelionException(String message) {
+		super(message);
+		// TODO Auto-generated constructor stub
 	}
 
-	/**
-	 * Create a DandelionException to wrapped Exception
-	 * 
-	 * @param message
-	 *            message of wrapped exception
-	 * @param exception
-	 *            wrapped exception
-	 * @param errorCode
-	 *            associated error
-	 */
-	private DandelionException(String message, Throwable exception, DandelionError errorCode) {
-		super(message, exception);
-		this.errorCode = errorCode;
-
-	}
-
-	/**
-	 * @return associated error to this exception
-	 */
-	public DandelionError getErrorCode() {
-		return errorCode;
+	public DandelionException(Throwable cause) {
+		super(cause);
+		// TODO Auto-generated constructor stub
 	}
 
 	/**
@@ -124,38 +92,13 @@ public class DandelionException extends RuntimeException {
 		return (T) parameters.get(field);
 	}
 
-	/**
-	 * Wrap a Exception into a DandelionException
-	 * 
-	 * @param exception
-	 *            exception to wrap
-	 * @param error
-	 *            associated dandelion error
-	 * @return generated exception
-	 */
-	public static DandelionException wrap(Throwable exception, DandelionError error) {
+	public static DandelionException wrap(Throwable exception) {
 		if (exception instanceof DandelionException) {
 			DandelionException se = (DandelionException) exception;
-			if (error != null && error != se.getErrorCode()) {
-				return new DandelionException(exception.getMessage(), exception, error);
-			}
 			return se;
 		}
 		else {
-			return new DandelionException(exception.getMessage(), exception, error);
+			return new DandelionException(exception.getMessage(), exception);
 		}
-	}
-
-	/**
-	 * @return the localized Message for Dandelion Error
-	 */
-	@Override
-	public String getLocalizedMessage() {
-		if (errorCode == null) {
-			return null;
-		}
-		String key = createBundleKey(errorCode);
-		ResourceBundle bundle = ResourceBundle.getBundle("com.github.dandelion.core.exceptions");
-		return MessageFormat.format(bundle.getString(key), parameters.values());
 	}
 }

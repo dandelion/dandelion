@@ -37,16 +37,17 @@ import java.net.URL;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.github.dandelion.core.DandelionException;
 
+/**
+ * 
+ * TODO
+ * 
+ * @author Thibault Duchateau
+ * @since 0.10.0
+ */
 public final class ResourceUtils {
 
-	private static final Logger LOG = LoggerFactory.getLogger(ResourceUtils.class);
-
-	public static final String PROTOCOL_RELATIVE_PREFIX = "//";
 	private static final int DEFAULT_BUFFER_SIZE = 1024 * 4;
 
 	public static InputStream getFileFromClasspath(String pathToFile) {
@@ -59,13 +60,10 @@ public final class ResourceUtils {
 			return getContentFromInputStream(in);
 		}
 		catch (IOException e) {
-			DandelionException de = DandelionException.wrap(e, ResourceError.CONTENT_CANT_BE_READ_FROM_INPUTSTREAM)
-					.set("path", pathToFile);
-			if (neverFail) {
-				LOG.debug(de.getLocalizedMessage(), de);
-				return "";
-			}
-			throw de;
+			StringBuilder sb = new StringBuilder("The content pointed by the path ");
+			sb.append(pathToFile);
+			sb.append(" can't be read from an inputStream.");
+			throw new DandelionException(sb.toString(), e);
 		}
 	}
 
@@ -95,13 +93,14 @@ public final class ResourceUtils {
 			return ResourceUtils.getContentFromInputStream(urlLocation.openStream());
 		}
 		catch (IOException e) {
-			DandelionException de = DandelionException.wrap(e, ResourceError.CONTENT_CANT_BE_READ_FROM_URL).set("url",
-					url);
-			if (neverFail) {
-				LOG.debug(de.getLocalizedMessage(), de);
+			if(neverFail) {
 				return "";
 			}
-			throw de;
+			
+			StringBuilder sb = new StringBuilder("The content pointed by the url ");
+			sb.append(url);
+			sb.append(" can't be read.");
+			throw new DandelionException(sb.toString(), e);
 		}
 	}
 

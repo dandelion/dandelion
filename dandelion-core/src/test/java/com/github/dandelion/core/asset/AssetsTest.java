@@ -49,20 +49,20 @@ public class AssetsTest {
 		Set<Asset> assetsB2 = Assets.assetsFor(request, "bundle2");
 		assertThat(assetsB2).hasSize(1);
 		for(Asset aB2 : assetsB2){
-			assertThat(aB2.getLocation()).startsWith(CONTEXT_PATH);
+			assertThat(aB2.getFinalLocation()).startsWith(CONTEXT_PATH);
 		}
 		
 		Set<Asset> assetsB3 = Assets.assetsFor(request, "bundle3");
 		assertThat(assetsB3).hasSize(2);
 		for(Asset aB3 : assetsB3){
-			assertThat(aB3.getLocation()).startsWith(CONTEXT_PATH);
+			assertThat(aB3.getFinalLocation()).startsWith(CONTEXT_PATH);
 		}
 	}
 	
 	@Test
 	public void should_return_all_processed_assets_by_bundle_names() {
 		context.addBundles("bundle1", "bundle2", "bundle3");
-		Set<Asset> assets = Assets.assetsFor(request, null, "bundle1", "bundle2", "bundle3");
+		Set<Asset> assets = Assets.assetsFor(request, null, null, false, false, "bundle1", "bundle2", "bundle3");
 		assertThat(assets).hasSize(3);
 	}
 	

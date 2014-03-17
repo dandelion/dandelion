@@ -18,5 +18,6 @@
       <module>dandelion-webjars</module>
       <module>dandelion-spring3</module>
       <module>dandelion-ehcache</module>
+      <module>dandelion-yuicompressor</module>
    </modules>
 </project>

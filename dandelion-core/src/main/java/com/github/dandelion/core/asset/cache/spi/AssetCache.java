@@ -29,16 +29,19 @@
  */
 package com.github.dandelion.core.asset.cache.spi;
 
+import java.util.HashMap;
+
 import com.github.dandelion.core.asset.cache.impl.HashMapAssetCache;
 
 /**
  * <p>
- * SPI for caching any asset content.
+ * SPI for all implementation of {@link AssetCache}.
  * 
  * <p>
  * Dandelion provides one out-of-the-box service provider:
  * <ul>
- * <li>{@link HashMapAssetCache} based on memory caching</li>
+ * <li>{@link HashMapAssetCache} that uses a simple {@link HashMap} as a
+ * in-memory caching.</li>
  * </ul>
  * 
  * @author Romain Lespinasse
@@ -50,7 +53,7 @@ public interface AssetCache {
 	public static final String DANDELION_CACHE_NAME = "dandelionCache";
 
 	/**
-	 * @return the name of the asset cache system.
+	 * @return the name of the asset cache.
 	 */
 	String getCacheName();
 
@@ -72,4 +75,12 @@ public interface AssetCache {
 	 *            The content to store in the cache.
 	 */
 	void storeContent(String cacheKey, String cacheContent);
+
+	/**
+	 * Removes the content stored under the passed {@code cacheKey}.
+	 * 
+	 * @param cacheKey
+	 *            The key under which the content will be removed.
+	 */
+	void remove(String cacheKey);
 }

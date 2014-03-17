@@ -37,7 +37,7 @@ import javax.servlet.http.HttpServletResponse;
 
 /**
  * <p>
- * Utilities that deal with URLs.
+ * Collection of utilities to ease working with URLs.
  * 
  * @author Thibault Duchateau
  * @since 0.10.0
@@ -94,11 +94,11 @@ public class UrlUtils {
 	 * @return a String containing the current URL.
 	 */
 	public static StringBuilder getCurrentUrl(HttpServletRequest request, boolean preserveParameters) {
-		
+
 		StringBuilder currentUrl = new StringBuilder(request.getRequestURL());
-		
+
 		// Get request parameters
-		if(preserveParameters){
+		if (preserveParameters) {
 			if (request.getAttribute(FORWARD_QUERY_STRING_ATTRIBUTE) != null) {
 				currentUrl.append("?").append(request.getAttribute(FORWARD_QUERY_STRING_ATTRIBUTE));
 			}

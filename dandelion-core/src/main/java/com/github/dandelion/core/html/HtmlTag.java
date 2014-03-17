@@ -35,6 +35,7 @@ import java.util.Map;
  * Abstract superclass for all HTML tags.
  * 
  * @author Thibault Duchateau
+ * @since 0.2.0
  */
 public abstract class HtmlTag {
 

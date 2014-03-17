@@ -42,11 +42,12 @@ import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 
 import com.github.dandelion.core.config.Configuration;
+import com.github.dandelion.core.utils.StringUtils;
 
 /**
  * <p>
- * Main entry point for manipulating the assets graph of the given
- * {@link HttpServletRequest}.
+ * Main user-side entry point for manipulating the assets graph associated to
+ * the current {@link HttpServletRequest}.
  * 
  * <p>
  * The assets graph can be manipulated in many ways:
@@ -90,11 +91,29 @@ import com.github.dandelion.core.config.Configuration;
  */
 public class AssetRequestContext {
 
+	/**
+	 * List of bundle to activate for the current request
+	 */
 	private List<String> bundles;
+
+	/**
+	 * List of bundle to exclude from the current request
+	 */
 	private List<String> excludedBundles;
+
+	/**
+	 * List of assets to exclude from the current request
+	 */
 	private List<String> excludedAssets;
+
+	/**
+	 * List of asset parameters
+	 */
 	private Map<String, Map<String, Object>> parameters;
 
+	/**
+	 * Private constructor.
+	 */
 	private AssetRequestContext() {
 		this.bundles = new ArrayList<String>();
 		this.excludedBundles = new ArrayList<String>();
@@ -103,17 +122,25 @@ public class AssetRequestContext {
 	}
 
 	/**
-	 * Access to the Assets Request context for given servlet request
+	 * <p>
+	 * Returns the {@link AssetRequestContext} associated to the passed
+	 * {@link ServletRequest}.
+	 * 
+	 * <p>
+	 * If it doesn't exist, a new instance is created and stored as a request
+	 * attribute.
 	 * 
 	 * @param servletRequest
-	 *            given servlet request
-	 * @return Assets Request context for given servlet request
+	 *            The servlet request in which is stored the
+	 *            {@link AssetRequestContext}.
+	 * @return the instance of {@link AssetRequestContext} associated with the
+	 *         current servlet request.
 	 */
 	public static AssetRequestContext get(ServletRequest servletRequest) {
 		Object attribute = servletRequest.getAttribute(AssetRequestContext.class.getCanonicalName());
 		if (attribute == null || !(attribute instanceof AssetRequestContext)) {
 			attribute = new AssetRequestContext();
-			((AssetRequestContext) attribute).addBundles(Configuration.getProperties().getProperty("bundle.include"));
+			((AssetRequestContext) attribute).addBundles(Configuration.getBundleIncludes());
 			servletRequest.setAttribute(AssetRequestContext.class.getCanonicalName(), attribute);
 		}
 		return AssetRequestContext.class.cast(attribute);
@@ -121,12 +148,13 @@ public class AssetRequestContext {
 
 	/**
 	 * <p>
-	 * Adds the given comma-separated bundle(s) to the current
+	 * Adds the given comma-separated list of bundle to the current
 	 * {@link AssetRequestContext}.
 	 * 
 	 * @param bundles
 	 *            A comma-separated list of bundles.
-	 * @return the current {@link AssetRequestContext}.
+	 * @return the current {@link AssetRequestContext} updated with the active
+	 *         bundle.
 	 */
 	public AssetRequestContext addBundles(String bundles) {
 		if (bundles == null || bundles.isEmpty()) {
@@ -214,11 +242,11 @@ public class AssetRequestContext {
 	 *         {@link AssetRequestContext}.
 	 */
 	public String[] getBundles(boolean withoutExcludedBundles) {
-		List<String> _bundles = new ArrayList<String>(bundles);
+		List<String> bundles = new ArrayList<String>(this.bundles);
 		if (withoutExcludedBundles) {
-			_bundles.removeAll(excludedBundles);
+			bundles.removeAll(excludedBundles);
 		}
-		return _bundles.toArray(new String[_bundles.size()]);
+		return bundles.toArray(new String[bundles.size()]);
 	}
 
 	/**
@@ -257,10 +285,12 @@ public class AssetRequestContext {
 	 * @return this context
 	 */
 	public AssetRequestContext excludeAssets(String assetNames) {
-		if (assetNames == null || assetNames.isEmpty()) {
+		if (StringUtils.isNotBlank(assetNames)) {
+			return excludeAssets(assetNames.split(","));
+		}
+		else {
 			return this;
 		}
-		return excludeAssets(assetNames.split(","));
 	}
 
 	/**
@@ -271,7 +301,9 @@ public class AssetRequestContext {
 	 * @return this context
 	 */
 	private AssetRequestContext excludeAssets(String... assetNames) {
-		this.excludedAssets.addAll(Arrays.asList(assetNames));
+		for (String assetName : assetNames) {
+			this.excludedAssets.add(assetName.trim().toLowerCase());
+		}
 		return this;
 	}
 

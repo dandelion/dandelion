@@ -31,7 +31,7 @@ package com.github.dandelion.core.bundle.loader.spi;
 
 import java.util.List;
 
-import com.github.dandelion.core.bundle.Bundle;
+import com.github.dandelion.core.storage.BundleStorageUnit;
 
 /**
  * <p>
@@ -47,9 +47,10 @@ public interface BundleLoader {
 	 * Load bundles by scanning the classpath starting from the configured
 	 * folder.
 	 * 
-	 * @return a list of {@link Bundle} serialized from the JSON files.
+	 * @return a list of {@link BundleStorageUnit} deserialized from the JSON
+	 *         files.
 	 */
-	List<Bundle> loadBundles();
+	List<BundleStorageUnit> loadBundles();
 
 	/**
 	 * @return the name of the loader, mainly used for logging.

@@ -29,7 +29,6 @@
  */
 package com.github.dandelion.core.asset;
 
-import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -38,42 +37,31 @@ import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 
 import com.github.dandelion.core.DevMode;
+import com.github.dandelion.core.asset.locator.spi.AssetLocator;
 import com.github.dandelion.core.asset.processor.AssetProcessorSystem;
-import com.github.dandelion.core.asset.processor.spi.AssetProcessor;
 import com.github.dandelion.core.asset.web.AssetRequestContext;
-import com.github.dandelion.core.asset.wrapper.spi.AssetLocationWrapper;
-import com.github.dandelion.core.bundle.Bundle;
-import com.github.dandelion.core.bundle.BundleStorage;
+import com.github.dandelion.core.storage.AssetStorageUnit;
+import com.github.dandelion.core.storage.BundleStorageUnit;
 
 /**
  * <p>
- * Main entry point for accessing the assets managed by Dandelion.
+ * Main developer-side entry point for accessing the assets managed by
+ * Dandelion.
  * 
  * @author Romain Lespinasse
  * @author Thibault Duchateau
- * 
  * @since 0.10.0
  */
 public final class Assets {
 
 	private static AssetConfigurator assetConfigurator;
-	private static BundleStorage bundleStorage;
 
-	/**
-	 * Initialize Assets only if needed
-	 */
 	public static void initializeIfNeeded() {
-		if (bundleStorage == null || DevMode.isEnabled()) {
-			initializeBundleStorage();
-		}
 		if (assetConfigurator == null || DevMode.isEnabled()) {
 			initializeAssetConfigurator();
 		}
 	}
 
-	/**
-	 * Initialize Assets Configurator only if needed
-	 */
 	private static synchronized void initializeAssetConfigurator() {
 		if (assetConfigurator == null) {
 			assetConfigurator = new AssetConfigurator();
@@ -81,10 +69,9 @@ public final class Assets {
 		}
 	}
 
-	private static synchronized void initializeBundleStorage() {
-		if (bundleStorage == null) {
-			bundleStorage = new BundleStorage();
-		}
+	public static AssetConfigurator configurator() {
+		initializeIfNeeded();
+		return assetConfigurator;
 	}
 
 	/**
@@ -106,108 +93,121 @@ public final class Assets {
 	 * 
 	 * @return wrappers for locations of Assets
 	 */
-	public static Map<String, AssetLocationWrapper> getAssetLocationWrappers() {
+	public static Map<String, AssetLocator> getAssetLocatorsMap() {
 		initializeIfNeeded();
-		return assetConfigurator.getAssetsLocationWrappers();
+		return assetConfigurator.getAssetLocatorsMap();
 	}
 
 	/**
-	 * Returns the implementation of {@link AssetLocationWrapper} corresponding
-	 * to the given location key.
+	 * Returns the implementation of {@link AssetLocator} corresponding to the
+	 * given location key.
 	 * 
 	 * @return the location wrapper.
 	 */
-	public static AssetLocationWrapper getAssetLocationWrapper(String locationKey) {
+	public static AssetLocator getAssetLocator(String locationKey) {
 		initializeIfNeeded();
-		return assetConfigurator.getAssetsLocationWrappers().get(locationKey);
+		return assetConfigurator.getAssetLocatorsMap().get(locationKey);
 	}
 
 	/**
-	 * @param assets
-	 *            assets to filter
-	 * @param filters
-	 *            exclude assets names
-	 * @return a filtered list of assets
+	 * 
+	 * 
+	 * <p>
+	 * For better performance, all filtering tasks are performed before
+	 * converting asset storage units into assets
+	 * 
+	 * @param request
+	 * @param excludedAssets
+	 * @param desiredPosition
+	 * @param bundleNames
+	 * @return
 	 */
-	public static Set<Asset> excludeByName(Set<Asset> assets, String... filters) {
-		Set<Asset> _assets = new LinkedHashSet<Asset>();
-		List<String> _filters = new ArrayList<String>();
-
-		if (filters != null) {
-			for (String filter : filters) {
-				_filters.add(filter.toLowerCase());
-			}
-		}
-
-		for (Asset asset : assets) {
-			if (!_filters.contains(asset.getName().toLowerCase())
-					&& !_filters.contains(asset.getAssetKey().toLowerCase())) {
-				_assets.add(asset);
-			}
-		}
-
-		return _assets;
-	}
-
-	public static Set<Asset> assetsFor(HttpServletRequest request, String[] excludedAssets, String... bundleNames) {
+	public static Set<Asset> assetsFor(HttpServletRequest request, String[] excludedAssets,
+			AssetDomPosition desiredPosition, boolean skipCaching, boolean applyProcessors, String... bundleNames) {
 		initializeIfNeeded();
 
-		Set<Asset> assets = new LinkedHashSet<Asset>();
+		// Gathers all asset storage units in an ordered set
+		Set<AssetStorageUnit> assetStorageUnits = new LinkedHashSet<AssetStorageUnit>();
 
-		for (String bundleName : bundleNames) {
-			List<String> bundles = Assets.getStorage().getBundleDag().bundlesFor(bundleName);
-			for (String s : bundles) {
-				Bundle b = Assets.getStorage().getBundleDag().getVertex(s);
-				if (b.getAssets() != null) {
-					assets.addAll(b.getAssets());
-				}
-			}
+		for (BundleStorageUnit bsu : configurator().getStorage().bundlesFor(bundleNames)) {
+			assetStorageUnits.addAll(bsu.getAssetStorageUnits());
 		}
 
-		assets = excludeByName(assets, excludedAssets);
-		return processedAssets(assets, request);
+		// Filters by asset name
+		if (excludedAssets != null && excludedAssets.length > 0) {
+			assetStorageUnits = AssetUtils.filtersByName(assetStorageUnits, excludedAssets);
+		}
+
+		// Filters by DOM position if requested
+		if (desiredPosition != null) {
+			assetStorageUnits = AssetUtils.filtersByDomPosition(assetStorageUnits, desiredPosition);
+		}
+
+		// Convert all asset storage units into assets
+		AssetMapper assetMapper = new AssetMapper(request, skipCaching);
+		Set<Asset> assets = assetMapper.mapToAssets(assetStorageUnits);
+
+		// Applying the processor chain
+		if (applyProcessors) {
+			assets = AssetProcessorSystem.process(assets, request);
+		}
+
+		return assets;
 	}
 
 	public static Set<Asset> assetsFor(HttpServletRequest request, String bundleName) {
 		initializeIfNeeded();
 		String[] bundleNames = new String[] { bundleName };
 		String[] excludedAssets = AssetRequestContext.get(request).getExcludedAssets();
-		return assetsFor(request, excludedAssets, bundleNames);
+		return assetsFor(request, excludedAssets, null, true, true, bundleNames);
 	}
 
-	public static Set<Asset> assetsFor(HttpServletRequest request, AssetDOMPosition position) {
+	public static Set<Asset> assetsFor(HttpServletRequest request, String bundleName, boolean applyProcessors) {
 		initializeIfNeeded();
-		Set<Asset> assets = assetsFor(position, AssetRequestContext.get(request).getBundles(true));
+		String[] bundleNames = new String[] { bundleName };
 		String[] excludedAssets = AssetRequestContext.get(request).getExcludedAssets();
-		assets = excludeByName(assets, excludedAssets);
-		return AssetProcessorSystem.process(assets, request);
+		return assetsFor(request, excludedAssets, null, false, applyProcessors, bundleNames);
+	}
+
+	public static Set<Asset> assetsFor(HttpServletRequest request, String bundleName, boolean skipCaching,
+			boolean applyProcessors) {
+		initializeIfNeeded();
+		String[] bundleNames = new String[] { bundleName };
+		String[] excludedAssets = AssetRequestContext.get(request).getExcludedAssets();
+		return assetsFor(request, excludedAssets, null, skipCaching, applyProcessors, bundleNames);
+	}
+
+	public static Set<Asset> assetsFor(HttpServletRequest request, AssetDomPosition desiredPosition) {
+		initializeIfNeeded();
+		String[] bundleNames = AssetRequestContext.get(request).getBundles(true);
+		String[] excludedAssets = AssetRequestContext.get(request).getExcludedAssets();
+		return assetsFor(request, excludedAssets, desiredPosition, false, true, bundleNames);
+	}
+
+	public static Set<Asset> assetsFor(HttpServletRequest request, AssetDomPosition desiredPosition,
+			boolean skipCaching, boolean applyProcessors) {
+		initializeIfNeeded();
+		String[] bundleNames = AssetRequestContext.get(request).getBundles(true);
+		String[] excludedAssets = AssetRequestContext.get(request).getExcludedAssets();
+		return assetsFor(request, excludedAssets, desiredPosition, skipCaching, applyProcessors, bundleNames);
 	}
 
 	public static Set<Asset> assetsFor(HttpServletRequest request) {
 		initializeIfNeeded();
 		String[] bundleNames = AssetRequestContext.get(request).getBundles(true);
 		String[] excludedAssets = AssetRequestContext.get(request).getExcludedAssets();
-		return assetsFor(request, excludedAssets, bundleNames);
+		return assetsFor(request, excludedAssets, null, false, true, bundleNames);
 	}
 
-	public static BundleStorage getStorage() {
+	// public static BundleStorage getStorage() {
+	// initializeIfNeeded();
+	// return bundleStorage;
+	// }
+
+	public static Set<BundleStorageUnit> bundlesFor(HttpServletRequest request) {
 		initializeIfNeeded();
-		return bundleStorage;
-	}
-
-	public static Set<Bundle> bundlesFor(HttpServletRequest request) {
-		initializeIfNeeded();
-		String[] bundles = AssetRequestContext.get(request).getBundles(true);
-		Set<Bundle> retval = new LinkedHashSet<Bundle>();
-		for (String bundleName : bundles) {
-			List<String> bundlesToLoad = Assets.getStorage().getBundleDag().bundlesFor(bundleName);
-			for (String s : bundlesToLoad) {
-				Bundle b = Assets.getStorage().getBundleDag().getVertex(s);
-				retval.add(b);
-			}
-
-		}
-
+		String[] bundleNames = AssetRequestContext.get(request).getBundles(true);
+		Set<BundleStorageUnit> retval = configurator().getStorage().bundlesFor(bundleNames);
 		return retval;
 	}
 
@@ -224,45 +224,9 @@ public final class Assets {
 	 */
 	public static boolean existsAssetsFor(HttpServletRequest request) {
 		initializeIfNeeded();
-		Set<Asset> assets = assetsFor(request, AssetRequestContext.get(request).getExcludedAssets(),
-				AssetRequestContext.get(request).getBundles(false));
+		Set<Asset> assets = assetsFor(request, AssetRequestContext.get(request).getExcludedAssets(), null, false,
+				false, AssetRequestContext.get(request).getBundles(false));
 		return !assets.isEmpty();
-	}
-
-	/**
-	 * Applies the {@link AssetProcessor} chain to the passed set of
-	 * {@link Asset}s.
-	 * 
-	 * @param assetsToProcess
-	 *            The set of {@link Asset} to process with the active
-	 *            {@link AssetProcessor}.
-	 * @param request
-	 *            The current {@link HttpServletRequest}.
-	 * @return a new set of processed {@link Asset}.
-	 */
-	private static Set<Asset> processedAssets(Set<Asset> assetsToProcess, HttpServletRequest request) {
-		return AssetProcessorSystem.process(assetsToProcess, request);
-	}
-
-	private static Set<Asset> assetsFor(AssetDOMPosition position, String... bundleNames) {
-		Set<Asset> assets = new LinkedHashSet<Asset>();
-
-		for (String bundleName : bundleNames) {
-			List<String> bundles = Assets.getStorage().getBundleDag().bundlesFor(bundleName);
-			for (String s : bundles) {
-				Bundle b = Assets.getStorage().getBundleDag().getVertex(s);
-				if (b.getAssets() != null && !b.getAssets().isEmpty()) {
-					for (Asset a : b.getAssets()) {
-						AssetDOMPosition assetPosition = a.getDom() == null ? a.getType().getDefaultDom() : a.getDom();
-						if (position.equals(assetPosition)) {
-							assets.add(a);
-						}
-					}
-				}
-			}
-		}
-
-		return assets;
 	}
 
 	/**

@@ -29,32 +29,24 @@
  */
 package com.github.dandelion.core.asset;
 
-import static com.github.dandelion.core.asset.AssetDOMPosition.body;
-import static com.github.dandelion.core.asset.AssetDOMPosition.head;
+import static com.github.dandelion.core.asset.AssetDomPosition.body;
+import static com.github.dandelion.core.asset.AssetDomPosition.head;
 
 /**
  * <p>
- * Possible types of asset.
+ * Types of an asset. Currently, only stylesheets and scripts are supported.
  * 
  * <p>
  * The order in the enum corresponds to the order in the DOM.
  */
 public enum AssetType {
 
-	/**
-	 * Cascade Style Sheet type
-	 */
-	css("text/css", head),
-
-	/**
-	 * Javascript type
-	 */
-	js("application/javascript", body);
+	css("text/css", head), js("application/javascript", body);
 
 	private String contentType;
-	private AssetDOMPosition defaultDom;
+	private AssetDomPosition defaultDom;
 
-	private AssetType(String contentType, AssetDOMPosition defaultDom) {
+	private AssetType(String contentType, AssetDomPosition defaultDom) {
 		this.contentType = contentType;
 		this.defaultDom = defaultDom;
 	}
@@ -63,7 +55,7 @@ public enum AssetType {
 		return contentType;
 	}
 
-	public AssetDOMPosition getDefaultDom() {
+	public AssetDomPosition getDefaultDom() {
 		return defaultDom;
 	}
 

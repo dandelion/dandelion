@@ -29,34 +29,31 @@
  */
 package com.github.dandelion.core.asset;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.github.dandelion.core.asset.processor.impl.AssetAggregationProcessor;
-import com.github.dandelion.core.asset.processor.impl.AssetMinificationProcessor;
-import com.github.dandelion.core.asset.wrapper.AssetLocationWrapperSystem;
-import com.github.dandelion.core.asset.wrapper.spi.AssetLocationWrapper;
-import com.github.dandelion.core.bundle.Bundle;
+import com.github.dandelion.core.asset.locator.AssetLocatorSystem;
+import com.github.dandelion.core.asset.locator.spi.AssetLocator;
 import com.github.dandelion.core.bundle.loader.BundleLoaderSystem;
 import com.github.dandelion.core.bundle.loader.spi.BundleLoader;
 import com.github.dandelion.core.config.Configuration;
+import com.github.dandelion.core.storage.BundleStorage;
+import com.github.dandelion.core.storage.BundleStorageUnit;
+import com.github.dandelion.core.utils.PropertiesUtils;
 
 /**
  * Load Assets configuration
  * <ul>
  * <li>assetsLoader :
  * <ul>
- * <li>the {@link com.github.dandelion.core.bundle.loader.spi.BundleLoader} found
- * in 'dandelion/dandelion.properties' for the key 'assetsLoader'</li>
+ * <li>the {@link com.github.dandelion.core.bundle.loader.spi.BundleLoader}
+ * found in 'dandelion/dandelion.properties' for the key 'assetsLoader'</li>
  * <li>or
- * {@link com.github.dandelion.core.bundle.loader.impl.AbstractBundleLoader}
- * by default</li>
+ * {@link com.github.dandelion.core.bundle.loader.spi.AbstractBundleLoader} by
+ * default</li>
  * </ul>
  * </li>
  * <li>assets.locations : type of access to assets content(remote [by default],
@@ -65,17 +62,19 @@ import com.github.dandelion.core.config.Configuration;
  * 
  * @author Romain Lespinasse
  * @author Thibault Duchateau
+ * @since 0.10.0
  */
 public class AssetConfigurator {
 
 	private static final Logger LOG = LoggerFactory.getLogger(AssetConfigurator.class);
 
-	private List<BundleLoader> bundleLoaders;
 	private List<String> assetsLocations;
 	private List<String> excludedBundles;
 	private List<String> excludedAssets;
-	private Map<String, AssetLocationWrapper> assetsLocationWrappers;
-
+	private List<BundleLoader> bundleLoaders;
+	private Map<String, AssetLocator> assetLocatorsMap;
+	private BundleStorage bundleStorage;
+	
 	public AssetConfigurator() {
 	}
 
@@ -83,66 +82,36 @@ public class AssetConfigurator {
 	 * Initialization of Assets Configurator on application load
 	 */
 	public void initialize() {
-		Properties configuration = Configuration.getProperties();
-
-		assetsLocations = setPropertyAsList(configuration.getProperty("assets.locations"), ",");
-		excludedBundles = setPropertyAsList(configuration.getProperty("assets.excluded.bundles"), ",");
-		excludedAssets = setPropertyAsList(configuration.getProperty("assets.excluded.assets"), ",");
+		assetsLocations = PropertiesUtils.propertyAsList(Configuration.getAssetLocationStrategy(), ",");
+		excludedBundles = PropertiesUtils.propertyAsList(Configuration.getBundleExcludes(), ",");
+		excludedAssets = PropertiesUtils.propertyAsList(Configuration.getAssetExcludes(), ",");
 
 		bundleLoaders = BundleLoaderSystem.getLoaders();
-		assetsLocationWrappers = AssetLocationWrapperSystem.getWrappersWithKey();
-		
-		if (new AssetMinificationProcessor().isMinificationEnabled()
-				|| new AssetAggregationProcessor().isAggregationEnabled()) {
-			activateLocationWrapper("cdn");
+
+		bundleStorage = new BundleStorage();
+		for (BundleLoader assetLoader : bundleLoaders) {
+			prepareAssetsLoading(assetLoader.loadBundles());
 		}
-		processAssetsLoading(true);
+
+		getStorage().checkBundleDag();
+		
+		assetLocatorsMap = AssetLocatorSystem.getAssetLocatorsMap();
+		
+		processAssetsLoading();
 	}
 
-	/**
-	 * Set the default configuration when it's needed
-	 */
-	public void setDefaultsIfNeeded() {
-		if (assetsLocations == null) {
-			assetsLocations = setPropertyAsList("cdn,classpath", ",");
-		}
-		if (excludedBundles == null) {
-			excludedBundles = new ArrayList<String>();
-		}
-		if (excludedAssets == null) {
-			excludedAssets = new ArrayList<String>();
-		}
-	}
 
 	/**
 	 * Process to the assets loading from defined asset loader
 	 */
-	public void processAssetsLoading(boolean defaultsNeeded) {
-		if (defaultsNeeded){
-			setDefaultsIfNeeded();
-		}
+	public void processAssetsLoading() {
 
 		for (BundleLoader assetLoader : bundleLoaders) {
 			prepareAssetsLoading(assetLoader.loadBundles());
 		}
 
-		Assets.getStorage().checkBundleDag();
-//		repairOrphanParentBundle();
-//		overrideAssetsByBundle();
-//
-//		storeAssetsFromBundle(ROOT_BUNDLE, null);
-//		storeAssetsFromBundle(DETACHED_PARENT_BUNDLE, null);
-//
-//		clearAllAssetsProcessElements();
+		getStorage().checkBundleDag();
 	}
-
-	public void activateLocationWrapper(String locationKey){
-		if (assetsLocationWrappers.containsKey(locationKey)) {
-			assetsLocationWrappers.get(locationKey).setActive(true);
-			LOG.debug("Asset location wrapper with the key {} is enabled", locationKey);
-		}
-    }
-	
 
 	/**
 	 * Prepare Assets Loading by
@@ -156,54 +125,26 @@ public class AssetConfigurator {
 	 * @param components
 	 *            components to analyze
 	 */
-	private void prepareAssetsLoading(List<Bundle> bundles) {
+	private void prepareAssetsLoading(List<BundleStorageUnit> bundles) {
 		LOG.debug("Excluded bundles are {}", excludedBundles);
 		LOG.debug("Excluded assets are {}", excludedAssets);
 
-		Assets.getStorage().loadBundles(bundles);
-
-//		for (AssetComponent component : components) {
-//			LOG.debug("Prepare {}", component);
-//
-//			if (!excludedBundles.contains(component.getBundle()) && !excludedBundles.contains(component.getParent())) {
-//				LOG.debug("Bundle {} and his parent {} are not excluded", component.getBundle(),
-//						component.getParent());
-//
-//				if (component.isOverride()) {
-//					prepareOverrideAssets(component);
-//				}
-//				else {
-//					prepareParentBundle(component);
-//					prepareBundle(component);
-//					prepareAssets(component);
-//				}
-//			}
-//		}
+		getStorage().loadBundles(bundles);
 	}
 
-	private List<String> setPropertyAsList(String values, String delimiter) {
-		if (values == null || values.isEmpty())
-			return null;
-		return Arrays.asList(values.split(delimiter));
-	}
-
-	public List<String> getAssetLocations(){
+	public List<String> getAssetLocations() {
 		return this.assetsLocations;
 	}
-	
-	public void setBundleLoaders(List<BundleLoader> bundleLoaders) {
-		this.bundleLoaders = bundleLoaders;
+
+	public Map<String, AssetLocator> getAssetLocatorsMap() {
+		return this.assetLocatorsMap;
 	}
 
-	public void setAssetsLocationWrappers(Map<String, AssetLocationWrapper> assetsLocationWrappers) {
-		this.assetsLocationWrappers = assetsLocationWrappers;
-	}
-
-	public Map<String, AssetLocationWrapper> getAssetsLocationWrappers(){
-		return this.assetsLocationWrappers;
-	}
-	
-	public List<BundleLoader> getBundleLoaders(){
+	public List<BundleLoader> getBundleLoaders() {
 		return this.bundleLoaders;
+	}
+	
+	public BundleStorage getStorage(){
+		return bundleStorage;
 	}
 }

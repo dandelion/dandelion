@@ -29,19 +29,20 @@
  */
 package com.github.dandelion.core.asset.cache.impl;
 
+import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 import com.github.dandelion.core.asset.cache.spi.AssetCache;
 
 /**
  * <p>
- * Service provider for {@link AssetCache} that uses a simple
- * {@link ConcurrentHashMap} as a store.
+ * Service provider for {@link AssetCache} that uses a simple {@link HashMap} as
+ * a store.
  * 
  * <p>
  * Note that this implementation is not cluster-safe.
  * 
+ * @author Thibault Duchateau
  * @author Romain Lespinasse
  * @since 0.10.0
  */
@@ -49,7 +50,7 @@ public class HashMapAssetCache implements AssetCache {
 	private Map<String, String> cache;
 
 	public HashMapAssetCache() {
-		cache = new ConcurrentHashMap<String, String>();
+		cache = new HashMap<String, String>();
 	}
 
 	/**
@@ -74,5 +75,13 @@ public class HashMapAssetCache implements AssetCache {
 	@Override
 	public void storeContent(String cacheKey, String cacheContent) {
 		cache.put(cacheKey, cacheContent);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void remove(String cacheKey) {
+		cache.remove(cacheKey);
 	}
 }

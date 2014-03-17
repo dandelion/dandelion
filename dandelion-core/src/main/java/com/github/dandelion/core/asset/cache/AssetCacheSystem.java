@@ -46,7 +46,7 @@ import com.github.dandelion.core.utils.Sha1Utils;
 /**
  * <p>
  * System in charge of discovering all implementations of {@link AssetCache}
- * available in the classpath.
+ * available in the classpath and manipulating the configured {@link AssetCache}.
  * 
  * @author Romain Lespinasse
  * @author Thibault Duchateau
@@ -73,7 +73,7 @@ public final class AssetCacheSystem {
 			LOG.info("Asset cache found: {}", ac.getClass().getSimpleName());
 		}
 
-		String cacheName = Configuration.getProperty("asset.cache.strategy");
+		String cacheName = Configuration.get("asset.cache.strategy");
 		if (!caches.isEmpty()) {
 			if (caches.containsKey(cacheName)) {
 				assetCache = caches.get(cacheName);
@@ -82,8 +82,8 @@ public final class AssetCacheSystem {
 				assetCache = caches.values().iterator().next();
 			}
 			else {
-				LOG.warn("Asset Cache Strategy is set with {}, but we only found caches with names {}", cacheName,
-						caches.keySet());
+				LOG.warn("Asset Cache Strategy is set with {}, but only caches with names {} have been found.",
+						cacheName, caches.keySet());
 			}
 		}
 		else if (cacheName != null) {
@@ -109,7 +109,7 @@ public final class AssetCacheSystem {
 
 	public static String getContent(String cacheKey) {
 		initializeIfNeeded();
-		LOG.debug("Content retrieved with the key {}", cacheKey);
+		LOG.debug("Retrieving asset with the key {}", cacheKey);
 		return assetCache.getContent(cacheKey);
 	}
 
@@ -117,9 +117,22 @@ public final class AssetCacheSystem {
 			String content) {
 		initializeIfNeeded();
 		String generatedKey = generateCacheKey(context, location, resourceName, type);
-		LOG.debug("Content stored under the key {}", generatedKey);
+		LOG.debug("Storing asset under the key {}", generatedKey);
 		assetCache.storeContent(generatedKey, content);
 		return content;
+	}
+
+	public static String storeContent(String key, String content) {
+		initializeIfNeeded();
+		LOG.debug("Storing asset under the key {}", key);
+		assetCache.storeContent(key, content);
+		return content;
+	}
+
+	public static void remove(String key) {
+		initializeIfNeeded();
+		LOG.debug("Removing asset under the key {}", key);
+		assetCache.remove(key);
 	}
 
 	public static String getCacheName() {

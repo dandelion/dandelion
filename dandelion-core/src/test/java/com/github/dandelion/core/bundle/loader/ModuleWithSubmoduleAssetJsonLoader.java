@@ -36,7 +36,7 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.github.dandelion.core.bundle.loader.impl.AbstractBundleLoader;
+import com.github.dandelion.core.bundle.loader.spi.AbstractBundleLoader;
 
 public class ModuleWithSubmoduleAssetJsonLoader extends AbstractBundleLoader {
 

@@ -29,6 +29,8 @@
  */
 package com.github.dandelion.core;
 
+import org.slf4j.Logger;
+
 /**
  * <p>
  * Utility class used to set/get the development mode.
@@ -51,5 +53,9 @@ public final class DevMode {
 
 	public static void set(boolean state) {
 		devMode = state;
+	}
+	
+	public static void log(String message, Logger logger, Object... arguments){
+		logger.info("[DevMode] " + message, arguments);
 	}
 }

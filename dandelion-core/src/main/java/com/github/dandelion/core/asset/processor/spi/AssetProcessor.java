@@ -2,20 +2,20 @@
  * [The "BSD licence"]
  * Copyright (c) 2013-2014 Dandelion
  * All rights reserved.
- *
+ * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
  * are met:
- *
+ * 
  * 1. Redistributions of source code must retain the above copyright
  * notice, this list of conditions and the following disclaimer.
  * 2. Redistributions in binary form must reproduce the above copyright
  * notice, this list of conditions and the following disclaimer in the
  * documentation and/or other materials provided with the distribution.
- * 3. Neither the name of Dandelion nor the names of its contributors
- * may be used to endorse or promote products derived from this software
+ * 3. Neither the name of Dandelion nor the names of its contributors 
+ * may be used to endorse or promote products derived from this software 
  * without specific prior written permission.
- *
+ * 
  * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
  * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
  * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
@@ -29,40 +29,36 @@
  */
 package com.github.dandelion.core.asset.processor.spi;
 
-import java.util.Set;
-
-import javax.servlet.http.HttpServletRequest;
+import java.io.Reader;
+import java.io.Writer;
 
 import com.github.dandelion.core.asset.Asset;
 
 /**
  * <p>
- * Abstract superclass for all processors.
+ * SPI for all asset processors.
  * 
- * @author Romain Lespinasse
- * @since 0.10.0
+ * @author Thibault Duchateau
  */
-public abstract class AssetProcessor implements Comparable<AssetProcessor> {
+public interface AssetProcessor {
 
-	private AssetProcessor nextEntry;
+	/**
+	 * @return the processor key associated with the processor.
+	 */
+	String getProcessorKey();
 
-	public abstract int getRank();
-
-	public void setNextEntry(AssetProcessor nextEntry) {
-		this.nextEntry = nextEntry;
-	}
-
-	public Set<Asset> doProcess(Set<Asset> assets, HttpServletRequest request) {
-		Set<Asset> _assets = process(assets, request);
-		return nextEntry == null ? _assets : nextEntry.doProcess(_assets, request);
-	}
-
-	public abstract Set<Asset> process(Set<Asset> assets, HttpServletRequest request);
-
-	public abstract String getProcessorKey();
-
-	@Override
-	public int compareTo(AssetProcessor entry) {
-		return getRank() - entry.getRank();
-	}
+	/**
+	 * <p>
+	 * Perform the processing of the given {@link Asset} by reading its content
+	 * from the given {@link Reader} and writing the processed content to the
+	 * {@link Writer}.
+	 * 
+	 * @param asset
+	 *            The asset being processed.
+	 * @param reader
+	 *            The reader containig the content to process.
+	 * @param writer
+	 *            The destination writer.
+	 */
+	void process(Asset asset, Reader reader, Writer writer);
 }

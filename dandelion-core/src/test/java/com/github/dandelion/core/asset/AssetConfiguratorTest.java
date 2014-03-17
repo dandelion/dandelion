@@ -43,7 +43,6 @@ public class AssetConfiguratorTest {
 		assetConfigurator = new AssetConfigurator();
 		assetConfigurator.initialize();
 	}
-
 	
 	@Test
 	public void should_have_loaded_bundle_loaders(){
@@ -52,9 +51,7 @@ public class AssetConfiguratorTest {
 	
 	@Test
 	public void should_have_loaded_location_wrappers(){
-		assertThat(assetConfigurator.getAssetsLocationWrappers()).hasSize(6);
-		assertThat(assetConfigurator.getAssetsLocationWrappers().keySet()).contains("delegate", "minification",
-				"classpath", "cdn", "webapp", "aggregation");
+		assertThat(assetConfigurator.getAssetLocatorsMap().keySet()).contains("delegate", "classpath", "cdn", "webapp");
 	}
 //	@Test
 //	public void should_load_default_bundle() {

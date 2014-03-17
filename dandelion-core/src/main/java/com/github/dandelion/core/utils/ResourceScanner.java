@@ -195,11 +195,14 @@ public final class ResourceScanner {
 				resourcePaths.addAll(scanForResourcePathsInJarFile(url));
 			}
 			else {
-				throw new DandelionException(ResourceScannerError.UNSUPPORTED_PROTOCOL).set("", url.getProtocol());
+				StringBuilder sb = new StringBuilder("The protocol ");
+				sb.append(url.getProtocol());
+				sb.append(" is not supported.");
+				throw new DandelionException(sb.toString());
 			}
 		}
 
-		LOG.debug("{} resources found before filtering", resourcePaths.size());
+		LOG.trace("{} resources found before filtering", resourcePaths.size());
 		return filterResourcePaths(location, resourcePaths, excludedPaths, nameFilter, prefixFilter, suffixFilter);
 	}
 
