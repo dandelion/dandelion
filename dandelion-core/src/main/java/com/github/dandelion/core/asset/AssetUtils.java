@@ -98,7 +98,7 @@ public final class AssetUtils {
 	/**
 	 * <p>
 	 * Filters the given set of {@link AssetStorageUnit} using the given
-	 * {@link AssetDOMPosition}.
+	 * {@link Temp}.
 	 * 
 	 * @param asus
 	 *            The set of {@link AssetStorageUnit} to filter.
@@ -107,11 +107,11 @@ public final class AssetUtils {
 	 * @return a filtered collection of {@link AssetStorageUnit}.
 	 */
 	public static Set<AssetStorageUnit> filtersByDomPosition(Set<AssetStorageUnit> asus,
-			AssetDOMPosition desiredPosition) {
+			Temp desiredPosition) {
 		Set<AssetStorageUnit> filteredAsus = new LinkedHashSet<AssetStorageUnit>();
 		for (AssetStorageUnit asu : asus) {
 
-			AssetDOMPosition assetPosition = asu.getDom() == null ? asu.getType().getDefaultDom() : asu.getDom();
+			Temp assetPosition = asu.getDom() == null ? asu.getType().getDefaultDom() : asu.getDom();
 			if (assetPosition.equals(desiredPosition)) {
 				filteredAsus.add(asu);
 			}

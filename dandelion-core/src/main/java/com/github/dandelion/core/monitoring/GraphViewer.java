@@ -47,7 +47,7 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.dandelion.core.DevMode;
 import com.github.dandelion.core.asset.Asset;
-import com.github.dandelion.core.asset.AssetDOMPosition;
+import com.github.dandelion.core.asset.Temp;
 import com.github.dandelion.core.asset.Assets;
 import com.github.dandelion.core.asset.web.AssetFilter;
 import com.github.dandelion.core.asset.web.AssetFilterResponseWrapper;
@@ -95,7 +95,7 @@ public class GraphViewer {
 		String graphView = ResourceUtils.getContentFromInputStream(Thread.currentThread().getContextClassLoader()
 				.getResourceAsStream("dandelion/internal/graphViewer/graphViewer.html"));
 
-		Set<Asset> assetsHead = Assets.assetsFor(request, AssetDOMPosition.head, true, false);
+		Set<Asset> assetsHead = Assets.assetsFor(request, Temp.head, true, false);
 		Iterator<Asset> iteratorAssetHead = assetsHead.iterator();
 		while (iteratorAssetHead.hasNext()) {
 			sbHead.append("    &lt;link href=\"" + iteratorAssetHead.next().getFinalLocation() + "\" />");
@@ -104,7 +104,7 @@ public class GraphViewer {
 			}
 		}
 
-		Set<Asset> assetsBody = Assets.assetsFor(request, AssetDOMPosition.body, true, false);
+		Set<Asset> assetsBody = Assets.assetsFor(request, Temp.body, true, false);
 		Iterator<Asset> iteratorAssetBody = assetsBody.iterator();
 		while (iteratorAssetBody.hasNext()) {
 			sbBody.append("    &lt;script src=\"" + iteratorAssetBody.next().getFinalLocation() + "\"></script>");
