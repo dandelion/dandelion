@@ -46,7 +46,7 @@ import org.slf4j.LoggerFactory;
 
 import com.github.dandelion.core.DevMode;
 import com.github.dandelion.core.asset.Asset;
-import com.github.dandelion.core.asset.AssetDomPosition;
+import com.github.dandelion.core.asset.AssetDOMPosition;
 import com.github.dandelion.core.asset.Assets;
 import com.github.dandelion.core.html.HtmlTag;
 import com.github.dandelion.core.monitoring.GraphViewer;
@@ -107,7 +107,7 @@ public class AssetFilter implements Filter {
 
 			if (isDandelionApplyable(request, context, wrapper)) {
 				
-				Set<Asset> assetsHead = Assets.assetsFor(request, AssetDomPosition.head);
+				Set<Asset> assetsHead = Assets.assetsFor(request, AssetDOMPosition.head);
 				if (!assetsHead.isEmpty()) {
 					StringBuilder htmlHead = new StringBuilder();
 					for (Asset asset : assetsHead) {
@@ -119,7 +119,7 @@ public class AssetFilter implements Filter {
 					html = html.replace("</head>", htmlHead + "\n</head>");
 				}
 				
-				Set<Asset> assetsBody = Assets.assetsFor(request, AssetDomPosition.body);
+				Set<Asset> assetsBody = Assets.assetsFor(request, AssetDOMPosition.body);
 				if (!assetsBody.isEmpty()) {
 					StringBuilder htmlBody = new StringBuilder();
 					for (Asset asset : assetsBody) {

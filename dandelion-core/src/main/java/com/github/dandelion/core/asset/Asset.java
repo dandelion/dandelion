@@ -67,7 +67,7 @@ public class Asset {
 	/**
 	 * Position where the asset must be injected.
 	 */
-	private AssetDomPosition dom;
+	private AssetDOMPosition dom;
 
 	/**
 	 * Key of the locator used to get the asset.
@@ -125,7 +125,7 @@ public class Asset {
 		this.finalLocation = location;
 	}
 
-	protected Asset(String name, String version, AssetType type, AssetDomPosition dom, String location) {
+	protected Asset(String name, String version, AssetType type, AssetDOMPosition dom, String location) {
 		this.name = name;
 		this.version = version;
 		this.type = type;
@@ -196,11 +196,11 @@ public class Asset {
 		this.finalLocation = finalLocation;
 	}
 
-	public AssetDomPosition getDom() {
+	public AssetDOMPosition getDom() {
 		return dom;
 	}
 
-	public void setDom(AssetDomPosition dom) {
+	public void setDom(AssetDOMPosition dom) {
 		this.dom = dom;
 	}
 

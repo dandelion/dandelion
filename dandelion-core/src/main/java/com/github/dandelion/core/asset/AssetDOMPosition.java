@@ -37,7 +37,7 @@ package com.github.dandelion.core.asset;
  * @author Romain Lespinasse
  * @since 0.2.0
  */
-public enum AssetDomPosition {
+public enum AssetDOMPosition {
 
 	/**
 	 * Typically used for stylesheets.

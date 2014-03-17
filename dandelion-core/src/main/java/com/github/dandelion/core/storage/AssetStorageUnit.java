@@ -33,7 +33,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.github.dandelion.core.asset.AssetDomPosition;
+import com.github.dandelion.core.asset.AssetDOMPosition;
 import com.github.dandelion.core.asset.AssetType;
 
 /**
@@ -48,33 +48,33 @@ public class AssetStorageUnit {
 	private String name;
 	private String version;
 	private AssetType type;
-	private AssetDomPosition dom;
+	private AssetDOMPosition dom;
 	private Map<String, String> locations;
 	private Map<String, String> attributes;
 	private String[] attributesOnlyName;
 	private String cacheKey;
 
-	public AssetStorageUnit(){
+	public AssetStorageUnit() {
 	}
-	
+
 	public AssetStorageUnit(String name, String version, AssetType type) {
 		this.name = name;
 		this.version = version;
 		this.type = type;
 	}
-	
+
 	public AssetStorageUnit(String name, Map<String, String> locations) {
 		this.name = name;
 		this.locations = locations;
 	}
 
-	public AssetStorageUnit(String name, String version, AssetType type, AssetDomPosition position) {
+	public AssetStorageUnit(String name, String version, AssetType type, AssetDOMPosition position) {
 		this.name = name;
 		this.version = version;
 		this.type = type;
 		this.dom = position;
 	}
-	
+
 	public AssetStorageUnit(String name, String version, AssetType type, Map<String, String> locations) {
 		this.name = name;
 		this.version = version;
@@ -106,11 +106,11 @@ public class AssetStorageUnit {
 		this.type = type;
 	}
 
-	public AssetDomPosition getDom() {
+	public AssetDOMPosition getDom() {
 		return dom;
 	}
 
-	public void setDom(AssetDomPosition dom) {
+	public void setDom(AssetDOMPosition dom) {
 		this.dom = dom;
 	}
 
@@ -214,8 +214,8 @@ public class AssetStorageUnit {
 				+ ", locations=" + locations + ", attributes=" + attributes + ", attributesOnlyName="
 				+ Arrays.toString(attributesOnlyName) + "]";
 	}
-	
-	public String toLog(){
+
+	public String toLog() {
 		return "'" + name + "' (" + type + ", v" + version + ")";
 	}
 }

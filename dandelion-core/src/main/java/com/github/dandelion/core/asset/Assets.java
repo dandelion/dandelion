@@ -123,7 +123,7 @@ public final class Assets {
 	 * @return
 	 */
 	public static Set<Asset> assetsFor(HttpServletRequest request, String[] excludedAssets,
-			AssetDomPosition desiredPosition, boolean skipCaching, boolean applyProcessors, String... bundleNames) {
+			AssetDOMPosition desiredPosition, boolean skipCaching, boolean applyProcessors, String... bundleNames) {
 		initializeIfNeeded();
 
 		// Gathers all asset storage units in an ordered set
@@ -177,14 +177,14 @@ public final class Assets {
 		return assetsFor(request, excludedAssets, null, skipCaching, applyProcessors, bundleNames);
 	}
 
-	public static Set<Asset> assetsFor(HttpServletRequest request, AssetDomPosition desiredPosition) {
+	public static Set<Asset> assetsFor(HttpServletRequest request, AssetDOMPosition desiredPosition) {
 		initializeIfNeeded();
 		String[] bundleNames = AssetRequestContext.get(request).getBundles(true);
 		String[] excludedAssets = AssetRequestContext.get(request).getExcludedAssets();
 		return assetsFor(request, excludedAssets, desiredPosition, false, true, bundleNames);
 	}
 
-	public static Set<Asset> assetsFor(HttpServletRequest request, AssetDomPosition desiredPosition,
+	public static Set<Asset> assetsFor(HttpServletRequest request, AssetDOMPosition desiredPosition,
 			boolean skipCaching, boolean applyProcessors) {
 		initializeIfNeeded();
 		String[] bundleNames = AssetRequestContext.get(request).getBundles(true);

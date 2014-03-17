@@ -42,7 +42,7 @@ import java.util.*;
 public class PropertiesUtils {
 
 	/**
-	 * Filter properties which begin with the supplied prefix.
+	 * <p>Filters properties which begin with the supplied prefix.
 	 * 
 	 * @param prefix
 	 *            The prefix used to filter the properties.
