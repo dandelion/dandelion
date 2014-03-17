@@ -33,7 +33,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.github.dandelion.core.asset.Temp;
+import com.github.dandelion.core.asset.AssetDomPosition;
 import com.github.dandelion.core.asset.AssetType;
 
 /**
@@ -48,7 +48,7 @@ public class AssetStorageUnit {
 	private String name;
 	private String version;
 	private AssetType type;
-	private Temp dom;
+	private AssetDomPosition dom;
 	private Map<String, String> locations;
 	private Map<String, String> attributes;
 	private String[] attributesOnlyName;
@@ -68,7 +68,7 @@ public class AssetStorageUnit {
 		this.locations = locations;
 	}
 
-	public AssetStorageUnit(String name, String version, AssetType type, Temp position) {
+	public AssetStorageUnit(String name, String version, AssetType type, AssetDomPosition position) {
 		this.name = name;
 		this.version = version;
 		this.type = type;
@@ -106,11 +106,11 @@ public class AssetStorageUnit {
 		this.type = type;
 	}
 
-	public Temp getDom() {
+	public AssetDomPosition getDom() {
 		return dom;
 	}
 
-	public void setDom(Temp dom) {
+	public void setDom(AssetDomPosition dom) {
 		this.dom = dom;
 	}
 

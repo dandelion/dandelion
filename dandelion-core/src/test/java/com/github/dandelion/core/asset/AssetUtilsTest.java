@@ -50,11 +50,11 @@ public class AssetUtilsTest {
 	public void should_return_a_filtered_set_when_filtering_by_position() {
 
 		Set<AssetStorageUnit> asus = new LinkedHashSet<AssetStorageUnit>();
-		asus.add(new AssetStorageUnit("name1", "1.0.0", AssetType.js, Temp.body));
-		asus.add(new AssetStorageUnit("name2", "1.0.0", AssetType.js, Temp.body));
-		asus.add(new AssetStorageUnit("name3", "1.0.0", AssetType.js, Temp.head));
+		asus.add(new AssetStorageUnit("name1", "1.0.0", AssetType.js, AssetDomPosition.body));
+		asus.add(new AssetStorageUnit("name2", "1.0.0", AssetType.js, AssetDomPosition.body));
+		asus.add(new AssetStorageUnit("name3", "1.0.0", AssetType.js, AssetDomPosition.head));
 
-		assertThat(AssetUtils.filtersByDomPosition(asus, Temp.head)).onProperty("name").contains("name3");
+		assertThat(AssetUtils.filtersByDomPosition(asus, AssetDomPosition.head)).onProperty("name").contains("name3");
 	}
 
 	@Test
@@ -65,7 +65,7 @@ public class AssetUtilsTest {
 		asus.add(new AssetStorageUnit("name2", "1.0.0", AssetType.js));
 		asus.add(new AssetStorageUnit("name3", "1.0.0", AssetType.css));
 
-		assertThat(AssetUtils.filtersByDomPosition(asus, Temp.body)).onProperty("name").contains("name1",
+		assertThat(AssetUtils.filtersByDomPosition(asus, AssetDomPosition.body)).onProperty("name").contains("name1",
 				"name2");
 	}
 }

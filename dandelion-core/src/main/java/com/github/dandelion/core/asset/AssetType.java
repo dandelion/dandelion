@@ -29,8 +29,8 @@
  */
 package com.github.dandelion.core.asset;
 
-import static com.github.dandelion.core.asset.Temp.body;
-import static com.github.dandelion.core.asset.Temp.head;
+import static com.github.dandelion.core.asset.AssetDomPosition.body;
+import static com.github.dandelion.core.asset.AssetDomPosition.head;
 
 /**
  * <p>
@@ -44,9 +44,9 @@ public enum AssetType {
 	css("text/css", head), js("application/javascript", body);
 
 	private String contentType;
-	private Temp defaultDom;
+	private AssetDomPosition defaultDom;
 
-	private AssetType(String contentType, Temp defaultDom) {
+	private AssetType(String contentType, AssetDomPosition defaultDom) {
 		this.contentType = contentType;
 		this.defaultDom = defaultDom;
 	}
@@ -55,7 +55,7 @@ public enum AssetType {
 		return contentType;
 	}
 
-	public Temp getDefaultDom() {
+	public AssetDomPosition getDefaultDom() {
 		return defaultDom;
 	}
 
