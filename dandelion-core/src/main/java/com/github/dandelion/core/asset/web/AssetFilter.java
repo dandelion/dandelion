@@ -32,7 +32,6 @@ package com.github.dandelion.core.asset.web;
 import java.io.IOException;
 import java.util.Set;
 
-import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
@@ -44,33 +43,35 @@ import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.github.dandelion.core.Context;
 import com.github.dandelion.core.DevMode;
 import com.github.dandelion.core.asset.Asset;
 import com.github.dandelion.core.asset.AssetDomPosition;
-import com.github.dandelion.core.asset.Assets;
+import com.github.dandelion.core.asset.AssetQuery;
 import com.github.dandelion.core.html.HtmlTag;
 import com.github.dandelion.core.monitoring.GraphViewer;
 import com.github.dandelion.core.utils.HtmlUtils;
 
 /**
  * <p>
- * Dandelion filter used to inject web resources at the right positions in the
- * HTML, depending on the content of the {@link Assets}.
+ * TODO
  * 
  * @author Thibault Duchateau
  * @author Romain Lespinasse
  * @since 0.10.0
  */
-public class AssetFilter implements Filter {
+public class AssetFilter extends AbstractDandelionFilter {
 
 	private static Logger LOG = LoggerFactory.getLogger(AssetFilter.class);
 
-	public static final String DANDELION_ASSET_FILTER_STATE = "dandelionAssetFilterState";
-	public static final String DANDELION_SHOW_GRAPH = "showDandelionGraph";
+	public static final String DANDELION_CONTEXT_ATTRIBUTE = "dandelion_context";
+	private Context context;
 	
 	@Override
 	public void init(FilterConfig filterConfig) throws ServletException {
-		LOG.info("initialize the Dandelion AssetFilter");
+		LOG.info("Initializing the Dandelion configuration");
+		context = new Context(filterConfig);
+		LOG.info("Dandelion configuration initialized");
 	}
 
 	@Override
@@ -87,11 +88,11 @@ public class AssetFilter implements Filter {
 		HttpServletRequest request = (HttpServletRequest) servletRequest;
 		HttpServletResponse response = (HttpServletResponse) serlvetResponse;
 
+		request.setAttribute(DANDELION_CONTEXT_ATTRIBUTE, context);
 		// Override the response with the graph viewer
 		if(DevMode.isEnabled() && request.getParameter(DANDELION_SHOW_GRAPH) != null){
-			GraphViewer graphViewer = new GraphViewer();
+			GraphViewer graphViewer = new GraphViewer(context);
 			response.getWriter().println(graphViewer.getView(request, response, filterChain));
-			response.getWriter().close();
 			return;
 		}
 		
@@ -103,11 +104,15 @@ public class AssetFilter implements Filter {
 			filterChain.doFilter(request, wrapper);
 			
 			String html = wrapper.getWrappedContent();
-			AssetRequestContext context = AssetRequestContext.get(request);
+			AssetRequestContext arc = AssetRequestContext.get(request);
 
-			if (isDandelionApplyable(request, context, wrapper)) {
+			if (isDandelionApplyable(request, arc, wrapper)) {
 				
-				Set<Asset> assetsHead = Assets.assetsFor(request, AssetDomPosition.head);
+				Set<Asset> assetsHead = new AssetQuery(request, context)
+					.withPosition(AssetDomPosition.head)
+					.perform();
+				
+//				Set<Asset> assetsHead = Assets.assetsFor(request, AssetDomPosition.head);
 				if (!assetsHead.isEmpty()) {
 					StringBuilder htmlHead = new StringBuilder();
 					for (Asset asset : assetsHead) {
@@ -119,7 +124,11 @@ public class AssetFilter implements Filter {
 					html = html.replace("</head>", htmlHead + "\n</head>");
 				}
 				
-				Set<Asset> assetsBody = Assets.assetsFor(request, AssetDomPosition.body);
+				Set<Asset> assetsBody = new AssetQuery(request,context)
+				.withPosition(AssetDomPosition.body)
+				.perform();
+				
+//				Set<Asset> assetsBody = Assets.assetsFor(request, AssetDomPosition.body);
 				if (!assetsBody.isEmpty()) {
 					StringBuilder htmlBody = new StringBuilder();
 					for (Asset asset : assetsBody) {
@@ -135,7 +144,6 @@ public class AssetFilter implements Filter {
 			}
 
 			response.getWriter().println(html);
-			response.getWriter().close();
 		}
 		// All other requests are not filtered
 		else {
@@ -190,9 +198,9 @@ public class AssetFilter implements Filter {
 		if (wrapper.getContentType() == null || !wrapper.getContentType().contains("text/html")) {
 			return false;
 		}
-		else if (!Assets.existsAssetsFor(request)) {
-			return false;
-		}
+//		else if (!Assets.existsAssetsFor(request)) {
+//			return false;
+//		}
 		return true;
 	}
 

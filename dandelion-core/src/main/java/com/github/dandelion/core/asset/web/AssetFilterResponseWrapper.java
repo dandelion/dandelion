@@ -48,7 +48,7 @@ import javax.servlet.http.HttpServletResponseWrapper;
 public class AssetFilterResponseWrapper extends HttpServletResponseWrapper {
 
 	protected PrintWriter printWriter = null;
-	protected CharArrayWriter writer = null;
+	protected CharArrayWriter charArrayWriter = null;
 
 	public AssetFilterResponseWrapper(HttpServletResponse response) {
 		super(response);
@@ -61,18 +61,18 @@ public class AssetFilterResponseWrapper extends HttpServletResponseWrapper {
 
 	@Override
 	public PrintWriter getWriter() throws IOException {
-		if (writer == null) {
-			writer = new CharArrayWriter();
+		if (charArrayWriter == null) {
+			charArrayWriter = new CharArrayWriter();
 		}
 
 		if (printWriter == null) {
-			printWriter = new PrintWriter(writer);
+			printWriter = new PrintWriter(charArrayWriter);
 		}
 
 		return printWriter;
 	}
 
 	public String getWrappedContent() {
-		return writer.toString();
+		return charArrayWriter.toString();
 	}
 }

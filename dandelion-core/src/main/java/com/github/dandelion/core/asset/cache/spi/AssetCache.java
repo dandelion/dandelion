@@ -30,8 +30,11 @@
 package com.github.dandelion.core.asset.cache.spi;
 
 import java.util.HashMap;
+import java.util.Set;
 
-import com.github.dandelion.core.asset.cache.impl.HashMapAssetCache;
+import com.github.dandelion.core.Context;
+import com.github.dandelion.core.asset.Asset;
+import com.github.dandelion.core.asset.cache.impl.MemoryAssetCache;
 
 /**
  * <p>
@@ -40,8 +43,8 @@ import com.github.dandelion.core.asset.cache.impl.HashMapAssetCache;
  * <p>
  * Dandelion provides one out-of-the-box service provider:
  * <ul>
- * <li>{@link HashMapAssetCache} that uses a simple {@link HashMap} as a
- * in-memory caching.</li>
+ * <li>{@link MemoryAssetCache} that uses a simple {@link HashMap} for in-memory
+ * caching.</li>
  * </ul>
  * 
  * @author Romain Lespinasse
@@ -61,20 +64,42 @@ public interface AssetCache {
 	 * Gets the content from the cache stored under the passed {@code cacheKey}.
 	 * 
 	 * @param cacheKey
-	 *            The cache key under which the content is stored in the cache.
-	 * @return the content associated with the cacheKey.
+	 *            The cache key under which the asset content is stored in the
+	 *            cache.
+	 * @return the content associated with the cache key.
 	 */
-	String getContent(String cacheKey);
+	String getAssetContent(String cacheKey);
 
 	/**
-	 * Puts the passed {@code cacheContent} to the cache.
+	 * Gets the set of assets to be displayed for a request stored under the
+	 * passed {@code cacheKey}.
+	 * 
+	 * @param cacheKey
+	 *            The cache key under which the set of assets is stored in the
+	 *            cache.
+	 * @return the assets associated with the cache key.
+	 */
+	Set<Asset> getRequestAssets(String cacheKey);
+
+	/**
+	 * Puts the passed {@code assetContent} to the cache.
 	 * 
 	 * @param cacheKey
 	 *            The key used to puts the content to the cache.
-	 * @param cacheContent
+	 * @param assetContent
 	 *            The content to store in the cache.
 	 */
-	void storeContent(String cacheKey, String cacheContent);
+	void storeAssetContent(String cacheKey, String assetContent);
+
+	/**
+	 * Puts the passed {@code assets} to the cache.
+	 * 
+	 * @param cacheKey
+	 *            The key used to puts the assets to the cache.
+	 * @param assets
+	 *            The assets to store in the cache.
+	 */
+	void storeRequestAssets(String cacheKey, Set<Asset> assets);
 
 	/**
 	 * Removes the content stored under the passed {@code cacheKey}.
@@ -83,4 +108,6 @@ public interface AssetCache {
 	 *            The key under which the content will be removed.
 	 */
 	void remove(String cacheKey);
+
+	void setContext(Context context);
 }

@@ -35,11 +35,9 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-import com.github.dandelion.core.storage.AssetStorageUnit;
-
 /**
  * <p>
- * Some utilities to deal with {@link Asset}s and {@link AssetStorageUnit}s.
+ * Some utilities to deal with {@link Asset}s.
  * 
  * @author Thibault Duchateau
  * @since 0.10.0
@@ -48,21 +46,21 @@ public final class AssetUtils {
 
 	/**
 	 * <p>
-	 * Filters the given set of {@link AssetStorageUnit} using the given array
-	 * of {@link AssetType}.
+	 * Filters the given set of {@link Asset}s using the given array of
+	 * {@link AssetType}.
 	 * 
-	 * @param asus
-	 *            The set of {@link AssetStorageUnit} to filter.
+	 * @param assets
+	 *            The set of {@link Asset}s to filter.
 	 * @param filters
 	 *            Types of asset used to filter.
-	 * @return a filtered collection of {@link AssetStorageUnit}.
+	 * @return a filtered collection of {@link Asset}s.
 	 */
-	public static Set<AssetStorageUnit> filtersByType(Set<AssetStorageUnit> asus, AssetType... filters) {
-		Set<AssetStorageUnit> retval = new LinkedHashSet<AssetStorageUnit>();
+	public static Set<Asset> filtersByType(Set<Asset> assets, AssetType... filters) {
+		Set<Asset> retval = new LinkedHashSet<Asset>();
 		List<AssetType> types = new ArrayList<AssetType>(Arrays.asList(filters));
-		for (AssetStorageUnit asu : asus) {
-			if (types.contains(asu.getType())) {
-				retval.add(asu);
+		for (Asset asset : assets) {
+			if (types.contains(asset.getType())) {
+				retval.add(asset);
 			}
 		}
 		return retval;
@@ -70,25 +68,24 @@ public final class AssetUtils {
 
 	/**
 	 * <p>
-	 * Filters the given set of {@link AssetStorageUnit} by removing all
-	 * elements whose name is present in the given array of excluded asset
-	 * names.
+	 * Filters the given set of {@link Asset}s by removing all elements whose
+	 * name is present in the given array of excluded asset names.
 	 * 
-	 * @param asus
-	 *            The collection of {@link AssetStorageUnit} to filter.
+	 * @param assets
+	 *            The collection of {@link Asset}s to filter.
 	 * @param excludedAssetNames
 	 *            The collection of asset names to exclude from the collection.
-	 * @return a filtered collection of {@link AssetStorageUnit}.
+	 * @return a filtered collection of {@link Asset}s.
 	 */
-	public static Set<AssetStorageUnit> filtersByName(Set<AssetStorageUnit> asus, String[] excludedAssetNames) {
+	public static Set<Asset> filtersByName(Set<Asset> assets, String[] excludedAssetNames) {
 
 		List<String> excludedAssetNameList = Arrays.asList(excludedAssetNames);
 
-		Set<AssetStorageUnit> filteredAsus = new LinkedHashSet<AssetStorageUnit>();
-		for (AssetStorageUnit asu : asus) {
+		Set<Asset> filteredAsus = new LinkedHashSet<Asset>();
+		for (Asset asset : assets) {
 
-			if (!excludedAssetNameList.contains(asu.getName().trim().toLowerCase())) {
-				filteredAsus.add(asu);
+			if (!excludedAssetNameList.contains(asset.getName().trim().toLowerCase())) {
+				filteredAsus.add(asset);
 			}
 		}
 
@@ -97,23 +94,22 @@ public final class AssetUtils {
 
 	/**
 	 * <p>
-	 * Filters the given set of {@link AssetStorageUnit} using the given
+	 * Filters the given set of {@link Asset}s using the given
 	 * {@link AssetDomPosition}.
 	 * 
-	 * @param asus
-	 *            The set of {@link AssetStorageUnit} to filter.
+	 * @param assets
+	 *            The set of {@link Asset}s to filter.
 	 * @param desiredPosition
 	 *            The DOM position used to filter.
-	 * @return a filtered collection of {@link AssetStorageUnit}.
+	 * @return a filtered collection of {@link Asset}s.
 	 */
-	public static Set<AssetStorageUnit> filtersByDomPosition(Set<AssetStorageUnit> asus,
-			AssetDomPosition desiredPosition) {
-		Set<AssetStorageUnit> filteredAsus = new LinkedHashSet<AssetStorageUnit>();
-		for (AssetStorageUnit asu : asus) {
+	public static Set<Asset> filtersByDomPosition(Set<Asset> assets, AssetDomPosition desiredPosition) {
+		Set<Asset> filteredAsus = new LinkedHashSet<Asset>();
+		for (Asset asset : assets) {
 
-			AssetDomPosition assetPosition = asu.getDom() == null ? asu.getType().getDefaultDom() : asu.getDom();
+			AssetDomPosition assetPosition = asset.getDom() == null ? asset.getType().getDefaultDom() : asset.getDom();
 			if (assetPosition.equals(desiredPosition)) {
-				filteredAsus.add(asu);
+				filteredAsus.add(asset);
 			}
 		}
 

@@ -29,9 +29,11 @@
  */
 package com.github.dandelion.core.config;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Properties;
 
-import com.github.dandelion.core.DevMode;
+import com.github.dandelion.core.utils.PropertiesUtils;
 import com.github.dandelion.core.utils.StringUtils;
 
 /**
@@ -52,140 +54,155 @@ import com.github.dandelion.core.utils.StringUtils;
  */
 public class Configuration {
 
-	private static Properties configuration;
-
-	public static final String DEFAULT_ASSET_LOCATION_STRATEGY = "webjar,webapp,cdn";
-	public static final String DEFAULT_ASSET_PROCESSORS = "";
-	public static final boolean DEFAULT_ASSET_PROCESSORS_ENABLED = false;
-	public static final String DEFAULT_ASSET_PROCESSORS_ENCODING = "UTF-8";
-	public static final String DEFAULT_ASSET_EXCLUDES = "";
-	public static final String DEFAULT_ASSET_CACHE_MANAGER_NAME = "";
-	public static final String DEFAULT_ASSET_CACHE_CONFIGURATION_LOCATION = "";
-	public static final String DEFAULT_BUNDLE_INCLUDES = "";
-	public static final String DEFAULT_BUNDLE_EXCLUDES = "";
-
-	public static final String PROP_ASSET_LOCATION_STRATEGY = "asset.locations.encoding";
-	public static final String PROP_ASSET_PROCESSORS_ENABLED = "asset.processors.enabled";
-	public static final String PROP_ASSET_PROCESSORS = "asset.processors";
-	public static final String PROP_ASSET_PROCESSORS_ENCODING = "asset.processors.encoding";
-	public static final String PROP_ASSET_EXCLUDES = "asset.excludes";
-	public static final String PROP_ASSET_CACHE_MANAGER_NAME = "asset.cache.manager";
-	public static final String PROP_ASSET_CACHE_CONFIGURATION_LOCATION = "asset.cache.configuration.location";
-	public static final String PROP_BUNDLE_INCLUDES = "bundle.includes";
-	public static final String PROP_BUNDLE_EXCLUDES = "bundle.excludes";
-
-	private static String assetLocationStrategy = DEFAULT_ASSET_LOCATION_STRATEGY;
-	private static String assetProcessors = DEFAULT_ASSET_PROCESSORS;
-	private static boolean assetProcessorsEnabled = DEFAULT_ASSET_PROCESSORS_ENABLED;
-	private static String assetProcessorEncoding = DEFAULT_ASSET_PROCESSORS_ENCODING;
-	private static String assetExcludes = DEFAULT_ASSET_EXCLUDES;
-	private static String assetCacheManagerName = DEFAULT_ASSET_CACHE_MANAGER_NAME;
-	private static String assetCacheConfigurationLocation = DEFAULT_ASSET_CACHE_CONFIGURATION_LOCATION;
-	private static String bundleIncludes = DEFAULT_BUNDLE_INCLUDES;
-	private static String bundleExcludes = DEFAULT_BUNDLE_EXCLUDES;
-
-	public static void initializeIfNeeded() {
-		if (configuration == null || DevMode.isEnabled()) {
-			loadConfiguration();
-		}
-	}
-
-	public static String get(String key) {
-		initializeIfNeeded();
-		return configuration.getProperty(key);
-	}
-
-	public static String get(String key, String defaultValue) {
-		initializeIfNeeded();
-		return configuration.getProperty(key, defaultValue);
-	}
-
 	/**
-	 * <p>
-	 * Load the Dandelion configuration using the following strategy:
-	 * <ul>
-	 * <li>All default properties files are loaded (dandelion, webanalytics,
-	 * ...)</li>
-	 * <li>If it exists, the user properties are loaded using the bundle
-	 * mechanism and override the default configuration</li>
-	 * </ul>
+	 * The properties instance used as a configuration storage.
 	 */
-	private static synchronized void loadConfiguration() {
-		if (configuration == null) {
+	private Properties properties;
 
-			ConfigurationLoader confLoader = DandelionConfigurator.getConfigurationLoader();
-			Properties properties = new Properties();
-			properties.putAll(confLoader.loadDefaultConfiguration());
-			properties.putAll(confLoader.loadUserConfiguration());
-			configuration = properties;
+	public Configuration() {
+		this.properties = new Properties();
+		setDefaultConfiguration();
+	}
+
+	public String get(DandelionConfig config) {
+		String retval = this.properties.getProperty(config.getPropertyName());
+		if (StringUtils.isNotBlank(retval)) {
+			return retval;
+		}
+		else {
+			return config.getDefaultValue();
 		}
 	}
 
-	public static String getAssetLocationStrategy() {
-		String value = get(PROP_ASSET_LOCATION_STRATEGY);
+	public void put(DandelionConfig config, Object value) {
+		this.properties.put(config.getPropertyName(), value);
+	}
+
+	public void putDefault(DandelionConfig config) {
+		this.properties.put(config.getPropertyName(), config.getDefaultValue());
+	}
+
+	public void putAll(Properties properties) {
+		this.properties.putAll(properties);
+	}
+
+	public Properties getProperties() {
+		return properties;
+	}
+
+	public void setProperties(Properties properties) {
+		this.properties = properties;
+	}
+
+	public String get(String key, String defaultValue) {
+		return properties.getProperty(key, defaultValue);
+	}
+
+	public boolean isMinificationEnabled() {
+		String retval = get(DandelionConfig.MINIFICATION_ENABLED);
+		if (StringUtils.isNotBlank(retval)) {
+			return Boolean.parseBoolean(retval);
+		}
+		return false;
+	}
+
+	public void setMinificationEnabled(boolean value) {
+		put(DandelionConfig.MINIFICATION_ENABLED, value);
+	}
+
+	public List<String> getAssetLocationsResolutionStrategy() {
+		String retval = get(DandelionConfig.ASSET_LOCATIONS_RESOLUTION_STRATEGY);
+		if (StringUtils.isNotBlank(retval)) {
+			return PropertiesUtils.propertyAsList(retval, ",");
+		}
+		return Collections.emptyList();
+	}
+
+	public void setAssetLocationsResolutionStrategy(String value) {
+		put(DandelionConfig.ASSET_LOCATIONS_RESOLUTION_STRATEGY, value);
+	}
+
+	public List<String> getAssetProcessors() {
+		String value = get(DandelionConfig.ASSET_PROCESSORS);
 		if (StringUtils.isNotBlank(value)) {
-			assetLocationStrategy = value;
+			return PropertiesUtils.propertyAsList(value, ",");
 		}
-		return assetLocationStrategy;
-	}
-	
-	public static boolean isAssetProcessorsEnabled() {
-		return assetProcessorsEnabled;
+		return Collections.emptyList();
 	}
 
-	public static String getAssetProcessors() {
-		String value = get(PROP_ASSET_PROCESSORS);
-		if (StringUtils.isNotBlank(value)) {
-			assetProcessors = value;
-		}
-		return assetProcessors;
+	public void setAssetProcessors(String... processors) {
+		put(DandelionConfig.ASSET_PROCESSORS, processors);
 	}
 
-	public static String getAssetProcessorEncoding() {
-		String value = get(PROP_ASSET_PROCESSORS_ENCODING);
-		if (StringUtils.isNotBlank(value)) {
-			assetProcessorEncoding = value;
-		}
-		return assetProcessorEncoding;
+	public String getAssetProcessorEncoding() {
+		return get(DandelionConfig.ASSET_PROCESSORS_ENCODING);
 	}
 
-	public static String getAssetExcludes() {
-		String value = get(PROP_ASSET_EXCLUDES);
-		if (StringUtils.isNotBlank(value)) {
-			assetExcludes = value;
-		}
-		return assetExcludes;
+	public void setAssetProcessorEncoding(String value) {
+		put(DandelionConfig.ASSET_PROCESSORS_ENCODING, value);
 	}
 
-	public static String getAssetCacheManagerName() {
-		String value = get(PROP_ASSET_CACHE_MANAGER_NAME);
+	public List<String> getAssetExcludes() {
+		String value = get(DandelionConfig.ASSET_EXCLUDES);
 		if (StringUtils.isNotBlank(value)) {
-			assetCacheManagerName = value;
+			return PropertiesUtils.propertyAsList(value, ",");
 		}
-		return assetCacheManagerName;
+		return Collections.emptyList();
 	}
 
-	public static String getAssetCacheConfigurationLocation() {
-		String value = get(PROP_ASSET_CACHE_CONFIGURATION_LOCATION);
-		if (StringUtils.isNotBlank(value)) {
-			assetCacheConfigurationLocation = value;
-		}
-		return assetCacheConfigurationLocation;
+	public String getAssetCacheManagerName() {
+		return get(DandelionConfig.CACHE_MANAGER_NAME);
 	}
 
-	public static String getBundleIncludes() {
-		String value = get(PROP_BUNDLE_INCLUDES);
-		if (StringUtils.isNotBlank(value)) {
-			bundleIncludes = value;
-		}
-		return bundleIncludes;
+	public String getAssetCacheConfigurationLocation() {
+		return get(DandelionConfig.CACHE_CONFIGURATION_LOCATION);
 	}
 
-	public static String getBundleExcludes() {
-		String value = get(PROP_BUNDLE_EXCLUDES);
+	public int getCacheAssetMaxSize() {
+		String value = get(DandelionConfig.CACHE_ASSET_MAX_SIZE);
 		if (StringUtils.isNotBlank(value)) {
-			bundleExcludes = value;
+			return Integer.parseInt(value);
 		}
-		return bundleExcludes;
+		return Integer.parseInt(DandelionConfig.CACHE_ASSET_MAX_SIZE.getDefaultValue());
+	}
+
+	public int getCacheRequestMaxSize() {
+		String value = get(DandelionConfig.CACHE_REQUEST_MAX_SIZE);
+		if (StringUtils.isNotBlank(value)) {
+			return Integer.parseInt(value);
+		}
+		return Integer.parseInt(DandelionConfig.CACHE_REQUEST_MAX_SIZE.getDefaultValue());
+	}
+
+	public List<String> getBundleIncludes() {
+		String value = get(DandelionConfig.BUNDLE_INCLUDES);
+		if (StringUtils.isNotBlank(value)) {
+			return PropertiesUtils.propertyAsList(value, ",");
+		}
+		return Collections.emptyList();
+	}
+
+	public List<String> getBundleExcludes() {
+		String value = get(DandelionConfig.BUNDLE_EXCLUDES);
+		if (StringUtils.isNotBlank(value)) {
+			return PropertiesUtils.propertyAsList(value, ",");
+		}
+		return Collections.emptyList();
+	}
+
+	public void setDefaultConfiguration() {
+		putDefault(DandelionConfig.ASSET_LOCATIONS_RESOLUTION_STRATEGY);
+		putDefault(DandelionConfig.ASSET_LOCATIONS_RESOLUTION_STRATEGY);
+		putDefault(DandelionConfig.ASSET_PROCESSORS);
+		putDefault(DandelionConfig.ASSET_PROCESSORS_ENABLED);
+		putDefault(DandelionConfig.ASSET_PROCESSORS_ENCODING);
+		putDefault(DandelionConfig.ASSET_EXCLUDES);
+		putDefault(DandelionConfig.CACHE_ASSET_MAX_SIZE);
+		putDefault(DandelionConfig.CACHE_REQUEST_MAX_SIZE);
+		putDefault(DandelionConfig.CACHE_MANAGER_NAME);
+		putDefault(DandelionConfig.CACHE_MANAGER_NAME);
+		putDefault(DandelionConfig.CACHE_CONFIGURATION_LOCATION);
+		putDefault(DandelionConfig.BUNDLE_INCLUDES);
+		putDefault(DandelionConfig.BUNDLE_EXCLUDES);
 	}
 }

@@ -33,12 +33,10 @@ package com.github.dandelion.core.utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.github.dandelion.core.DevMode;
+import com.github.dandelion.core.Context;
 import com.github.dandelion.core.asset.Asset;
 import com.github.dandelion.core.asset.AssetType;
-import com.github.dandelion.core.asset.cache.AssetCacheSystem;
 import com.github.dandelion.core.asset.web.data.AssetContent;
-import com.github.dandelion.core.config.Configuration;
 import com.github.dandelion.core.html.HtmlTag;
 import com.github.dandelion.core.html.LinkTag;
 import com.github.dandelion.core.html.ScriptTag;
@@ -56,37 +54,13 @@ public class HtmlUtils {
 	// public static final String DEFAULT_CACHE_CONTROL = "no-cache";
 	public static final String DEFAULT_CACHE_CONTROL = "public, max-age=315360000";
 
-	private static final String CACHE_CONTROL = "assets.servlet.cache.control";
-	private static String cacheControl;
-
-	private static synchronized void initializeCacheControl() {
-		if (cacheControl != null) {
-			return;
-		}
-
-		String _cacheControl = Configuration.get(CACHE_CONTROL);
-		if (DevMode.isEnabled() || _cacheControl == null || _cacheControl.isEmpty()) {
-			_cacheControl = DEFAULT_CACHE_CONTROL;
-		}
-		cacheControl = _cacheControl;
-	}
-
-	public static String getCacheControl() {
-		if (cacheControl == null) {
-			initializeCacheControl();
-		}
-		return cacheControl;
-	}
-
 	public static HtmlTag transformAsset(Asset asset) {
 		HtmlTag tag;
 		switch (asset.getType()) {
 		case css:
-			System.out.println("asset.getFinalLocation() = " + asset.getFinalLocation());
 			tag = new LinkTag(asset.getFinalLocation());
 			break;
 		case js:
-			System.out.println("asset.getFinalLocation() = " + asset.getFinalLocation());
 			tag = new ScriptTag(asset.getFinalLocation());
 			break;
 		default:
@@ -99,12 +73,12 @@ public class HtmlUtils {
 		return tag;
 	}
 
-	public static AssetContent getAssetContent(String assetKey) {
+	public static AssetContent getAssetContent(String assetKey, Context context) {
 		String content = "";
 		String contentType = null;
 		AssetType resourceType = AssetType.typeOfAsset(assetKey);
 		if (resourceType != null) {
-			content = AssetCacheSystem.getContent(assetKey);
+			content = context.getCacheManager().getContent(assetKey);
 			if (content == null) {
 				LOG.debug("missing content from key {}", assetKey);
 				content = "";

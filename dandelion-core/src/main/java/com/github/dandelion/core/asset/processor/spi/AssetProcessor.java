@@ -32,6 +32,7 @@ package com.github.dandelion.core.asset.processor.spi;
 import java.io.Reader;
 import java.io.Writer;
 
+import com.github.dandelion.core.Context;
 import com.github.dandelion.core.asset.Asset;
 
 /**
@@ -60,5 +61,5 @@ public interface AssetProcessor {
 	 * @param writer
 	 *            The destination writer.
 	 */
-	void process(Asset asset, Reader reader, Writer writer);
+	void process(Asset asset, Reader reader, Writer writer, Context context);
 }

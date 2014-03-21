@@ -51,8 +51,6 @@
  */
 package com.github.dandelion.core.asset.processor.vendor;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -64,6 +62,10 @@ import java.io.PushbackInputStream;
  * translation from C to Java of jsmin.c published by Douglas Crockford.
  * Permission is hereby granted to use the Java version under the same
  * conditions as the jsmin.c on which it is based.
+ * 
+ * <p>
+ * The original class has been slightly adapted to suit the Dandelion dev
+ * guidelines.
  * 
  * @author Thibault Duchateau
  * @since 0.10.0
@@ -333,30 +335,4 @@ public class JSMin {
 			super("Unterminated regular expression at line " + line + " and column " + column);
 		}
 	}
-
-	public static void main(String arg[]) {
-		try {
-			JSMin jsmin = new JSMin(new FileInputStream(arg[0]), System.out);
-			jsmin.jsmin();
-		}
-		catch (FileNotFoundException e) {
-			e.printStackTrace();
-		}
-		catch (ArrayIndexOutOfBoundsException e) {
-			e.printStackTrace();
-		}
-		catch (IOException e) {
-			e.printStackTrace();
-		}
-		catch (UnterminatedRegExpLiteralException e) {
-			e.printStackTrace();
-		}
-		catch (UnterminatedCommentException e) {
-			e.printStackTrace();
-		}
-		catch (UnterminatedStringLiteralException e) {
-			e.printStackTrace();
-		}
-	}
-
 }

@@ -30,14 +30,13 @@
 package com.github.dandelion.core.bundle.loader.impl;
 
 import java.util.Collections;
-import java.util.List;
 import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.github.dandelion.core.Context;
 import com.github.dandelion.core.bundle.loader.spi.AbstractBundleLoader;
-import com.github.dandelion.core.storage.BundleStorageUnit;
 
 /**
  * <p>
@@ -72,14 +71,6 @@ public class VendorBundleLoader extends AbstractBundleLoader {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public List<BundleStorageUnit> loadBundles() {
-		return super.loadBundles();
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
 	public boolean isRecursive() {
 		return true;
 	}
@@ -96,7 +87,7 @@ public class VendorBundleLoader extends AbstractBundleLoader {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Set<String> getExcludedPaths() {
+	public Set<String> getExcludedPaths(Context context) {
 		return Collections.emptySet();
 	}
 }

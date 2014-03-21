@@ -148,6 +148,13 @@ public class Asset {
 		this.attributesOnlyName = asu.getAttributesOnlyName();
 	}
 
+	public Asset(String name, String version, AssetType type, AssetDomPosition position) {
+		this.name = name;
+		this.version = version;
+		this.type = type;
+		this.dom = position;
+	}
+
 	public String getName() {
 		return name;
 	}

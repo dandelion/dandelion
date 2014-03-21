@@ -45,12 +45,16 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.dandelion.core.Context;
 import com.github.dandelion.core.DevMode;
 import com.github.dandelion.core.asset.Asset;
 import com.github.dandelion.core.asset.AssetDomPosition;
-import com.github.dandelion.core.asset.Assets;
+import com.github.dandelion.core.asset.AssetMapper;
+import com.github.dandelion.core.asset.AssetQuery;
 import com.github.dandelion.core.asset.web.AssetFilter;
 import com.github.dandelion.core.asset.web.AssetFilterResponseWrapper;
+import com.github.dandelion.core.asset.web.AssetRequestContext;
+import com.github.dandelion.core.storage.AssetStorageUnit;
 import com.github.dandelion.core.storage.BundleStorageUnit;
 import com.github.dandelion.core.utils.ResourceUtils;
 import com.github.dandelion.core.utils.UrlUtils;
@@ -72,8 +76,12 @@ import com.github.dandelion.core.utils.UrlUtils;
 public class GraphViewer {
 
 	private static ObjectMapper mapper;
+	private AssetMapper assetMapper;
+	private Context context;
 
-	public GraphViewer() {
+	public GraphViewer(Context context) {
+		this.context = context;
+		
 		mapper = new ObjectMapper();
 		mapper.configure(JsonParser.Feature.ALLOW_COMMENTS, true);
 		mapper.configure(JsonParser.Feature.ALLOW_SINGLE_QUOTES, true);
@@ -87,6 +95,7 @@ public class GraphViewer {
 		AssetFilterResponseWrapper wrapper = new AssetFilterResponseWrapper(response);
 		filterChain.doFilter(request, wrapper);
 
+		assetMapper = new AssetMapper(request, context);
 		StringBuilder sbNodesRequest = new StringBuilder();
 		StringBuilder sbNodesApplication = new StringBuilder();
 		StringBuilder sbHead = new StringBuilder();
@@ -95,7 +104,7 @@ public class GraphViewer {
 		String graphView = ResourceUtils.getContentFromInputStream(Thread.currentThread().getContextClassLoader()
 				.getResourceAsStream("dandelion/internal/graphViewer/graphViewer.html"));
 
-		Set<Asset> assetsHead = Assets.assetsFor(request, AssetDomPosition.head, true, false);
+		Set<Asset> assetsHead = new AssetQuery(request, context).withPosition(AssetDomPosition.head).perform();
 		Iterator<Asset> iteratorAssetHead = assetsHead.iterator();
 		while (iteratorAssetHead.hasNext()) {
 			sbHead.append("    &lt;link href=\"" + iteratorAssetHead.next().getFinalLocation() + "\" />");
@@ -104,7 +113,7 @@ public class GraphViewer {
 			}
 		}
 
-		Set<Asset> assetsBody = Assets.assetsFor(request, AssetDomPosition.body, true, false);
+		Set<Asset> assetsBody = new AssetQuery(request, context).withPosition(AssetDomPosition.body).perform();
 		Iterator<Asset> iteratorAssetBody = assetsBody.iterator();
 		while (iteratorAssetBody.hasNext()) {
 			sbBody.append("    &lt;script src=\"" + iteratorAssetBody.next().getFinalLocation() + "\"></script>");
@@ -114,12 +123,12 @@ public class GraphViewer {
 		}
 
 		// Request nodes
-		Set<BundleStorageUnit> bsuRequest = Assets.bundlesFor(request);
+		Set<BundleStorageUnit> bsuRequest = context.getBundleStorage().bundlesFor(AssetRequestContext.get(request).getBundles(true));
 
 		for (BundleStorageUnit bsu : bsuRequest) {
 			Map<String, Object> map = new HashMap<String, Object>();
 			map.put("label", bsu.getName());
-			map.put("assets", convertToD3Assets(Assets.assetsFor(request, bsu.getName(), true, false)));
+			map.put("assets", convertToD3Assets(bsu.getAssetStorageUnits()));
 			String bundle = mapper.writeValueAsString(map);
 			sbNodesRequest.append("requestGraph.addNode('" + bsu.getName() + "'," + bundle + ");").append('\n');
 		}
@@ -138,11 +147,10 @@ public class GraphViewer {
 		}
 
 		// Application nodes
-		List<BundleStorageUnit> allBundles = Assets.configurator().getStorage().getBundleDag().getVerticies();
+		List<BundleStorageUnit> allBundles = context.getBundleStorage().getBundleDag().getVerticies();
 		for (BundleStorageUnit bsu : allBundles) {
 			Map<String, Object> map = new HashMap<String, Object>();
 			map.put("label", bsu.getName());
-			map.put("assets", convertToD3Assets(Assets.assetsFor(request, bsu.getName(), true, false)));
 			String bundle = mapper.writeValueAsString(map);
 			sbNodesApplication.append("applicationGraph.addNode('" + bsu.getName() + "'," + bundle + ");").append('\n');
 		}
@@ -173,8 +181,9 @@ public class GraphViewer {
 		return graphView;
 	}
 
-	public List<D3Asset> convertToD3Assets(Set<Asset> assets) {
+	public List<D3Asset> convertToD3Assets(Set<AssetStorageUnit> asus) {
 		List<D3Asset> d3Assets = new ArrayList<GraphViewer.D3Asset>();
+		Set<Asset> assets = assetMapper.mapToAssets(asus);
 		for (Asset a : assets) {
 			d3Assets.add(new D3Asset(a));
 		}

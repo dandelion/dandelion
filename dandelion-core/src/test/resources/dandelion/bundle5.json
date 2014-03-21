@@ -1,0 +1,45 @@
+{
+    "bundle": "bundle5",
+    "assets": [
+               {
+                   "name": "a5_1",
+                   "version": "1.0.0",
+                   "type": "js",
+                   "locations": {
+                       "classpath": "dandelion/asset.js"
+                   }
+               },
+               {
+                   "name": "a5_2",
+                   "version": "1.0.0",
+                   "type": "js",
+                   "locations": {
+                       "classpath": "dandelion/asset.js"
+                   }
+               },
+               {
+                   "name": "a5_3",
+                   "version": "1.0.0",
+                   "type": "js",
+                   "locations": {
+                       "classpath": "dandelion/asset.js"
+                   }
+               },
+               {
+                   "name": "a5_4",
+                   "version": "1.0.0",
+                   "type": "css",
+                   "locations": {
+                       "classpath": "dandelion/asset.css"
+                   }
+               },
+               {
+                   "name": "a5_5",
+                   "version": "1.0.0",
+                   "type": "css",
+                   "locations": {
+                       "classpath": "dandelion/asset.css"
+                   }
+               }
+           ]
+}

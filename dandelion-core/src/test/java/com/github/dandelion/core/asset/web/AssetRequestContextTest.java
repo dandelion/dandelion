@@ -3,14 +3,24 @@ package com.github.dandelion.core.asset.web;
 import static org.fest.assertions.Assertions.assertThat;
 
 import org.fest.assertions.MapAssert;
+import org.junit.Before;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 
+import com.github.dandelion.core.Context;
+
 public class AssetRequestContextTest {
+
+	private MockHttpServletRequest request;
+
+	@Before
+	public void setup() {
+		request = new MockHttpServletRequest();
+		request.setAttribute(AssetFilter.DANDELION_CONTEXT_ATTRIBUTE, new Context());
+	}
 
 	@Test
 	public void should_store_bundles() {
-		MockHttpServletRequest request = new MockHttpServletRequest();
 
 		AssetRequestContext context = AssetRequestContext.get(request);
 		context.addBundles("bundle1,bundle2");
@@ -22,7 +32,6 @@ public class AssetRequestContextTest {
 
 	@Test
 	public void should_exclude_bundles() {
-		MockHttpServletRequest request = new MockHttpServletRequest();
 
 		AssetRequestContext context = AssetRequestContext.get(request);
 		context.addBundles("bundle1,bundle2,bundle3,bundle4");
@@ -35,7 +44,6 @@ public class AssetRequestContextTest {
 
 	@Test
 	public void should_exclude_assets() {
-		MockHttpServletRequest request = new MockHttpServletRequest();
 
 		AssetRequestContext context = AssetRequestContext.get(request);
 		context.excludeAssets("asset1,asset2");
@@ -45,7 +53,6 @@ public class AssetRequestContextTest {
 
 	@Test
 	public void should_store_parameters() {
-		MockHttpServletRequest request = new MockHttpServletRequest();
 		AssetRequestContext context = AssetRequestContext.get(request);
 
 		context.addParameter("asset1", "param1", "value1");
@@ -58,7 +65,6 @@ public class AssetRequestContextTest {
 
 	@Test
 	public void should_dont_blink_a_eye() {
-		MockHttpServletRequest request = new MockHttpServletRequest();
 
 		AssetRequestContext context = AssetRequestContext.get(request);
 		context.addBundles("");

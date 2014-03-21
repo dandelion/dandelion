@@ -32,6 +32,7 @@ package com.github.dandelion.core.asset.processor.spi;
 import java.io.Reader;
 import java.io.Writer;
 
+import com.github.dandelion.core.Context;
 import com.github.dandelion.core.DandelionException;
 import com.github.dandelion.core.asset.Asset;
 
@@ -45,14 +46,16 @@ import com.github.dandelion.core.asset.Asset;
  */
 public abstract class AbstractAssetProcessor implements AssetProcessor {
 
+	protected Context context;
+	
 	/**
 	 * <p>
 	 * Wrapper method for the actual {@link #doProcess(Asset, Reader, Writer)}
 	 * method which handle exceptions.
 	 */
 	@Override
-	public void process(Asset asset, Reader reader, Writer writer) {
-
+	public void process(Asset asset, Reader reader, Writer writer, Context context) {
+		this.context = context;
 		try {
 			doProcess(asset, reader, writer);
 		}

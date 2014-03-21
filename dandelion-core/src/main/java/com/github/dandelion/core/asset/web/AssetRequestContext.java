@@ -41,7 +41,7 @@ import java.util.Map;
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 
-import com.github.dandelion.core.config.Configuration;
+import com.github.dandelion.core.Context;
 import com.github.dandelion.core.utils.StringUtils;
 
 /**
@@ -138,9 +138,10 @@ public class AssetRequestContext {
 	 */
 	public static AssetRequestContext get(ServletRequest servletRequest) {
 		Object attribute = servletRequest.getAttribute(AssetRequestContext.class.getCanonicalName());
+		Context context = (Context) servletRequest.getAttribute(AssetFilter.DANDELION_CONTEXT_ATTRIBUTE);
 		if (attribute == null || !(attribute instanceof AssetRequestContext)) {
 			attribute = new AssetRequestContext();
-			((AssetRequestContext) attribute).addBundles(Configuration.getBundleIncludes());
+			((AssetRequestContext) attribute).addBundles(context.getConfiguration().getBundleIncludes());
 			servletRequest.setAttribute(AssetRequestContext.class.getCanonicalName(), attribute);
 		}
 		return AssetRequestContext.class.cast(attribute);

@@ -88,6 +88,10 @@ import java.util.regex.Pattern;
  * Fork from Yahoo's YUI Compressor authored by Andrew Roberts which contains a
  * number of enhancements to the original CSS compression algorithms.
  * 
+ * <p>
+ * The original class has been slightly adapted to suit the Dandelion dev
+ * guidelines.
+ * 
  * @author Thibault Duchateau
  * @since 0.10.0
  */
@@ -97,7 +101,6 @@ public class CssCompressor {
 	private StringBuffer srcsb = new StringBuffer();
 
 	public CssCompressor(Reader in) throws IOException {
-		// Read the stream...
 		int c;
 		while ((c = in.read()) != -1) {
 			srcsb.append((char) c);
@@ -357,7 +360,7 @@ public class CssCompressor {
 		css = css.trim();
 
 		// Merge the classes
-		css = mergeRules(css);
+		// css = mergeRules(css);
 
 		// Remove the last semi-colon in blocks
 		css = css.replaceAll(";\\}", "}");

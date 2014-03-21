@@ -1,0 +1,13 @@
+{
+    "bundle": "bundle4",
+    "assets": [
+               {
+                   "name": "a4_1",
+                   "version": "1.0.0",
+                   "type": "js",
+                   "locations": {
+                       "classpath": "dandelion/asset.js"
+                   }
+               }
+           ]
+}

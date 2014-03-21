@@ -27,7 +27,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.github.dandelion.core.asset.processor;
+package com.github.dandelion.core.asset.processor.impl;
 
 import static org.fest.assertions.Assertions.assertThat;
 
@@ -36,19 +36,26 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.Writer;
 
+import org.junit.Before;
 import org.junit.Test;
 
-import com.github.dandelion.core.asset.processor.impl.JsMinProcessor;
+import com.github.dandelion.core.Context;
 import com.github.dandelion.core.asset.processor.spi.AssetProcessor;
 
-public class JsMinProcessorTest {
+public class CssMinProcessorTest {
 
-	private AssetProcessor assetProcessor = new JsMinProcessor();
+	private AssetProcessor assetProcessor = new CssMinProcessor();
+	private Context context;
+
+	@Before
+	public void setup() {
+		context = new Context();
+	}
 	
 	@Test
-	public void should_minifiy_js() throws IOException{
+	public void should_minifiy_css() throws IOException{
 		Writer writer = new StringWriter();
-		assetProcessor.process(null, new StringReader("var b = new Array()//commentaire\nfunction v(){}"), writer);
-		assertThat(writer.toString()).isEqualTo("\nvar b=new Array()\nfunction v(){}");
+		assetProcessor.process(null, new StringReader("body {\n	padding-top: 60px;\n padding-bottom: 40px; \n}"), writer, context);
+		assertThat(writer.toString()).isEqualTo("body{padding-top:60px;padding-bottom:40px}");
 	}
 }

@@ -72,6 +72,14 @@ public class WebjarLocator extends AbstractAssetLocator {
 	 * {@inheritDoc}
 	 */
 	@Override
+	public boolean isCachingForced() {
+		return true;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public String doGetLocation(AssetStorageUnit asu, HttpServletRequest request) {
 		String location = asu.getLocations().get(getLocationKey());
 		return locator.getFullPath(location);

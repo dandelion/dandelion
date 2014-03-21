@@ -42,19 +42,24 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.springframework.mock.web.MockHttpServletRequest;
 
+import com.github.dandelion.core.Context;
 import com.github.dandelion.core.DandelionException;
+import com.github.dandelion.core.asset.web.AssetFilter;
 import com.github.dandelion.core.storage.AssetStorageUnit;
 
 public class AssetMapperTest {
 
 	private AssetMapper assetMapper;
 	private MockHttpServletRequest request;
+	private Context context;
 
 	@Before
 	public void setup() {
+		context = new Context();
 		request = new MockHttpServletRequest();
 		request.setContextPath("/context");
-		assetMapper = new AssetMapper(request);
+		request.setAttribute(AssetFilter.DANDELION_CONTEXT_ATTRIBUTE, context);
+		assetMapper = new AssetMapper(request, context);
 	}
 
 	@Rule
@@ -108,7 +113,7 @@ public class AssetMapperTest {
 	public void should_throw_an_exception_when_the_asset_has_an_unknown_location() {
 		exception.expect(DandelionException.class);
 		exception.expectMessage("The location key 'foo' is not valid. Please choose a valid one among "
-				+ Assets.getAssetLocatorsMap().keySet() + ".");
+				+ context.getAssetLocatorsMap().keySet() + ".");
 
 		AssetStorageUnit asu = new AssetStorageUnit();
 		asu.setName("asset-name");

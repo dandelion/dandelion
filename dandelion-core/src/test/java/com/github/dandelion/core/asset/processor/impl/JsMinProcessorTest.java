@@ -27,36 +27,35 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.github.dandelion.core;
+package com.github.dandelion.core.asset.processor.impl;
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import static org.fest.assertions.Assertions.assertThat;
 
-/**
- * <p>
- * Marker annotation that signifies that a public API (public class, method or
- * field) is subject to incompatible changes, or even removal, in a future
- * release. An API bearing this annotation is exempt from any compatibility
- * guarantees made by its containing library.
- * 
- * <p>
- * Note that the presence of this annotation implies nothing about the quality
- * or performance of the API in question, only the fact that it is not
- * "API-frozen."
- * 
- * <p>
- * This annotation has been kindly borrowed from the <a
- * href="https://code.google.com/p/guava-libraries/">Guava project</a>.
- * 
- * @author Thibault Duchateau
- * @since 0.10.0
- */
-@Retention(value = RetentionPolicy.CLASS)
-@Target({ ElementType.FIELD, ElementType.METHOD, ElementType.ANNOTATION_TYPE, ElementType.CONSTRUCTOR, ElementType.TYPE })
-@Documented
-public @interface Beta {
+import java.io.IOException;
+import java.io.StringReader;
+import java.io.StringWriter;
+import java.io.Writer;
 
+import org.junit.Before;
+import org.junit.Test;
+
+import com.github.dandelion.core.Context;
+import com.github.dandelion.core.asset.processor.spi.AssetProcessor;
+
+public class JsMinProcessorTest {
+
+	private AssetProcessor assetProcessor = new JsMinProcessor();
+	private Context context;
+
+	@Before
+	public void setup() {
+		context = new Context();
+	}
+	
+	@Test
+	public void should_minifiy_js() throws IOException{
+		Writer writer = new StringWriter();
+		assetProcessor.process(null, new StringReader("var b = new Array()//commentaire\nfunction v(){}"), writer, context);
+		assertThat(writer.toString()).isEqualTo("\nvar b=new Array()\nfunction v(){}");
+	}
 }

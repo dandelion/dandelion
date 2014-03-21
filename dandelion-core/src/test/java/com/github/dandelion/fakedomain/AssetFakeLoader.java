@@ -37,6 +37,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
+import com.github.dandelion.core.Context;
 import com.github.dandelion.core.asset.AssetType;
 import com.github.dandelion.core.bundle.loader.spi.BundleLoader;
 import com.github.dandelion.core.storage.AssetStorageUnit;
@@ -45,7 +46,7 @@ import com.github.dandelion.core.storage.BundleStorageUnit;
 public class AssetFakeLoader implements BundleLoader {
 	
 	@Override
-	public List<BundleStorageUnit> loadBundles() {
+	public List<BundleStorageUnit> loadBundles(Context context) {
 		Map<String, String> locations = new HashMap<String, String>();
 		locations.put("remote", "remoteURL");
 		locations.put("local", "localPath");

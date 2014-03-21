@@ -31,6 +31,7 @@ package com.github.dandelion.extras.cache.ehcache;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Set;
 
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
@@ -39,8 +40,11 @@ import net.sf.ehcache.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.github.dandelion.core.Context;
+import com.github.dandelion.core.asset.Asset;
+import com.github.dandelion.core.asset.cache.spi.AbstractAssetCache;
 import com.github.dandelion.core.asset.cache.spi.AssetCache;
-import com.github.dandelion.core.config.Configuration;
+import com.github.dandelion.core.asset.web.AssetServlet;
 import com.github.dandelion.core.utils.ResourceScanner;
 import com.github.dandelion.core.utils.StringUtils;
 
@@ -56,7 +60,7 @@ import com.github.dandelion.core.utils.StringUtils;
  * The {@link CacheManager} instance is obtained using the following strategy:
  * <ul>
  * <li>First tries to get an existing {@link CacheManager} using the
- * {@code assets.cache.manager} configuration property.</li>
+ * {@code cache.manager.name} configuration property.</li>
  * <li>If no {@link CacheManager} is configured, a default one is created.</li>
  * </ul>
  * 
@@ -64,7 +68,7 @@ import com.github.dandelion.core.utils.StringUtils;
  * Once the {@link CacheManager} obtained, then the configuration file is loaded
  * using the following strategy:
  * <ul>
- * <li>First checks if the {@code assets.cache.configuration} configuration
+ * <li>First checks if the {@code cache.configuration.location} configuration
  * property exists and uses this path to load the file.</li>
  * <li>If the above configuration property is not used, scans the classpath
  * (starting from the root) for the {@code ehcache.xml} configuration file.</li>
@@ -76,19 +80,28 @@ import com.github.dandelion.core.utils.StringUtils;
  * exist in your {@code ehcache.xml} configuration file, Dandelion will
  * automatically add and use it.
  * 
+ * <p>
+ * Note finally that the same cache is used for two purposes:
+ * <ul>
+ * <li>Store the content of {@link Asset}s that are served by the
+ * {@link AssetServlet}</li>
+ * <li>Store the set of {@link Asset}s to be displayed on a page, for a given
+ * request, thus avoiding location resolution and processing</li>
+ * </ul>
+ * 
  * @author Thibault Duchateau
  * @since 0.10.0
  */
-public class EhCacheAssetCache implements AssetCache {
+public class EhCacheAssetCache extends AbstractAssetCache {
 
 	private static final Logger LOG = LoggerFactory.getLogger(EhCacheAssetCache.class);
 
 	private Cache cache;
 
-	public EhCacheAssetCache() {
-
+	public EhCacheAssetCache(Context context) {
+		super(context);
 		CacheManager cacheManager = null;
-		String cacheManagerName = Configuration.getAssetCacheManagerName();
+		String cacheManagerName = context.getConfiguration().getAssetCacheManagerName();
 
 		// First try to get an existing CacheManager
 		if (StringUtils.isNotBlank(cacheManagerName)) {
@@ -98,7 +111,7 @@ public class EhCacheAssetCache implements AssetCache {
 		else {
 			InputStream stream = null;
 
-			String cacheConfigurationPath = Configuration.getAssetCacheConfigurationLocation();
+			String cacheConfigurationPath = context.getConfiguration().getAssetCacheConfigurationLocation();
 
 			if (StringUtils.isBlank(cacheConfigurationPath)) {
 				try {
@@ -132,7 +145,7 @@ public class EhCacheAssetCache implements AssetCache {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public String getContent(String cacheKey) {
+	public String getAssetContent(String cacheKey) {
 		Element element = cache.get(cacheKey);
 		return element == null ? null : (String) element.getObjectValue();
 	}
@@ -141,12 +154,33 @@ public class EhCacheAssetCache implements AssetCache {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void storeContent(String cacheKey, String cacheContent) {
+	public void storeAssetContent(String cacheKey, String cacheContent) {
 		cache.put(new Element(cacheKey, cacheContent));
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void remove(String cacheKey) {
 		cache.remove(cacheKey);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@SuppressWarnings("unchecked")
+	public Set<Asset> getRequestAssets(String cacheKey) {
+		Element element = cache.get(cacheKey);
+		return element == null ? null : (Set<Asset>) element.getObjectValue();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void storeRequestAssets(String cacheKey, Set<Asset> assets) {
+		cache.put(new Element(cacheKey, assets));
 	}
 }

@@ -27,28 +27,29 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.github.dandelion.core.asset.processor;
+package com.github.dandelion.core.asset.cache.spi;
 
-import static org.fest.assertions.Assertions.assertThat;
+import com.github.dandelion.core.Context;
 
-import java.io.IOException;
-import java.io.StringReader;
-import java.io.StringWriter;
-import java.io.Writer;
+/**
+ * <p>
+ * Abstract base class for all implemenations of {@link AssetCache}.
+ * 
+ * @author Thibault Duchateau
+ * @since 0.10.0
+ */
+public abstract class AbstractAssetCache implements AssetCache {
 
-import org.junit.Test;
+	protected Context context;
 
-import com.github.dandelion.core.asset.processor.impl.CssMinProcessor;
-import com.github.dandelion.core.asset.processor.spi.AssetProcessor;
+	public AbstractAssetCache() {
+	}
 
-public class CssMinProcessorTest {
+	public AbstractAssetCache(Context context) {
+		this.context = context;
+	}
 
-	private AssetProcessor assetProcessor = new CssMinProcessor();
-	
-	@Test
-	public void should_minifiy_css() throws IOException{
-		Writer writer = new StringWriter();
-		assetProcessor.process(null, new StringReader("body {\n	padding-top: 60px;\n padding-bottom: 40px; \n}"), writer);
-		assertThat(writer.toString()).isEqualTo("body{padding-top:60px;padding-bottom:40px}");
+	public void setContext(Context context) {
+		this.context = context;
 	}
 }

@@ -40,14 +40,15 @@ import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.github.dandelion.core.asset.cache.AssetCacheSystem;
+import com.github.dandelion.core.Context;
+import com.github.dandelion.core.asset.cache.spi.AssetCache;
 import com.github.dandelion.core.asset.web.data.AssetContent;
 import com.github.dandelion.core.utils.HtmlUtils;
 
 /**
  * <p>
  * Dandelion servlet in charge of serving the assets stored in the configured
- * {@link AssetCacheSystem}.
+ * {@link AssetCache}.
  * 
  * @author Thibault Duchateau
  * @author Romain Lespinasse
@@ -63,19 +64,26 @@ public class AssetServlet extends HttpServlet {
 	public static final String DANDELION_ASSETS_URL = "/dandelion-assets/";
 	public static final String DANDELION_ASSETS_URL_PATTERN = "/dandelion-assets/*";
 
+	private HttpHeadersConfigurer httpHeadersConfigurer = new HttpHeadersConfigurer();
+	
+
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		getLogger().debug("Dandelion Asset servlet captured GET request {}", request.getRequestURI());
 
-		String assetKey = request.getRequestURL().substring(request.getRequestURL().lastIndexOf("/") + 1);
-		AssetContent assetContent = HtmlUtils.getAssetContent(assetKey);
-
-		response.setHeader("Cache-Control", HtmlUtils.getCacheControl());
-		response.setContentType(assetContent.getContentType());
-
+		Context context = (Context) request.getAttribute(AssetFilter.DANDELION_CONTEXT_ATTRIBUTE);
+		
+		// Get the asset content thanks to the cache key
+		String assetKey = context.getCacheManager().getCacheKeyFromRequest(request);
+		// TODO degager de HtmlUtils
+		AssetContent assetContent = HtmlUtils.getAssetContent(assetKey, context);
+		
+		// Configure response headers
+		httpHeadersConfigurer.configureResponseHeaders(response, assetContent);
+		
+		// Send the asset's content
 		PrintWriter writer = response.getWriter();
 		writer.write(assetContent.getContent());
-		writer.close();
 	}
 
 	protected Logger getLogger() {

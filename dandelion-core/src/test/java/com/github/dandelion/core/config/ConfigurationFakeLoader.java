@@ -31,14 +31,7 @@ package com.github.dandelion.core.config;
 
 import java.util.Properties;
 
-import com.github.dandelion.core.DandelionException;
-
 public class ConfigurationFakeLoader implements ConfigurationLoader {
-
-	@Override
-	public Properties loadDefaultConfiguration() throws DandelionException {
-		return null;
-	}
 
 	public Properties loadUserConfiguration() {
 		return null;

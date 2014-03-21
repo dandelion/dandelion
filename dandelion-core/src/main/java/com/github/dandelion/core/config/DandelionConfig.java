@@ -29,34 +29,55 @@
  */
 package com.github.dandelion.core.config;
 
-import static org.fest.assertions.Assertions.assertThat;
+/**
+ * TODO
+ * TODO
+ * 
+ * @author Thibault Duchateau
+ */
+public enum DandelionConfig {
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-
-public class DandelionConfiguratorTest {
-
-	@Before
-	public void before() {
-		System.clearProperty(ConfigurationLoader.DANDELION_CONFLOADER_CLASS);
+	// Main configurations
+	MINIFICATION_ENABLED("minification.enabled", "false"),
+	
+	// Asset configurations
+	ASSET_LOCATIONS_RESOLUTION_STRATEGY("asset.locations.resolution.strategy", "webjar,webapp,cdn"),
+	ASSET_PROCESSORS_ENABLED("asset.processors.enabled", "false"),
+	ASSET_PROCESSORS("asset.processors", "cssurlrewriting,jsmin,cssmin"),
+	ASSET_PROCESSORS_ENCODING("asset.processors.encoding", "UTF-8"),
+	ASSET_EXCLUDES("asset.excludes", ""),
+	
+	// Cache configurations
+	CACHE_ASSET_MAX_SIZE("cache.asset.max.size", "50"),
+	CACHE_REQUEST_MAX_SIZE("cache.request.max.size", "50"),
+	CACHE_MANAGER_NAME("cache.manager.name", ""),
+	CACHE_CONFIGURATION_LOCATION("cache.configuration.location", ""),
+	
+	// Bundle configurations
+	BUNDLE_INCLUDES("bundle.includes", ""),
+	BUNDLE_EXCLUDES("bundle.excludes", "");
+	
+	private String propertyName;
+	private String defaultValue;
+	
+	private DandelionConfig(String propertyName, String defaultValue){
+		this.propertyName = propertyName;
+		this.defaultValue = defaultValue;
 	}
 
-	@Test
-	public void should_use_StandardConfigurationLoader_by_default() {
-		assertThat(DandelionConfigurator.getConfigurationLoader()).isInstanceOf(StandardConfigurationLoader.class);
+	public String getPropertyName() {
+		return propertyName;
 	}
 
-	@Test
-	public void should_use_another_configution_loader_using_system_property() {
-		System.setProperty(ConfigurationLoader.DANDELION_CONFLOADER_CLASS,
-				"com.github.dandelion.core.config.ConfigurationFakeLoader");
-		assertThat(DandelionConfigurator.getConfigurationLoader()).isInstanceOf(ConfigurationFakeLoader.class);
-		System.clearProperty(ConfigurationLoader.DANDELION_CONFLOADER_CLASS);
+	public void setPropertyName(String propertyName) {
+		this.propertyName = propertyName;
 	}
 
-	@After
-	public void after() {
-		DandelionConfigurator.clear();
+	public String getDefaultValue() {
+		return defaultValue;
+	}
+
+	public void setDefaultValue(String defaultValue) {
+		this.defaultValue = defaultValue;
 	}
 }

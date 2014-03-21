@@ -29,19 +29,21 @@
  */
 package com.github.dandelion.core.config;
 
-import java.io.*;
+import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.*;
+import java.util.Locale;
+import java.util.MissingResourceException;
+import java.util.Properties;
+import java.util.ResourceBundle;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.github.dandelion.core.DandelionException;
+import com.github.dandelion.core.Context;
 import com.github.dandelion.core.DevMode;
 import com.github.dandelion.core.utils.PropertiesUtils;
-import com.github.dandelion.core.utils.ResourceScanner;
 import com.github.dandelion.core.utils.StringUtils;
 import com.github.dandelion.core.utils.UTF8Control;
 
@@ -51,13 +53,13 @@ import com.github.dandelion.core.utils.UTF8Control;
  * 
  * <p>
  * Note that a custom {@link ConfigurationLoader} can be used thanks to the
- * {@link DandelionConfigurator}.
+ * {@link Context}.
  * 
  * @author Thibault Duchateau
  * @author Romain Lespinasse
  * @since 0.10.0
  * @see ConfigurationLoader
- * @see DandelionConfigurator
+ * @see Context
  * @see ConfigurationError
  */
 public class StandardConfigurationLoader implements ConfigurationLoader {
@@ -65,77 +67,8 @@ public class StandardConfigurationLoader implements ConfigurationLoader {
 	// Logger
 	private static Logger LOG = LoggerFactory.getLogger(StandardConfigurationLoader.class);
 
-	public static final String DANDELION_DEFAULT = "dandelion-default";
-	public static final String DANDELION_PROPERTIES = "properties";
-	public static final String DANDELION_OTHER = "dandelion";
-	public static final String DANDELION_FOLDER = "dandelion";
 	public static final String DANDELION_USER_PROPERTIES = "dandelion";
 	public static final String DANDELION_CONFIGURATION = "dandelion.configuration";
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public Properties loadDefaultConfiguration() throws DandelionException {
-
-		LOG.debug("Loading default configurations...");
-
-		// Initialize properties
-		Properties defaultProperties = new Properties();
-
-		// Get default file as stream
-		InputStream propertiesStream = null;
-
-		try {
-			Reader reader;
-			Properties properties;
-
-			String defaultPropertiesPath = ResourceScanner.findResourcePath(DANDELION_FOLDER, DANDELION_DEFAULT + "."
-					+ DANDELION_PROPERTIES);
-			if (defaultPropertiesPath != null) {
-				propertiesStream = Thread.currentThread().getContextClassLoader()
-						.getResourceAsStream(defaultPropertiesPath);
-				reader = new InputStreamReader(propertiesStream, "UTF-8");
-				properties = new Properties();
-				properties.load(reader);
-				defaultProperties.putAll(properties);
-			}
-
-			Set<String> resourcePaths = ResourceScanner.findResourcePaths(DANDELION_FOLDER, null, DANDELION_OTHER,
-					DANDELION_PROPERTIES, false);
-			for (String resourcePath : resourcePaths) {
-				if ((DANDELION_FOLDER + File.separator + DANDELION_DEFAULT + "." + DANDELION_PROPERTIES)
-						.equals(resourcePath)) {
-					continue;
-				}
-
-				propertiesStream = Thread.currentThread().getContextClassLoader().getResourceAsStream(resourcePath);
-				reader = new InputStreamReader(propertiesStream, "UTF-8");
-				properties = new Properties();
-				properties.load(reader);
-				defaultProperties.putAll(properties);
-			}
-		}
-		catch (IOException e) {
-			StringBuilder sb = new StringBuilder("Unable to load the default configuration file ");
-			sb.append(DANDELION_DEFAULT + "." + DANDELION_PROPERTIES);
-			sb.append(".");
-			throw new DandelionException(sb.toString(), e);
-		}
-		finally {
-			if (propertiesStream != null) {
-				try {
-					propertiesStream.close();
-				}
-				catch (IOException e) {
-					LOG.error("Properties Stream can't be close", e);
-				}
-			}
-		}
-
-		LOG.debug("Default configuration loaded");
-
-		return defaultProperties;
-	}
 
 	/**
 	 * {@inheritDoc}
@@ -145,7 +78,7 @@ public class StandardConfigurationLoader implements ConfigurationLoader {
 		LOG.debug("Loading user configuration...");
 
 		ResourceBundle userBundle = null;
-		if(DevMode.isEnabled()){
+		if (DevMode.isEnabled()) {
 			ResourceBundle.clearCache();
 		}
 
@@ -181,8 +114,8 @@ public class StandardConfigurationLoader implements ConfigurationLoader {
 				// if no resource bundle is found, try using the context
 				// classloader
 				try {
-					userBundle = ResourceBundle.getBundle(DANDELION_USER_PROPERTIES, Locale.getDefault(), Thread
-							.currentThread().getContextClassLoader(), new UTF8Control());
+					userBundle = ResourceBundle.getBundle("dandelion/" + DANDELION_USER_PROPERTIES,
+							Locale.getDefault(), Thread.currentThread().getContextClassLoader(), new UTF8Control());
 					LOG.debug("User configuration loaded");
 				}
 				catch (MissingResourceException mre) {

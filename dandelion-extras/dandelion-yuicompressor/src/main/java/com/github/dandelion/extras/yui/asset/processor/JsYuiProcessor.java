@@ -77,5 +77,4 @@ public class JsYuiProcessor extends AbstractAssetProcessor {
 			throw DandelionException.wrap(e);
 		}
 	}
-
 }

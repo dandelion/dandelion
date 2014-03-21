@@ -36,10 +36,7 @@ import java.io.Writer;
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.ServiceLoader;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
@@ -47,14 +44,11 @@ import javax.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.github.dandelion.core.DevMode;
+import com.github.dandelion.core.Context;
 import com.github.dandelion.core.asset.Asset;
 import com.github.dandelion.core.asset.AssetType;
-import com.github.dandelion.core.asset.cache.AssetCacheSystem;
 import com.github.dandelion.core.asset.processor.spi.AssetProcessor;
 import com.github.dandelion.core.asset.web.AssetServlet;
-import com.github.dandelion.core.config.Configuration;
-import com.github.dandelion.core.utils.StringUtils;
 import com.github.dandelion.core.utils.UrlUtils;
 
 /**
@@ -66,73 +60,24 @@ import com.github.dandelion.core.utils.UrlUtils;
  * @author Romain Lespinasse
  * @since 0.10.0
  */
-public final class AssetProcessorSystem {
+public final class AssetProcessorManager {
 
-	private static final Logger LOG = LoggerFactory.getLogger(AssetProcessorSystem.class);
-
-	private static ServiceLoader<AssetProcessor> apServiceLoader = ServiceLoader.load(AssetProcessor.class);
-	private static Map<String, AssetProcessor> processorsMap;
-	private static List<AssetProcessor> activeProcessors;
-
-	private static void initializeIfNeeded() {
-		if (processorsMap == null || DevMode.isEnabled()) {
-			initializeAssetProcessors();
-		}
+	private static final Logger LOG = LoggerFactory.getLogger(AssetProcessorManager.class);
+	private Context context;
+	
+	public AssetProcessorManager(Context context){
+		this.context = context;
 	}
 
-	/**
-	 * <p>
-	 * The initialization is performed in 2 steps.
-	 * <p>
-	 * First, all available implementations are stored in the
-	 * {@link #processorsMap}.
-	 * <p>
-	 * Then, if the asset processing is enabled, the {@link #activeProcessors}
-	 * list is updated with all active processors.
-	 */
-	private static synchronized void initializeAssetProcessors() {
+	public Set<Asset> process(Set<Asset> assets, HttpServletRequest request) {
 
-		processorsMap = new HashMap<String, AssetProcessor>();
-		activeProcessors = new ArrayList<AssetProcessor>();
-
-		for (AssetProcessor ape : apServiceLoader) {
-			processorsMap.put(ape.getProcessorKey().toLowerCase(), ape);
-			LOG.info("Asset processor found: {}", ape.getClass().getSimpleName());
-		}
-
-		if (Configuration.isAssetProcessorsEnabled()) {
-			LOG.info("Asset processors enabled.");
-
-			// User-defined active processors
-			String assetProcessorString = Configuration.getAssetProcessors();
-			if (StringUtils.isNotBlank(assetProcessorString)) {
-				for (String assetProcessorKey : assetProcessorString.trim().toLowerCase().split(",")) {
-					if (processorsMap.containsKey(assetProcessorKey)) {
-						activeProcessors.add(processorsMap.get(assetProcessorKey));
-					}
-				}
-			}
-			// Default active processors
-			else {
-				activeProcessors.add(processorsMap.get("jsmin"));
-			}
-			LOG.info("The following processors are active: {}", activeProcessors);
-		}
-		else {
-			LOG.info("Asset processors disabled.");
-		}
-	}
-
-	public static Set<Asset> process(Set<Asset> assets, HttpServletRequest request) {
-		initializeIfNeeded();
-
-		if (!activeProcessors.isEmpty()) {
-			LOG.debug("Processing assets with the following processors: {}", activeProcessors);
+		if (!context.getActiveProcessors().isEmpty()) {
+			LOG.debug("Processing assets with the following processors: {}", context.getActiveProcessors());
 			for (Asset asset : assets) {
 
 				if (anyProcessorCanBeAppliedFor(asset)) {
 
-					String content = AssetCacheSystem.getContent(asset.getCacheKey());
+					String content = context.getCacheManager().getContent(asset.getCacheKey());
 
 					Reader assetReader = new StringReader(content);
 					Writer assetWriter = new StringWriter();
@@ -141,41 +86,37 @@ public final class AssetProcessorSystem {
 					for (AssetProcessor assetProcessor : compatibleAssetProcessors) {
 						LOG.trace("Applying processor {} on {}", assetProcessor.getProcessorKey(), asset.toLog());
 						assetWriter = new StringWriter();
-						assetProcessor.process(asset, assetReader, assetWriter);
+						assetProcessor.process(asset, assetReader, assetWriter, context);
 						assetReader = new StringReader(assetWriter.toString());
 					}
 
 					// The old asset is removed from cache
-					AssetCacheSystem.remove(asset.getCacheKey());
+					context.getCacheManager().remove(asset.getCacheKey());
 
 					// The new cache key is built, with ".min" applied before
 					// the extension
-					String context = UrlUtils.getCurrentUrl(request, true).toString();
-					context = context.replaceAll("\\?", "_").replaceAll("&", "_");
-					String newCacheKey = AssetCacheSystem.generateCacheKey(context, asset.getConfigLocation(),
-							asset.getName() + ".min", asset.getType());
-
+					String contextTmp = UrlUtils.getCurrentUrl(request, true).toString();
+					contextTmp = contextTmp.replaceAll("\\?", "_").replaceAll("&", "_");
+					String newCacheKey = this.context.getCacheManager().generateCacheKeyMin(contextTmp, asset);
+					asset.setCacheKey(newCacheKey);
+					
 					// The final asset location is overriden
 					asset.setFinalLocation(UrlUtils.getProcessedUrl(AssetServlet.DANDELION_ASSETS_URL + newCacheKey,
 							request, null));
-
 					// The cache system is updated with the new key/content pair
-					AssetCacheSystem.storeContent(newCacheKey, assetWriter.toString());
+					context.getCacheManager().storeContent(newCacheKey, assetWriter.toString());
 				}
 			}
-		}
-		else {
-			LOG.debug("No asset processor active. All asset will be left untouched.");
 		}
 
 		return assets;
 	}
 
-	private static List<AssetProcessor> getCompatibleProcessorFor(Asset asset) {
+	private List<AssetProcessor> getCompatibleProcessorFor(Asset asset) {
 
 		List<AssetProcessor> compatibleProcessors = new ArrayList<AssetProcessor>();
 
-		for (AssetProcessor assetProcessor : activeProcessors) {
+		for (AssetProcessor assetProcessor : context.getActiveProcessors()) {
 			Annotation annotation = assetProcessor.getClass().getAnnotation(CompatibleAssetType.class);
 			CompatibleAssetType compatibleAssetType = (CompatibleAssetType) annotation;
 			List<AssetType> compatibleAssetTypes = Arrays.asList(compatibleAssetType.types());
@@ -186,9 +127,9 @@ public final class AssetProcessorSystem {
 		return compatibleProcessors;
 	}
 
-	public static boolean anyProcessorCanBeAppliedFor(Asset asset) {
+	public boolean anyProcessorCanBeAppliedFor(Asset asset) {
 
-		for (AssetProcessor assetProcessor : activeProcessors) {
+		for (AssetProcessor assetProcessor : context.getActiveProcessors()) {
 			Annotation annotation = assetProcessor.getClass().getAnnotation(CompatibleAssetType.class);
 			CompatibleAssetType compatibleAssetType = (CompatibleAssetType) annotation;
 			List<AssetType> compatibleAssetTypes = Arrays.asList(compatibleAssetType.types());
@@ -200,9 +141,16 @@ public final class AssetProcessorSystem {
 		return false;
 	}
 
+
 	/**
-	 * Prevents instantiation.
+	 * <p>
+	 * Clears the scanned {@link AssetProcessor}s.
+	 * 
+	 * <p>
+	 * FOR INTERNAL USE ONLY
 	 */
-	private AssetProcessorSystem() {
+	public static void clear() {
+//		processorsMap.clear();
+//		activeProcessors.clear();
 	}
 }

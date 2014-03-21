@@ -40,7 +40,7 @@ import com.github.dandelion.core.asset.processor.vendor.CssCompressor;
 
 /**
  * <p>
- * CSS processor based on the {@link CssCompressor} implementation.
+ * CSS processor based on the {@link CSSMin} implementation.
  * 
  * @author Thibault Duchateau
  * @since 0.10.0

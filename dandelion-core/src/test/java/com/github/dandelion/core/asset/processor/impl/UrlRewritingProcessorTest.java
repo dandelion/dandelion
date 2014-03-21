@@ -27,7 +27,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.github.dandelion.core.asset.processor;
+package com.github.dandelion.core.asset.processor.impl;
 
 import static org.fest.assertions.Assertions.assertThat;
 
@@ -39,8 +39,8 @@ import java.util.Scanner;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.github.dandelion.core.Context;
 import com.github.dandelion.core.asset.Asset;
-import com.github.dandelion.core.asset.processor.impl.CssUrlRewritingProcessor;
 import com.github.dandelion.core.asset.processor.spi.AssetProcessor;
 import com.github.dandelion.core.utils.ResourceUtils;
 
@@ -48,9 +48,11 @@ public class UrlRewritingProcessorTest {
 
 	private AssetProcessor assetProcessor = new CssUrlRewritingProcessor();
 	private Asset processedAsset;
-	
+	private Context context;
+
 	@Before
 	public void setup(){
+		context = new Context();
 		processedAsset = new Asset();
 		processedAsset.setFinalLocation("http://domain/folder/sub/assets/css/asset.css");
 	}
@@ -58,28 +60,28 @@ public class UrlRewritingProcessorTest {
 	@Test
 	public void should_not_process_anything() {
 		Writer writer = new StringWriter();
-		assetProcessor.process(processedAsset, new StringReader(ResourceUtils.getFileContentFromClasspath("locator/test1.css", true)), writer);
+		assetProcessor.process(processedAsset, new StringReader(ResourceUtils.getFileContentFromClasspath("locator/test1.css", true)), writer, context);
 		assertThat(writer.toString()).contains("images/my-image.png");
 	}
 
 	@Test
 	public void should_process_one_relative_path_1_lvl() {
 		Writer writer = new StringWriter();
-		assetProcessor.process(processedAsset, new StringReader(ResourceUtils.getFileContentFromClasspath("locator/test2.css", true)), writer);
+		assetProcessor.process(processedAsset, new StringReader(ResourceUtils.getFileContentFromClasspath("locator/test2.css", true)), writer, context);
 		assertThat(writer.toString()).contains("http://domain/folder/sub/assets/images/my-image.png");
 	}
 
 	@Test
 	public void should_process_one_relative_path_2_lvl() {
 		Writer writer = new StringWriter();
-		assetProcessor.process(processedAsset, new StringReader(ResourceUtils.getFileContentFromClasspath("locator/test3.css", true)), writer);
+		assetProcessor.process(processedAsset, new StringReader(ResourceUtils.getFileContentFromClasspath("locator/test3.css", true)), writer, context);
 		assertThat(writer.toString()).contains("http://domain/folder/sub/images/my-image.png");
 	}
 
 	@Test
 	public void should_process_multiple_relative_paths_2_lvl() {
 		Writer writer = new StringWriter();
-		assetProcessor.process(processedAsset, new StringReader(ResourceUtils.getFileContentFromClasspath("locator/test4.css", true)), writer);
+		assetProcessor.process(processedAsset, new StringReader(ResourceUtils.getFileContentFromClasspath("locator/test4.css", true)), writer, context);
 		Scanner scanner = new Scanner(writer.toString());
 		while (scanner.hasNextLine()) {
 			assertThat(scanner.nextLine()).contains("http://domain/folder/sub/assets/images/my-image.png");

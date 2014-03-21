@@ -39,7 +39,6 @@ import com.github.dandelion.core.asset.AssetType;
 import com.github.dandelion.core.asset.processor.CompatibleAssetType;
 import com.github.dandelion.core.asset.processor.spi.AbstractAssetProcessor;
 import com.github.dandelion.core.asset.processor.vendor.JSMin;
-import com.github.dandelion.core.config.Configuration;
 import com.github.dandelion.core.utils.ReaderInputStream;
 import com.github.dandelion.core.utils.WriterOutputStream;
 
@@ -66,8 +65,8 @@ public class JsMinProcessor extends AbstractAssetProcessor {
 	 */
 	@Override
 	public void doProcess(Asset asset, Reader reader, Writer writer) throws Exception {
-		InputStream is = new ReaderInputStream(reader, Configuration.getAssetProcessorEncoding());
-		OutputStream os = new WriterOutputStream(writer, Configuration.getAssetProcessorEncoding());
+		InputStream is = new ReaderInputStream(reader, context.getConfiguration().getAssetProcessorEncoding());
+		OutputStream os = new WriterOutputStream(writer, context.getConfiguration().getAssetProcessorEncoding());
 		try {
 			new JSMin(is, os).jsmin();
 		}

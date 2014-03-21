@@ -79,6 +79,9 @@ import com.github.dandelion.core.utils.StringUtils;
  * @param url
  *            The original URL that will be used to build the absolute path.
  * @return the processed content that should contain only absolute paths.
+ * 
+ * @author Thibault Duchateau
+ * @since 0.10.0
  */
 @CompatibleAssetType(types = AssetType.css)
 public class CssUrlRewritingProcessor extends AbstractAssetProcessor {
@@ -156,6 +159,5 @@ public class CssUrlRewritingProcessor extends AbstractAssetProcessor {
 				throw DandelionException.wrap(e);
 			}
 		}
-
 	}
 }

@@ -71,7 +71,7 @@ public class BundleStorage {
 	 * @throws DandelionException
 	 *             as soon as a cycle is introduced in the bundle DAG.
 	 */
-	public BundleDag loadBundles(List<BundleStorageUnit> bundleStorageUnits) {
+	public BundleDag storeBundles(List<BundleStorageUnit> bundleStorageUnits) {
 
 		for (BundleStorageUnit bsu : bundleStorageUnits) {
 
@@ -196,7 +196,7 @@ public class BundleStorage {
 
 		Set<BundleStorageUnit> retval = new LinkedHashSet<BundleStorageUnit>();
 		for (String bundleName : bundleNames) {
-			retval.addAll(bundlesFor(bundleName));
+			retval.addAll(bundlesFor(bundleName.trim()));
 		}
 
 		return retval;

@@ -30,13 +30,12 @@
 package com.github.dandelion.core.bundle.loader.impl;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.github.dandelion.core.bundle.loader.BundleLoaderSystem;
+import com.github.dandelion.core.Context;
 import com.github.dandelion.core.bundle.loader.spi.AbstractBundleLoader;
 import com.github.dandelion.core.bundle.loader.spi.BundleLoader;
 import com.github.dandelion.core.storage.BundleStorageUnit;
@@ -80,14 +79,6 @@ public class DandelionBundleLoader extends AbstractBundleLoader {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public List<BundleStorageUnit> loadBundles() {
-		return super.loadBundles();
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
 	public boolean isRecursive() {
 		return true;
 	}
@@ -104,10 +95,10 @@ public class DandelionBundleLoader extends AbstractBundleLoader {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Set<String> getExcludedPaths() {
+	public Set<String> getExcludedPaths(Context context) {
 		Set<String> excludedPaths = new HashSet<String>();
 		excludedPaths.add(VendorBundleLoader.SCANNING_PATH);
-		for (BundleLoader loader : BundleLoaderSystem.getLoaders()) {
+		for (BundleLoader loader : context.getBundleLoaders()) {
 			if (loader instanceof AbstractBundleLoader) {
 				String path = ((AbstractBundleLoader) loader).getPath();
 				if (!path.equalsIgnoreCase(getPath())) {

@@ -27,54 +27,30 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.github.dandelion.core.config;
+package com.github.dandelion.core.asset.cache.impl;
 
-import static org.fest.assertions.Assertions.assertThat;
+import java.util.LinkedHashMap;
+import java.util.Map.Entry;
 
-import java.io.File;
-import java.util.Properties;
+/**
+ * <p>
+ * A simple thread-unsafe LRU cache based on the {@link LinkedHashMap}.
+ * 
+ * @author Thibault Duchateau
+ * @since 0.10.0
+ */
+public class SimpleLruCache<K, V> extends LinkedHashMap<K, V> {
 
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+	private static final long serialVersionUID = 1L;
 
-public class StandardConfigurationLoaderTest {
+	private int lrucSize;
 
-	private static StandardConfigurationLoader loader;
-
-	@BeforeClass
-	public static void setup() {
-		loader = new StandardConfigurationLoader();
+	public SimpleLruCache(int size) {
+		lrucSize = size;
 	}
 
-	@Before
-	public void before() throws Exception {
-		System.clearProperty(StandardConfigurationLoader.DANDELION_CONFIGURATION);
-	}
-
-	@Test
-	public void should_load_properties_from_classpath() throws Exception {
-		Properties userProperties = loader.loadUserConfiguration();
-
-		assertThat(userProperties).hasSize(1);
-		assertThat(userProperties.getProperty("asset.locations.resolution.strategy")).isEqualTo("webapp,cdn");
-	}
-
-	@Test
-	public void should_load_user_properties_from_system_property() throws Exception {
-		String path = new File("src/test/resources/dandelion-test/configuration-loader/".replace("/", File.separator))
-				.getAbsolutePath();
-		System.setProperty(StandardConfigurationLoader.DANDELION_CONFIGURATION, path);
-
-		Properties userProperties = loader.loadUserConfiguration();
-
-		assertThat(userProperties).hasSize(1);
-		assertThat(userProperties.getProperty("assets.locations")).isEqualTo("other,remote,local");
-	}
-	
-	@AfterClass
-	public static void teardown() {
-		System.clearProperty(StandardConfigurationLoader.DANDELION_CONFIGURATION);
+	@Override
+	protected boolean removeEldestEntry(Entry<K, V> eldest) {
+		return size() > lrucSize;
 	}
 }

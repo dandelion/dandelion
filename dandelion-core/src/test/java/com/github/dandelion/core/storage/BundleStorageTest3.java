@@ -63,7 +63,7 @@ public class BundleStorageTest3 {
 		bundlesToAdd.add(b12);
 
 		bundleStorage = new BundleStorage();
-		bundleStorage.loadBundles(bundlesToAdd);
+		bundleStorage.storeBundles(bundlesToAdd);
 	}
 
 	@Test

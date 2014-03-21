@@ -29,34 +29,36 @@
  */
 package com.github.dandelion.core.asset.cache.impl;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
+import com.github.dandelion.core.Context;
+import com.github.dandelion.core.asset.Asset;
+import com.github.dandelion.core.asset.cache.spi.AbstractAssetCache;
 import com.github.dandelion.core.asset.cache.spi.AssetCache;
 
 /**
  * <p>
- * Service provider for {@link AssetCache} that uses a simple {@link HashMap} as
- * a store.
- * 
- * <p>
- * Note that this implementation is not cluster-safe.
+ * Service provider for {@link AssetCache} that uses {@link SimpleLruCache}s as
+ * stores.
  * 
  * @author Thibault Duchateau
  * @author Romain Lespinasse
  * @since 0.10.0
  */
-public class HashMapAssetCache implements AssetCache {
+public class MemoryAssetCache extends AbstractAssetCache {
 	private Map<String, String> cache;
+	private Map<String, Set<Asset>> assets;
 
-	public HashMapAssetCache() {
-		cache = new HashMap<String, String>();
+	public MemoryAssetCache(Context context) {
+		super(context);
+		cache = new SimpleLruCache<String, String>(context.getConfiguration().getCacheAssetMaxSize());
+		assets = new SimpleLruCache<String, Set<Asset>>(context.getConfiguration().getCacheRequestMaxSize());
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
-	@Override
 	public String getCacheName() {
 		return "default";
 	}
@@ -64,23 +66,34 @@ public class HashMapAssetCache implements AssetCache {
 	/**
 	 * {@inheritDoc}
 	 */
-	@Override
-	public String getContent(String cacheKey) {
+	public String getAssetContent(String cacheKey) {
 		return cache.get(cacheKey);
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
-	@Override
-	public void storeContent(String cacheKey, String cacheContent) {
+	public Set<Asset> getRequestAssets(String cacheKey) {
+		return assets.get(cacheKey);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public void storeAssetContent(String cacheKey, String cacheContent) {
 		cache.put(cacheKey, cacheContent);
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
-	@Override
+	public void storeRequestAssets(String cacheKey, Set<Asset> a) {
+		assets.put(cacheKey, a);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
 	public void remove(String cacheKey) {
 		cache.remove(cacheKey);
 	}

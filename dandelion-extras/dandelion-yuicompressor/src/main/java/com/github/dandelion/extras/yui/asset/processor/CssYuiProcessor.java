@@ -44,7 +44,8 @@ import com.github.dandelion.core.asset.processor.spi.AbstractAssetProcessor;
 import com.yahoo.platform.yui.compressor.CssCompressor;
 
 /**
- * <p>CSS compressor based on YUI compressor.
+ * <p>
+ * CSS compressor based on YUI compressor.
  * 
  * @author Thibault Duchateau
  * @since 0.10.0
@@ -71,5 +72,4 @@ public class CssYuiProcessor extends AbstractAssetProcessor {
 			throw DandelionException.wrap(e);
 		}
 	}
-
 }

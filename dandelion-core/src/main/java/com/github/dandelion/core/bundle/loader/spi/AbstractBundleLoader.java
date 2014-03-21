@@ -40,6 +40,8 @@ import org.slf4j.Logger;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.dandelion.core.Context;
+import com.github.dandelion.core.DandelionException;
 import com.github.dandelion.core.storage.BundleStorageUnit;
 import com.github.dandelion.core.utils.ResourceScanner;
 
@@ -65,7 +67,7 @@ public abstract class AbstractBundleLoader implements BundleLoader {
 	/**
 	 * {@inheritDoc}
 	 */
-	public List<BundleStorageUnit> loadBundles() {
+	public List<BundleStorageUnit> loadBundles(Context context) {
 
 		mapper.configure(JsonParser.Feature.ALLOW_COMMENTS, true);
 		mapper.configure(JsonParser.Feature.ALLOW_SINGLE_QUOTES, true);
@@ -73,23 +75,33 @@ public abstract class AbstractBundleLoader implements BundleLoader {
 
 		List<BundleStorageUnit> bundles = new ArrayList<BundleStorageUnit>();
 
+		Set<String> resourcePaths = null;
 		try {
-			Set<String> resourcePaths = ResourceScanner.findResourcePaths(getPath(), getExcludedPaths(), null, ".json",
+			resourcePaths = ResourceScanner.findResourcePaths(getPath(), getExcludedPaths(context), null, ".json",
 					isRecursive());
-			getLogger().debug("{} resources scanned inside the folder '{}'. Parsing to bundle...",
-					resourcePaths.size(), getPath());
+		}
+		catch (IOException e) {
+			throw new DandelionException("Something went wrong when scanning files in " + getPath(), e);
+		}
 
-			ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+		getLogger().debug("{} resources scanned inside the folder '{}'. Parsing to bundle...", resourcePaths.size(),
+				getPath());
 
-			for (String resourcePath : resourcePaths) {
+		ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+
+		for (String resourcePath : resourcePaths) {
+			try {
 				InputStream configFileStream = classLoader.getResourceAsStream(resourcePath);
 				BundleStorageUnit bsu = mapper.readValue(configFileStream, BundleStorageUnit.class);
 				getLogger().debug("Parsed {}", bsu);
 				bundles.add(bsu);
 			}
-		}
-		catch (IOException e) {
-			getLogger().error(e.getMessage(), e);
+			catch (IOException e) {
+				StringBuilder sb = new StringBuilder("The file '");
+				sb.append(resourcePath);
+				sb.append("' is wrongly formatted. Please correct it before continuing.");
+				throw new DandelionException(sb.toString(), e);
+			}
 		}
 
 		return bundles;
@@ -105,7 +117,7 @@ public abstract class AbstractBundleLoader implements BundleLoader {
 	/**
 	 * @return a set of paths to exclude during the resource scanning.
 	 */
-	public Set<String> getExcludedPaths() {
+	public Set<String> getExcludedPaths(Context context) {
 		return Collections.emptySet();
 	}
 }

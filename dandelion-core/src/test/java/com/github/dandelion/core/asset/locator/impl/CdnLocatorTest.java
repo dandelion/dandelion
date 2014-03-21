@@ -40,8 +40,10 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.springframework.mock.web.MockHttpServletRequest;
 
+import com.github.dandelion.core.Context;
 import com.github.dandelion.core.DandelionException;
 import com.github.dandelion.core.asset.AssetType;
+import com.github.dandelion.core.asset.web.AssetFilter;
 import com.github.dandelion.core.storage.AssetStorageUnit;
 
 public class CdnLocatorTest {
@@ -57,6 +59,7 @@ public class CdnLocatorTest {
 	@Before
 	public void setup() {
 		request = new MockHttpServletRequest();
+		request.setAttribute(AssetFilter.DANDELION_CONTEXT_ATTRIBUTE, new Context());
 	}
 
 	@Test

@@ -27,54 +27,29 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.github.dandelion.core.config;
+package com.github.dandelion.core;
 
 import static org.fest.assertions.Assertions.assertThat;
 
-import java.io.File;
-import java.util.Properties;
-
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
-public class StandardConfigurationLoaderTest {
-
-	private static StandardConfigurationLoader loader;
-
-	@BeforeClass
-	public static void setup() {
-		loader = new StandardConfigurationLoader();
-	}
-
-	@Before
-	public void before() throws Exception {
-		System.clearProperty(StandardConfigurationLoader.DANDELION_CONFIGURATION);
-	}
+public class ContextTest {
 
 	@Test
-	public void should_load_properties_from_classpath() throws Exception {
-		Properties userProperties = loader.loadUserConfiguration();
-
-		assertThat(userProperties).hasSize(1);
-		assertThat(userProperties.getProperty("asset.locations.resolution.strategy")).isEqualTo("webapp,cdn");
-	}
-
-	@Test
-	public void should_load_user_properties_from_system_property() throws Exception {
-		String path = new File("src/test/resources/dandelion-test/configuration-loader/".replace("/", File.separator))
-				.getAbsolutePath();
-		System.setProperty(StandardConfigurationLoader.DANDELION_CONFIGURATION, path);
-
-		Properties userProperties = loader.loadUserConfiguration();
-
-		assertThat(userProperties).hasSize(1);
-		assertThat(userProperties.getProperty("assets.locations")).isEqualTo("other,remote,local");
-	}
-	
-	@AfterClass
-	public static void teardown() {
-		System.clearProperty(StandardConfigurationLoader.DANDELION_CONFIGURATION);
+	public void should_load_the_context(){
+		Context context = new Context();
+		
+		// SPI
+		assertThat(context.getBundleLoaders()).isNotEmpty();
+		assertThat(context.getActiveProcessors()).isEmpty();
+		assertThat(context.getAssetLocatorsMap()).isNotEmpty();
+		
+		// Configuration should be initialized
+		assertThat(context.getConfiguration()).isNotNull();
+		assertThat(context.getConfiguration().getProperties()).isNotEmpty();
+		
+		// Manager should be initialized
+		assertThat(context.getProcessorManager()).isNotNull();
+		assertThat(context.getCacheManager()).isNotNull();
 	}
 }

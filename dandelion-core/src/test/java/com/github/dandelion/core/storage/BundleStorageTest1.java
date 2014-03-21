@@ -49,7 +49,7 @@ public class BundleStorageTest1 {
 		bundlesToAdd.add(b4);
 
 		bundleStorage = new BundleStorage();
-		bundleStorage.loadBundles(bundlesToAdd);
+		bundleStorage.storeBundles(bundlesToAdd);
 	}
 
 	@Test

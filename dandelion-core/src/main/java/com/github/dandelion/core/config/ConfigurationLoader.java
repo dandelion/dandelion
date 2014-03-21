@@ -31,7 +31,7 @@ package com.github.dandelion.core.config;
 
 import java.util.Properties;
 
-import com.github.dandelion.core.DandelionException;
+import com.github.dandelion.core.Context;
 
 /**
  * <p>
@@ -40,7 +40,7 @@ import com.github.dandelion.core.DandelionException;
  * <p>
  * The default implementation is the {@link StandardConfigurationLoader} class
  * but it can be replaced by another class that implements this interface thanks
- * to the {@link DandelionConfigurator}.
+ * to the {@link Context}.
  * 
  * @author Thibault Duchateau
  * @since 0.10.0
@@ -48,21 +48,6 @@ import com.github.dandelion.core.DandelionException;
 public interface ConfigurationLoader {
 
 	public final static String DANDELION_CONFLOADER_CLASS = "dandelion.confloader.class";
-
-	/**
-	 * <p>
-	 * Load the default configuration from the internal properties file and
-	 * both:
-	 * <ul>
-	 * <li>stores the properties inside a class field</li>
-	 * <li>returns the properties if they need to be used outside of the class</li>
-	 * </ul>
-	 * 
-	 * @return the default properties
-	 * @throws DandelionException
-	 *             if the default properties cannot be loader.
-	 */
-	public Properties loadDefaultConfiguration() throws DandelionException;
 
 	/**
 	 * <p>

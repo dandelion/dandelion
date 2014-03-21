@@ -50,7 +50,7 @@ public class BundleDagUserTest1 {
 		bundlesToAdd.add(b4);
 
 		bundleStorage = new BundleStorage();
-		bundleStorage.loadBundles(bundlesToAdd);
+		bundleStorage.storeBundles(bundlesToAdd);
 	}
 
 	@Test
@@ -61,7 +61,7 @@ public class BundleDagUserTest1 {
 		assetsBu1.add(new AssetStorageUnit("asset1_2", "2.0.0", AssetType.js));
 		BundleStorageUnit bu1 = new BundleStorageUnit("b1", assetsBu1);
 
-		bundleStorage.loadBundles(Arrays.asList(bu1));
+		bundleStorage.storeBundles(Arrays.asList(bu1));
 
 		Set<BundleStorageUnit> bundlesToLoad = bundleStorage.bundlesFor("b1");
 		assertThat(bundlesToLoad).extracting("name").containsExactly("b1");

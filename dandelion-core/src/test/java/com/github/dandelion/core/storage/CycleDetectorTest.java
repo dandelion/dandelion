@@ -43,6 +43,6 @@ public class CycleDetectorTest {
 
 		expectedEx.expect(DandelionException.class);
 		expectedEx.expectMessage("A cycle has been detected in the asset graph for the bundle b1.");
-		bundleStorage.loadBundles(bundlesToAdd);
+		bundleStorage.storeBundles(bundlesToAdd);
 	}
 }
