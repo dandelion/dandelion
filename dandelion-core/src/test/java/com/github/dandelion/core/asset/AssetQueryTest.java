@@ -34,13 +34,14 @@ import static org.fest.assertions.Assertions.assertThat;
 import java.io.File;
 import java.util.Set;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 
 import com.github.dandelion.core.Context;
-import com.github.dandelion.core.asset.web.AssetFilter;
 import com.github.dandelion.core.asset.web.AssetRequestContext;
+import com.github.dandelion.core.asset.web.WebConstants;
 import com.github.dandelion.core.config.StandardConfigurationLoader;
 
 public class AssetQueryTest {
@@ -58,8 +59,7 @@ public class AssetQueryTest {
 		
 		request = new MockHttpServletRequest();
 		request.setContextPath("/context");
-		request.setAttribute(AssetFilter.DANDELION_CONTEXT_ATTRIBUTE, context);
-
+		request.setAttribute(WebConstants.DANDELION_CONTEXT_ATTRIBUTE, context);
 	}
 
 	@Test
@@ -77,7 +77,7 @@ public class AssetQueryTest {
 
 		AssetRequestContext.get(request).addBundles("bundle5");
 		Set<Asset> assets = new AssetQuery(request, context).withPosition(AssetDomPosition.head).perform();
-		assertThat(assets).onProperty("name").contains("a5_4", "a5_5");
+		assertThat(assets).onProperty("name").containsOnly("a5_4", "a5_5");
 	}	
 	
 	@Test
@@ -85,14 +85,51 @@ public class AssetQueryTest {
 
 		AssetRequestContext.get(request).addBundles("bundle5");
 		Set<Asset> assets = new AssetQuery(request, context).withPosition(AssetDomPosition.body).perform();
-		assertThat(assets).onProperty("name").contains("a5_1", "a5_2", "a5_3");
+		assertThat(assets).onProperty("name").containsOnly("a5_1", "a5_2", "a5_3");
 	}
 	
 	@Test
-	public void should_exclude_1_asset() {
+	public void should_return_only_body_assets_with_1_js_excluded() {
 
-		AssetRequestContext.get(request).addBundles("bundle5").excludeAssets("a5_1");
+		AssetRequestContext.get(request).addBundles("bundle5").excludeJs("a5_1");
 		Set<Asset> assets = new AssetQuery(request, context).withPosition(AssetDomPosition.body).perform();
-		assertThat(assets).onProperty("name").contains("a5_2", "a5_3");
+		assertThat(assets).onProperty("name").containsOnly("a5_2", "a5_3");
+	}
+	
+	@Test
+	public void should_return_all_assets_with_1_js_and_1_css_excluded() {
+
+		AssetRequestContext.get(request).addBundles("bundle5").excludeJs("a5_1").excludeCss("a5_5");
+		Set<Asset> assets = new AssetQuery(request, context).perform();
+		assertThat(assets).onProperty("name").containsOnly("a5_2", "a5_3", "a5_4");
+	}
+	
+	@Test
+	public void should_return_all_assets_with_1_css_excluded() {
+
+		AssetRequestContext.get(request).addBundles("bundle5").excludeCss("a5_5");
+		Set<Asset> assets = new AssetQuery(request, context).perform();
+		assertThat(assets).onProperty("name").containsOnly("a5_1", "a5_2", "a5_3", "a5_4");
+	}
+	
+	@Test
+	public void should_return_all_assets_with_1_css_with_malformatted_name_excluded() {
+
+		AssetRequestContext.get(request).addBundles("bundle5").excludeCss("  a5_5 ");
+		Set<Asset> assets = new AssetQuery(request, context).perform();
+		assertThat(assets).onProperty("name").containsOnly("a5_1", "a5_2", "a5_3", "a5_4");
+	}
+	
+	@Test
+	public void should_return_all_assets() {
+
+		AssetRequestContext.get(request).addBundles("bundle5").excludeCss("unknown_css");
+		Set<Asset> assets = new AssetQuery(request, context).perform();
+		assertThat(assets).onProperty("name").containsOnly("a5_1", "a5_2", "a5_3", "a5_4", "a5_5");
+	}
+	
+	@After
+	public void teardown() {
+		System.clearProperty(StandardConfigurationLoader.DANDELION_CONFIGURATION);
 	}
 }

@@ -50,14 +50,14 @@ public class BundleTagTest extends PhantomJsTest {
 	}
 
 	@Test
-	public void assets_bundles() {
+	public void should_include_1_bundle() {
 		goTo("/include_bundle.jsp");
 		assertThat(text("link")).hasSize(1);
 		assertThat(text("script")).hasSize(2);
 	}
 
 	@Test
-	public void assets_excludedBundles() {
+	public void should_exclude_1_bundle() {
 		goTo("/exclude_bundle.jsp");
 		assertThat(text("script")).hasSize(0);
 	}

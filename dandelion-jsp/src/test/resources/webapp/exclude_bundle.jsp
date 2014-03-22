@@ -6,6 +6,6 @@
 <head>
 </head>
 <body>
-<dandelion:bundle include="exclude-bundle" excluded="exclude-bundle"/>
+<dandelion:bundle includes="exclude-bundle" excludes="exclude-bundle"/>
 </body>
 </html>

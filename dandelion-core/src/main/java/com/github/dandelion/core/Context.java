@@ -171,15 +171,8 @@ public class Context {
 
 		// Then all bundles of the components present in the classpath
 		for (BundleLoader bl : blServiceLoader) {
-			// if (!"false".equalsIgnoreCase(configuration.get("bundle.loader."
-			// + bl.getName() + ".active"))) {
 			bundleLoaders.add(bl);
 			LOG.info("Active bundle loader found: {}", bl.getClass().getSimpleName());
-			// }
-			// else {
-			// LOG.info("Inactive bundle loader found: {}",
-			// bl.getClass().getSimpleName());
-			// }
 		}
 
 		// Finally all bundles created by users
@@ -237,7 +230,7 @@ public class Context {
 			LOG.info("Asset processor found: {}", ape.getClass().getSimpleName());
 		}
 
-		if (configuration.isMinificationEnabled()) {
+		if (configuration.isMinificationOn()) {
 			LOG.info("Asset processors enabled.");
 
 			for (String assetProcessorKey : configuration.getAssetProcessors()) {

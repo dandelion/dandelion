@@ -43,7 +43,8 @@ import com.github.dandelion.core.storage.BundleStorageUnit;
 import com.github.dandelion.core.utils.UrlUtils;
 
 /**
- * <p>Allows to build and execute a query against the {@link BundleStorage}.
+ * <p>
+ * Allows to build and execute a query against the {@link BundleStorage}.
  * 
  * @author Thibault Duchateau
  * @since 0.10.0
@@ -51,18 +52,18 @@ import com.github.dandelion.core.utils.UrlUtils;
 public class AssetQuery {
 
 	private Set<Asset> requestedAssets;
-	
+
 	public AssetQuery(HttpServletRequest request, Context context) {
-	
+
 		String key = UrlUtils.getCurrentUri(request).toString();
 		this.requestedAssets = context.getCacheManager().getAssets(key);
-		
+
 		if (this.requestedAssets == null || DevMode.isEnabled()) {
 
 			// Gathers all asset storage units in an ordered set
 			Set<AssetStorageUnit> assetStorageUnits = new LinkedHashSet<AssetStorageUnit>();
 
-			String[] bundleNames = AssetRequestContext.get(request).getBundles(false);
+			String[] bundleNames = AssetRequestContext.get(request).getBundles(true);
 			for (BundleStorageUnit bsu : context.getBundleStorage().bundlesFor(bundleNames)) {
 				assetStorageUnits.addAll(bsu.getAssetStorageUnits());
 			}
@@ -73,32 +74,42 @@ public class AssetQuery {
 
 			// Applying the active processors
 			mappedAssets = context.getProcessorManager().process(mappedAssets, request);
-			
+
 			this.requestedAssets = context.getCacheManager().storeAssets(key, mappedAssets);
 		}
+
+		String[] excludedJsNames = AssetRequestContext.get(request).getExcludedJs();
+		if (excludedJsNames.length > 0) {
+			excludeJs(excludedJsNames);
+		}
+		
+		String[] excludedCssNames = AssetRequestContext.get(request).getExcludedCss();
+		if (excludedCssNames.length > 0) {
+			excludeCss(excludedCssNames);
+		}
 	}
-	
-	public AssetQuery withPosition(AssetDomPosition desiredPosition){
+
+	public AssetQuery withPosition(AssetDomPosition desiredPosition) {
 		this.requestedAssets = AssetUtils.filtersByDomPosition(this.requestedAssets, desiredPosition);
 		return this;
 	}
-	
-	public AssetQuery withType(AssetType desiredType){
+
+	public AssetQuery withType(AssetType desiredType) {
 		// TODO
 		return this;
 	}
-	
-	public AssetQuery excludeAssets(String[] excludedAssetNames){
-		this.requestedAssets = AssetUtils.filtersByName(this.requestedAssets, excludedAssetNames);
+
+	public AssetQuery excludeJs(String[] excludedJsNames) {
+		this.requestedAssets = AssetUtils.filtersByNameAndType(this.requestedAssets, excludedJsNames, AssetType.js);
+		return this;
+	}
+
+	public AssetQuery excludeCss(String[] excludedCssNames) {
+		this.requestedAssets = AssetUtils.filtersByNameAndType(this.requestedAssets, excludedCssNames, AssetType.css);
 		return this;
 	}
 	
-	public AssetQuery excludeBundles(String[] excludedBundleNames){
-		// TODO 
-		return this;
-	}
-	
-	public Set<Asset> perform(){
+	public Set<Asset> perform() {
 		return this.requestedAssets;
 	}
 }

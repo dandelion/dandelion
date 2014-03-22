@@ -50,10 +50,17 @@ public class AssetTagTest extends PhantomJsTest {
 	}
 
 	@Test
-	public void assets_excludedAssets() {
-		goTo("/exclude_asset.jsp");
+	public void should_exclude_1_js() {
+		goTo("/excluded_js.jsp");
 		assertThat(text("script")).hasSize(1);
 		assertThat(text("link")).hasSize(1);
+	}
+
+	@Test
+	public void should_exclude_1_css() {
+		goTo("/excluded_css.jsp");
+		assertThat(text("script")).hasSize(2);
+		assertThat(text("link")).hasSize(0);
 	}
 
 	@AfterClass

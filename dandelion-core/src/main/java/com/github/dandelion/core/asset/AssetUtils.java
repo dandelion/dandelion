@@ -94,6 +94,35 @@ public final class AssetUtils {
 
 	/**
 	 * <p>
+	 * Filters the given set of {@link Asset}s by removing all elements whose
+	 * name is present in the given array of excluded asset names and whose type
+	 * if given as parameter.
+	 * 
+	 * @param assets
+	 *            The collection of {@link Asset}s to filter.
+	 * @param excludedAssetNames
+	 *            The collection of asset names to exclude from the collection.
+	 * @param type
+	 *            The type of asset to exclude.
+	 * @return a filtered collection of {@link Asset}s.
+	 */
+	public static Set<Asset> filtersByNameAndType(Set<Asset> assets, String[] excludedAssetNames, AssetType type) {
+
+		List<String> excludedAssetNameList = Arrays.asList(excludedAssetNames);
+
+		Set<Asset> filteredAsus = new LinkedHashSet<Asset>();
+		for (Asset asset : assets) {
+
+			if (!asset.getType().equals(type) || !excludedAssetNameList.contains(asset.getName().trim().toLowerCase())) {
+				filteredAsus.add(asset);
+			}
+		}
+
+		return filteredAsus;
+	}
+
+	/**
+	 * <p>
 	 * Filters the given set of {@link Asset}s using the given
 	 * {@link AssetDomPosition}.
 	 * 

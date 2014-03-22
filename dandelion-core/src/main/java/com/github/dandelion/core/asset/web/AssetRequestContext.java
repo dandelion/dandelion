@@ -104,7 +104,8 @@ public class AssetRequestContext {
 	/**
 	 * List of assets to exclude from the current request
 	 */
-	private List<String> excludedAssets;
+	private List<String> excludedJs;
+	private List<String> excludedCss;
 
 	/**
 	 * List of asset parameters
@@ -117,7 +118,8 @@ public class AssetRequestContext {
 	private AssetRequestContext() {
 		this.bundles = new ArrayList<String>();
 		this.excludedBundles = new ArrayList<String>();
-		this.excludedAssets = new ArrayList<String>();
+		this.excludedJs = new ArrayList<String>();
+		this.excludedCss = new ArrayList<String>();
 		this.parameters = new HashMap<String, Map<String, Object>>();
 	}
 
@@ -138,7 +140,7 @@ public class AssetRequestContext {
 	 */
 	public static AssetRequestContext get(ServletRequest servletRequest) {
 		Object attribute = servletRequest.getAttribute(AssetRequestContext.class.getCanonicalName());
-		Context context = (Context) servletRequest.getAttribute(AssetFilter.DANDELION_CONTEXT_ATTRIBUTE);
+		Context context = (Context) servletRequest.getAttribute(WebConstants.DANDELION_CONTEXT_ATTRIBUTE);
 		if (attribute == null || !(attribute instanceof AssetRequestContext)) {
 			attribute = new AssetRequestContext();
 			((AssetRequestContext) attribute).addBundles(context.getConfiguration().getBundleIncludes());
@@ -281,33 +283,49 @@ public class AssetRequestContext {
 	/**
 	 * Fluent exclude for asset names
 	 * 
-	 * @param assetNames
+	 * @param jsNames
 	 *            asset names (separated by comma)
 	 * @return this context
 	 */
-	public AssetRequestContext excludeAssets(String assetNames) {
-		if (StringUtils.isNotBlank(assetNames)) {
-			return excludeAssets(assetNames.split(","));
+	public AssetRequestContext excludeJs(String jsNames) {
+		if (StringUtils.isNotBlank(jsNames)) {
+			return excludeJs(jsNames.split(","));
 		}
 		else {
 			return this;
 		}
 	}
 
+	public AssetRequestContext excludeCss(String cssNames) {
+		if (StringUtils.isNotBlank(cssNames)) {
+			return excludeCss(cssNames.split(","));
+		}
+		else {
+			return this;
+		}
+	}
+	
 	/**
 	 * Fluent exclude for asset names
 	 * 
-	 * @param assetNames
+	 * @param jsNames
 	 *            asset names
 	 * @return this context
 	 */
-	private AssetRequestContext excludeAssets(String... assetNames) {
-		for (String assetName : assetNames) {
-			this.excludedAssets.add(assetName.trim().toLowerCase());
+	private AssetRequestContext excludeJs(String... jsNames) {
+		for (String jsName : jsNames) {
+			this.excludedJs.add(jsName.trim().toLowerCase());
 		}
 		return this;
 	}
 
+	private AssetRequestContext excludeCss(String... cssNames) {
+		for (String cssName : cssNames) {
+			this.excludedCss.add(cssName.trim().toLowerCase());
+		}
+		return this;
+	}
+	
 	/**
 	 * @return all scopes to remove
 	 */
@@ -316,10 +334,17 @@ public class AssetRequestContext {
 	}
 
 	/**
-	 * @return all asset names to remove
+	 * @return all Javascript to exclude from the current request.
 	 */
-	public String[] getExcludedAssets() {
-		return excludedAssets.toArray(new String[excludedAssets.size()]);
+	public String[] getExcludedJs() {
+		return excludedJs.toArray(new String[excludedJs.size()]);
+	}
+	
+	/**
+	 * @return all Stylesheets to exclude from the current request.
+	 */
+	public String[] getExcludedCss() {
+		return excludedCss.toArray(new String[excludedCss.size()]);
 	}
 
 	/**

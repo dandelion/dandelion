@@ -29,56 +29,36 @@
  */
 package com.github.dandelion.core.config;
 
-/**
- * TODO
- * TODO
- * 
- * @author Thibault Duchateau
- */
-public enum DandelionConfig {
+import static org.fest.assertions.Assertions.assertThat;
 
-	// Main configurations
-	MINIFICATION_ON("minification.on", "false"),
-	
-	// Asset configurations
-	ASSET_LOCATIONS_RESOLUTION_STRATEGY("asset.locations.resolution.strategy", "webjar,webapp,cdn"),
-	ASSET_PROCESSORS_ENABLED("asset.processors.enabled", "false"),
-	ASSET_PROCESSORS("asset.processors", "cssurlrewriting,jsmin,cssmin"),
-	ASSET_PROCESSORS_ENCODING("asset.processors.encoding", "UTF-8"),
-	ASSET_JS_EXCLUDES("asset.js.excludes", ""),
-	ASSET_CSS_EXCLUDES("asset.css.excludes", ""),
-	
-	// Cache configurations
-	CACHE_ASSET_MAX_SIZE("cache.asset.max.size", "50"),
-	CACHE_REQUEST_MAX_SIZE("cache.request.max.size", "50"),
-	CACHE_MANAGER_NAME("cache.manager.name", ""),
-	CACHE_CONFIGURATION_LOCATION("cache.configuration.location", ""),
-	
-	// Bundle configurations
-	BUNDLE_INCLUDES("bundle.includes", ""),
-	BUNDLE_EXCLUDES("bundle.excludes", "");
-	
-	private String propertyName;
-	private String defaultValue;
-	
-	private DandelionConfig(String propertyName, String defaultValue){
-		this.propertyName = propertyName;
-		this.defaultValue = defaultValue;
-	}
+import org.junit.Test;
 
-	public String getPropertyName() {
-		return propertyName;
-	}
+import com.github.dandelion.core.utils.PropertiesUtils;
 
-	public void setPropertyName(String propertyName) {
-		this.propertyName = propertyName;
-	}
+public class ConfigurationTest {
 
-	public String getDefaultValue() {
-		return defaultValue;
-	}
+	@Test
+	public void should_load_default_properties_at_instantation() {
+		Configuration config = new Configuration();
+		assertThat(config.getAssetCssExcludes()).isEmpty();
+		assertThat(config.getAssetJsExcludes()).isEmpty();
+		assertThat(config.getAssetLocationsResolutionStrategy()).isEqualTo(
+				PropertiesUtils.propertyAsList(DandelionConfig.ASSET_LOCATIONS_RESOLUTION_STRATEGY.getDefaultValue(),
+						","));
+		assertThat(config.getAssetProcessorEncoding()).isEqualTo(
+				DandelionConfig.ASSET_PROCESSORS_ENCODING.getDefaultValue());
+		assertThat(config.getAssetProcessors()).isEqualTo(
+				PropertiesUtils.propertyAsList(DandelionConfig.ASSET_PROCESSORS.getDefaultValue(), ","));
 
-	public void setDefaultValue(String defaultValue) {
-		this.defaultValue = defaultValue;
+		assertThat(config.getBundleExcludes()).isEmpty();
+		assertThat(config.getBundleIncludes()).isEmpty();
+
+		assertThat(config.getCacheConfigurationLocation()).isEqualTo(
+				DandelionConfig.CACHE_CONFIGURATION_LOCATION.getDefaultValue());
+		assertThat(config.getCacheManagerName()).isEqualTo(DandelionConfig.CACHE_MANAGER_NAME.getDefaultValue());
+		assertThat(config.getCacheAssetMaxSize()).isEqualTo(
+				Integer.parseInt(DandelionConfig.CACHE_ASSET_MAX_SIZE.getDefaultValue()));
+		assertThat(config.getCacheRequestMaxSize()).isEqualTo(
+				Integer.parseInt(DandelionConfig.CACHE_REQUEST_MAX_SIZE.getDefaultValue()));
 	}
 }

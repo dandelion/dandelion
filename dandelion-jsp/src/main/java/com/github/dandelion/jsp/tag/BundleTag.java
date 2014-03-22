@@ -37,14 +37,14 @@ import com.github.dandelion.core.asset.web.AssetRequestContext;
 
 /**
  * <p>
- * JSP tag for manipulating the asset stack by adding or excluding bundles from
- * it.
+ * JSP tag for manipulating the current assets by adding or excluding bundles
+ * from it.
  * 
  * <p>
  * Usage :
  * 
  * <pre>
- * &lt;dandelion:bundle include="..." exclude="..." /&gt;
+ * &lt;dandelion:bundle includes="..." excludes="..." /&gt;
  * </pre>
  */
 public class BundleTag extends TagSupport {
@@ -54,22 +54,22 @@ public class BundleTag extends TagSupport {
 	/**
 	 * Tag attributes
 	 */
-	// Bundles to include in the asset stack
-	private String include;
+	// Bundles to include in the current request
+	private String includes;
 
-	// Bundles to exclude from the asset stack
-	private String exclude;
+	// Bundles to exclude from the current request
+	private String excludes;
 
 	public int doEndTag() throws JspException {
-		AssetRequestContext.get(pageContext.getRequest()).addBundles(include).excludeBundles(exclude);
+		AssetRequestContext.get(pageContext.getRequest()).addBundles(includes).excludeBundles(excludes);
 		return EVAL_PAGE;
 	}
 
-	public void setInclude(String include) {
-		this.include = include;
+	public void setIncludes(String includes) {
+		this.includes = includes;
 	}
 
-	public void setExclude(String exclude) {
-		this.exclude = exclude;
+	public void setExcludes(String excludes) {
+		this.excludes = excludes;
 	}
 }

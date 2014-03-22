@@ -43,7 +43,13 @@ import com.github.dandelion.core.asset.web.AssetRequestContext;
  * Usage :
  * 
  * <pre>
- * &lt;dandelion:asset exclude="..." /&gt;
+ * &lt;dandelion:asset jsExcludes="..." /&gt;
+ * </pre>
+ * 
+ * or:
+ * 
+ * <pre>
+ * &lt;dandelion:asset cssExcludes="..." /&gt;
  * </pre>
  */
 public class AssetTag extends TagSupport {
@@ -53,15 +59,21 @@ public class AssetTag extends TagSupport {
 	/**
 	 * Tag attributes
 	 */
-	// Assets to exclude from the asset stack
-	private String exclude;
+	// Assets to exclude from the current request
+	private String jsExcludes;
+	private String cssExcludes;
 
 	public int doEndTag() throws JspException {
-		AssetRequestContext.get(pageContext.getRequest()).excludeAssets(exclude);
+		AssetRequestContext.get(pageContext.getRequest()).excludeJs(jsExcludes);
+		AssetRequestContext.get(pageContext.getRequest()).excludeCss(cssExcludes);
 		return EVAL_PAGE;
 	}
 
-	public void setExclude(String exclude) {
-		this.exclude = exclude;
+	public void setJsExcludes(String jsExcludes) {
+		this.jsExcludes = jsExcludes;
+	}
+	
+	public void setCssExcludes(String cssExcludes) {
+		this.cssExcludes = cssExcludes;
 	}
 }

@@ -47,7 +47,7 @@
       <attribute>
          <description>
          <![CDATA[
-            <p>Comma-separated list of bundles to include in the asset stack.</p>
+            <p>Comma-separated list of bundles to include in the current request.</p>
             <p>
             <ul>
             <li>Required: <b>no</b></li>
@@ -55,14 +55,14 @@
             </p>
          ]]>
          </description>
-         <name>include</name>
+         <name>includes</name>
          <required>false</required>
          <rtexprvalue>true</rtexprvalue>
       </attribute>
       <attribute>
          <description>
          <![CDATA[
-            <p>Comma-separated list of bundles to exclude from the asset stack.</p>
+            <p>Comma-separated list of bundles to exclude from the current request.</p>
             <p>
             <ul>
             <li>Required: <b>no</b></li>
@@ -70,7 +70,7 @@
             </p>
          ]]>
          </description>
-         <name>exclude</name>
+         <name>excludes</name>
          <required>false</required>
          <rtexprvalue>true</rtexprvalue>
       </attribute>
@@ -79,7 +79,7 @@
    <tag>
       <description>
       <![CDATA[
-         <p>The <dandelion:asset> tag allows you to interact with the asset stack by excluding assets from the current request.</p>
+         <p>The <dandelion:asset> tag allows you to interact with the assets by excluding js/css from the current request.</p>
       ]]>
       </description>
       <name>asset</name>
@@ -88,7 +88,7 @@
       <attribute>
          <description>
          <![CDATA[
-            <p>Comma-separated list of assets to exclude from the asset stack.</p>
+            <p>Comma-separated list of Js files to exclude from the current request.</p>
             <p>
             <ul>
             <li>Required: <b>no</b></li>
@@ -96,7 +96,22 @@
             </p>
          ]]>
          </description>
-         <name>exclude</name>
+         <name>jsExcludes</name>
+         <required>false</required>
+         <rtexprvalue>true</rtexprvalue>
+      </attribute>
+      <attribute>
+         <description>
+         <![CDATA[
+            <p>Comma-separated list of Css files to exclude from the current request.</p>
+            <p>
+            <ul>
+            <li>Required: <b>no</b></li>
+            </ul>
+            </p>
+         ]]>
+         </description>
+         <name>cssExcludes</name>
          <required>false</required>
          <rtexprvalue>true</rtexprvalue>
       </attribute>

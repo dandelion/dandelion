@@ -16,7 +16,7 @@ public class AssetRequestContextTest {
 	@Before
 	public void setup() {
 		request = new MockHttpServletRequest();
-		request.setAttribute(AssetFilter.DANDELION_CONTEXT_ATTRIBUTE, new Context());
+		request.setAttribute(WebConstants.DANDELION_CONTEXT_ATTRIBUTE, new Context());
 	}
 
 	@Test
@@ -43,14 +43,23 @@ public class AssetRequestContextTest {
 	}
 
 	@Test
-	public void should_exclude_assets() {
+	public void should_add_excluded_js() {
 
 		AssetRequestContext context = AssetRequestContext.get(request);
-		context.excludeAssets("asset1,asset2");
+		context.excludeJs("asset1,asset2");
 
-		assertThat(context.getExcludedAssets()).hasSize(2).contains("asset1", "asset2");
+		assertThat(context.getExcludedJs()).hasSize(2).contains("asset1", "asset2");
 	}
 
+	@Test
+	public void should_add_excluded_css() {
+
+		AssetRequestContext context = AssetRequestContext.get(request);
+		context.excludeCss("asset1,asset2");
+
+		assertThat(context.getExcludedCss()).hasSize(2).contains("asset1", "asset2");
+	}
+	
 	@Test
 	public void should_store_parameters() {
 		AssetRequestContext context = AssetRequestContext.get(request);

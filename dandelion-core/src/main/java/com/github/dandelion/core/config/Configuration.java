@@ -98,16 +98,16 @@ public class Configuration {
 		return properties.getProperty(key, defaultValue);
 	}
 
-	public boolean isMinificationEnabled() {
-		String retval = get(DandelionConfig.MINIFICATION_ENABLED);
+	public boolean isMinificationOn() {
+		String retval = get(DandelionConfig.MINIFICATION_ON);
 		if (StringUtils.isNotBlank(retval)) {
 			return Boolean.parseBoolean(retval);
 		}
 		return false;
 	}
 
-	public void setMinificationEnabled(boolean value) {
-		put(DandelionConfig.MINIFICATION_ENABLED, value);
+	public void setMinificationOn(boolean value) {
+		put(DandelionConfig.MINIFICATION_ON, value);
 	}
 
 	public List<String> getAssetLocationsResolutionStrategy() {
@@ -142,19 +142,27 @@ public class Configuration {
 		put(DandelionConfig.ASSET_PROCESSORS_ENCODING, value);
 	}
 
-	public List<String> getAssetExcludes() {
-		String value = get(DandelionConfig.ASSET_EXCLUDES);
+	public List<String> getAssetJsExcludes() {
+		String value = get(DandelionConfig.ASSET_JS_EXCLUDES);
 		if (StringUtils.isNotBlank(value)) {
 			return PropertiesUtils.propertyAsList(value, ",");
 		}
 		return Collections.emptyList();
 	}
 
-	public String getAssetCacheManagerName() {
+	public List<String> getAssetCssExcludes() {
+		String value = get(DandelionConfig.ASSET_CSS_EXCLUDES);
+		if (StringUtils.isNotBlank(value)) {
+			return PropertiesUtils.propertyAsList(value, ",");
+		}
+		return Collections.emptyList();
+	}
+	
+	public String getCacheManagerName() {
 		return get(DandelionConfig.CACHE_MANAGER_NAME);
 	}
 
-	public String getAssetCacheConfigurationLocation() {
+	public String getCacheConfigurationLocation() {
 		return get(DandelionConfig.CACHE_CONFIGURATION_LOCATION);
 	}
 
@@ -196,7 +204,8 @@ public class Configuration {
 		putDefault(DandelionConfig.ASSET_PROCESSORS);
 		putDefault(DandelionConfig.ASSET_PROCESSORS_ENABLED);
 		putDefault(DandelionConfig.ASSET_PROCESSORS_ENCODING);
-		putDefault(DandelionConfig.ASSET_EXCLUDES);
+		putDefault(DandelionConfig.ASSET_JS_EXCLUDES);
+		putDefault(DandelionConfig.ASSET_CSS_EXCLUDES);
 		putDefault(DandelionConfig.CACHE_ASSET_MAX_SIZE);
 		putDefault(DandelionConfig.CACHE_REQUEST_MAX_SIZE);
 		putDefault(DandelionConfig.CACHE_MANAGER_NAME);

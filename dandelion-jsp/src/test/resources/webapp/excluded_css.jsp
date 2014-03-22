@@ -6,7 +6,7 @@
 <head>
 </head>
 <body>
-<dandelion:bundle include="bundle1" />
-<dandelion:asset exclude="asset1" />
+<dandelion:bundle includes="bundle1" />
+<dandelion:asset cssExcludes="asset3" />
 </body>
 </html>
