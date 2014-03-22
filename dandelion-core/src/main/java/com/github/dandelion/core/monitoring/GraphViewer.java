@@ -51,9 +51,9 @@ import com.github.dandelion.core.asset.Asset;
 import com.github.dandelion.core.asset.AssetDomPosition;
 import com.github.dandelion.core.asset.AssetMapper;
 import com.github.dandelion.core.asset.AssetQuery;
-import com.github.dandelion.core.asset.web.AssetFilter;
 import com.github.dandelion.core.asset.web.AssetFilterResponseWrapper;
 import com.github.dandelion.core.asset.web.AssetRequestContext;
+import com.github.dandelion.core.asset.web.WebConstants;
 import com.github.dandelion.core.storage.AssetStorageUnit;
 import com.github.dandelion.core.storage.BundleStorageUnit;
 import com.github.dandelion.core.utils.ResourceUtils;
@@ -174,7 +174,7 @@ public class GraphViewer {
 		graphView = graphView.replace("[NODES_REQUEST]", sbNodesRequest.toString());
 		graphView = graphView.replace("[NODES_APPLICATION]", sbNodesApplication.toString());
 		graphView = graphView.replace("[CURRENT_URL]",
-				currentUri.substring(0, currentUri.indexOf(AssetFilter.DANDELION_SHOW_GRAPH) - 1));
+				currentUri.substring(0, currentUri.indexOf(WebConstants.DANDELION_SHOW_GRAPH) - 1));
 		graphView = graphView.replace("[HEAD]", sbHead.toString());
 		graphView = graphView.replace("[BODY]", sbBody.toString());
 

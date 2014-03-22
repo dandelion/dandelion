@@ -71,7 +71,7 @@ public class AssetServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		getLogger().debug("Dandelion Asset servlet captured GET request {}", request.getRequestURI());
 
-		Context context = (Context) request.getAttribute(AssetFilter.DANDELION_CONTEXT_ATTRIBUTE);
+		Context context = (Context) request.getAttribute(WebConstants.DANDELION_CONTEXT_ATTRIBUTE);
 		
 		// Get the asset content thanks to the cache key
 		String assetKey = context.getCacheManager().getCacheKeyFromRequest(request);

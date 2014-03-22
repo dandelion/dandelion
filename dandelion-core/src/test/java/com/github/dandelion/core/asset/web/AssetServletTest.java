@@ -28,7 +28,7 @@ public class AssetServletTest {
 		context = new Context();
 		request = new MockHttpServletRequest();
 		request.setContextPath("/context");
-		request.setAttribute(AssetFilter.DANDELION_CONTEXT_ATTRIBUTE, context);
+		request.setAttribute(WebConstants.DANDELION_CONTEXT_ATTRIBUTE, context);
 		response = new MockHttpServletResponse();
 	}
 	

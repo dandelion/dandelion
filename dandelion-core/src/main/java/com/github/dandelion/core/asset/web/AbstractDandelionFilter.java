@@ -33,6 +33,4 @@ import javax.servlet.Filter;
 
 public abstract class AbstractDandelionFilter implements Filter {
 
-	public static final String DANDELION_ASSET_FILTER_STATE = "dandelionAssetFilterState";
-	public static final String DANDELION_SHOW_GRAPH = "showDandelionGraph";
 }

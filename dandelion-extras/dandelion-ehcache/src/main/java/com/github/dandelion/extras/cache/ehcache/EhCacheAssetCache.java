@@ -101,7 +101,7 @@ public class EhCacheAssetCache extends AbstractAssetCache {
 	public EhCacheAssetCache(Context context) {
 		super(context);
 		CacheManager cacheManager = null;
-		String cacheManagerName = context.getConfiguration().getAssetCacheManagerName();
+		String cacheManagerName = context.getConfiguration().getCacheManagerName();
 
 		// First try to get an existing CacheManager
 		if (StringUtils.isNotBlank(cacheManagerName)) {
@@ -111,7 +111,7 @@ public class EhCacheAssetCache extends AbstractAssetCache {
 		else {
 			InputStream stream = null;
 
-			String cacheConfigurationPath = context.getConfiguration().getAssetCacheConfigurationLocation();
+			String cacheConfigurationPath = context.getConfiguration().getCacheConfigurationLocation();
 
 			if (StringUtils.isBlank(cacheConfigurationPath)) {
 				try {

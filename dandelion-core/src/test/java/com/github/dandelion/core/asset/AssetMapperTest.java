@@ -44,7 +44,7 @@ import org.springframework.mock.web.MockHttpServletRequest;
 
 import com.github.dandelion.core.Context;
 import com.github.dandelion.core.DandelionException;
-import com.github.dandelion.core.asset.web.AssetFilter;
+import com.github.dandelion.core.asset.web.WebConstants;
 import com.github.dandelion.core.storage.AssetStorageUnit;
 
 public class AssetMapperTest {
@@ -58,7 +58,7 @@ public class AssetMapperTest {
 		context = new Context();
 		request = new MockHttpServletRequest();
 		request.setContextPath("/context");
-		request.setAttribute(AssetFilter.DANDELION_CONTEXT_ATTRIBUTE, context);
+		request.setAttribute(WebConstants.DANDELION_CONTEXT_ATTRIBUTE, context);
 		assetMapper = new AssetMapper(request, context);
 	}
 

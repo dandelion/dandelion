@@ -146,21 +146,11 @@ public class BundleStorage {
 
 	public void checkBundleDag() {
 
-		// List<Bundle> emptyBundles = new ArrayList<Bundle>();
-		// for (Entry<String, Bundle> entries :
-		// bundleDag.getVertexMap().entrySet()) {
-		// if (entries.getValue().getAssets() == null ||
-		// entries.getValue().getAssets().isEmpty()) {
-		// emptyBundles.add(entries.getValue());
-		// }
-		// }
-
-		// if (!emptyBundles.isEmpty()) {
-		// throw new
-		// DandelionException(BundleStorageError.UNDEFINED_BUNDLE).set("emptyBundles",
-		// emptyBundles);
-		// LOG.warn("Some bundles are empty: {}.", emptyBundles.toString());
-		// }
+		for (BundleStorageUnit bsu : bundleDag.getVerticies()) {
+			if (bsu.getAssetStorageUnits() == null || bsu.getAssetStorageUnits().isEmpty()) {
+				LOG.warn("Empty bundle: {}", bsu.getName());
+			}
+		}
 	}
 
 	/**

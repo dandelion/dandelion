@@ -27,43 +27,29 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.github.dandelion.extras.webjar.asset.locator;
+package com.github.dandelion.core.asset.web;
 
-import static java.util.Collections.singletonMap;
-import static org.fest.assertions.Assertions.assertThat;
+/**
+ * <p>
+ * All web-related constants used in Dandelion.
+ * 
+ * @author Thibault Duchateau
+ * @since 0.10.0
+ */
+public class WebConstants {
 
-import java.net.MalformedURLException;
+	/**
+	 * Request attributes
+	 */
+	public static final String DANDELION_CONTEXT_ATTRIBUTE = "dandelion_context";
 
-import org.junit.Before;
-import org.junit.Test;
-import org.springframework.mock.web.MockHttpServletRequest;
+	/**
+	 * Request parameters
+	 */
+	public static final String DANDELION_SHOW_GRAPH = "showDandelionGraph";
 
-import com.github.dandelion.core.Context;
-import com.github.dandelion.core.asset.web.WebConstants;
-import com.github.dandelion.core.storage.AssetStorageUnit;
-
-public class WebjarLocatorTest {
-
-	private WebjarLocator locator = new WebjarLocator();
-	private MockHttpServletRequest request;
-	
-	@Before
-	public void setup(){
-		request = new MockHttpServletRequest();
-		request.setAttribute(WebConstants.DANDELION_CONTEXT_ATTRIBUTE, new Context());
-	}
-	
-	@Test
-	public void should_return_the_internal_url(){
-		AssetStorageUnit asu = new AssetStorageUnit("jquery-js", singletonMap("webjar", "jquery.js"));
-		String location = locator.getLocation(asu, request);
-		assertThat(location).isEqualTo("META-INF/resources/webjars/jquery/1.11.0/jquery.js");
-	}
-	
-	@Test
-	public void should_return_the_content() throws MalformedURLException{
-		AssetStorageUnit asu = new AssetStorageUnit("jquery-js", singletonMap("webjar", "jquery.js"));
-		String content = locator.getContent(asu, request);
-		assertThat(content).contains("jQuery JavaScript Library v1.11.0");
-	}
+	/**
+	 * Request attributes/parameters
+	 */
+	public static final String DANDELION_ASSET_FILTER_STATE = "dandelionAssetFilterState";
 }

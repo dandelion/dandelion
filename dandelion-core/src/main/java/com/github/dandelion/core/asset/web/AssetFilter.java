@@ -64,7 +64,6 @@ public class AssetFilter extends AbstractDandelionFilter {
 
 	private static Logger LOG = LoggerFactory.getLogger(AssetFilter.class);
 
-	public static final String DANDELION_CONTEXT_ATTRIBUTE = "dandelion_context";
 	private Context context;
 	
 	@Override
@@ -88,9 +87,9 @@ public class AssetFilter extends AbstractDandelionFilter {
 		HttpServletRequest request = (HttpServletRequest) servletRequest;
 		HttpServletResponse response = (HttpServletResponse) serlvetResponse;
 
-		request.setAttribute(DANDELION_CONTEXT_ATTRIBUTE, context);
+		request.setAttribute(WebConstants.DANDELION_CONTEXT_ATTRIBUTE, context);
 		// Override the response with the graph viewer
-		if(DevMode.isEnabled() && request.getParameter(DANDELION_SHOW_GRAPH) != null){
+		if(DevMode.isEnabled() && request.getParameter(WebConstants.DANDELION_SHOW_GRAPH) != null){
 			GraphViewer graphViewer = new GraphViewer(context);
 			response.getWriter().println(graphViewer.getView(request, response, filterChain));
 			return;
@@ -168,13 +167,13 @@ public class AssetFilter extends AbstractDandelionFilter {
 
 		// Then, check whether the filter has been explicitely disabled
 		// (possibly by other components)
-		if (request.getAttribute(DANDELION_ASSET_FILTER_STATE) != null) {
+		if (request.getAttribute(WebConstants.DANDELION_ASSET_FILTER_STATE) != null) {
 			applyFilter = applyFilter
-					&& Boolean.parseBoolean(String.valueOf(request.getAttribute(DANDELION_ASSET_FILTER_STATE)));
+					&& Boolean.parseBoolean(String.valueOf(request.getAttribute(WebConstants.DANDELION_ASSET_FILTER_STATE)));
 			return applyFilter;
 		}
-		else if (request.getParameter(DANDELION_ASSET_FILTER_STATE) != null) {
-			applyFilter = applyFilter && Boolean.parseBoolean(request.getParameter(DANDELION_ASSET_FILTER_STATE));
+		else if (request.getParameter(WebConstants.DANDELION_ASSET_FILTER_STATE) != null) {
+			applyFilter = applyFilter && Boolean.parseBoolean(request.getParameter(WebConstants.DANDELION_ASSET_FILTER_STATE));
 			return applyFilter;
 		}
 
