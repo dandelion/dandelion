@@ -70,6 +70,13 @@ public class AssetFilter implements Filter {
 	@Override
 	public void init(FilterConfig filterConfig) throws ServletException {
 		LOG.info("Initializing the Dandelion configuration");
+		if(DevMode.isEnabled()){
+			DevMode.log("===========================", LOG);
+			DevMode.log("", LOG);
+			DevMode.log("DevMode is enabled. Don't forget to disable it in production environment.", LOG);
+			DevMode.log("", LOG);
+			DevMode.log("===========================", LOG);
+		}
 		context = new Context(filterConfig);
 		LOG.info("Dandelion configuration initialized");
 	}
