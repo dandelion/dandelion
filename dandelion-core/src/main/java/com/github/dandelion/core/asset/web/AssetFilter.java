@@ -32,6 +32,7 @@ package com.github.dandelion.core.asset.web;
 import java.io.IOException;
 import java.util.Set;
 
+import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
@@ -54,18 +55,18 @@ import com.github.dandelion.core.utils.HtmlUtils;
 
 /**
  * <p>
- * TODO
+ * Main Dandelion filter in charge of injecting {@link Asset}s into pages.
  * 
  * @author Thibault Duchateau
  * @author Romain Lespinasse
  * @since 0.10.0
  */
-public class AssetFilter extends AbstractDandelionFilter {
+public class AssetFilter implements Filter {
 
 	private static Logger LOG = LoggerFactory.getLogger(AssetFilter.class);
 
 	private Context context;
-	
+
 	@Override
 	public void init(FilterConfig filterConfig) throws ServletException {
 		LOG.info("Initializing the Dandelion configuration");
@@ -89,29 +90,26 @@ public class AssetFilter extends AbstractDandelionFilter {
 
 		request.setAttribute(WebConstants.DANDELION_CONTEXT_ATTRIBUTE, context);
 		// Override the response with the graph viewer
-		if(DevMode.isEnabled() && request.getParameter(WebConstants.DANDELION_SHOW_GRAPH) != null){
+		if (DevMode.isEnabled() && request.getParameter(WebConstants.DANDELION_SHOW_GRAPH) != null) {
 			GraphViewer graphViewer = new GraphViewer(context);
 			response.getWriter().println(graphViewer.getView(request, response, filterChain));
 			return;
 		}
-		
+
 		// Only filter requests that accept HTML
 		if (isFilterApplyable(request)) {
 			LOG.trace("The AssetFilter applies to the request {}", request.getRequestURL().toString());
 
 			AssetFilterResponseWrapper wrapper = new AssetFilterResponseWrapper(response);
 			filterChain.doFilter(request, wrapper);
-			
+
 			String html = wrapper.getWrappedContent();
 			AssetRequestContext arc = AssetRequestContext.get(request);
 
 			if (isDandelionApplyable(request, arc, wrapper)) {
-				
-				Set<Asset> assetsHead = new AssetQuery(request, context)
-					.withPosition(AssetDomPosition.head)
-					.perform();
-				
-//				Set<Asset> assetsHead = Assets.assetsFor(request, AssetDomPosition.head);
+
+				Set<Asset> assetsHead = new AssetQuery(request, context).withPosition(AssetDomPosition.head).perform();
+
 				if (!assetsHead.isEmpty()) {
 					StringBuilder htmlHead = new StringBuilder();
 					for (Asset asset : assetsHead) {
@@ -119,15 +117,12 @@ public class AssetFilter extends AbstractDandelionFilter {
 						htmlHead.append(tag.toHtml());
 						htmlHead.append("\n");
 					}
-					
+
 					html = html.replace("</head>", htmlHead + "\n</head>");
 				}
-				
-				Set<Asset> assetsBody = new AssetQuery(request,context)
-				.withPosition(AssetDomPosition.body)
-				.perform();
-				
-//				Set<Asset> assetsBody = Assets.assetsFor(request, AssetDomPosition.body);
+
+				Set<Asset> assetsBody = new AssetQuery(request, context).withPosition(AssetDomPosition.body).perform();
+
 				if (!assetsBody.isEmpty()) {
 					StringBuilder htmlBody = new StringBuilder();
 					for (Asset asset : assetsBody) {
@@ -137,12 +132,12 @@ public class AssetFilter extends AbstractDandelionFilter {
 					}
 					html = html.replace("</body>", htmlBody + "</body>");
 				}
-				
-				// The Content-Length header is deliberately not updated here
-				// because it causes issues with Thymeleaf
 			}
 
+			// The response is explicitely closed here instead of setting a
+			// Content-Length header
 			response.getWriter().println(html);
+			response.getWriter().close();
 		}
 		// All other requests are not filtered
 		else {
@@ -169,11 +164,13 @@ public class AssetFilter extends AbstractDandelionFilter {
 		// (possibly by other components)
 		if (request.getAttribute(WebConstants.DANDELION_ASSET_FILTER_STATE) != null) {
 			applyFilter = applyFilter
-					&& Boolean.parseBoolean(String.valueOf(request.getAttribute(WebConstants.DANDELION_ASSET_FILTER_STATE)));
+					&& Boolean.parseBoolean(String.valueOf(request
+							.getAttribute(WebConstants.DANDELION_ASSET_FILTER_STATE)));
 			return applyFilter;
 		}
 		else if (request.getParameter(WebConstants.DANDELION_ASSET_FILTER_STATE) != null) {
-			applyFilter = applyFilter && Boolean.parseBoolean(request.getParameter(WebConstants.DANDELION_ASSET_FILTER_STATE));
+			applyFilter = applyFilter
+					&& Boolean.parseBoolean(request.getParameter(WebConstants.DANDELION_ASSET_FILTER_STATE));
 			return applyFilter;
 		}
 
@@ -193,13 +190,14 @@ public class AssetFilter extends AbstractDandelionFilter {
 	 *            The wrapper around the response to generate.
 	 * @return true if the response can be updated.
 	 */
-	private boolean isDandelionApplyable(HttpServletRequest request, AssetRequestContext context, AssetFilterResponseWrapper wrapper) {
+	private boolean isDandelionApplyable(HttpServletRequest request, AssetRequestContext context,
+			AssetFilterResponseWrapper wrapper) {
 		if (wrapper.getContentType() == null || !wrapper.getContentType().contains("text/html")) {
 			return false;
 		}
-//		else if (!Assets.existsAssetsFor(request)) {
-//			return false;
-//		}
+		// else if (!Assets.existsAssetsFor(request)) {
+		// return false;
+		// }
 		return true;
 	}
 

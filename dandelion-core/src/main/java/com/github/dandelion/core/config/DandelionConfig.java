@@ -30,10 +30,12 @@
 package com.github.dandelion.core.config;
 
 /**
- * TODO
- * TODO
+ * <p>
+ * Enum containing all configuration properties and their associated default
+ * value.
  * 
  * @author Thibault Duchateau
+ * @since 0.10.0
  */
 public enum DandelionConfig {
 
