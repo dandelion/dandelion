@@ -36,8 +36,7 @@ import static com.github.dandelion.core.asset.AssetDomPosition.head;
  * <p>
  * Types of an asset. Currently, only stylesheets and scripts are supported.
  * 
- * <p>
- * The order in the enum corresponds to the order in the DOM.
+ * @author Romain Lespinasse
  */
 public enum AssetType {
 

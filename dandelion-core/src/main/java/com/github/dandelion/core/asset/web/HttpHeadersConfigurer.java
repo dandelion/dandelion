@@ -38,11 +38,10 @@ import java.util.concurrent.TimeUnit;
 import javax.servlet.http.HttpServletResponse;
 
 import com.github.dandelion.core.DevMode;
-import com.github.dandelion.core.asset.web.data.AssetContent;
 
 /**
- * 
- * TODO
+ * <p>
+ * Configures the HTTP headers of a {@link HttpServletResponse}s.
  * 
  * @author Thibault Duchateau
  * @since 0.10.0
@@ -58,11 +57,10 @@ public class HttpHeadersConfigurer {
 		DATE_FORMAT.setTimeZone(TimeZone.getTimeZone("GMT"));
 	}
 
-	public void configureResponseHeaders(HttpServletResponse response, AssetContent assetContent) {
-		
-		response.setHeader("Content-Length", String.valueOf(assetContent.getContent().getBytes().length));
-		response.setContentType(assetContent.getContentType());
-		
+	public void configureResponseHeaders(HttpServletResponse response, String contentType) {
+
+		response.setContentType(contentType == null ? "text/plain" : contentType);
+
 		if (DevMode.isEnabled()) {
 			response.setHeader(HttpHeader.CACHE_CONTROL.getName(), "no-cache");
 			response.setHeader(HttpHeader.EXPIRES.getName(), String.valueOf(1));
@@ -70,8 +68,9 @@ public class HttpHeadersConfigurer {
 		else {
 			response.setHeader(HttpHeader.CACHE_CONTROL.getName(), DEFAULT_CACHE_CONTROL);
 			response.setHeader(HttpHeader.EXPIRES.getName(), String.valueOf(ONE_YEAR_IN_MILLISECONDS));
-			
-			//trim the milliseconds off the value since the header is only accurate down to the second
+
+			// Trim the milliseconds off the value since the header is only
+			// accurate down to the second
 			long lastModified = new Date().getTime();
 			lastModified = TimeUnit.MILLISECONDS.toSeconds(lastModified);
 			lastModified = TimeUnit.SECONDS.toMillis(lastModified);

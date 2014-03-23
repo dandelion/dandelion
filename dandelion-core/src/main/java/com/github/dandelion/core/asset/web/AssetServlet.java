@@ -41,9 +41,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.github.dandelion.core.Context;
+import com.github.dandelion.core.asset.AssetType;
 import com.github.dandelion.core.asset.cache.spi.AssetCache;
-import com.github.dandelion.core.asset.web.data.AssetContent;
-import com.github.dandelion.core.utils.HtmlUtils;
 
 /**
  * <p>
@@ -75,15 +74,18 @@ public class AssetServlet extends HttpServlet {
 		
 		// Get the asset content thanks to the cache key
 		String assetKey = context.getCacheManager().getCacheKeyFromRequest(request);
-		// TODO degager de HtmlUtils
-		AssetContent assetContent = HtmlUtils.getAssetContent(assetKey, context);
+		AssetType assetType = AssetType.typeOfAsset(assetKey);
 		
 		// Configure response headers
-		httpHeadersConfigurer.configureResponseHeaders(response, assetContent);
+		httpHeadersConfigurer.configureResponseHeaders(response, assetType.getContentType());
 		
 		// Send the asset's content
 		PrintWriter writer = response.getWriter();
-		writer.write(assetContent.getContent());
+		writer.write(context.getCacheManager().getContent(assetKey));
+		
+		// The response is explicitely closed here instead of setting a
+		// Content-Length header
+		writer.close();
 	}
 
 	protected Logger getLogger() {

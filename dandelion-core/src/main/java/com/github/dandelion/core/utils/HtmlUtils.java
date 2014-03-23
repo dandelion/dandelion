@@ -30,13 +30,7 @@
 
 package com.github.dandelion.core.utils;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.github.dandelion.core.Context;
 import com.github.dandelion.core.asset.Asset;
-import com.github.dandelion.core.asset.AssetType;
-import com.github.dandelion.core.asset.web.data.AssetContent;
 import com.github.dandelion.core.html.HtmlTag;
 import com.github.dandelion.core.html.LinkTag;
 import com.github.dandelion.core.html.ScriptTag;
@@ -49,10 +43,6 @@ import com.github.dandelion.core.html.ScriptTag;
  * @since 0.2.0
  */
 public class HtmlUtils {
-	private static Logger LOG = LoggerFactory.getLogger(HtmlUtils.class);
-
-	// public static final String DEFAULT_CACHE_CONTROL = "no-cache";
-	public static final String DEFAULT_CACHE_CONTROL = "public, max-age=315360000";
 
 	public static HtmlTag transformAsset(Asset asset) {
 		HtmlTag tag;
@@ -71,25 +61,5 @@ public class HtmlUtils {
 			tag.addAttributes(asset.getAttributes());
 		}
 		return tag;
-	}
-
-	public static AssetContent getAssetContent(String assetKey, Context context) {
-		String content = "";
-		String contentType = null;
-		AssetType resourceType = AssetType.typeOfAsset(assetKey);
-		if (resourceType != null) {
-			content = context.getCacheManager().getContent(assetKey);
-			if (content == null) {
-				LOG.debug("missing content from key {}", assetKey);
-				content = "";
-			}
-			contentType = resourceType.getContentType();
-		}
-		else {
-			content = "";
-			contentType = "text/plain";
-			LOG.debug("unknown asset type from key {}", assetKey);
-		}
-		return new AssetContent(content, contentType);
 	}
 }

@@ -52,36 +52,4 @@ public class AssetServletTest {
 		assertThat(response.getContentAsString()).isEqualTo(content);
 
 	}
-
-	@Test
-	public void should_never_fail_to_retrieve_missing_content_from_cache() throws ServletException, IOException {
-
-		Asset asset = new Asset();
-		asset.setName("resourceName");
-		asset.setType(AssetType.css);
-		asset.setFinalLocation("location");
-		request.setRequestURI("/test/"
-				+ context.getCacheManager().generateCacheKey("should_fail_to_retrieve_missing_content_from_cache", asset));
-
-		servlet.doGet(request, response);
-
-		assertThat(response.getContentAsString()).isEqualTo("");
-	}
-
-	@Test
-	public void should_manage_unknown_type() throws ServletException, IOException {
-
-		Asset asset = new Asset();
-		asset.setName("resourceName");
-		asset.setType(AssetType.css);
-		asset.setFinalLocation("location");
-		
-		request.setRequestURI("/test/"
-				+ context.getCacheManager().generateCacheKey("should_manage_unknown_type", asset) + System.currentTimeMillis());
-
-		servlet.doGet(request, response);
-
-		assertThat(response.getContentAsString()).isEmpty();
-
-	}
 }
