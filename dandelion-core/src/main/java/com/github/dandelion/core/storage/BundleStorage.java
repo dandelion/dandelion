@@ -102,7 +102,8 @@ public class BundleStorage {
 						for (AssetStorageUnit existingAsu : existingBundle.getAssetStorageUnits()) {
 
 							// Si un asset de meme nom existe deja, on l'ecrase
-							if (existingAsu.getName().equalsIgnoreCase(asu.getName())) {
+							if (existingAsu.getName().equalsIgnoreCase(asu.getName())
+									&& existingAsu.getType().equals(asu.getType())) {
 
 								LOG.debug(
 										"Replacing asset '{}' ({}) from the bundle '{}' by the asset {} ({}) from the bundle {}.",
