@@ -38,6 +38,7 @@ import java.io.Writer;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.mock.web.MockFilterConfig;
 
 import com.github.dandelion.core.Context;
 import com.github.dandelion.core.asset.processor.spi.AssetProcessor;
@@ -49,7 +50,7 @@ public class JsMinProcessorTest {
 
 	@Before
 	public void setup() {
-		context = new Context();
+		context = new Context(new MockFilterConfig());
 	}
 	
 	@Test

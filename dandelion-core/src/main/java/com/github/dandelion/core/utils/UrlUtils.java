@@ -48,9 +48,6 @@ public class UrlUtils {
 	private static final String FORWARD_QUERY_STRING_ATTRIBUTE = "javax.servlet.forward.query_string";
 	private static final String INCLUDE_REQUEST_URI_ATTRIBUTE = "javax.servlet.include.request_uri";
 
-	public static String getContextPath(HttpServletRequest request){
-		return request.getContextPath();
-	}
 	/**
 	 * <p>
 	 * Get the current URI with potentiel request parameters.

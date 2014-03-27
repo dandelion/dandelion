@@ -8,6 +8,7 @@ import javax.servlet.ServletException;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.mock.web.MockFilterConfig;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
@@ -25,7 +26,7 @@ public class AssetServletTest {
 
 	@Before
 	public void setup() {
-		context = new Context();
+		context = new Context(new MockFilterConfig());
 		request = new MockHttpServletRequest();
 		request.setContextPath("/context");
 		request.setAttribute(WebConstants.DANDELION_CONTEXT_ATTRIBUTE, context);

@@ -36,7 +36,6 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.github.dandelion.core.Context;
 import com.github.dandelion.core.bundle.loader.spi.AbstractBundleLoader;
 
 public class ModuleWithSubmoduleAssetJsonLoader extends AbstractBundleLoader {
@@ -64,7 +63,7 @@ public class ModuleWithSubmoduleAssetJsonLoader extends AbstractBundleLoader {
 	}
 
 	@Override
-	public Set<String> getExcludedPaths(Context context) {
+	public Set<String> getExcludedPaths() {
 		Set<String> excludedPaths = new HashSet<String>();
 		excludedPaths.add("module_with_submodule/submodule");
 		return excludedPaths;

@@ -45,13 +45,19 @@ import com.github.dandelion.core.storage.BundleStorageUnit;
 public interface BundleLoader {
 
 	/**
+	 * TODO
+	 * @param context
+	 */
+	void initLoader(Context context);
+	
+	/**
 	 * Load bundles by scanning the classpath starting from the configured
 	 * folder.
 	 * 
 	 * @return a list of {@link BundleStorageUnit} deserialized from the JSON
 	 *         files.
 	 */
-	List<BundleStorageUnit> loadBundles(Context context);
+	List<BundleStorageUnit> loadBundles();
 
 	/**
 	 * @return the name of the loader, mainly used for logging.

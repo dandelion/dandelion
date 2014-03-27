@@ -39,6 +39,7 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.springframework.mock.web.MockFilterConfig;
 import org.springframework.mock.web.MockHttpServletRequest;
 
 import com.github.dandelion.core.Context;
@@ -61,7 +62,7 @@ public class DelegatedLocatorTest {
 		request = new MockHttpServletRequest();
 		request.setRequestURI("/context/page.html");
 		request.setContextPath("/context");
-		request.setAttribute(WebConstants.DANDELION_CONTEXT_ATTRIBUTE, new Context());
+		request.setAttribute(WebConstants.DANDELION_CONTEXT_ATTRIBUTE, new Context(new MockFilterConfig()));
 	}
 
 	@Test

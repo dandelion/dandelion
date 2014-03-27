@@ -40,7 +40,9 @@ public enum HttpHeader {
 
 	CACHE_CONTROL("Cache-Control"), 
 	EXPIRES("Expires"), 
-	LAST_MODIFIED("Last-Modified");
+	LAST_MODIFIED("Last-Modified"),
+	CONTENT_TYPE("Content-Type"),
+	ACCEPT("Accept");
 
 	private String name;
 

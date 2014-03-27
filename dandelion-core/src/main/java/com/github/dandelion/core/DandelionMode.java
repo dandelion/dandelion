@@ -2,20 +2,20 @@
  * [The "BSD licence"]
  * Copyright (c) 2013-2014 Dandelion
  * All rights reserved.
- *
+ * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
  * are met:
- *
+ * 
  * 1. Redistributions of source code must retain the above copyright
  * notice, this list of conditions and the following disclaimer.
  * 2. Redistributions in binary form must reproduce the above copyright
  * notice, this list of conditions and the following disclaimer in the
  * documentation and/or other materials provided with the distribution.
- * 3. Neither the name of Dandelion nor the names of its contributors
- * may be used to endorse or promote products derived from this software
+ * 3. Neither the name of Dandelion nor the names of its contributors 
+ * may be used to endorse or promote products derived from this software 
  * without specific prior written permission.
- *
+ * 
  * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
  * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
  * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
@@ -29,33 +29,7 @@
  */
 package com.github.dandelion.core;
 
-import org.slf4j.Logger;
+public enum DandelionMode {
 
-/**
- * <p>
- * Utility class used to set/get the development mode.
- * 
- * @author Romain Lespinasse
- * @author Thibault Duchateau
- */
-public final class DevMode {
-
-	public final static String DANDELION_DEV_MODE = "dandelion.dev.mode";
-	private static boolean devMode = false;
-
-	static {
-		devMode = Boolean.TRUE.toString().equals(System.getProperty(DANDELION_DEV_MODE, Boolean.toString(devMode)));
-	}
-
-	public static boolean isEnabled() {
-		return devMode;
-	}
-
-	public static void set(boolean state) {
-		devMode = state;
-	}
-	
-	public static void log(String message, Logger logger, Object... arguments){
-		logger.info("[DevMode] " + message, arguments);
-	}
+	DEVELOPMENT, PRODUCTION;
 }

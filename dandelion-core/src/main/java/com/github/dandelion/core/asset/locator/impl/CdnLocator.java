@@ -60,11 +60,10 @@ public class CdnLocator extends AbstractAssetLocator {
 		return "cdn";
 	}
 
-	
 	@Override
 	public String doGetLocation(AssetStorageUnit asu, HttpServletRequest request) {
 		String location = asu.getLocations().get(getLocationKey());
-		
+
 		if (UrlUtils.isProtocolRelative(location)) {
 			location = request.isSecure() ? "https:" : "http:" + location;
 		}

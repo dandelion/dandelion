@@ -31,34 +31,110 @@ package com.github.dandelion.core.config;
 
 import static org.fest.assertions.Assertions.assertThat;
 
-import org.junit.Test;
+import java.util.Properties;
 
-import com.github.dandelion.core.utils.PropertiesUtils;
+import org.junit.Test;
+import org.springframework.mock.web.MockFilterConfig;
+
+import com.github.dandelion.core.DandelionMode;
 
 public class ConfigurationTest {
 
 	@Test
-	public void should_load_default_properties_at_instantation() {
-		Configuration config = new Configuration();
-		assertThat(config.getAssetCssExcludes()).isEmpty();
-		assertThat(config.getAssetJsExcludes()).isEmpty();
-		assertThat(config.getAssetLocationsResolutionStrategy()).isEqualTo(
-				PropertiesUtils.propertyAsList(DandelionConfig.ASSET_LOCATIONS_RESOLUTION_STRATEGY.getDefaultValue(),
-						","));
-		assertThat(config.getAssetProcessorEncoding()).isEqualTo(
-				DandelionConfig.ASSET_PROCESSORS_ENCODING.getDefaultValue());
-		assertThat(config.getAssetProcessors()).isEqualTo(
-				PropertiesUtils.propertyAsList(DandelionConfig.ASSET_PROCESSORS.getDefaultValue(), ","));
+	public void should_load_configuration_from_default() {
+		Configuration config = new Configuration(new MockFilterConfig(), new Properties());
 
-		assertThat(config.getBundleExcludes()).isEmpty();
-		assertThat(config.getBundleIncludes()).isEmpty();
+		assertThat(config.getDandelionMode()).isEqualTo(DandelionMode.DEVELOPMENT);
+		assertThat(config.getAssetLocationsResolutionStrategy()).containsSequence("webjar", "webapp", "cdn");
+		assertThat(config.getCacheAssetMaxSize()).isEqualTo(50);
+	}
 
-		assertThat(config.getCacheConfigurationLocation()).isEqualTo(
-				DandelionConfig.CACHE_CONFIGURATION_LOCATION.getDefaultValue());
-		assertThat(config.getCacheManagerName()).isEqualTo(DandelionConfig.CACHE_MANAGER_NAME.getDefaultValue());
-		assertThat(config.getCacheAssetMaxSize()).isEqualTo(
-				Integer.parseInt(DandelionConfig.CACHE_ASSET_MAX_SIZE.getDefaultValue()));
-		assertThat(config.getCacheRequestMaxSize()).isEqualTo(
-				Integer.parseInt(DandelionConfig.CACHE_REQUEST_MAX_SIZE.getDefaultValue()));
+	@Test
+	public void should_load_configuration_from_properties() {
+		Properties userProperties = new Properties();
+		userProperties.put(DandelionConfig.DANDELION_MODE.getName(), "production");
+		userProperties.put(DandelionConfig.ASSET_LOCATIONS_RESOLUTION_STRATEGY.getName(), "foo,bar");
+		userProperties.put(DandelionConfig.CACHE_ASSET_MAX_SIZE.getName(), "40");
+
+		Configuration config = new Configuration(new MockFilterConfig(), userProperties);
+
+		assertThat(config.getDandelionMode()).isEqualTo(DandelionMode.PRODUCTION);
+		assertThat(config.getAssetLocationsResolutionStrategy()).containsSequence("foo", "bar");
+		assertThat(config.getCacheAssetMaxSize()).isEqualTo(40);
+	}
+
+	@Test
+	public void should_load_configuration_from_initparams() {
+		Properties userProperties = new Properties();
+		userProperties.put(DandelionConfig.DANDELION_MODE.getName(), "production");
+		userProperties.put(DandelionConfig.ASSET_LOCATIONS_RESOLUTION_STRATEGY.getName(), "foo,bar");
+		userProperties.put(DandelionConfig.CACHE_ASSET_MAX_SIZE.getName(), "40");
+
+		MockFilterConfig filterConfig = new MockFilterConfig();
+		filterConfig.addInitParameter(DandelionConfig.DANDELION_MODE.getName(), "production");
+		filterConfig.addInitParameter(DandelionConfig.ASSET_LOCATIONS_RESOLUTION_STRATEGY.getName(),
+				"foo,bar,baz");
+		filterConfig.addInitParameter(DandelionConfig.CACHE_ASSET_MAX_SIZE.getName(), "30");
+
+		Configuration config = new Configuration(filterConfig, userProperties);
+
+		assertThat(config.getDandelionMode()).isEqualTo(DandelionMode.PRODUCTION);
+		assertThat(config.getAssetLocationsResolutionStrategy()).containsSequence("foo", "bar", "baz");
+		assertThat(config.getCacheAssetMaxSize()).isEqualTo(30);
+	}
+
+	@Test
+	public void should_load_configuration_from_system() {
+		Properties userProperties = new Properties();
+		userProperties.put(DandelionConfig.DANDELION_MODE.getName(), "production");
+		userProperties.put(DandelionConfig.ASSET_LOCATIONS_RESOLUTION_STRATEGY.getName(), "foo,bar");
+		userProperties.put(DandelionConfig.CACHE_ASSET_MAX_SIZE.getName(), "40");
+
+		MockFilterConfig filterConfig = new MockFilterConfig();
+		filterConfig.addInitParameter(DandelionConfig.DANDELION_MODE.getName(), "production");
+		filterConfig.addInitParameter(DandelionConfig.ASSET_LOCATIONS_RESOLUTION_STRATEGY.getName(),
+				"foo,bar,baz");
+		filterConfig.addInitParameter(DandelionConfig.CACHE_ASSET_MAX_SIZE.getName(), "30");
+
+		System.setProperty(DandelionConfig.DANDELION_MODE.getName(), "production");
+		System.setProperty(DandelionConfig.ASSET_LOCATIONS_RESOLUTION_STRATEGY.getName(), "bar,foo,baz,qux");
+		System.setProperty(DandelionConfig.CACHE_ASSET_MAX_SIZE.getName(), "20");
+
+		Configuration config = new Configuration(new MockFilterConfig(), new Properties());
+
+		assertThat(config.getDandelionMode()).isEqualTo(DandelionMode.PRODUCTION);
+		assertThat(config.getAssetLocationsResolutionStrategy()).containsSequence("bar", "foo", "baz", "qux");
+		assertThat(config.getCacheAssetMaxSize()).isEqualTo(20);
+
+		System.clearProperty(DandelionConfig.DANDELION_MODE.getName());
+		System.clearProperty(DandelionConfig.ASSET_LOCATIONS_RESOLUTION_STRATEGY.getName());
+		System.clearProperty(DandelionConfig.CACHE_ASSET_MAX_SIZE.getName());
+	}
+
+	@Test
+	public void should_set_mode_to_development_if_unknown_value() {
+		Properties userProperties = new Properties();
+		userProperties.put(DandelionConfig.DANDELION_MODE.getName(), "unknown");
+		Configuration config = new Configuration(new MockFilterConfig(), userProperties);
+
+		assertThat(config.getDandelionMode()).isEqualTo(DandelionMode.DEVELOPMENT);
+	}
+
+	@Test
+	public void should_set_default_cacheAssetMaxSize_if_wrong_value() {
+		Properties userProperties = new Properties();
+		userProperties.put(DandelionConfig.CACHE_ASSET_MAX_SIZE.getName(), "text");
+		Configuration config = new Configuration(new MockFilterConfig(), userProperties);
+
+		assertThat(config.getCacheAssetMaxSize()).isEqualTo(50);
+	}
+
+	@Test
+	public void should_set_default_cacheRequestMaxSize_if_wrong_value() {
+		Properties userProperties = new Properties();
+		userProperties.put(DandelionConfig.CACHE_REQUEST_MAX_SIZE.getName(), "text");
+		Configuration config = new Configuration(new MockFilterConfig(), userProperties);
+
+		assertThat(config.getCacheRequestMaxSize()).isEqualTo(50);
 	}
 }

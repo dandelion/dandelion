@@ -44,6 +44,13 @@ import com.github.dandelion.core.asset.Asset;
 public interface AssetProcessor {
 
 	/**
+	 * TODO
+	 * 
+	 * @param context
+	 */
+	void initProcessor(Context context);
+
+	/**
 	 * @return the processor key associated with the processor.
 	 */
 	String getProcessorKey();

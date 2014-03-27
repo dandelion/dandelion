@@ -41,10 +41,10 @@ import com.github.dandelion.core.utils.UrlUtils;
 
 /**
  * <p>
- * Location wrapper for assets that use {@code webapp} as a location key.
+ * Locator for assets that use {@code webapp} as a location key.
  * 
  * <p>
- * Basically, a "webapp asset" is an asset stored inside a web application
+ * Basically, a "webapp asset" is an asset stored inside the web application
  * folder.
  * 
  * @author Romain Lespinasse

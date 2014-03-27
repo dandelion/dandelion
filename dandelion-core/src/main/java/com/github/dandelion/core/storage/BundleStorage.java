@@ -136,10 +136,6 @@ public class BundleStorage {
 					}
 				}
 			}
-			else {
-				// TODO
-				LOG.warn("Aucun asset defini. Cas a traiter");
-			}
 		}
 
 		return bundleDag;

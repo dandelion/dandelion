@@ -42,7 +42,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.github.dandelion.core.Context;
-import com.github.dandelion.core.DevMode;
 import com.github.dandelion.core.utils.PropertiesUtils;
 import com.github.dandelion.core.utils.StringUtils;
 import com.github.dandelion.core.utils.UTF8Control;
@@ -78,9 +77,7 @@ public class StandardConfigurationLoader implements ConfigurationLoader {
 		LOG.debug("Loading user configuration...");
 
 		ResourceBundle userBundle = null;
-		if (DevMode.isEnabled()) {
-			ResourceBundle.clearCache();
-		}
+		ResourceBundle.clearCache();
 
 		// First check if the resource bundle is externalized
 		if (StringUtils.isNotBlank(System.getProperty(DANDELION_CONFIGURATION))) {

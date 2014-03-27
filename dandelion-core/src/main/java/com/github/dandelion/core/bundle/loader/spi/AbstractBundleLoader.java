@@ -63,11 +63,20 @@ import com.github.dandelion.core.utils.ResourceScanner;
 public abstract class AbstractBundleLoader implements BundleLoader {
 
 	private ObjectMapper mapper = new ObjectMapper();
+	protected Context context;
 
 	/**
 	 * {@inheritDoc}
 	 */
-	public List<BundleStorageUnit> loadBundles(Context context) {
+	@Override
+	public void initLoader(Context context) {
+		this.context = context;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public List<BundleStorageUnit> loadBundles() {
 
 		mapper.configure(JsonParser.Feature.ALLOW_COMMENTS, true);
 		mapper.configure(JsonParser.Feature.ALLOW_SINGLE_QUOTES, true);
@@ -77,7 +86,7 @@ public abstract class AbstractBundleLoader implements BundleLoader {
 
 		Set<String> resourcePaths = null;
 		try {
-			resourcePaths = ResourceScanner.findResourcePaths(getPath(), getExcludedPaths(context), null, ".json",
+			resourcePaths = ResourceScanner.findResourcePaths(getPath(), getExcludedPaths(), null, ".json",
 					isRecursive());
 		}
 		catch (IOException e) {
@@ -117,7 +126,7 @@ public abstract class AbstractBundleLoader implements BundleLoader {
 	/**
 	 * @return a set of paths to exclude during the resource scanning.
 	 */
-	public Set<String> getExcludedPaths(Context context) {
+	public Set<String> getExcludedPaths() {
 		return Collections.emptySet();
 	}
 }

@@ -47,7 +47,15 @@ import com.github.dandelion.core.asset.Asset;
 public abstract class AbstractAssetProcessor implements AssetProcessor {
 
 	protected Context context;
-	
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void initProcessor(Context context) {
+		this.context = context;
+	}
+
 	/**
 	 * <p>
 	 * Wrapper method for the actual {@link #doProcess(Asset, Reader, Writer)}

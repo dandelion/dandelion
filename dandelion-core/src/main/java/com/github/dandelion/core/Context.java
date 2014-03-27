@@ -52,7 +52,6 @@ import com.github.dandelion.core.bundle.loader.impl.VendorBundleLoader;
 import com.github.dandelion.core.bundle.loader.spi.BundleLoader;
 import com.github.dandelion.core.config.Configuration;
 import com.github.dandelion.core.config.ConfigurationLoader;
-import com.github.dandelion.core.config.DandelionConfig;
 import com.github.dandelion.core.config.StandardConfigurationLoader;
 import com.github.dandelion.core.storage.BundleStorage;
 import com.github.dandelion.core.utils.ClassUtils;
@@ -63,11 +62,8 @@ import com.github.dandelion.core.utils.StringUtils;
  * The {@link Context} is used to pick up different classes in charge of the
  * configuration loading, instantiate them and cache them.
  * 
- * <ul>
- * <li>The configuration loader, in charge of loading default and user
- * properties</li>
- * </ul>
  * <p>
+ * There should be only one instance of this class in the application.
  * 
  * @author Thibault Duchateau
  * @since 0.10.0
@@ -76,6 +72,9 @@ public class Context {
 
 	private static Logger LOG = LoggerFactory.getLogger(Context.class);
 
+	/**
+	 * Service loaders
+	 */
 	private ServiceLoader<AssetCache> assetCacheServiceLoader = ServiceLoader.load(AssetCache.class);
 	private ServiceLoader<AssetLocator> alServiceLoader = ServiceLoader.load(AssetLocator.class);
 	private ServiceLoader<AssetProcessor> apServiceLoader = ServiceLoader.load(AssetProcessor.class);
@@ -88,22 +87,24 @@ public class Context {
 	private AssetProcessorManager assetProcessorManager;
 	private AssetCacheManager assetCacheManager;
 
-	private ConfigurationLoader configurationLoader;
-	private static Map<String, AssetLocator> assetLocatorsMap;
-	private static BundleStorage bundleStorage;
+	private Map<String, AssetLocator> assetLocatorsMap;
+	private BundleStorage bundleStorage;
 	private Configuration configuration;
 
-	public Context() {
-		initialize();
-	}
-
 	public Context(FilterConfig filterConfig) {
-		initialize();
+		initialize(filterConfig);
 	}
 
-	public synchronized void initialize() {
+	/**
+	 * <p>
+	 * Performs all the required initializations of the Dandelion context.
+	 * 
+	 * @param filterConfig
+	 *            The filter configuration.
+	 */
+	public void initialize(FilterConfig filterConfig) {
 
-		initializeConfiguration();
+		initializeConfiguration(filterConfig);
 		initializeBundleLoaders();
 		initializeAssetLocators();
 		initializeAssetCache();
@@ -112,11 +113,7 @@ public class Context {
 		assetProcessorManager = new AssetProcessorManager(this);
 		assetCacheManager = new AssetCacheManager(this);
 
-		bundleStorage = new BundleStorage();
-		for (BundleLoader bundleLoader : getBundleLoaders()) {
-			bundleStorage.storeBundles(bundleLoader.loadBundles(this));
-		}
-		bundleStorage.checkBundleDag();
+		initializeBundleStorage();
 	}
 
 	/**
@@ -126,15 +123,15 @@ public class Context {
 	 * <ol>
 	 * <li>Check first if the <code>dandelion.confloader.class</code> system
 	 * property is set and tries to instantiate it</li>
-	 * <li>Otherwise, instantiate the {@link StandardConfigurationLoader} based
-	 * on property files</li>
+	 * <li>Otherwise, instantiate the {@link StandardConfigurationLoader} which
+	 * reads properties files</li>
 	 * </ol>
 	 * 
 	 * @return an implementation of {@link ConfigurationLoader}.
 	 */
-	public void initializeConfiguration() {
+	public void initializeConfiguration(FilterConfig filterConfig) {
 
-		configuration = new Configuration();
+		ConfigurationLoader configurationLoader = null;
 
 		LOG.debug("Initializing the configuration loader...");
 
@@ -155,14 +152,28 @@ public class Context {
 			configurationLoader = new StandardConfigurationLoader();
 		}
 
-		Properties properties = new Properties();
-		properties.putAll(configurationLoader.loadUserConfiguration());
-		configuration.putAll(properties);
+		Properties userProperties = new Properties();
+		userProperties.putAll(configurationLoader.loadUserConfiguration());
+		configuration = new Configuration(filterConfig, userProperties);
 	}
 
+	/**
+	 * <p>
+	 * Initializes the {@link BundleLoader}s in a particular order:
+	 * <ol>
+	 * <li>First, the {@link VendorBundleLoader} which loads all
+	 * "vendor bundles"</li>
+	 * <li>Then, all service providers of the {@link BundleLoader} SPI present
+	 * in the classpath</li>
+	 * <li>Finally the {@link DandelionBundleLoader} which loads "user bundles"</li>
+	 * </ol>
+	 */
 	public void initializeBundleLoaders() {
 		VendorBundleLoader vendorLoader = new VendorBundleLoader();
+		vendorLoader.initLoader(this);
+
 		DandelionBundleLoader dandelionLoader = new DandelionBundleLoader();
+		dandelionLoader.initLoader(this);
 
 		bundleLoaders = new ArrayList<BundleLoader>();
 
@@ -171,6 +182,7 @@ public class Context {
 
 		// Then all bundles of the components present in the classpath
 		for (BundleLoader bl : blServiceLoader) {
+			bl.initLoader(this);
 			bundleLoaders.add(bl);
 			LOG.info("Active bundle loader found: {}", bl.getClass().getSimpleName());
 		}
@@ -178,15 +190,20 @@ public class Context {
 		// Finally all bundles created by users
 		bundleLoaders.add(dandelionLoader);
 	}
-	
+
+	/**
+	 * <p>
+	 * Initializes the {@link AssetCache} to use for caching.
+	 */
 	public void initializeAssetCache() {
 		Map<String, AssetCache> caches = new HashMap<String, AssetCache>();
 		for (AssetCache ac : assetCacheServiceLoader) {
+			ac.initCache(this);
 			caches.put(ac.getCacheName(), ac);
 			LOG.info("Asset cache found: {}", ac.getClass().getSimpleName());
 		}
 
-		String cacheName = configuration.get(DandelionConfig.CACHE_MANAGER_NAME);
+		String cacheName = configuration.getCacheManagerName();
 		if (!caches.isEmpty()) {
 			if (caches.containsKey(cacheName)) {
 				assetCache = caches.get(cacheName);
@@ -204,28 +221,45 @@ public class Context {
 		}
 
 		if (assetCache == null) {
-			assetCache = new MemoryAssetCache(this);
+			assetCache = new MemoryAssetCache();
 		}
 
-		// assetCache.setContext(this);
+		assetCache.initCache(this);
+
 		LOG.info("Selected asset cache system: {} (based on {})", assetCache.getCacheName(), assetCache.getClass()
 				.getSimpleName());
 	}
 
+	/**
+	 * <p>
+	 * Initializes all service providers of the {@link AssetLocator} SPI. The
+	 * order doesn't matter.
+	 */
 	public void initializeAssetLocators() {
 		assetLocatorsMap = new HashMap<String, AssetLocator>();
 		for (AssetLocator al : alServiceLoader) {
+			al.initLocator(this);
 			assetLocatorsMap.put(al.getLocationKey(), al);
-			LOG.info("Asset locator found: {} ({})", al.getLocationKey(), al.isActive() ? "active" : "inactive");
+			LOG.info("Asset locator found: {}", al.getLocationKey());
 		}
 	}
 
+	/**
+	 * <p>
+	 * Initializes all service providers of the {@link AssetProcessor} SPI and
+	 * stores them all in the {@link #processorsMap}.
+	 * 
+	 * <p>
+	 * If minification is enabled, the {@link #activeProcessors} is filled with
+	 * default service providers.
+	 */
 	public void initializeAssetProcessors() {
 
 		processorsMap = new HashMap<String, AssetProcessor>();
 		activeProcessors = new ArrayList<AssetProcessor>();
 
 		for (AssetProcessor ape : apServiceLoader) {
+			ape.initProcessor(this);
 			processorsMap.put(ape.getProcessorKey().toLowerCase(), ape);
 			LOG.info("Asset processor found: {}", ape.getClass().getSimpleName());
 		}
@@ -245,10 +279,21 @@ public class Context {
 		}
 	}
 
-	//
-	// static void clear() {
-	// configurationLoader = null;
-	// }
+	/**
+	 * <p>
+	 * Initializes the {@link BundleStorage} by using all configured
+	 * {@link BundleLoader}s.
+	 * 
+	 * <p>
+	 * Once loader, some checks are performed on the {@link BundleStorage}.
+	 */
+	public void initializeBundleStorage() {
+		bundleStorage = new BundleStorage();
+		for (BundleLoader bundleLoader : getBundleLoaders()) {
+			bundleStorage.storeBundles(bundleLoader.loadBundles());
+		}
+		bundleStorage.checkBundleDag();
+	}
 
 	public AssetCache getAssetCache() {
 		return assetCache;
@@ -288,5 +333,14 @@ public class Context {
 	 */
 	public Configuration getConfiguration() {
 		return configuration;
+	}
+
+	/**
+	 * @return {@code true} if the {@code dandelion.mode} configuration property
+	 *         is set to "development" or any other value than "production". If
+	 *         the mode is not explicitely configured, it returns {@code true}.
+	 */
+	public boolean isDevModeEnabled() {
+		return "development".equalsIgnoreCase(configuration.getDandelionMode().toString());
 	}
 }

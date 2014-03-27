@@ -40,7 +40,7 @@ import com.github.dandelion.core.storage.AssetStorageUnit;
 
 /**
  * <p>
- * Location wrapper for assets that use {@code delegate} as a location key.
+ * Locator for assets that use {@code delegate} as a location key.
  * 
  * <p>
  * Basically, a "delegated asset" is an asset that is created programmatically

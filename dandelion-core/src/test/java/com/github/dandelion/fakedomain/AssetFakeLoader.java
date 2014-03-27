@@ -37,16 +37,17 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
-import com.github.dandelion.core.Context;
+import org.slf4j.Logger;
+
 import com.github.dandelion.core.asset.AssetType;
-import com.github.dandelion.core.bundle.loader.spi.BundleLoader;
+import com.github.dandelion.core.bundle.loader.spi.AbstractBundleLoader;
 import com.github.dandelion.core.storage.AssetStorageUnit;
 import com.github.dandelion.core.storage.BundleStorageUnit;
 
-public class AssetFakeLoader implements BundleLoader {
+public class AssetFakeLoader extends AbstractBundleLoader {
 	
 	@Override
-	public List<BundleStorageUnit> loadBundles(Context context) {
+	public List<BundleStorageUnit> loadBundles() {
 		Map<String, String> locations = new HashMap<String, String>();
 		locations.put("remote", "remoteURL");
 		locations.put("local", "localPath");
@@ -68,5 +69,17 @@ public class AssetFakeLoader implements BundleLoader {
 	@Override
 	public boolean isRecursive() {
 		return true;
+	}
+
+	@Override
+	protected Logger getLogger() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String getPath() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

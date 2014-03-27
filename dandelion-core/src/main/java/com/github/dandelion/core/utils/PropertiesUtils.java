@@ -31,6 +31,7 @@ package com.github.dandelion.core.utils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Properties;
@@ -86,8 +87,9 @@ public class PropertiesUtils {
 	}
 
 	public static List<String> propertyAsList(String values, String delimiter) {
-		if (values == null || values.isEmpty())
-			return null;
+		if (values == null || values.isEmpty()) {
+			return Collections.emptyList();
+		}
 		return Arrays.asList(values.split(delimiter));
 	}
 }

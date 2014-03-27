@@ -34,6 +34,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.github.dandelion.core.Context;
 import com.github.dandelion.core.DandelionException;
 import com.github.dandelion.core.asset.Asset;
 import com.github.dandelion.core.asset.processor.spi.AssetProcessor;
@@ -55,6 +56,7 @@ import com.github.dandelion.core.utils.StringUtils;
 public abstract class AbstractAssetLocator implements AssetLocator {
 
 	protected boolean active;
+	protected Context context;
 
 	/**
 	 * {@inheritDoc}
@@ -70,6 +72,14 @@ public abstract class AbstractAssetLocator implements AssetLocator {
 	@Override
 	public boolean isCachingForced() {
 		return false;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void initLocator(Context context) {
+		this.context = context;
 	}
 
 	/**

@@ -30,7 +30,6 @@
 package com.github.dandelion.core.utils;
 
 import java.util.Iterator;
-import java.util.Random;
 
 /**
  * <p>
@@ -41,8 +40,6 @@ import java.util.Random;
  */
 public class StringUtils {
 
-	private static final String NUMERIC = "0123456789";
-	private static final Random RANDOM = new Random();
 	private static final String[] ESCAPES;
 
 	static {
@@ -200,17 +197,6 @@ public class StringUtils {
 
 	}
 
-	public static String randomNumeric(int count) {
-		StringBuilder strBuilder = new StringBuilder(count);
-		int anLen = NUMERIC.length();
-		synchronized (RANDOM) {
-			for (int i = 0; i < count; i++) {
-				strBuilder.append(NUMERIC.charAt(RANDOM.nextInt(anLen)));
-			}
-		}
-		return strBuilder.toString();
-	}
-
 	/**
 	 * <p>
 	 * Checks if the String contains any character in the given set of
@@ -314,13 +300,6 @@ public class StringUtils {
 	 */
 	public static boolean hasLength(String str) {
 		return hasLength((CharSequence) str);
-	}
-
-	/**
-	 * @return a random number with 5 digits
-	 */
-	public static String getRamdomNumber() {
-		return StringUtils.randomNumeric(5);
 	}
 
 	/**

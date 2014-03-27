@@ -40,7 +40,6 @@ import org.slf4j.LoggerFactory;
 
 import com.github.dandelion.core.Context;
 import com.github.dandelion.core.DandelionException;
-import com.github.dandelion.core.DevMode;
 import com.github.dandelion.core.asset.cache.spi.AssetCache;
 import com.github.dandelion.core.asset.locator.spi.AssetLocator;
 import com.github.dandelion.core.asset.web.AssetServlet;
@@ -165,7 +164,7 @@ public class AssetMapper {
 		String location;
 		AssetLocator locator = locators.get(locationKey);
 		if (locators.containsKey(locationKey) && locators.get(locationKey).isActive()) {
-			LOG.debug("Using locator {} for the assset {}.", locator.getClass().getSimpleName(), asu.toLog());
+			LOG.debug("'{}' locator selected for the assset {}.", locator.getClass().getSimpleName(), asu.toLog());
 			location = locators.get(locationKey).getLocation(asu, request);
 		}
 		else {
@@ -206,8 +205,7 @@ public class AssetMapper {
 		// cached
 		String content = context.getCacheManager().getContent(asset.getCacheKey());
 
-		if (content == null || DevMode.isEnabled()) {
-			DevMode.log("Refreshing asset content...", LOG);
+		if (content == null || context.isDevModeEnabled()) {
 			Map<String, AssetLocator> assetLocatorsMap = context.getAssetLocatorsMap();
 			if (assetLocatorsMap.containsKey(asset.getConfigLocationKey())
 					&& assetLocatorsMap.get(asset.getConfigLocationKey()).isActive()) {

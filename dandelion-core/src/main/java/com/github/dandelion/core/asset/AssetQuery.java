@@ -35,7 +35,6 @@ import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 
 import com.github.dandelion.core.Context;
-import com.github.dandelion.core.DevMode;
 import com.github.dandelion.core.asset.web.AssetRequestContext;
 import com.github.dandelion.core.storage.AssetStorageUnit;
 import com.github.dandelion.core.storage.BundleStorage;
@@ -58,7 +57,7 @@ public class AssetQuery {
 		String key = UrlUtils.getCurrentUri(request).toString();
 		this.requestedAssets = context.getCacheManager().getAssets(key);
 
-		if (this.requestedAssets == null || DevMode.isEnabled()) {
+		if (this.requestedAssets == null || context.isDevModeEnabled()) {
 
 			// Gathers all asset storage units in an ordered set
 			Set<AssetStorageUnit> assetStorageUnits = new LinkedHashSet<AssetStorageUnit>();

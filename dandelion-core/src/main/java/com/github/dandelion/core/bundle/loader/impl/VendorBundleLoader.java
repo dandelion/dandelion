@@ -35,7 +35,6 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.github.dandelion.core.Context;
 import com.github.dandelion.core.bundle.loader.spi.AbstractBundleLoader;
 
 /**
@@ -87,7 +86,7 @@ public class VendorBundleLoader extends AbstractBundleLoader {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Set<String> getExcludedPaths(Context context) {
+	public Set<String> getExcludedPaths() {
 		return Collections.emptySet();
 	}
 }

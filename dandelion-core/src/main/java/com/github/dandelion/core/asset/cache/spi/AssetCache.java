@@ -35,6 +35,7 @@ import java.util.Set;
 import com.github.dandelion.core.Context;
 import com.github.dandelion.core.asset.Asset;
 import com.github.dandelion.core.asset.cache.impl.MemoryAssetCache;
+import com.github.dandelion.core.asset.web.AssetFilter;
 
 /**
  * <p>
@@ -54,6 +55,16 @@ import com.github.dandelion.core.asset.cache.impl.MemoryAssetCache;
 public interface AssetCache {
 
 	public static final String DANDELION_CACHE_NAME = "dandelionCache";
+
+	/**
+	 * <p>
+	 * Initializes the configured service provider of the {@link AssetCache} SPI
+	 * by using the {@link Context}.
+	 * 
+	 * @param context
+	 *            The {@link Context} initialized in the {@link AssetFilter}.
+	 */
+	void initCache(Context context);
 
 	/**
 	 * @return the name of the asset cache.
@@ -108,6 +119,4 @@ public interface AssetCache {
 	 *            The key under which the content will be removed.
 	 */
 	void remove(String cacheKey);
-
-	void setContext(Context context);
 }

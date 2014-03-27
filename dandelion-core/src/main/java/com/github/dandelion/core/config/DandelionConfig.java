@@ -40,11 +40,11 @@ package com.github.dandelion.core.config;
 public enum DandelionConfig {
 
 	// Main configurations
+	DANDELION_MODE("dandelion.mode", "development"),
 	MINIFICATION_ON("minification.on", "false"),
 	
 	// Asset configurations
 	ASSET_LOCATIONS_RESOLUTION_STRATEGY("asset.locations.resolution.strategy", "webjar,webapp,cdn"),
-	ASSET_PROCESSORS_ENABLED("asset.processors.enabled", "false"),
 	ASSET_PROCESSORS("asset.processors", "cssurlrewriting,jsmin,cssmin"),
 	ASSET_PROCESSORS_ENCODING("asset.processors.encoding", "UTF-8"),
 	ASSET_JS_EXCLUDES("asset.js.excludes", ""),
@@ -62,25 +62,17 @@ public enum DandelionConfig {
 	
 	private String propertyName;
 	private String defaultValue;
-	
-	private DandelionConfig(String propertyName, String defaultValue){
+
+	private DandelionConfig(String propertyName, String defaultValue) {
 		this.propertyName = propertyName;
 		this.defaultValue = defaultValue;
 	}
 
-	public String getPropertyName() {
+	public String getName() {
 		return propertyName;
-	}
-
-	public void setPropertyName(String propertyName) {
-		this.propertyName = propertyName;
 	}
 
 	public String getDefaultValue() {
 		return defaultValue;
-	}
-
-	public void setDefaultValue(String defaultValue) {
-		this.defaultValue = defaultValue;
 	}
 }

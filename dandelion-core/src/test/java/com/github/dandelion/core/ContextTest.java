@@ -32,12 +32,13 @@ package com.github.dandelion.core;
 import static org.fest.assertions.Assertions.assertThat;
 
 import org.junit.Test;
+import org.springframework.mock.web.MockFilterConfig;
 
 public class ContextTest {
 
 	@Test
 	public void should_load_the_context(){
-		Context context = new Context();
+		Context context = new Context(new MockFilterConfig());
 		
 		// SPI
 		assertThat(context.getBundleLoaders()).isNotEmpty();

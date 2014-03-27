@@ -2,19 +2,10 @@ package com.github.dandelion.core.asset.cache;
 
 import java.util.Set;
 
-import com.github.dandelion.core.Context;
 import com.github.dandelion.core.asset.Asset;
 import com.github.dandelion.core.asset.cache.spi.AbstractAssetCache;
 
 public class AnotherAssetCache extends AbstractAssetCache {
-
-	public AnotherAssetCache(){
-		super();
-	}
-	
-	public AnotherAssetCache(Context context) {
-		super(context);
-	}
 
 	@Override
 	public String getCacheName() {

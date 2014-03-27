@@ -40,6 +40,7 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.springframework.mock.web.MockFilterConfig;
 import org.springframework.mock.web.MockHttpServletRequest;
 
 import com.github.dandelion.core.Context;
@@ -55,7 +56,7 @@ public class AssetMapperTest {
 
 	@Before
 	public void setup() {
-		context = new Context();
+		context = new Context(new MockFilterConfig());
 		request = new MockHttpServletRequest();
 		request.setContextPath("/context");
 		request.setAttribute(WebConstants.DANDELION_CONTEXT_ATTRIBUTE, context);

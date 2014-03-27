@@ -29,189 +29,279 @@
  */
 package com.github.dandelion.core.config;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
 
+import javax.servlet.FilterConfig;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.github.dandelion.core.Context;
+import com.github.dandelion.core.DandelionMode;
 import com.github.dandelion.core.utils.PropertiesUtils;
 import com.github.dandelion.core.utils.StringUtils;
 
 /**
  * <p>
- * Entry point for all Dandelion configuration properties.
+ * This class holds the Dandelion configuration initialized at server startup
+ * and must accessed through the Dandelion {@link Context}.
  * 
  * <p>
- * The configuration is loaded only once using the configured instance of
- * {@link ConfigurationLoader}.
- * 
- * <p>
- * Custom configuration properties can still be accessed using the
- * {@link #get(String)} method.
+ * All configuration present in the {@link DandelionConfig} enum are read using
+ * a particular strategy. See {@link #readConfig(DandelionConfig)}.
  * 
  * @author Thibault Duchateau
- * @author Romain Lespinasse
  * @since 0.10.0
  */
 public class Configuration {
 
-	/**
-	 * The properties instance used as a configuration storage.
-	 */
-	private Properties properties;
+	private static Logger LOG = LoggerFactory.getLogger(Configuration.class);
 
-	public Configuration() {
-		this.properties = new Properties();
-		setDefaultConfiguration();
-	}
+	private FilterConfig filterConfig;
+	private Properties userProperties;
+	private boolean servlet3InUse;
 
-	public String get(DandelionConfig config) {
-		String retval = this.properties.getProperty(config.getPropertyName());
-		if (StringUtils.isNotBlank(retval)) {
-			return retval;
+	private DandelionMode dandelionMode;
+	private boolean minificationOn;
+	private List<String> assetLocationsResolutionStrategy;
+	private List<String> assetProcessors;
+	private String assetProcessorEncoding;
+	private List<String> assetJsExcludes;
+	private List<String> assetCssExcludes;
+	private int cacheAssetMaxSize;
+	private int cacheRequestMaxSize;
+	private String cacheManagerName;
+	private String cacheConfigurationLocation;
+	private List<String> bundleIncludes;
+	private List<String> bundleExcludes;
+
+	public Configuration(FilterConfig filterConfig, Properties userProperties) {
+		this.filterConfig = filterConfig;
+		this.userProperties = userProperties;
+
+		// Dandelion mode
+		try {
+			this.dandelionMode = DandelionMode.valueOf(readConfig(DandelionConfig.DANDELION_MODE).toUpperCase());
 		}
-		else {
-			return config.getDefaultValue();
+		catch (IllegalArgumentException e) {
+			LOG.warn("The '{}' property is incorrectly configured. Falling back to the default value ({})",
+					DandelionConfig.DANDELION_MODE.getName(), DandelionConfig.DANDELION_MODE.getDefaultValue());
+			this.dandelionMode = DandelionMode.DEVELOPMENT;
 		}
+		if (dandelionMode.equals(DandelionMode.DEVELOPMENT)) {
+			LOG.info("===========================================");
+			LOG.info("");
+			LOG.info("The 'dandelion.mode' is set to 'development'.");
+			LOG.info("");
+			LOG.info("===========================================");
+		}
+
+		// Main properties
+		this.minificationOn = Boolean.parseBoolean(readConfig(DandelionConfig.MINIFICATION_ON));
+
+		// Bundles-related properties
+		this.bundleIncludes = PropertiesUtils.propertyAsList(readConfig(DandelionConfig.BUNDLE_INCLUDES), ",");
+		this.bundleExcludes = PropertiesUtils.propertyAsList(readConfig(DandelionConfig.BUNDLE_EXCLUDES), ",");
+
+		// Assets-related properties
+		this.assetLocationsResolutionStrategy = PropertiesUtils.propertyAsList(
+				readConfig(DandelionConfig.ASSET_LOCATIONS_RESOLUTION_STRATEGY), ",");
+		this.assetProcessors = PropertiesUtils.propertyAsList(readConfig(DandelionConfig.ASSET_PROCESSORS), ",");
+		this.assetProcessorEncoding = readConfig(DandelionConfig.ASSET_PROCESSORS_ENCODING);
+		this.assetJsExcludes = PropertiesUtils.propertyAsList(readConfig(DandelionConfig.ASSET_JS_EXCLUDES), ",");
+		this.assetCssExcludes = PropertiesUtils.propertyAsList(readConfig(DandelionConfig.ASSET_CSS_EXCLUDES), ",");
+
+		// Caching-related properties
+		try {
+			this.cacheAssetMaxSize = Integer.parseInt(readConfig(DandelionConfig.CACHE_ASSET_MAX_SIZE));
+		}
+		catch (NumberFormatException e) {
+			LOG.warn("The '{}' property is incorrectly configured. Falling back to the default value ({})",
+					DandelionConfig.CACHE_ASSET_MAX_SIZE.getName(),
+					DandelionConfig.CACHE_ASSET_MAX_SIZE.getDefaultValue());
+			this.cacheAssetMaxSize = Integer.parseInt(DandelionConfig.CACHE_ASSET_MAX_SIZE.getDefaultValue());
+		}
+		try {
+			this.cacheRequestMaxSize = Integer.parseInt(readConfig(DandelionConfig.CACHE_REQUEST_MAX_SIZE));
+		}
+		catch (NumberFormatException e) {
+			LOG.warn("The '{}' property is incorrectly configured. Falling back to the default value ({})",
+					DandelionConfig.CACHE_REQUEST_MAX_SIZE.getName(),
+					DandelionConfig.CACHE_REQUEST_MAX_SIZE.getDefaultValue());
+			this.cacheRequestMaxSize = Integer.parseInt(DandelionConfig.CACHE_REQUEST_MAX_SIZE.getDefaultValue());
+		}
+		this.cacheManagerName = readConfig(DandelionConfig.CACHE_MANAGER_NAME);
+		this.cacheConfigurationLocation = readConfig(DandelionConfig.CACHE_CONFIGURATION_LOCATION);
+
+		servlet3InUse = filterConfig.getServletContext().getMajorVersion() == 3;
 	}
 
-	public void put(DandelionConfig config, Object value) {
-		this.properties.put(config.getPropertyName(), value);
-	}
-
-	public void putDefault(DandelionConfig config) {
-		this.properties.put(config.getPropertyName(), config.getDefaultValue());
-	}
-
-	public void putAll(Properties properties) {
-		this.properties.putAll(properties);
-	}
-
-	public Properties getProperties() {
-		return properties;
-	}
-
-	public void setProperties(Properties properties) {
-		this.properties = properties;
-	}
-
-	public String get(String key, String defaultValue) {
-		return properties.getProperty(key, defaultValue);
+	public DandelionMode getDandelionMode() {
+		return dandelionMode;
 	}
 
 	public boolean isMinificationOn() {
-		String retval = get(DandelionConfig.MINIFICATION_ON);
-		if (StringUtils.isNotBlank(retval)) {
-			return Boolean.parseBoolean(retval);
-		}
-		return false;
-	}
-
-	public void setMinificationOn(boolean value) {
-		put(DandelionConfig.MINIFICATION_ON, value);
+		return minificationOn;
 	}
 
 	public List<String> getAssetLocationsResolutionStrategy() {
-		String retval = get(DandelionConfig.ASSET_LOCATIONS_RESOLUTION_STRATEGY);
-		if (StringUtils.isNotBlank(retval)) {
-			return PropertiesUtils.propertyAsList(retval, ",");
-		}
-		return Collections.emptyList();
-	}
-
-	public void setAssetLocationsResolutionStrategy(String value) {
-		put(DandelionConfig.ASSET_LOCATIONS_RESOLUTION_STRATEGY, value);
+		return assetLocationsResolutionStrategy;
 	}
 
 	public List<String> getAssetProcessors() {
-		String value = get(DandelionConfig.ASSET_PROCESSORS);
-		if (StringUtils.isNotBlank(value)) {
-			return PropertiesUtils.propertyAsList(value, ",");
-		}
-		return Collections.emptyList();
-	}
-
-	public void setAssetProcessors(String... processors) {
-		put(DandelionConfig.ASSET_PROCESSORS, processors);
+		return assetProcessors;
 	}
 
 	public String getAssetProcessorEncoding() {
-		return get(DandelionConfig.ASSET_PROCESSORS_ENCODING);
-	}
-
-	public void setAssetProcessorEncoding(String value) {
-		put(DandelionConfig.ASSET_PROCESSORS_ENCODING, value);
+		return assetProcessorEncoding;
 	}
 
 	public List<String> getAssetJsExcludes() {
-		String value = get(DandelionConfig.ASSET_JS_EXCLUDES);
-		if (StringUtils.isNotBlank(value)) {
-			return PropertiesUtils.propertyAsList(value, ",");
-		}
-		return Collections.emptyList();
+		return assetJsExcludes;
 	}
 
 	public List<String> getAssetCssExcludes() {
-		String value = get(DandelionConfig.ASSET_CSS_EXCLUDES);
-		if (StringUtils.isNotBlank(value)) {
-			return PropertiesUtils.propertyAsList(value, ",");
-		}
-		return Collections.emptyList();
-	}
-	
-	public String getCacheManagerName() {
-		return get(DandelionConfig.CACHE_MANAGER_NAME);
-	}
-
-	public String getCacheConfigurationLocation() {
-		return get(DandelionConfig.CACHE_CONFIGURATION_LOCATION);
+		return assetCssExcludes;
 	}
 
 	public int getCacheAssetMaxSize() {
-		String value = get(DandelionConfig.CACHE_ASSET_MAX_SIZE);
-		if (StringUtils.isNotBlank(value)) {
-			return Integer.parseInt(value);
-		}
-		return Integer.parseInt(DandelionConfig.CACHE_ASSET_MAX_SIZE.getDefaultValue());
+		return cacheAssetMaxSize;
 	}
 
 	public int getCacheRequestMaxSize() {
-		String value = get(DandelionConfig.CACHE_REQUEST_MAX_SIZE);
-		if (StringUtils.isNotBlank(value)) {
-			return Integer.parseInt(value);
-		}
-		return Integer.parseInt(DandelionConfig.CACHE_REQUEST_MAX_SIZE.getDefaultValue());
+		return cacheRequestMaxSize;
+	}
+
+	public String getCacheManagerName() {
+		return cacheManagerName;
+	}
+
+	public String getCacheConfigurationLocation() {
+		return cacheConfigurationLocation;
 	}
 
 	public List<String> getBundleIncludes() {
-		String value = get(DandelionConfig.BUNDLE_INCLUDES);
-		if (StringUtils.isNotBlank(value)) {
-			return PropertiesUtils.propertyAsList(value, ",");
-		}
-		return Collections.emptyList();
+		return bundleIncludes;
 	}
 
 	public List<String> getBundleExcludes() {
-		String value = get(DandelionConfig.BUNDLE_EXCLUDES);
-		if (StringUtils.isNotBlank(value)) {
-			return PropertiesUtils.propertyAsList(value, ",");
-		}
-		return Collections.emptyList();
+		return bundleExcludes;
 	}
 
-	public void setDefaultConfiguration() {
-		putDefault(DandelionConfig.ASSET_LOCATIONS_RESOLUTION_STRATEGY);
-		putDefault(DandelionConfig.ASSET_LOCATIONS_RESOLUTION_STRATEGY);
-		putDefault(DandelionConfig.ASSET_PROCESSORS);
-		putDefault(DandelionConfig.ASSET_PROCESSORS_ENABLED);
-		putDefault(DandelionConfig.ASSET_PROCESSORS_ENCODING);
-		putDefault(DandelionConfig.ASSET_JS_EXCLUDES);
-		putDefault(DandelionConfig.ASSET_CSS_EXCLUDES);
-		putDefault(DandelionConfig.CACHE_ASSET_MAX_SIZE);
-		putDefault(DandelionConfig.CACHE_REQUEST_MAX_SIZE);
-		putDefault(DandelionConfig.CACHE_MANAGER_NAME);
-		putDefault(DandelionConfig.CACHE_MANAGER_NAME);
-		putDefault(DandelionConfig.CACHE_CONFIGURATION_LOCATION);
-		putDefault(DandelionConfig.BUNDLE_INCLUDES);
-		putDefault(DandelionConfig.BUNDLE_EXCLUDES);
+	public void put(DandelionConfig config, Object value) {
+		this.userProperties.put(config.getName(), value);
+	}
+
+	public void putDefault(DandelionConfig config) {
+		this.userProperties.put(config.getName(), config.getDefaultValue());
+	}
+
+	public void putAll(Properties properties) {
+		this.userProperties.putAll(properties);
+	}
+
+	public Properties getProperties() {
+		return userProperties;
+	}
+
+	public void setProperties(Properties properties) {
+		this.userProperties = properties;
+	}
+
+	public String get(String key, String defaultValue) {
+		return userProperties.getProperty(key, defaultValue);
+	}
+
+	public boolean isServlet3InUse() {
+		return servlet3InUse;
+	}
+
+	/**
+	 * <p>
+	 * Reads the given {@link DandelionConfig} in order of priority:
+	 * <ol>
+	 * <li>System properties have the highest precedence and thus override
+	 * everything else</li>
+	 * <li>Then the filter initialization parameters, coming from the
+	 * {@code web.xml} file</li>
+	 * <li>Then the user-defined properties, coming from the
+	 * {@code dandelion.properties} file, if it exists</li>
+	 * <li>Finally the hard-coded default value of the given
+	 * {@link DandelionConfig}</li>
+	 * </ol>
+	 * 
+	 * @param config
+	 *            The config to read.
+	 * @return the value of the given {@link DandelionConfig}.
+	 */
+	public String readConfig(DandelionConfig config) {
+
+		String retval = null;
+		if (System.getProperty(config.getName()) != null) {
+			retval = System.getProperty(config.getName());
+		}
+
+		if (retval == null && filterConfig != null) {
+			retval = filterConfig.getInitParameter(config.getName());
+		}
+
+		if (retval == null && userProperties != null) {
+			retval = userProperties.getProperty(config.getName());
+		}
+
+		return StringUtils.isNotBlank(retval) ? retval.trim() : config.getDefaultValue();
+	}
+
+	public void setDandelionMode(DandelionMode dandelionMode) {
+		this.dandelionMode = dandelionMode;
+	}
+
+	public void setMinificationOn(boolean minificationOn) {
+		this.minificationOn = minificationOn;
+	}
+
+	public void setAssetLocationsResolutionStrategy(List<String> assetLocationsResolutionStrategy) {
+		this.assetLocationsResolutionStrategy = assetLocationsResolutionStrategy;
+	}
+
+	public void setAssetProcessors(List<String> assetProcessors) {
+		this.assetProcessors = assetProcessors;
+	}
+
+	public void setAssetProcessorEncoding(String assetProcessorEncoding) {
+		this.assetProcessorEncoding = assetProcessorEncoding;
+	}
+
+	public void setAssetJsExcludes(List<String> assetJsExcludes) {
+		this.assetJsExcludes = assetJsExcludes;
+	}
+
+	public void setAssetCssExcludes(List<String> assetCssExcludes) {
+		this.assetCssExcludes = assetCssExcludes;
+	}
+
+	public void setCacheAssetMaxSize(int cacheAssetMaxSize) {
+		this.cacheAssetMaxSize = cacheAssetMaxSize;
+	}
+
+	public void setCacheRequestMaxSize(int cacheRequestMaxSize) {
+		this.cacheRequestMaxSize = cacheRequestMaxSize;
+	}
+
+	public void setCacheManagerName(String cacheManagerName) {
+		this.cacheManagerName = cacheManagerName;
+	}
+
+	public void setCacheConfigurationLocation(String cacheConfigurationLocation) {
+		this.cacheConfigurationLocation = cacheConfigurationLocation;
+	}
+
+	public void setBundleIncludes(List<String> bundleIncludes) {
+		this.bundleIncludes = bundleIncludes;
+	}
+
+	public void setBundleExcludes(List<String> bundleExcludes) {
+		this.bundleExcludes = bundleExcludes;
 	}
 }

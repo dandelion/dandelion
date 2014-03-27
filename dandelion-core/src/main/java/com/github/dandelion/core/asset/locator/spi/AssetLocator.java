@@ -31,6 +31,7 @@ package com.github.dandelion.core.asset.locator.spi;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.github.dandelion.core.Context;
 import com.github.dandelion.core.asset.Asset;
 import com.github.dandelion.core.asset.processor.spi.AssetProcessor;
 import com.github.dandelion.core.asset.web.AssetServlet;
@@ -46,6 +47,12 @@ import com.github.dandelion.core.storage.AssetStorageUnit;
  */
 public interface AssetLocator {
 
+	/**
+	 * TODO
+	 * @param context
+	 */
+	void initLocator(Context context);
+	
 	/**
 	 * @return the location key associated to the locator.
 	 */
@@ -73,6 +80,8 @@ public interface AssetLocator {
 	 *            extracted.
 	 * @param request
 	 *            The current HTTP request.
+	 * @param context
+	 *            TODO
 	 * @return the content of location
 	 */
 	String getContent(AssetStorageUnit asu, HttpServletRequest request);
@@ -88,7 +97,7 @@ public interface AssetLocator {
 	 *            The asset from which the content should be extracted.
 	 * @param request
 	 *            The current HTTP request.
-	 * @return
+	 * @return TODO
 	 */
 	String getContent(Asset asset, HttpServletRequest request);
 

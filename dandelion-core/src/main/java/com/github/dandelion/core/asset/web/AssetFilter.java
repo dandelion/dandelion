@@ -45,7 +45,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.github.dandelion.core.Context;
-import com.github.dandelion.core.DevMode;
 import com.github.dandelion.core.asset.Asset;
 import com.github.dandelion.core.asset.AssetDomPosition;
 import com.github.dandelion.core.asset.AssetQuery;
@@ -66,19 +65,12 @@ public class AssetFilter implements Filter {
 	private static Logger LOG = LoggerFactory.getLogger(AssetFilter.class);
 
 	private Context context;
-
+	
 	@Override
 	public void init(FilterConfig filterConfig) throws ServletException {
-		LOG.info("Initializing the Dandelion configuration");
-		if(DevMode.isEnabled()){
-			DevMode.log("===========================", LOG);
-			DevMode.log("", LOG);
-			DevMode.log("DevMode is enabled. Don't forget to disable it in production environment.", LOG);
-			DevMode.log("", LOG);
-			DevMode.log("===========================", LOG);
-		}
+		LOG.info("Initializing the Dandelion context");
 		context = new Context(filterConfig);
-		LOG.info("Dandelion configuration initialized");
+		LOG.info("Dandelion context initialized");
 	}
 
 	@Override
@@ -97,7 +89,7 @@ public class AssetFilter implements Filter {
 
 		request.setAttribute(WebConstants.DANDELION_CONTEXT_ATTRIBUTE, context);
 		// Override the response with the graph viewer
-		if (DevMode.isEnabled() && request.getParameter(WebConstants.DANDELION_SHOW_GRAPH) != null) {
+		if (context.isDevModeEnabled() && request.getParameter(WebConstants.DANDELION_SHOW_GRAPH) != null) {
 			GraphViewer graphViewer = new GraphViewer(context);
 			response.getWriter().println(graphViewer.getView(request, response, filterChain));
 			return;
@@ -141,9 +133,10 @@ public class AssetFilter implements Filter {
 				}
 			}
 
+			response.getWriter().println(html);
+
 			// The response is explicitely closed here instead of setting a
 			// Content-Length header
-			response.getWriter().println(html);
 			response.getWriter().close();
 		}
 		// All other requests are not filtered
@@ -160,21 +153,24 @@ public class AssetFilter implements Filter {
 		boolean applyFilter = false;
 
 		// First check the request headers to see if the content is of type HTML
-		if (request.getHeader("Content-Type") != null && request.getHeader("Content-Type").contains("text/html")) {
+		if (request.getHeader(HttpHeader.CONTENT_TYPE.getName()) != null
+				&& request.getHeader(HttpHeader.CONTENT_TYPE.getName()).contains("text/html")) {
 			applyFilter = true;
 		}
-		else if (request.getHeader("Accept") != null && request.getHeader("Accept").contains("text/html")) {
+		else if (request.getHeader(HttpHeader.ACCEPT.getName()) != null
+				&& request.getHeader(HttpHeader.ACCEPT.getName()).contains("text/html")) {
 			applyFilter = true;
 		}
 
 		// Then, check whether the filter has been explicitely disabled
-		// (possibly by other components)
+		// (possibly by other components) either from a request attribute...
 		if (request.getAttribute(WebConstants.DANDELION_ASSET_FILTER_STATE) != null) {
 			applyFilter = applyFilter
 					&& Boolean.parseBoolean(String.valueOf(request
 							.getAttribute(WebConstants.DANDELION_ASSET_FILTER_STATE)));
 			return applyFilter;
 		}
+		// ... or from a request parameter
 		else if (request.getParameter(WebConstants.DANDELION_ASSET_FILTER_STATE) != null) {
 			applyFilter = applyFilter
 					&& Boolean.parseBoolean(request.getParameter(WebConstants.DANDELION_ASSET_FILTER_STATE));

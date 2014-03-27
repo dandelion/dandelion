@@ -37,7 +37,7 @@ import java.util.concurrent.TimeUnit;
 
 import javax.servlet.http.HttpServletResponse;
 
-import com.github.dandelion.core.DevMode;
+import com.github.dandelion.core.Context;
 
 /**
  * <p>
@@ -51,17 +51,22 @@ public class HttpHeadersConfigurer {
 	public static final long ONE_YEAR_IN_MILLISECONDS = 365 * 24 * 60 * 60 * 1000L;
 	public static final String DEFAULT_CACHE_CONTROL = "public, max-age=315360000";
 	private static final SimpleDateFormat DATE_FORMAT;
-
+	private Context context;
+	
 	static {
 		DATE_FORMAT = new SimpleDateFormat("E, dd MMM yyyy HH:mm:ss z", Locale.US);
 		DATE_FORMAT.setTimeZone(TimeZone.getTimeZone("GMT"));
 	}
 
+	public HttpHeadersConfigurer(Context context){
+		this.context = context;
+	}
+	
 	public void configureResponseHeaders(HttpServletResponse response, String contentType) {
 
 		response.setContentType(contentType == null ? "text/plain" : contentType);
 
-		if (DevMode.isEnabled()) {
+		if (context.isDevModeEnabled()) {
 			response.setHeader(HttpHeader.CACHE_CONTROL.getName(), "no-cache");
 			response.setHeader(HttpHeader.EXPIRES.getName(), String.valueOf(1));
 		}

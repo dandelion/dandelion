@@ -37,6 +37,7 @@ import java.util.Set;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.mock.web.MockFilterConfig;
 import org.springframework.mock.web.MockHttpServletRequest;
 
 import com.github.dandelion.core.Context;
@@ -55,7 +56,7 @@ public class AssetQueryTest {
 		String path = new File("src/test/resources/dandelion-test/asset-query/".replace("/", File.separator))
 		.getAbsolutePath();
 		System.setProperty(StandardConfigurationLoader.DANDELION_CONFIGURATION, path);
-		context = new Context();
+		context = new Context(new MockFilterConfig());
 		
 		request = new MockHttpServletRequest();
 		request.setContextPath("/context");

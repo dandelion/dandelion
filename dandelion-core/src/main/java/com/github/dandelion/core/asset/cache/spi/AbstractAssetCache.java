@@ -42,14 +42,11 @@ public abstract class AbstractAssetCache implements AssetCache {
 
 	protected Context context;
 
-	public AbstractAssetCache() {
-	}
-
-	public AbstractAssetCache(Context context) {
-		this.context = context;
-	}
-
-	public void setContext(Context context) {
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void initCache(Context context) {
 		this.context = context;
 	}
 }

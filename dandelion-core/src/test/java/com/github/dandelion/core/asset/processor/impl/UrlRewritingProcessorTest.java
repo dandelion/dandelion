@@ -38,6 +38,7 @@ import java.util.Scanner;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.mock.web.MockFilterConfig;
 
 import com.github.dandelion.core.Context;
 import com.github.dandelion.core.asset.Asset;
@@ -52,7 +53,7 @@ public class UrlRewritingProcessorTest {
 
 	@Before
 	public void setup(){
-		context = new Context();
+		context = new Context(new MockFilterConfig());
 		processedAsset = new Asset();
 		processedAsset.setFinalLocation("http://domain/folder/sub/assets/css/asset.css");
 	}

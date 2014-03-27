@@ -47,11 +47,16 @@ import com.github.dandelion.core.asset.cache.spi.AssetCache;
  * @since 0.10.0
  */
 public class MemoryAssetCache extends AbstractAssetCache {
+
 	private Map<String, String> cache;
 	private Map<String, Set<Asset>> assets;
 
-	public MemoryAssetCache(Context context) {
-		super(context);
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void initCache(Context context) {
+		super.initCache(context);
 		cache = new SimpleLruCache<String, String>(context.getConfiguration().getCacheAssetMaxSize());
 		assets = new SimpleLruCache<String, Set<Asset>>(context.getConfiguration().getCacheRequestMaxSize());
 	}
@@ -96,5 +101,9 @@ public class MemoryAssetCache extends AbstractAssetCache {
 	 */
 	public void remove(String cacheKey) {
 		cache.remove(cacheKey);
+	}
+	
+	public Map<String, String> getCache(){
+		return cache;
 	}
 }

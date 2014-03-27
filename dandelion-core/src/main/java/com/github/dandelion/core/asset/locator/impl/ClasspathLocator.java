@@ -40,20 +40,21 @@ import com.github.dandelion.core.utils.ResourceUtils;
 
 /**
  * <p>
- * Location wrapper for assets that use {@code classpath} as a location key.
+ * Locator for assets that use {@code classpath} as a location key.
  * 
  * <p>
- * Basically, the location wrapper locates assets available in the classpath.
+ * Basically, this locator locates assets available in the classpath.
  * 
+ * @author Thibault Duchateau
  * @author Romain Lespinasse
  * @since 0.2.0
  */
 public class ClasspathLocator extends AbstractAssetLocator {
 
-	public ClasspathLocator(){
+	public ClasspathLocator() {
 		active = true;
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -62,13 +63,11 @@ public class ClasspathLocator extends AbstractAssetLocator {
 		return "classpath";
 	}
 
-	
 	@Override
 	public boolean isCachingForced() {
 		return true;
 	}
 
-	
 	/**
 	 * {@inheritDoc}
 	 */
