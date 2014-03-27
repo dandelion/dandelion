@@ -94,7 +94,7 @@ import com.github.dandelion.core.utils.StringUtils;
  */
 public class EhCacheAssetCache extends AbstractAssetCache {
 
-	private static final Logger LOG = LoggerFactory.getLogger(EhCacheAssetCacheTest.class);
+	private static final Logger LOG = LoggerFactory.getLogger(EhCacheAssetCache.class);
 
 	private Cache cache;
 
