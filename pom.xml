@@ -50,7 +50,7 @@
       <servlet-api.version>2.5</servlet-api.version>
       <slf4j-api.version>1.7.5</slf4j-api.version>
       <thymeleaf.version>2.1.1.RELEASE</thymeleaf.version>
-      <webjars-locator.version>0.9</webjars-locator.version>
+      <webjars-locator.version>0.12</webjars-locator.version>
       <yui-compressor.version>2.4.7</yui-compressor.version>
 
       <!-- Test dependencies -->
