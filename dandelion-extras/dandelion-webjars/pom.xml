@@ -11,7 +11,7 @@
 
    <artifactId>dandelion-webjars</artifactId>
    <packaging>jar</packaging>
-   <name>Dandelion :: Extras :: Webjars</name>
+   <name>Dandelion :: Extras :: Locator :: Webjars</name>
    <description>Extra providing a new asset locator for WebJars.</description>
 
    <dependencies>

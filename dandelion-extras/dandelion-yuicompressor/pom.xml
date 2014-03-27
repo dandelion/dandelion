@@ -11,7 +11,7 @@
 
    <artifactId>dandelion-yuicompressor</artifactId>
    <packaging>jar</packaging>
-   <name>Dandelion :: Extras :: YUI Compressor</name>
+   <name>Dandelion :: Extras :: Processor :: YUI Compressor</name>
    <description>Extra providing new asset processors based on Yahoo's YUI Compressor.</description>
 
    <dependencies>
