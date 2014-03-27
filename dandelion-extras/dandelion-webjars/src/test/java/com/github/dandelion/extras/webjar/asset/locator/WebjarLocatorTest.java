@@ -46,12 +46,15 @@ import com.github.dandelion.core.storage.AssetStorageUnit;
 public class WebjarLocatorTest {
 
 	private WebjarLocator locator = new WebjarLocator();
+	private Context context;
 	private MockHttpServletRequest request;
 	
 	@Before
 	public void setup(){
+		context = new Context(new MockFilterConfig());
+		locator.initLocator(context);
 		request = new MockHttpServletRequest();
-		request.setAttribute(WebConstants.DANDELION_CONTEXT_ATTRIBUTE, new Context(new MockFilterConfig()));
+		request.setAttribute(WebConstants.DANDELION_CONTEXT_ATTRIBUTE, context);
 	}
 	
 	@Test
