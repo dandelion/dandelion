@@ -39,6 +39,7 @@ import com.github.dandelion.core.asset.locator.spi.AbstractAssetLocator;
 import com.github.dandelion.core.asset.locator.spi.AssetLocator;
 import com.github.dandelion.core.storage.AssetStorageUnit;
 import com.github.dandelion.core.utils.ResourceUtils;
+import com.github.dandelion.core.utils.UrlUtils;
 
 /**
  * <p>
@@ -73,7 +74,7 @@ public class WebjarLocator extends AbstractAssetLocator {
 	 */
 	@Override
 	public boolean isCachingForced() {
-		return true;
+		return context.getConfiguration().isServlet3InUse() ? false : true;
 	}
 
 	/**
@@ -82,7 +83,13 @@ public class WebjarLocator extends AbstractAssetLocator {
 	@Override
 	public String doGetLocation(AssetStorageUnit asu, HttpServletRequest request) {
 		String location = asu.getLocations().get(getLocationKey());
-		return locator.getFullPath(location);
+		
+		if(context.getConfiguration().isServlet3InUse()) {
+			return UrlUtils.getProcessedUrl(locator.getFullPath(location).substring(18), request, null);
+		}
+		else {
+			return locator.getFullPath(location);
+		}
 	}
 
 	/**
@@ -90,6 +97,12 @@ public class WebjarLocator extends AbstractAssetLocator {
 	 */
 	@Override
 	protected String doGetContent(String location, Map<String, Object> parameters, HttpServletRequest request) {
-		return ResourceUtils.getFileContentFromClasspath(location, false);
+		if(context.getConfiguration().isServlet3InUse()) {
+			return ResourceUtils.getContentFromUrl(request, location, true);
+		}
+		else {
+			// TODO Fix issues with relative URLs in CSS files 
+			return ResourceUtils.getFileContentFromClasspath(location, false);
+		}
 	}
 }

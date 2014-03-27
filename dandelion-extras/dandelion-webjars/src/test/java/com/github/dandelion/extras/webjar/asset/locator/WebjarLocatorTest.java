@@ -36,6 +36,7 @@ import java.net.MalformedURLException;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.mock.web.MockFilterConfig;
 import org.springframework.mock.web.MockHttpServletRequest;
 
 import com.github.dandelion.core.Context;
@@ -50,7 +51,7 @@ public class WebjarLocatorTest {
 	@Before
 	public void setup(){
 		request = new MockHttpServletRequest();
-		request.setAttribute(WebConstants.DANDELION_CONTEXT_ATTRIBUTE, new Context());
+		request.setAttribute(WebConstants.DANDELION_CONTEXT_ATTRIBUTE, new Context(new MockFilterConfig()));
 	}
 	
 	@Test
