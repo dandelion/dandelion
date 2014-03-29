@@ -35,12 +35,11 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.webjars.WebJarAssetLocator;
 
-import com.github.dandelion.core.asset.locator.Servlet3Compatible;
+import com.github.dandelion.core.asset.locator.Servlet2Compatible;
 import com.github.dandelion.core.asset.locator.spi.AbstractAssetLocator;
 import com.github.dandelion.core.asset.locator.spi.AssetLocator;
 import com.github.dandelion.core.storage.AssetStorageUnit;
 import com.github.dandelion.core.utils.ResourceUtils;
-import com.github.dandelion.core.utils.UrlUtils;
 
 /**
  * <p>
@@ -54,13 +53,9 @@ import com.github.dandelion.core.utils.UrlUtils;
  * @author Thibault Duchateau
  * @since 0.10.0
  */
-public class WebjarLocator extends AbstractAssetLocator implements Servlet3Compatible {
+public class WebjarServlet2Locator extends AbstractAssetLocator implements Servlet2Compatible {
 
 	private static WebJarAssetLocator locator = new WebJarAssetLocator();
-
-	public WebjarLocator() {
-		this.active = true;
-	}
 
 	/**
 	 * {@inheritDoc}
@@ -75,7 +70,7 @@ public class WebjarLocator extends AbstractAssetLocator implements Servlet3Compa
 	 */
 	@Override
 	public boolean isCachingForced() {
-		return false;
+		return true;
 	}
 
 	/**
@@ -84,7 +79,7 @@ public class WebjarLocator extends AbstractAssetLocator implements Servlet3Compa
 	@Override
 	public String doGetLocation(AssetStorageUnit asu, HttpServletRequest request) {
 		String location = asu.getLocations().get(getLocationKey());
-		return UrlUtils.getProcessedUrl(locator.getFullPath(location).substring(18), request, null);
+		return locator.getFullPath(location);
 	}
 
 	/**
@@ -92,6 +87,7 @@ public class WebjarLocator extends AbstractAssetLocator implements Servlet3Compa
 	 */
 	@Override
 	protected String doGetContent(String location, Map<String, Object> parameters, HttpServletRequest request) {
-		return ResourceUtils.getContentFromUrl(request, location, true);
+		// FIXME Fix issues with relative URLs in CSS files
+		return ResourceUtils.getFileContentFromClasspath(location, false);
 	}
 }

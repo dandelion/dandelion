@@ -34,6 +34,8 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.github.dandelion.core.asset.locator.Servlet2Compatible;
+import com.github.dandelion.core.asset.locator.Servlet3Compatible;
 import com.github.dandelion.core.asset.locator.spi.AbstractAssetLocator;
 import com.github.dandelion.core.asset.web.AssetRequestContext;
 import com.github.dandelion.core.storage.AssetStorageUnit;
@@ -50,7 +52,7 @@ import com.github.dandelion.core.storage.AssetStorageUnit;
  * @author Romain Lespinasse
  * @since 0.2.0
  */
-public class DelegateLocator extends AbstractAssetLocator {
+public class DelegateLocator extends AbstractAssetLocator implements Servlet2Compatible, Servlet3Compatible {
 
 	public static final String DELEGATED_CONTENT_PARAM = "DELEGATED_CONTENT";
 

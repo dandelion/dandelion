@@ -31,9 +31,11 @@ package com.github.dandelion.core.asset.locator.spi;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.github.dandelion.core.Beta;
 import com.github.dandelion.core.Context;
 import com.github.dandelion.core.asset.Asset;
 import com.github.dandelion.core.asset.processor.spi.AssetProcessor;
+import com.github.dandelion.core.asset.web.AssetFilter;
 import com.github.dandelion.core.asset.web.AssetServlet;
 import com.github.dandelion.core.storage.AssetStorageUnit;
 
@@ -48,11 +50,15 @@ import com.github.dandelion.core.storage.AssetStorageUnit;
 public interface AssetLocator {
 
 	/**
-	 * TODO
+	 * <p>
+	 * Initializes the configured service provider of the {@link AssetLocator}
+	 * SPI by using the {@link Context}.
+	 * 
 	 * @param context
+	 *            The {@link Context} initialized in the {@link AssetFilter}.
 	 */
 	void initLocator(Context context);
-	
+
 	/**
 	 * @return the location key associated to the locator.
 	 */
@@ -80,9 +86,7 @@ public interface AssetLocator {
 	 *            extracted.
 	 * @param request
 	 *            The current HTTP request.
-	 * @param context
-	 *            TODO
-	 * @return the content of location
+	 * @return a String holding the content of the {@link AssetStorageUnit}.
 	 */
 	String getContent(AssetStorageUnit asu, HttpServletRequest request);
 
@@ -97,7 +101,7 @@ public interface AssetLocator {
 	 *            The asset from which the content should be extracted.
 	 * @param request
 	 *            The current HTTP request.
-	 * @return TODO
+	 * @return a String holding the content of the {@link Asset}.
 	 */
 	String getContent(Asset asset, HttpServletRequest request);
 
@@ -105,11 +109,13 @@ public interface AssetLocator {
 	 * @return {@code true} if the asset locator is active, otherwise
 	 *         {@code false}. By default, all {@link AssetLocator}s are active.
 	 */
+	@Beta
 	boolean isActive();
 
 	/**
 	 * @return {@code true} if the asset has to be cached in order to be
-	 *         accessed by the {@link AssetServlet}, otherwise {@code false}.
+	 *         accessed by the {@link AssetServlet}, otherwise {@code false} if
+	 *         it can be directly accessed.
 	 */
 	boolean isCachingForced();
 }

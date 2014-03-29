@@ -3,3 +3,4 @@ com.github.dandelion.core.asset.locator.impl.DelegateLocator
 com.github.dandelion.core.asset.locator.impl.WebappLocator
 com.github.dandelion.core.asset.locator.impl.CdnLocator
 com.github.dandelion.core.asset.locator.impl.JarLocator
+com.github.dandelion.core.asset.locator.impl.JarServlet2Locator

@@ -1,1 +1,2 @@
 com.github.dandelion.extras.webjar.asset.locator.WebjarLocator
+com.github.dandelion.extras.webjar.asset.locator.WebjarServlet2Locator

@@ -27,38 +27,17 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.github.dandelion.extras.webjar.asset.locator;
+package com.github.dandelion.core.asset.locator;
 
-import static java.util.Collections.singletonMap;
-import static org.fest.assertions.Assertions.assertThat;
+import com.github.dandelion.core.asset.locator.spi.AssetLocator;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.springframework.mock.web.MockFilterConfig;
-import org.springframework.mock.web.MockHttpServletRequest;
-
-import com.github.dandelion.core.Context;
-import com.github.dandelion.core.asset.web.WebConstants;
-import com.github.dandelion.core.storage.AssetStorageUnit;
-
-public class WebjarLocatorTest {
-
-	private WebjarLocator locator = new WebjarLocator();
-	private Context context;
-	private MockHttpServletRequest request;
-	
-	@Before
-	public void setup(){
-		context = new Context(new MockFilterConfig());
-		locator.initLocator(context);
-		request = new MockHttpServletRequest();
-		request.setAttribute(WebConstants.DANDELION_CONTEXT_ATTRIBUTE, context);
-	}
-	
-	@Test
-	public void should_return_the_internal_url(){
-		AssetStorageUnit asu = new AssetStorageUnit("jquery-js", singletonMap("webjar", "jquery.js"));
-		String location = locator.getLocation(asu, request);
-		assertThat(location).isEqualTo("/webjars/jquery/1.11.0/jquery.js");
-	}
+/**
+ * <p>
+ * Marker interface used to indicate if the marked {@link AssetLocator} is
+ * compatible with the Servlet 2.x API.
+ * 
+ * @author Thibault Duchateau
+ * @since 0.10.0
+ */
+public interface Servlet2Compatible {
 }

@@ -27,38 +27,35 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.github.dandelion.extras.webjar.asset.locator;
+package com.github.dandelion.core;
 
-import static java.util.Collections.singletonMap;
-import static org.fest.assertions.Assertions.assertThat;
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.springframework.mock.web.MockFilterConfig;
-import org.springframework.mock.web.MockHttpServletRequest;
-
-import com.github.dandelion.core.Context;
-import com.github.dandelion.core.asset.web.WebConstants;
-import com.github.dandelion.core.storage.AssetStorageUnit;
-
-public class WebjarLocatorTest {
-
-	private WebjarLocator locator = new WebjarLocator();
-	private Context context;
-	private MockHttpServletRequest request;
-	
-	@Before
-	public void setup(){
-		context = new Context(new MockFilterConfig());
-		locator.initLocator(context);
-		request = new MockHttpServletRequest();
-		request.setAttribute(WebConstants.DANDELION_CONTEXT_ATTRIBUTE, context);
-	}
-	
-	@Test
-	public void should_return_the_internal_url(){
-		AssetStorageUnit asu = new AssetStorageUnit("jquery-js", singletonMap("webjar", "jquery.js"));
-		String location = locator.getLocation(asu, request);
-		assertThat(location).isEqualTo("/webjars/jquery/1.11.0/jquery.js");
-	}
+/**
+ * <p>
+ * Marker annotation that signifies that a public API (public class, method or
+ * field) is subject to incompatible changes, or even removal, in a future
+ * release. An API bearing this annotation is exempt from any compatibility
+ * guarantees made by its containing library.
+ * 
+ * <p>
+ * Note that the presence of this annotation implies nothing about the quality
+ * or performance of the API in question, only the fact that it is not
+ * "API-frozen."
+ * 
+ * <p>
+ * This annotation has been kindly borrowed from the <a
+ * href="https://code.google.com/p/guava-libraries/">Guava project</a>.
+ * 
+ * @author Thibault Duchateau
+ * @since 0.10.0
+ */
+@Retention(value = RetentionPolicy.CLASS)
+@Target({ ElementType.FIELD, ElementType.METHOD, ElementType.ANNOTATION_TYPE, ElementType.CONSTRUCTOR, ElementType.TYPE })
+@Documented
+public @interface Beta {
 }

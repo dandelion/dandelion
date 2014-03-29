@@ -34,6 +34,8 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.github.dandelion.core.asset.locator.Servlet2Compatible;
+import com.github.dandelion.core.asset.locator.Servlet3Compatible;
 import com.github.dandelion.core.asset.locator.spi.AbstractAssetLocator;
 import com.github.dandelion.core.storage.AssetStorageUnit;
 import com.github.dandelion.core.utils.ResourceUtils;
@@ -50,7 +52,7 @@ import com.github.dandelion.core.utils.UrlUtils;
  * @author Romain Lespinasse
  * @since 0.2.0
  */
-public class WebappLocator extends AbstractAssetLocator {
+public class WebappLocator extends AbstractAssetLocator implements Servlet2Compatible, Servlet3Compatible {
 
 	public WebappLocator() {
 		active = true;

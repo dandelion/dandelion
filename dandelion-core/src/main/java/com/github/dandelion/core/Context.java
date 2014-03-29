@@ -44,6 +44,8 @@ import org.slf4j.LoggerFactory;
 import com.github.dandelion.core.asset.cache.AssetCacheManager;
 import com.github.dandelion.core.asset.cache.impl.MemoryAssetCache;
 import com.github.dandelion.core.asset.cache.spi.AssetCache;
+import com.github.dandelion.core.asset.locator.Servlet2Compatible;
+import com.github.dandelion.core.asset.locator.Servlet3Compatible;
 import com.github.dandelion.core.asset.locator.spi.AssetLocator;
 import com.github.dandelion.core.asset.processor.AssetProcessorManager;
 import com.github.dandelion.core.asset.processor.spi.AssetProcessor;
@@ -238,9 +240,24 @@ public class Context {
 	public void initializeAssetLocators() {
 		assetLocatorsMap = new HashMap<String, AssetLocator>();
 		for (AssetLocator al : alServiceLoader) {
-			al.initLocator(this);
-			assetLocatorsMap.put(al.getLocationKey(), al);
-			LOG.info("Asset locator found: {}", al.getLocationKey());
+
+			// Only register Servlet3-compatible asset locators if Servlet 3.x
+			// is being used
+			if (this.getConfiguration().isServlet3InUse()) {
+				if (Servlet3Compatible.class.isAssignableFrom(al.getClass())) {
+					al.initLocator(this);
+					assetLocatorsMap.put(al.getLocationKey(), al);
+					LOG.info("Asset locator found: {}", al.getLocationKey());
+				}
+			}
+			// Otherwise register all Servlet2-compatible asset locators
+			else {
+				if (Servlet2Compatible.class.isAssignableFrom(al.getClass())) {
+					al.initLocator(this);
+					assetLocatorsMap.put(al.getLocationKey(), al);
+					LOG.info("Asset locator found: {}", al.getLocationKey());
+				}
+			}
 		}
 	}
 

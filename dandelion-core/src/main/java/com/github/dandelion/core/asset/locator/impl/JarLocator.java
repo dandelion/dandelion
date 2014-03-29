@@ -34,25 +34,25 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.github.dandelion.core.Context;
+import com.github.dandelion.core.asset.locator.Servlet3Compatible;
 import com.github.dandelion.core.asset.locator.spi.AbstractAssetLocator;
 import com.github.dandelion.core.storage.AssetStorageUnit;
 import com.github.dandelion.core.utils.ResourceUtils;
-import com.github.dandelion.core.utils.UrlUtils;
 
 /**
  * <p>
- * Locator for assets that use {@code jar} as a location key.
+ * Servlet 3.x compatible locator for assets that use {@code jar} as a location
+ * key.
+ * 
+ * <p>
+ * This locator will be automatically selected if the Servlet 3.x API is being
+ * used. See {@link Context#initializeAssetLocators()}.
  * 
  * @author Thibault Duchateau
  * @since 0.10.0
  */
-public class JarLocator extends AbstractAssetLocator {
-
-	private static final String LOCATION_PREFIX = "META-INF/resources/";
-
-	public JarLocator() {
-		active = true;
-	}
+public class JarLocator extends AbstractAssetLocator implements Servlet3Compatible {
 
 	/**
 	 * {@inheritDoc}
@@ -67,7 +67,7 @@ public class JarLocator extends AbstractAssetLocator {
 	 */
 	@Override
 	public boolean isCachingForced() {
-		return context.getConfiguration().isServlet3InUse() ? false : true;
+		return false;
 	}
 
 	/**
@@ -76,14 +76,7 @@ public class JarLocator extends AbstractAssetLocator {
 	@Override
 	public String doGetLocation(AssetStorageUnit asu, HttpServletRequest request) {
 		String location = asu.getLocations().get(getLocationKey());
-		if (context.getConfiguration().isServlet3InUse()) {
-			return request.getContextPath() + "/"
-					+ (location.startsWith("/") ? location.substring(1) : location);
-		}
-		else {
-			return UrlUtils.getProcessedUrl(location, request, null);
-		}
-
+		return request.getContextPath() + "/" + (location.startsWith("/") ? location.substring(1) : location);
 	}
 
 	/**
@@ -91,13 +84,6 @@ public class JarLocator extends AbstractAssetLocator {
 	 */
 	@Override
 	protected String doGetContent(String location, Map<String, Object> parameters, HttpServletRequest request) {
-		if (context.getConfiguration().isServlet3InUse()) {
-			return ResourceUtils.getContentFromUrl(request, location, true);
-		}
-		else {
-			return ResourceUtils.getFileContentFromClasspath(
-					location.startsWith("/") ? LOCATION_PREFIX + location.substring(1) : LOCATION_PREFIX + location,
-					false);
-		}
+		return ResourceUtils.getContentFromUrl(request, location, true);
 	}
 }

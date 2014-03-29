@@ -55,7 +55,7 @@ import com.github.dandelion.core.utils.StringUtils;
  */
 public abstract class AbstractAssetLocator implements AssetLocator {
 
-	protected boolean active;
+	protected boolean active = true;
 	protected Context context;
 
 	/**

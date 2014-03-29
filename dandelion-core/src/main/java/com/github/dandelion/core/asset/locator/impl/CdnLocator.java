@@ -34,6 +34,8 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.github.dandelion.core.asset.locator.Servlet2Compatible;
+import com.github.dandelion.core.asset.locator.Servlet3Compatible;
 import com.github.dandelion.core.asset.locator.spi.AbstractAssetLocator;
 import com.github.dandelion.core.storage.AssetStorageUnit;
 import com.github.dandelion.core.utils.ResourceUtils;
@@ -46,7 +48,7 @@ import com.github.dandelion.core.utils.UrlUtils;
  * @author Thibault Duchateau
  * @since 0.10.0
  */
-public class CdnLocator extends AbstractAssetLocator {
+public class CdnLocator extends AbstractAssetLocator implements Servlet2Compatible, Servlet3Compatible {
 
 	public CdnLocator() {
 		this.active = true;

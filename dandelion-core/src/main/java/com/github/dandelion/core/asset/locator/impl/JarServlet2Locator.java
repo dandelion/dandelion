@@ -27,47 +27,42 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.github.dandelion.extras.webjar.asset.locator;
+
+package com.github.dandelion.core.asset.locator.impl;
 
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.webjars.WebJarAssetLocator;
-
-import com.github.dandelion.core.asset.locator.Servlet3Compatible;
+import com.github.dandelion.core.Context;
+import com.github.dandelion.core.asset.locator.Servlet2Compatible;
 import com.github.dandelion.core.asset.locator.spi.AbstractAssetLocator;
-import com.github.dandelion.core.asset.locator.spi.AssetLocator;
 import com.github.dandelion.core.storage.AssetStorageUnit;
 import com.github.dandelion.core.utils.ResourceUtils;
 import com.github.dandelion.core.utils.UrlUtils;
 
 /**
  * <p>
- * Locator for asset stored inside WebJars.
+ * Servlet 2.x compatible locator for assets that use {@code jar} as a location
+ * key.
  * 
  * <p>
- * This {@link AssetLocator} uses the {@link WebJarAssetLocator} to locate
- * assets in the classpath before getting their content.
+ * This locator will be automatically selected if the Servlet 2.x API is being
+ * used. See {@link Context#initializeAssetLocators()}.
  * 
- * @author Romain Lespinasse
  * @author Thibault Duchateau
  * @since 0.10.0
  */
-public class WebjarLocator extends AbstractAssetLocator implements Servlet3Compatible {
+public class JarServlet2Locator extends AbstractAssetLocator implements Servlet2Compatible {
 
-	private static WebJarAssetLocator locator = new WebJarAssetLocator();
-
-	public WebjarLocator() {
-		this.active = true;
-	}
+	private static final String LOCATION_PREFIX = "META-INF/resources/";
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
 	public String getLocationKey() {
-		return "webjar";
+		return "jar";
 	}
 
 	/**
@@ -75,7 +70,7 @@ public class WebjarLocator extends AbstractAssetLocator implements Servlet3Compa
 	 */
 	@Override
 	public boolean isCachingForced() {
-		return false;
+		return true;
 	}
 
 	/**
@@ -84,7 +79,7 @@ public class WebjarLocator extends AbstractAssetLocator implements Servlet3Compa
 	@Override
 	public String doGetLocation(AssetStorageUnit asu, HttpServletRequest request) {
 		String location = asu.getLocations().get(getLocationKey());
-		return UrlUtils.getProcessedUrl(locator.getFullPath(location).substring(18), request, null);
+		return UrlUtils.getProcessedUrl(location, request, null);
 	}
 
 	/**
@@ -92,6 +87,7 @@ public class WebjarLocator extends AbstractAssetLocator implements Servlet3Compa
 	 */
 	@Override
 	protected String doGetContent(String location, Map<String, Object> parameters, HttpServletRequest request) {
-		return ResourceUtils.getContentFromUrl(request, location, true);
+		return ResourceUtils.getFileContentFromClasspath(
+				location.startsWith("/") ? LOCATION_PREFIX + location.substring(1) : LOCATION_PREFIX + location, false);
 	}
 }

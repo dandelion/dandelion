@@ -32,6 +32,8 @@ package com.github.dandelion.extras.webjar.asset.locator;
 import static java.util.Collections.singletonMap;
 import static org.fest.assertions.Assertions.assertThat;
 
+import java.net.MalformedURLException;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.mock.web.MockFilterConfig;
@@ -41,9 +43,9 @@ import com.github.dandelion.core.Context;
 import com.github.dandelion.core.asset.web.WebConstants;
 import com.github.dandelion.core.storage.AssetStorageUnit;
 
-public class WebjarLocatorTest {
+public class WebjarServlet2LocatorTest {
 
-	private WebjarLocator locator = new WebjarLocator();
+	private WebjarServlet2Locator locator = new WebjarServlet2Locator();
 	private Context context;
 	private MockHttpServletRequest request;
 	
@@ -59,6 +61,13 @@ public class WebjarLocatorTest {
 	public void should_return_the_internal_url(){
 		AssetStorageUnit asu = new AssetStorageUnit("jquery-js", singletonMap("webjar", "jquery.js"));
 		String location = locator.getLocation(asu, request);
-		assertThat(location).isEqualTo("/webjars/jquery/1.11.0/jquery.js");
+		assertThat(location).isEqualTo("META-INF/resources/webjars/jquery/1.11.0/jquery.js");
+	}
+	
+	@Test
+	public void should_return_the_content() throws MalformedURLException{
+		AssetStorageUnit asu = new AssetStorageUnit("jquery-js", singletonMap("webjar", "jquery.js"));
+		String content = locator.getContent(asu, request);
+		assertThat(content).contains("jQuery JavaScript Library v1.11.0");
 	}
 }
