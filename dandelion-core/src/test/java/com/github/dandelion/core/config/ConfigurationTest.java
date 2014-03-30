@@ -100,7 +100,7 @@ public class ConfigurationTest {
 		System.setProperty(DandelionConfig.ASSET_LOCATIONS_RESOLUTION_STRATEGY.getName(), "bar,foo,baz,qux");
 		System.setProperty(DandelionConfig.CACHE_ASSET_MAX_SIZE.getName(), "20");
 
-		Configuration config = new Configuration(new MockFilterConfig(), new Properties());
+		Configuration config = new Configuration(new MockFilterConfig(), userProperties);
 
 		assertThat(config.getDandelionMode()).isEqualTo(DandelionMode.PRODUCTION);
 		assertThat(config.getAssetLocationsResolutionStrategy()).containsSequence("bar", "foo", "baz", "qux");
@@ -111,6 +111,18 @@ public class ConfigurationTest {
 		System.clearProperty(DandelionConfig.CACHE_ASSET_MAX_SIZE.getName());
 	}
 
+	@Test
+	public void should_override_default_prod_configuration(){
+		Properties userProperties = new Properties();
+		userProperties.put(DandelionConfig.DANDELION_MODE.getName(), "production");
+		userProperties.put(DandelionConfig.MINIFICATION_ON.getName(), "false");
+		
+		Configuration config = new Configuration(new MockFilterConfig(), userProperties);
+
+		assertThat(config.getDandelionMode()).isEqualTo(DandelionMode.PRODUCTION);
+		assertThat(config.isMinificationOn()).isFalse();
+	}
+	
 	@Test
 	public void should_set_mode_to_development_if_unknown_value() {
 		Properties userProperties = new Properties();

@@ -29,10 +29,13 @@
  */
 package com.github.dandelion.core.config;
 
+import com.github.dandelion.core.DandelionMode;
+
 /**
  * <p>
- * Enum containing all configuration properties and their associated default
- * value.
+ * Enum containing all configuration properties and their associated value both
+ * in {@link DandelionMode#DEVELOPMENT} and {@link DandelionMode#PRODUCTION}
+ * mode.
  * 
  * @author Thibault Duchateau
  * @since 0.10.0
@@ -40,39 +43,45 @@ package com.github.dandelion.core.config;
 public enum DandelionConfig {
 
 	// Main configurations
-	DANDELION_MODE("dandelion.mode", "development"),
-	MINIFICATION_ON("minification.on", "false"),
-	
-	// Asset configurations
-	ASSET_LOCATIONS_RESOLUTION_STRATEGY("asset.locations.resolution.strategy", "webjar,webapp,cdn"),
-	ASSET_PROCESSORS("asset.processors", "cssurlrewriting,jsmin,cssmin"),
-	ASSET_PROCESSORS_ENCODING("asset.processors.encoding", "UTF-8"),
-	ASSET_JS_EXCLUDES("asset.js.excludes", ""),
-	ASSET_CSS_EXCLUDES("asset.css.excludes", ""),
-	
-	// Cache configurations
-	CACHE_ASSET_MAX_SIZE("cache.asset.max.size", "50"),
-	CACHE_REQUEST_MAX_SIZE("cache.request.max.size", "50"),
-	CACHE_MANAGER_NAME("cache.manager.name", ""),
-	CACHE_CONFIGURATION_LOCATION("cache.configuration.location", ""),
-	
-	// Bundle configurations
-	BUNDLE_INCLUDES("bundle.includes", ""),
-	BUNDLE_EXCLUDES("bundle.excludes", "");
-	
-	private String propertyName;
-	private String defaultValue;
+	DANDELION_MODE("dandelion.mode", "development", ""), 
+	MINIFICATION_ON("minification.on", "false", "true"),
 
-	private DandelionConfig(String propertyName, String defaultValue) {
+	// Asset configurations
+	ASSET_LOCATIONS_RESOLUTION_STRATEGY("asset.locations.resolution.strategy", "webjar,webapp,cdn", "webjar,webapp,cdn"), 
+	ASSET_PROCESSORS("asset.processors", "cssurlrewriting,jsmin,cssmin", "cssurlrewriting,jsmin,cssmin"), 
+	ASSET_PROCESSORS_ENCODING("asset.processors.encoding", "UTF-8", "UTF-8"), 
+	ASSET_JS_EXCLUDES("asset.js.excludes", "", ""), 
+	ASSET_CSS_EXCLUDES("asset.css.excludes", "", ""),
+
+	// Cache configurations
+	CACHE_ASSET_MAX_SIZE("cache.asset.max.size", "50", "50"), 
+	CACHE_REQUEST_MAX_SIZE("cache.request.max.size", "50", "50"), 
+	CACHE_MANAGER_NAME("cache.manager.name", "", ""), 
+	CACHE_CONFIGURATION_LOCATION("cache.configuration.location", "", ""),
+
+	// Bundle configurations
+	BUNDLE_INCLUDES("bundle.includes", "", ""), 
+	BUNDLE_EXCLUDES("bundle.excludes", "", "");
+
+	private String propertyName;
+	private String defaultDevValue;
+	private String defaultProdValue;
+
+	private DandelionConfig(String propertyName, String defaultDevValue, String defaultProdValue) {
 		this.propertyName = propertyName;
-		this.defaultValue = defaultValue;
+		this.defaultDevValue = defaultDevValue;
+		this.defaultProdValue = defaultProdValue;
 	}
 
 	public String getName() {
 		return propertyName;
 	}
 
-	public String getDefaultValue() {
-		return defaultValue;
+	public String getDefaultDevValue() {
+		return defaultDevValue;
+	}
+
+	public String getDefaultProdValue() {
+		return defaultProdValue;
 	}
 }

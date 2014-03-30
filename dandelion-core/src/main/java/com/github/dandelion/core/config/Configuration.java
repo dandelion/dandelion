@@ -40,12 +40,11 @@ import org.slf4j.LoggerFactory;
 import com.github.dandelion.core.Context;
 import com.github.dandelion.core.DandelionMode;
 import com.github.dandelion.core.utils.PropertiesUtils;
-import com.github.dandelion.core.utils.StringUtils;
 
 /**
  * <p>
  * This class holds the Dandelion configuration initialized at server startup
- * and must accessed through the Dandelion {@link Context}.
+ * and must be accessed through the Dandelion {@link Context}.
  * 
  * <p>
  * All configuration present in the {@link DandelionConfig} enum are read using
@@ -86,13 +85,13 @@ public class Configuration {
 		}
 		catch (IllegalArgumentException e) {
 			LOG.warn("The '{}' property is incorrectly configured. Falling back to the default value ({})",
-					DandelionConfig.DANDELION_MODE.getName(), DandelionConfig.DANDELION_MODE.getDefaultValue());
+					DandelionConfig.DANDELION_MODE.getName(), DandelionConfig.DANDELION_MODE.getDefaultDevValue());
 			this.dandelionMode = DandelionMode.DEVELOPMENT;
 		}
 		if (dandelionMode.equals(DandelionMode.DEVELOPMENT)) {
 			LOG.info("===========================================");
 			LOG.info("");
-			LOG.info("The 'dandelion.mode' is set to 'development'.");
+			LOG.info("Dandelion development mode enabled.");
 			LOG.info("");
 			LOG.info("===========================================");
 		}
@@ -119,8 +118,8 @@ public class Configuration {
 		catch (NumberFormatException e) {
 			LOG.warn("The '{}' property is incorrectly configured. Falling back to the default value ({})",
 					DandelionConfig.CACHE_ASSET_MAX_SIZE.getName(),
-					DandelionConfig.CACHE_ASSET_MAX_SIZE.getDefaultValue());
-			this.cacheAssetMaxSize = Integer.parseInt(DandelionConfig.CACHE_ASSET_MAX_SIZE.getDefaultValue());
+					DandelionConfig.CACHE_ASSET_MAX_SIZE.getDefaultDevValue());
+			this.cacheAssetMaxSize = Integer.parseInt(DandelionConfig.CACHE_ASSET_MAX_SIZE.getDefaultDevValue());
 		}
 		try {
 			this.cacheRequestMaxSize = Integer.parseInt(readConfig(DandelionConfig.CACHE_REQUEST_MAX_SIZE));
@@ -128,8 +127,8 @@ public class Configuration {
 		catch (NumberFormatException e) {
 			LOG.warn("The '{}' property is incorrectly configured. Falling back to the default value ({})",
 					DandelionConfig.CACHE_REQUEST_MAX_SIZE.getName(),
-					DandelionConfig.CACHE_REQUEST_MAX_SIZE.getDefaultValue());
-			this.cacheRequestMaxSize = Integer.parseInt(DandelionConfig.CACHE_REQUEST_MAX_SIZE.getDefaultValue());
+					DandelionConfig.CACHE_REQUEST_MAX_SIZE.getDefaultDevValue());
+			this.cacheRequestMaxSize = Integer.parseInt(DandelionConfig.CACHE_REQUEST_MAX_SIZE.getDefaultDevValue());
 		}
 		this.cacheManagerName = readConfig(DandelionConfig.CACHE_MANAGER_NAME);
 		this.cacheConfigurationLocation = readConfig(DandelionConfig.CACHE_CONFIGURATION_LOCATION);
@@ -189,18 +188,6 @@ public class Configuration {
 		return bundleExcludes;
 	}
 
-	public void put(DandelionConfig config, Object value) {
-		this.userProperties.put(config.getName(), value);
-	}
-
-	public void putDefault(DandelionConfig config) {
-		this.userProperties.put(config.getName(), config.getDefaultValue());
-	}
-
-	public void putAll(Properties properties) {
-		this.userProperties.putAll(properties);
-	}
-
 	public Properties getProperties() {
 		return userProperties;
 	}
@@ -227,8 +214,9 @@ public class Configuration {
 	 * {@code web.xml} file</li>
 	 * <li>Then the user-defined properties, coming from the
 	 * {@code dandelion.properties} file, if it exists</li>
-	 * <li>Finally the hard-coded default value of the given
-	 * {@link DandelionConfig}</li>
+	 * <li>Finally the default "dev" value of the given {@link DandelionConfig}
+	 * if the {@link DandelionMode#DEVELOPMENT} is enabled, otherwise the
+	 * default "prod" value.</li>
 	 * </ol>
 	 * 
 	 * @param config
@@ -250,7 +238,16 @@ public class Configuration {
 			retval = userProperties.getProperty(config.getName());
 		}
 
-		return StringUtils.isNotBlank(retval) ? retval.trim() : config.getDefaultValue();
+		if (retval == null) {
+			if (dandelionMode != null && dandelionMode.equals(DandelionMode.PRODUCTION)) {
+				retval = config.getDefaultProdValue();
+			}
+			else {
+				retval = config.getDefaultDevValue();
+			}
+		}
+
+		return retval.trim();
 	}
 
 	public void setDandelionMode(DandelionMode dandelionMode) {
