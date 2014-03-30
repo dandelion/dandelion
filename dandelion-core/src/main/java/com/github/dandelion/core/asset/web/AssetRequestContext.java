@@ -42,6 +42,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 
 import com.github.dandelion.core.Context;
+import com.github.dandelion.core.storage.BundleStorageUnit;
 import com.github.dandelion.core.utils.StringUtils;
 
 /**
@@ -144,6 +145,9 @@ public class AssetRequestContext {
 		if (attribute == null || !(attribute instanceof AssetRequestContext)) {
 			attribute = new AssetRequestContext();
 			((AssetRequestContext) attribute).addBundles(context.getConfiguration().getBundleIncludes());
+			((AssetRequestContext) attribute).excludeBundles(context.getConfiguration().getBundleExcludes());
+			((AssetRequestContext) attribute).excludeJs(context.getConfiguration().getAssetJsExcludes());
+			((AssetRequestContext) attribute).excludeCss(context.getConfiguration().getAssetCssExcludes());
 			servletRequest.setAttribute(AssetRequestContext.class.getCanonicalName(), attribute);
 		}
 		return AssetRequestContext.class.cast(attribute);
@@ -269,6 +273,22 @@ public class AssetRequestContext {
 	}
 
 	/**
+	 * <p>
+	 * Adds the given collection of bundles to the current
+	 * {@link AssetRequestContext}.
+	 * 
+	 * @param bundles
+	 *            A collection of bundle names.
+	 * @return the current {@link AssetRequestContext}.
+	 */
+	public AssetRequestContext excludeBundles(Collection<String> bundles) {
+		for (String bundle : bundles) {
+			excludeBundles(bundle);
+		}
+		return this;
+	}
+
+	/**
 	 * Fluent exclude for bundles.
 	 * 
 	 * @param bundles
@@ -296,6 +316,13 @@ public class AssetRequestContext {
 		}
 	}
 
+	public AssetRequestContext excludeJs(Collection<String> jsToExclude) {
+		for (String js : jsToExclude) {
+			excludeJs(js);
+		}
+		return this;
+	}
+	
 	public AssetRequestContext excludeCss(String cssNames) {
 		if (StringUtils.isNotBlank(cssNames)) {
 			return excludeCss(cssNames.split(","));
@@ -303,6 +330,13 @@ public class AssetRequestContext {
 		else {
 			return this;
 		}
+	}
+
+	public AssetRequestContext excludeCss(Collection<String> cssToExclude) {
+		for (String css : cssToExclude) {
+			excludeCss(css);
+		}
+		return this;
 	}
 	
 	/**
@@ -325,9 +359,10 @@ public class AssetRequestContext {
 		}
 		return this;
 	}
-	
+
 	/**
-	 * @return all scopes to remove
+	 * @return all {@link BundleStorageUnit} to exclude from the current
+	 *         request.
 	 */
 	public String[] getExcludedBundles() {
 		return excludedBundles.toArray(new String[excludedBundles.size()]);
@@ -339,7 +374,7 @@ public class AssetRequestContext {
 	public String[] getExcludedJs() {
 		return excludedJs.toArray(new String[excludedJs.size()]);
 	}
-	
+
 	/**
 	 * @return all Stylesheets to exclude from the current request.
 	 */

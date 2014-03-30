@@ -2,6 +2,8 @@ package com.github.dandelion.core.asset.web;
 
 import static org.fest.assertions.Assertions.assertThat;
 
+import java.util.Arrays;
+
 import org.fest.assertions.MapAssert;
 import org.junit.Before;
 import org.junit.Test;
@@ -83,5 +85,33 @@ public class AssetRequestContextTest {
 		String nullValue = null;
 		context.addBundles(nullValue);
 		assertThat(context.getBundles(false)).isEmpty();
+	}
+	
+	@Test
+	public void should_initialize_excluded_bundles_from_context(){
+		Context context = new Context(new MockFilterConfig());
+		context.getConfiguration().setBundleExcludes(Arrays.asList("bundle1"));
+		
+		request = new MockHttpServletRequest();
+		request.setAttribute(WebConstants.DANDELION_CONTEXT_ATTRIBUTE, context);
+		
+		AssetRequestContext arc = AssetRequestContext.get(request);
+		assertThat(arc.getExcludedBundles()).contains("bundle1");
+		assertThat(arc.getExcludedJs()).isEmpty();
+		assertThat(arc.getExcludedCss()).isEmpty();
+	}
+	
+	@Test
+	public void should_initialize_excluded_js_from_context(){
+		Context context = new Context(new MockFilterConfig());
+		context.getConfiguration().setAssetJsExcludes(Arrays.asList("js1, js2"));
+		
+		request = new MockHttpServletRequest();
+		request.setAttribute(WebConstants.DANDELION_CONTEXT_ATTRIBUTE, context);
+		
+		AssetRequestContext arc = AssetRequestContext.get(request);
+		assertThat(arc.getExcludedBundles()).isEmpty();
+		assertThat(arc.getExcludedJs()).contains("js1", "js2");
+		assertThat(arc.getExcludedCss()).isEmpty();
 	}
 }
