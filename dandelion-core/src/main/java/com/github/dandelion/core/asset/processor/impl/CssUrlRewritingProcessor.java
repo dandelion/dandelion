@@ -40,6 +40,7 @@ import java.util.regex.Pattern;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.github.dandelion.core.Beta;
 import com.github.dandelion.core.DandelionException;
 import com.github.dandelion.core.asset.Asset;
 import com.github.dandelion.core.asset.AssetType;
@@ -83,6 +84,7 @@ import com.github.dandelion.core.utils.StringUtils;
  * @author Thibault Duchateau
  * @since 0.10.0
  */
+@Beta
 @CompatibleAssetType(types = AssetType.css)
 public class CssUrlRewritingProcessor extends AbstractAssetProcessor {
 
