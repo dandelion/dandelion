@@ -62,7 +62,7 @@ public class Configuration {
 	private boolean servlet3InUse;
 
 	private DandelionMode dandelionMode;
-	private boolean minificationOn;
+	private boolean minificationEnabled;
 	private List<String> assetLocationsResolutionStrategy;
 	private List<String> assetProcessors;
 	private String assetProcessorEncoding;
@@ -97,7 +97,7 @@ public class Configuration {
 		}
 
 		// Main properties
-		this.minificationOn = Boolean.parseBoolean(readConfig(DandelionConfig.MINIFICATION_ON));
+		this.minificationEnabled = Boolean.parseBoolean(readConfig(DandelionConfig.MINIFICATION));
 
 		// Bundles-related properties
 		this.bundleIncludes = PropertiesUtils.propertyAsList(readConfig(DandelionConfig.BUNDLE_INCLUDES), ",");
@@ -133,15 +133,22 @@ public class Configuration {
 		this.cacheManagerName = readConfig(DandelionConfig.CACHE_MANAGER_NAME);
 		this.cacheConfigurationLocation = readConfig(DandelionConfig.CACHE_CONFIGURATION_LOCATION);
 
-		servlet3InUse = filterConfig.getServletContext().getMajorVersion() == 3;
+		// Configure Servlet3 flag
+		Boolean overrideServlet3 = Boolean.parseBoolean(readConfig(DandelionConfig.OVERRIDE_SERVLET3));
+		if (overrideServlet3 == null) {
+			servlet3InUse = filterConfig.getServletContext().getMajorVersion() == 3;
+		}
+		else {
+			servlet3InUse = overrideServlet3;
+		}
 	}
 
 	public DandelionMode getDandelionMode() {
 		return dandelionMode;
 	}
 
-	public boolean isMinificationOn() {
-		return minificationOn;
+	public boolean isMinificationEnabled() {
+		return minificationEnabled;
 	}
 
 	public List<String> getAssetLocationsResolutionStrategy() {
@@ -204,6 +211,10 @@ public class Configuration {
 		return servlet3InUse;
 	}
 
+	public void setServlet3InUse(boolean used) {
+		servlet3InUse = used;
+	}
+
 	/**
 	 * <p>
 	 * Reads the given {@link DandelionConfig} in order of priority:
@@ -254,8 +265,8 @@ public class Configuration {
 		this.dandelionMode = dandelionMode;
 	}
 
-	public void setMinificationOn(boolean minificationOn) {
-		this.minificationOn = minificationOn;
+	public void setMinificationEnabled(boolean minificationEnabled) {
+		this.minificationEnabled = minificationEnabled;
 	}
 
 	public void setAssetLocationsResolutionStrategy(List<String> assetLocationsResolutionStrategy) {

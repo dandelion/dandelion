@@ -148,10 +148,9 @@ public class AssetMapper {
 				}
 			}
 		}
-		LOG.debug("");
 
 		Map<String, AssetLocator> locators = context.getAssetLocatorsMap();
-		if (!locators.keySet().contains(locationKey)) {
+		if (!locators.containsKey(locationKey)) {
 			StringBuilder msg = new StringBuilder("The location key '");
 			msg.append(locationKey);
 			msg.append("' is not valid. Please choose a valid one among ");
@@ -161,26 +160,21 @@ public class AssetMapper {
 		}
 
 		// Otherwise check for the locator
-		String location;
+		String location = null;
 		AssetLocator locator = locators.get(locationKey);
 		if (locators.containsKey(locationKey) && locators.get(locationKey).isActive()) {
 			LOG.debug("'{}' locator selected for the assset {}.", locator.getClass().getSimpleName(), asu.toLog());
 			location = locators.get(locationKey).getLocation(asu, request);
 		}
-		else {
-			location = asu.getLocations().get(locationKey);
-		}
 
 		if (location == null) {
 			LOG.warn("No location found for {} on {}", locationKey, asu.toString());
-			// continue;
 		}
 
 		asset.setConfigLocationKey(locationKey);
 		asset.setConfigLocation(asu.getLocations().get(locationKey));
 		String context = UrlUtils.getCurrentUrl(request, true).toString();
 		context = context.replaceAll("\\?", "_").replaceAll("&", "_");
-		// String context = UrlUtils.getContextPath(request);
 		String cacheKey = this.context.getCacheManager().generateCacheKey(context, asset);
 		asu.setCacheKey(cacheKey);
 		asset.setCacheKey(cacheKey);

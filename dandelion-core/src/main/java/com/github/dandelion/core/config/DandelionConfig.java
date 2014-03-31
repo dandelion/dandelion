@@ -44,7 +44,8 @@ public enum DandelionConfig {
 
 	// Main configurations
 	DANDELION_MODE("dandelion.mode", "development", ""), 
-	MINIFICATION_ON("minification.on", "false", "true"),
+	MINIFICATION("minification", "false", "true"),
+	OVERRIDE_SERVLET3("override.servlet3", "", ""),
 
 	// Asset configurations
 	ASSET_LOCATIONS_RESOLUTION_STRATEGY("asset.locations.resolution.strategy", "webjar,webapp,cdn", "webjar,webapp,cdn"), 

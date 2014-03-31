@@ -115,12 +115,12 @@ public class ConfigurationTest {
 	public void should_override_default_prod_configuration(){
 		Properties userProperties = new Properties();
 		userProperties.put(DandelionConfig.DANDELION_MODE.getName(), "production");
-		userProperties.put(DandelionConfig.MINIFICATION_ON.getName(), "false");
+		userProperties.put(DandelionConfig.MINIFICATION.getName(), "false");
 		
 		Configuration config = new Configuration(new MockFilterConfig(), userProperties);
 
 		assertThat(config.getDandelionMode()).isEqualTo(DandelionMode.PRODUCTION);
-		assertThat(config.isMinificationOn()).isFalse();
+		assertThat(config.isMinificationEnabled()).isFalse();
 	}
 	
 	@Test

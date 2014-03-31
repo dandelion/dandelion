@@ -37,6 +37,7 @@ import static com.github.dandelion.core.asset.AssetDomPosition.head;
  * Types of an asset. Currently, only stylesheets and scripts are supported.
  * 
  * @author Romain Lespinasse
+ * @since 0.2.0
  */
 public enum AssetType {
 

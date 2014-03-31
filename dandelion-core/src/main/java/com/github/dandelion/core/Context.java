@@ -281,7 +281,7 @@ public class Context {
 			LOG.info("Asset processor found: {}", ape.getClass().getSimpleName());
 		}
 
-		if (configuration.isMinificationOn()) {
+		if (configuration.isMinificationEnabled()) {
 			LOG.info("Asset processors enabled.");
 
 			for (String assetProcessorKey : configuration.getAssetProcessors()) {
