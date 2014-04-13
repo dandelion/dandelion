@@ -44,8 +44,8 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import com.github.dandelion.core.Context;
 import com.github.dandelion.core.DandelionException;
 import com.github.dandelion.core.asset.AssetType;
-import com.github.dandelion.core.asset.web.WebConstants;
 import com.github.dandelion.core.storage.AssetStorageUnit;
+import com.github.dandelion.core.web.WebConstants;
 
 public class CdnLocatorTest {
 
@@ -84,7 +84,7 @@ public class CdnLocatorTest {
 	public void should_return_the_same_protocol_relative_url() {
 		AssetStorageUnit asu = new AssetStorageUnit("my.js", singletonMap("cdn", protocol_relative_url));
 		String location = locator.getLocation(asu, request);
-		assertThat(location).isEqualTo("http:" + protocol_relative_url);
+		assertThat(location).isEqualTo(protocol_relative_url);
 	}
 
 	@Test

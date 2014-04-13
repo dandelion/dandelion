@@ -39,7 +39,6 @@ import com.github.dandelion.core.asset.locator.Servlet3Compatible;
 import com.github.dandelion.core.asset.locator.spi.AbstractAssetLocator;
 import com.github.dandelion.core.storage.AssetStorageUnit;
 import com.github.dandelion.core.utils.ResourceUtils;
-import com.github.dandelion.core.utils.UrlUtils;
 
 /**
  * <p>
@@ -64,12 +63,7 @@ public class CdnLocator extends AbstractAssetLocator implements Servlet2Compatib
 
 	@Override
 	public String doGetLocation(AssetStorageUnit asu, HttpServletRequest request) {
-		String location = asu.getLocations().get(getLocationKey());
-
-		if (UrlUtils.isProtocolRelative(location)) {
-			location = request.isSecure() ? "https:" : "http:" + location;
-		}
-		return location;
+		return asu.getLocations().get(getLocationKey());
 	}
 
 	/**

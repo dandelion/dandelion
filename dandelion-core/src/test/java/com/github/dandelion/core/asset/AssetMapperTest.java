@@ -45,8 +45,8 @@ import org.springframework.mock.web.MockHttpServletRequest;
 
 import com.github.dandelion.core.Context;
 import com.github.dandelion.core.DandelionException;
-import com.github.dandelion.core.asset.web.WebConstants;
 import com.github.dandelion.core.storage.AssetStorageUnit;
+import com.github.dandelion.core.web.WebConstants;
 
 public class AssetMapperTest {
 
@@ -158,6 +158,6 @@ public class AssetMapperTest {
 		Asset asset = assetMapper.mapToAsset(asu);
 		assertThat(asset.getConfigLocation()).isEqualTo("//my.domain/asset-name.js");
 		assertThat(asset.getConfigLocationKey()).isEqualTo("cdn");
-		assertThat(asset.getFinalLocation()).isEqualTo("http://my.domain/asset-name.js");
+		assertThat(asset.getFinalLocation()).isEqualTo("//my.domain/asset-name.js");
 	}
 }
