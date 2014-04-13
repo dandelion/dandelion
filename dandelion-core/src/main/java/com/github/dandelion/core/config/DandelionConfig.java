@@ -48,7 +48,7 @@ public enum DandelionConfig {
 	OVERRIDE_SERVLET3("override.servlet3", "", ""),
 
 	// Asset configurations
-	ASSET_LOCATIONS_RESOLUTION_STRATEGY("asset.locations.resolution.strategy", "webjar,webapp,cdn", "webjar,webapp,cdn"), 
+	ASSET_LOCATIONS_RESOLUTION_STRATEGY("asset.locations.resolution.strategy", "webapp,webjar,jar,cdn", "webapp,webjar,jar,cdn"), 
 	ASSET_PROCESSORS("asset.processors", "cssurlrewriting,jsmin,cssmin", "cssurlrewriting,jsmin,cssmin"), 
 	ASSET_PROCESSORS_ENCODING("asset.processors.encoding", "UTF-8", "UTF-8"), 
 	ASSET_JS_EXCLUDES("asset.js.excludes", "", ""), 

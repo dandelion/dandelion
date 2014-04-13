@@ -45,7 +45,7 @@ public class ConfigurationTest {
 		Configuration config = new Configuration(new MockFilterConfig(), new Properties());
 
 		assertThat(config.getDandelionMode()).isEqualTo(DandelionMode.DEVELOPMENT);
-		assertThat(config.getAssetLocationsResolutionStrategy()).containsSequence("webjar", "webapp", "cdn");
+		assertThat(config.getAssetLocationsResolutionStrategy()).containsSequence("webapp", "webjar", "jar", "cdn");
 		assertThat(config.getCacheAssetMaxSize()).isEqualTo(50);
 	}
 
