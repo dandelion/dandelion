@@ -52,8 +52,8 @@ import org.openqa.selenium.phantomjs.PhantomJSDriver;
 import org.openqa.selenium.phantomjs.PhantomJSDriverService;
 import org.openqa.selenium.remote.DesiredCapabilities;
 
-import com.github.dandelion.core.asset.web.AssetFilter;
-import com.github.dandelion.core.asset.web.AssetServlet;
+import com.github.dandelion.core.web.DandelionFilter;
+import com.github.dandelion.core.web.DandelionServlet;
 
 public abstract class PhantomJsTest extends FluentAdapter {
 	private static final Dimension DEFAULT_WINDOW_SIZE = new Dimension(1024, 768);
@@ -77,8 +77,8 @@ public abstract class PhantomJsTest extends FluentAdapter {
 		context.setResourceBase(webAppResources);
 		context.setClassLoader(classLoader);
 
-		context.addServlet(new ServletHolder(new AssetServlet()), AssetServlet.DANDELION_ASSETS_URL_PATTERN);
-		context.addFilter(new FilterHolder(new AssetFilter()), "/*", 0);
+		context.addServlet(new ServletHolder(new DandelionServlet()), DandelionServlet.DANDELION_ASSETS_URL_PATTERN);
+		context.addFilter(new FilterHolder(new DandelionFilter()), "/*", 0);
 
 		ServletHolder jsp = context.addServlet(JspServlet.class, "*.jsp");
 		jsp.setInitParameter("classpath", context.getClassPath());

@@ -36,11 +36,11 @@ import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 
 import com.github.dandelion.core.Context;
-import com.github.dandelion.core.asset.web.AssetRequestContext;
 import com.github.dandelion.core.storage.AssetStorageUnit;
 import com.github.dandelion.core.storage.BundleStorage;
 import com.github.dandelion.core.storage.BundleStorageUnit;
 import com.github.dandelion.core.utils.UrlUtils;
+import com.github.dandelion.core.web.AssetRequestContext;
 
 /**
  * <p>
@@ -97,11 +97,6 @@ public class AssetQuery {
 
 	public AssetQuery withPosition(AssetDomPosition desiredPosition) {
 		this.requestedAssets = AssetUtils.filtersByDomPosition(this.requestedAssets, desiredPosition);
-		return this;
-	}
-
-	public AssetQuery withType(AssetType desiredType) {
-		// TODO
 		return this;
 	}
 

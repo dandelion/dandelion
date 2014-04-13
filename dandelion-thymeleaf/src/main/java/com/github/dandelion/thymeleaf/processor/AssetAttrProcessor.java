@@ -35,7 +35,7 @@ import org.thymeleaf.Arguments;
 import org.thymeleaf.dom.Element;
 import org.thymeleaf.processor.ProcessorResult;
 
-import com.github.dandelion.core.asset.web.AssetRequestContext;
+import com.github.dandelion.core.web.AssetRequestContext;
 import com.github.dandelion.thymeleaf.dialect.AssetAttributeNames;
 import com.github.dandelion.thymeleaf.dialect.DandelionDialect;
 import com.github.dandelion.thymeleaf.util.ArgumentsUtil;

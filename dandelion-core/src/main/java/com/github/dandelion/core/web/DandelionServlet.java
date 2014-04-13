@@ -27,7 +27,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.github.dandelion.core.asset.web;
+package com.github.dandelion.core.web;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -53,11 +53,11 @@ import com.github.dandelion.core.asset.cache.spi.AssetCache;
  * @author Romain Lespinasse
  * @since 0.10.0
  */
-public class AssetServlet extends HttpServlet {
+public class DandelionServlet extends HttpServlet {
 
 	private static final long serialVersionUID = -6874842638265359418L;
 
-	private static Logger LOG = LoggerFactory.getLogger(AssetServlet.class);
+	private static Logger LOG = LoggerFactory.getLogger(DandelionServlet.class);
 
 	public static final String DANDELION_ASSETS = "dandelionAssets";
 	public static final String DANDELION_ASSETS_URL = "/dandelion-assets/";
@@ -74,6 +74,7 @@ public class AssetServlet extends HttpServlet {
 		httpHeadersConfigurer = new HttpHeadersConfigurer(context);
 		
 		// Get the asset content thanks to the cache key
+		System.out.println("context = " + context);
 		String assetKey = context.getCacheManager().getCacheKeyFromRequest(request);
 		AssetType assetType = AssetType.typeOfAsset(assetKey);
 		

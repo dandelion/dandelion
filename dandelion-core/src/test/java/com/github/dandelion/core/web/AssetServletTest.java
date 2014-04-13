@@ -1,4 +1,4 @@
-package com.github.dandelion.core.asset.web;
+package com.github.dandelion.core.web;
 
 import static org.fest.assertions.Assertions.assertThat;
 
@@ -15,10 +15,12 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import com.github.dandelion.core.Context;
 import com.github.dandelion.core.asset.Asset;
 import com.github.dandelion.core.asset.AssetType;
+import com.github.dandelion.core.web.DandelionServlet;
+import com.github.dandelion.core.web.WebConstants;
 
 public class AssetServletTest {
 	
-	private AssetServlet servlet = new AssetServlet();
+	private DandelionServlet servlet = new DandelionServlet();
 
 	private MockHttpServletRequest request;
 	private MockHttpServletResponse response;
@@ -45,7 +47,7 @@ public class AssetServletTest {
 		String cacheKey = context.getCacheManager().generateCacheKey("should_retrieve_content_from_cache", asset);
 		
 		context.getCacheManager().storeContent(cacheKey, content);
-		request.setRequestURI(AssetServlet.DANDELION_ASSETS_URL + context.getCacheManager().generateCacheKey("should_retrieve_content_from_cache", asset));
+		request.setRequestURI(DandelionServlet.DANDELION_ASSETS_URL + context.getCacheManager().generateCacheKey("should_retrieve_content_from_cache", asset));
 
 		servlet.doGet(request, response);
 

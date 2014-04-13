@@ -27,7 +27,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.github.dandelion.core.asset.web;
+package com.github.dandelion.core.web;
 
 import java.io.IOException;
 import java.util.Set;
@@ -60,9 +60,9 @@ import com.github.dandelion.core.utils.HtmlUtils;
  * @author Romain Lespinasse
  * @since 0.10.0
  */
-public class AssetFilter implements Filter {
+public class DandelionFilter implements Filter {
 
-	private static Logger LOG = LoggerFactory.getLogger(AssetFilter.class);
+	private static Logger LOG = LoggerFactory.getLogger(DandelionFilter.class);
 
 	private Context context;
 	
@@ -83,11 +83,11 @@ public class AssetFilter implements Filter {
 			filterChain.doFilter(servletRequest, serlvetResponse);
 			return;
 		}
-
+		
 		HttpServletRequest request = (HttpServletRequest) servletRequest;
 		HttpServletResponse response = (HttpServletResponse) serlvetResponse;
-
 		request.setAttribute(WebConstants.DANDELION_CONTEXT_ATTRIBUTE, context);
+
 		// Override the response with the graph viewer
 		if (context.isDevModeEnabled() && request.getParameter(WebConstants.DANDELION_SHOW_GRAPH) != null) {
 			GraphViewer graphViewer = new GraphViewer(context);
@@ -95,11 +95,15 @@ public class AssetFilter implements Filter {
 			return;
 		}
 
+//		if(context.isDevModeEnabled()) {
+//			init(filterConfig);
+//		}
+		
 		// Only filter requests that accept HTML
 		if (isFilterApplyable(request)) {
 			LOG.trace("The AssetFilter applies to the request {}", request.getRequestURL().toString());
 
-			AssetFilterResponseWrapper wrapper = new AssetFilterResponseWrapper(response);
+			DandelionFilterResponseWrapper wrapper = new DandelionFilterResponseWrapper(response);
 			filterChain.doFilter(request, wrapper);
 
 			String html = wrapper.getWrappedContent();
@@ -194,7 +198,7 @@ public class AssetFilter implements Filter {
 	 * @return true if the response can be updated.
 	 */
 	private boolean isDandelionApplyable(HttpServletRequest request, AssetRequestContext context,
-			AssetFilterResponseWrapper wrapper) {
+			DandelionFilterResponseWrapper wrapper) {
 		if (wrapper.getContentType() == null || !wrapper.getContentType().contains("text/html")) {
 			return false;
 		}

@@ -37,8 +37,8 @@ import javax.servlet.http.HttpServletRequest;
 import com.github.dandelion.core.asset.locator.Servlet2Compatible;
 import com.github.dandelion.core.asset.locator.Servlet3Compatible;
 import com.github.dandelion.core.asset.locator.spi.AbstractAssetLocator;
-import com.github.dandelion.core.asset.web.AssetRequestContext;
 import com.github.dandelion.core.storage.AssetStorageUnit;
+import com.github.dandelion.core.web.AssetRequestContext;
 
 /**
  * <p>

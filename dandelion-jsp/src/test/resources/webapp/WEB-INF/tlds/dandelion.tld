@@ -38,7 +38,7 @@
    <tag>
       <description>
       <![CDATA[
-         <p>The <dandelion:bundle> tag allows you to interact with the asset stack by adding/excluding bundles from the current request.</p>
+         <p>The <dandelion:bundle> tag allows you to add or exclude bundles from the current request.</p>
       ]]>
       </description>
       <name>bundle</name>
@@ -79,7 +79,7 @@
    <tag>
       <description>
       <![CDATA[
-         <p>The <dandelion:asset> tag allows you to interact with the assets by excluding js/css from the current request.</p>
+         <p>The <dandelion:asset> tag allows you to add or exclude js/css from the current request.</p>
       ]]>
       </description>
       <name>asset</name>

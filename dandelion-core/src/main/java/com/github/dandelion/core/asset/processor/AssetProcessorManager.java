@@ -48,8 +48,8 @@ import com.github.dandelion.core.Context;
 import com.github.dandelion.core.asset.Asset;
 import com.github.dandelion.core.asset.AssetType;
 import com.github.dandelion.core.asset.processor.spi.AssetProcessor;
-import com.github.dandelion.core.asset.web.AssetServlet;
 import com.github.dandelion.core.utils.UrlUtils;
+import com.github.dandelion.core.web.DandelionServlet;
 
 /**
  * <p>
@@ -101,7 +101,7 @@ public final class AssetProcessorManager {
 					asset.setCacheKey(newCacheKey);
 					
 					// The final asset location is overriden
-					asset.setFinalLocation(UrlUtils.getProcessedUrl(AssetServlet.DANDELION_ASSETS_URL + newCacheKey,
+					asset.setFinalLocation(UrlUtils.getProcessedUrl(DandelionServlet.DANDELION_ASSETS_URL + newCacheKey,
 							request, null));
 					// The cache system is updated with the new key/content pair
 					context.getCacheManager().storeContent(newCacheKey, assetWriter.toString());

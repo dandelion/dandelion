@@ -51,13 +51,13 @@ import com.github.dandelion.core.asset.Asset;
 import com.github.dandelion.core.asset.AssetDomPosition;
 import com.github.dandelion.core.asset.AssetMapper;
 import com.github.dandelion.core.asset.AssetQuery;
-import com.github.dandelion.core.asset.web.AssetFilterResponseWrapper;
-import com.github.dandelion.core.asset.web.AssetRequestContext;
-import com.github.dandelion.core.asset.web.WebConstants;
 import com.github.dandelion.core.storage.AssetStorageUnit;
 import com.github.dandelion.core.storage.BundleStorageUnit;
 import com.github.dandelion.core.utils.ResourceUtils;
 import com.github.dandelion.core.utils.UrlUtils;
+import com.github.dandelion.core.web.AssetRequestContext;
+import com.github.dandelion.core.web.DandelionFilterResponseWrapper;
+import com.github.dandelion.core.web.WebConstants;
 
 /**
  * <p>
@@ -92,7 +92,7 @@ public class GraphViewer {
 	public String getView(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
 			throws IOException, ServletException {
 
-		AssetFilterResponseWrapper wrapper = new AssetFilterResponseWrapper(response);
+		DandelionFilterResponseWrapper wrapper = new DandelionFilterResponseWrapper(response);
 		filterChain.doFilter(request, wrapper);
 
 		assetMapper = new AssetMapper(request, context);

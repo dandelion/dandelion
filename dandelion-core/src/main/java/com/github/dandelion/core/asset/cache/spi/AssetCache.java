@@ -35,7 +35,7 @@ import java.util.Set;
 import com.github.dandelion.core.Context;
 import com.github.dandelion.core.asset.Asset;
 import com.github.dandelion.core.asset.cache.impl.MemoryAssetCache;
-import com.github.dandelion.core.asset.web.AssetFilter;
+import com.github.dandelion.core.web.DandelionFilter;
 
 /**
  * <p>
@@ -62,7 +62,7 @@ public interface AssetCache {
 	 * by using the {@link Context}.
 	 * 
 	 * @param context
-	 *            The {@link Context} initialized in the {@link AssetFilter}.
+	 *            The {@link Context} initialized in the {@link DandelionFilter}.
 	 */
 	void initCache(Context context);
 

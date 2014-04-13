@@ -35,9 +35,9 @@ import com.github.dandelion.core.Beta;
 import com.github.dandelion.core.Context;
 import com.github.dandelion.core.asset.Asset;
 import com.github.dandelion.core.asset.processor.spi.AssetProcessor;
-import com.github.dandelion.core.asset.web.AssetFilter;
-import com.github.dandelion.core.asset.web.AssetServlet;
 import com.github.dandelion.core.storage.AssetStorageUnit;
+import com.github.dandelion.core.web.DandelionFilter;
+import com.github.dandelion.core.web.DandelionServlet;
 
 /**
  * <p>
@@ -55,7 +55,7 @@ public interface AssetLocator {
 	 * SPI by using the {@link Context}.
 	 * 
 	 * @param context
-	 *            The {@link Context} initialized in the {@link AssetFilter}.
+	 *            The {@link Context} initialized in the {@link DandelionFilter}.
 	 */
 	void initLocator(Context context);
 
@@ -114,7 +114,7 @@ public interface AssetLocator {
 
 	/**
 	 * @return {@code true} if the asset has to be cached in order to be
-	 *         accessed by the {@link AssetServlet}, otherwise {@code false} if
+	 *         accessed by the {@link DandelionServlet}, otherwise {@code false} if
 	 *         it can be directly accessed.
 	 */
 	boolean isCachingForced();

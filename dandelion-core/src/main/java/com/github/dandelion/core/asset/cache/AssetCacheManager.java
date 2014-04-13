@@ -39,8 +39,8 @@ import org.slf4j.LoggerFactory;
 import com.github.dandelion.core.Context;
 import com.github.dandelion.core.asset.Asset;
 import com.github.dandelion.core.asset.cache.spi.AssetCache;
-import com.github.dandelion.core.asset.web.AssetServlet;
 import com.github.dandelion.core.utils.Sha1Utils;
+import com.github.dandelion.core.web.DandelionServlet;
 
 /**
  * <p>
@@ -84,8 +84,8 @@ public class AssetCacheManager {
 
 	public String getCacheKeyFromRequest(HttpServletRequest request) {
 		String cacheKey = request.getRequestURL().substring(
-				request.getRequestURL().indexOf(AssetServlet.DANDELION_ASSETS_URL)
-						+ AssetServlet.DANDELION_ASSETS_URL.length());
+				request.getRequestURL().indexOf(DandelionServlet.DANDELION_ASSETS_URL)
+						+ DandelionServlet.DANDELION_ASSETS_URL.length());
 		return cacheKey;
 	}
 

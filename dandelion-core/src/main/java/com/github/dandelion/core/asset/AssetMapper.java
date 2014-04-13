@@ -42,9 +42,9 @@ import com.github.dandelion.core.Context;
 import com.github.dandelion.core.DandelionException;
 import com.github.dandelion.core.asset.cache.spi.AssetCache;
 import com.github.dandelion.core.asset.locator.spi.AssetLocator;
-import com.github.dandelion.core.asset.web.AssetServlet;
 import com.github.dandelion.core.storage.AssetStorageUnit;
 import com.github.dandelion.core.utils.UrlUtils;
+import com.github.dandelion.core.web.DandelionServlet;
 
 /**
  * <p>
@@ -181,7 +181,7 @@ public class AssetMapper {
 
 		if (locator.isCachingForced()) {
 			asset.setFinalLocation(UrlUtils
-					.getProcessedUrl(AssetServlet.DANDELION_ASSETS_URL + cacheKey, request, null));
+					.getProcessedUrl(DandelionServlet.DANDELION_ASSETS_URL + cacheKey, request, null));
 		}
 		else {
 			asset.setFinalLocation(location);

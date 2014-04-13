@@ -41,9 +41,9 @@ import org.springframework.mock.web.MockFilterConfig;
 import org.springframework.mock.web.MockHttpServletRequest;
 
 import com.github.dandelion.core.Context;
-import com.github.dandelion.core.asset.web.AssetRequestContext;
-import com.github.dandelion.core.asset.web.WebConstants;
 import com.github.dandelion.core.config.StandardConfigurationLoader;
+import com.github.dandelion.core.web.AssetRequestContext;
+import com.github.dandelion.core.web.WebConstants;
 
 public class AssetQueryTest {
 

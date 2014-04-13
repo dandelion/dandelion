@@ -2,20 +2,20 @@
  * [The "BSD licence"]
  * Copyright (c) 2013-2014 Dandelion
  * All rights reserved.
- *
+ * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
  * are met:
- *
+ * 
  * 1. Redistributions of source code must retain the above copyright
  * notice, this list of conditions and the following disclaimer.
  * 2. Redistributions in binary form must reproduce the above copyright
  * notice, this list of conditions and the following disclaimer in the
  * documentation and/or other materials provided with the distribution.
- * 3. Neither the name of Dandelion nor the names of its contributors
- * may be used to endorse or promote products derived from this software
+ * 3. Neither the name of Dandelion nor the names of its contributors 
+ * may be used to endorse or promote products derived from this software 
  * without specific prior written permission.
- *
+ * 
  * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
  * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
  * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
@@ -27,52 +27,29 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.github.dandelion.core.asset.web;
-
-import java.io.CharArrayWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
-
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpServletResponseWrapper;
+package com.github.dandelion.core.web;
 
 /**
  * <p>
- * Response wrapper that allows to access the wrapped response in a String
- * format thanks to the {@link #getWrappedContent()}.
+ * All web-related constants used in Dandelion.
  * 
- * @author Romain Lespinasse
+ * @author Thibault Duchateau
  * @since 0.10.0
  */
-public class AssetFilterResponseWrapper extends HttpServletResponseWrapper {
+public class WebConstants {
 
-	protected PrintWriter printWriter = null;
-	protected CharArrayWriter charArrayWriter = null;
+	/**
+	 * Request attributes
+	 */
+	public static final String DANDELION_CONTEXT_ATTRIBUTE = "dandelionContext";
 
-	public AssetFilterResponseWrapper(HttpServletResponse response) {
-		super(response);
-	}
+	/**
+	 * Request parameters
+	 */
+	public static final String DANDELION_SHOW_GRAPH = "showGraph";
 
-	@Override
-	public ServletOutputStream getOutputStream() throws IOException {
-		throw new IllegalStateException("getWriter() has already been called for this response");
-	}
-
-	@Override
-	public PrintWriter getWriter() throws IOException {
-		if (charArrayWriter == null) {
-			charArrayWriter = new CharArrayWriter();
-		}
-
-		if (printWriter == null) {
-			printWriter = new PrintWriter(charArrayWriter);
-		}
-
-		return printWriter;
-	}
-
-	public String getWrappedContent() {
-		return charArrayWriter.toString();
-	}
+	/**
+	 * Request attributes/parameters
+	 */
+	public static final String DANDELION_ASSET_FILTER_STATE = "dandelionAssetFilterState";
 }

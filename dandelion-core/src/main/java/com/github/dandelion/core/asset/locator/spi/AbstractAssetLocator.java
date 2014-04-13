@@ -38,9 +38,9 @@ import com.github.dandelion.core.Context;
 import com.github.dandelion.core.DandelionException;
 import com.github.dandelion.core.asset.Asset;
 import com.github.dandelion.core.asset.processor.spi.AssetProcessor;
-import com.github.dandelion.core.asset.web.AssetRequestContext;
 import com.github.dandelion.core.storage.AssetStorageUnit;
 import com.github.dandelion.core.utils.StringUtils;
+import com.github.dandelion.core.web.AssetRequestContext;
 
 /**
  * <p>

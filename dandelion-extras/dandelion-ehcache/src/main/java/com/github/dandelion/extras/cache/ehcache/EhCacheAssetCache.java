@@ -44,9 +44,9 @@ import com.github.dandelion.core.Context;
 import com.github.dandelion.core.asset.Asset;
 import com.github.dandelion.core.asset.cache.spi.AbstractAssetCache;
 import com.github.dandelion.core.asset.cache.spi.AssetCache;
-import com.github.dandelion.core.asset.web.AssetServlet;
 import com.github.dandelion.core.utils.ResourceScanner;
 import com.github.dandelion.core.utils.StringUtils;
+import com.github.dandelion.core.web.DandelionServlet;
 
 /**
  * <p>
@@ -84,7 +84,7 @@ import com.github.dandelion.core.utils.StringUtils;
  * Note finally that the same cache is used for two purposes:
  * <ul>
  * <li>Store the content of {@link Asset}s that are served by the
- * {@link AssetServlet}</li>
+ * {@link DandelionServlet}</li>
  * <li>Store the set of {@link Asset}s to be displayed on a page, for a given
  * request, thus avoiding location resolution and processing</li>
  * </ul>
