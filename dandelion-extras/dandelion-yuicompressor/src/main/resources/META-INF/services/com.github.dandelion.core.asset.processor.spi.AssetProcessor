@@ -1,2 +1,2 @@
-com.github.dandelion.extras.yui.asset.processor.CssYuiProcessor
-com.github.dandelion.extras.yui.asset.processor.JsYuiProcessor
+com.github.dandelion.extras.yui.asset.processor.CssMinYuiProcessor
+com.github.dandelion.extras.yui.asset.processor.JsMinYuiProcessor

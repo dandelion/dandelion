@@ -51,13 +51,13 @@ import com.yahoo.platform.yui.compressor.CssCompressor;
  * @since 0.10.0
  */
 @CompatibleAssetType(types = AssetType.css)
-public class CssYuiProcessor extends AbstractAssetProcessor {
+public class CssMinYuiProcessor extends AbstractAssetProcessor {
 
-	private static final Logger LOG = LoggerFactory.getLogger(CssYuiProcessor.class);
+	private static final Logger LOG = LoggerFactory.getLogger(CssMinYuiProcessor.class);
 
 	@Override
 	public String getProcessorKey() {
-		return "css-yui";
+		return "cssminyui";
 	}
 
 	@Override

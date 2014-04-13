@@ -52,13 +52,13 @@ import com.yahoo.platform.yui.compressor.JavaScriptCompressor;
  * @since 0.10.0
  */
 @CompatibleAssetType(types = AssetType.js)
-public class JsYuiProcessor extends AbstractAssetProcessor {
+public class JsMinYuiProcessor extends AbstractAssetProcessor {
 
-	private static final Logger LOG = LoggerFactory.getLogger(JsYuiProcessor.class);
+	private static final Logger LOG = LoggerFactory.getLogger(JsMinYuiProcessor.class);
 
 	@Override
 	public String getProcessorKey() {
-		return "js-yui";
+		return "jsminyui";
 	}
 
 	@Override
