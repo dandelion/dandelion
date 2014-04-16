@@ -57,8 +57,8 @@ public class MemoryAssetCache extends AbstractAssetCache {
 	@Override
 	public void initCache(Context context) {
 		super.initCache(context);
-		cache = new SimpleLruCache<String, String>(context.getConfiguration().getCacheAssetMaxSize());
-		assets = new SimpleLruCache<String, Set<Asset>>(context.getConfiguration().getCacheRequestMaxSize());
+		cache = new ConcurrentLruCache<String, String>(context.getConfiguration().getCacheAssetMaxSize());
+		assets = new ConcurrentLruCache<String, Set<Asset>>(context.getConfiguration().getCacheRequestMaxSize());
 	}
 
 	/**
