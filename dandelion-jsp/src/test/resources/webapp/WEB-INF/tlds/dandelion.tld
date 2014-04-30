@@ -31,7 +31,7 @@
 <taglib xmlns="http://java.sun.com/xml/ns/j2ee"
         version="2.0">
    <description>Taglib for Dandelion JSP module</description>
-   <tlib-version>0.10.0</tlib-version>
+   <tlib-version>0100</tlib-version>
    <short-name>dandelion</short-name>
    <uri>http://github.com/dandelion</uri>
    
@@ -79,7 +79,7 @@
    <tag>
       <description>
       <![CDATA[
-         <p>The <dandelion:asset> tag allows you to add or exclude js/css from the current request.</p>
+         <p>The <dandelion:asset> tag allows you to exclude individual js/css from the current request.</p>
       ]]>
       </description>
       <name>asset</name>
