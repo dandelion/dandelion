@@ -247,7 +247,7 @@ public class Context {
 				if (Servlet3Compatible.class.isAssignableFrom(al.getClass())) {
 					al.initLocator(this);
 					assetLocatorsMap.put(al.getLocationKey(), al);
-					LOG.info("Asset locator found: {}", al.getLocationKey());
+					LOG.info("Asset locator found: {} ({})", al.getLocationKey(), al.getClass().getSimpleName());
 				}
 			}
 			// Otherwise register all Servlet2-compatible asset locators
@@ -255,7 +255,7 @@ public class Context {
 				if (Servlet2Compatible.class.isAssignableFrom(al.getClass())) {
 					al.initLocator(this);
 					assetLocatorsMap.put(al.getLocationKey(), al);
-					LOG.info("Asset locator found: {}", al.getLocationKey());
+					LOG.info("Asset locator found: {} ({})", al.getLocationKey(), al.getClass().getSimpleName());
 				}
 			}
 		}

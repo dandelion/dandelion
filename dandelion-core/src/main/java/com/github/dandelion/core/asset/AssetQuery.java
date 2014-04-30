@@ -65,7 +65,7 @@ public class AssetQuery {
 
 		if (this.requestedAssets == null || context.isDevModeEnabled()) {
 
-			// Gathers all asset storage units in an ordered set
+			// All asset storage units are fetched in an ordered set
 			Set<AssetStorageUnit> assetStorageUnits = new LinkedHashSet<AssetStorageUnit>();
 
 			String[] bundleNames = AssetRequestContext.get(request).getBundles(true);
