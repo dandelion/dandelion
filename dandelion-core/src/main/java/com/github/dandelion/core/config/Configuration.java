@@ -40,6 +40,7 @@ import org.slf4j.LoggerFactory;
 import com.github.dandelion.core.Context;
 import com.github.dandelion.core.DandelionMode;
 import com.github.dandelion.core.utils.PropertiesUtils;
+import com.github.dandelion.core.utils.StringUtils;
 
 /**
  * <p>
@@ -134,12 +135,12 @@ public class Configuration {
 		this.cacheConfigurationLocation = readConfig(DandelionConfig.CACHE_CONFIGURATION_LOCATION);
 
 		// Configure Servlet3 flag
-		Boolean overrideServlet3 = Boolean.parseBoolean(readConfig(DandelionConfig.OVERRIDE_SERVLET3));
-		if (overrideServlet3 == null) {
+		String overrideServlet3 = readConfig(DandelionConfig.OVERRIDE_SERVLET3);
+		if (StringUtils.isBlank(overrideServlet3)) {
 			servlet3InUse = filterConfig.getServletContext().getMajorVersion() == 3;
 		}
 		else {
-			servlet3InUse = overrideServlet3;
+			servlet3InUse = Boolean.parseBoolean(overrideServlet3);
 		}
 	}
 
