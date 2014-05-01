@@ -119,4 +119,9 @@ public interface AssetCache {
 	 *            The key under which the content will be removed.
 	 */
 	void remove(String cacheKey);
+
+	/**
+	 * Clear all objects stored in cache.
+	 */
+	void clearAll();
 }

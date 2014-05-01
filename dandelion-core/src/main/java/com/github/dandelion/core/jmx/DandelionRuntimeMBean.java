@@ -12,7 +12,7 @@
  * 2. Redistributions in binary form must reproduce the above copyright
  * notice, this list of conditions and the following disclaimer in the
  * documentation and/or other materials provided with the distribution.
- * 3. Neither the name of Dandelion nor the names of its contributors 
+ * 3. Neither the name of Dandelion nor the names of its contributors
  * may be used to endorse or promote products derived from this software 
  * without specific prior written permission.
  * 
@@ -27,50 +27,19 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.github.dandelion.core.asset.cache.impl;
+package com.github.dandelion.core.jmx;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.concurrent.locks.ReadWriteLock;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
+import com.github.dandelion.core.Beta;
 
-public class ConcurrentLruCache<K, V> extends LinkedHashMap<K, V> {
+/**
+ * 
+ * @author Thibault Duchateau
+ * @since 0.10.0
+ */
+@Beta
+public interface DandelionRuntimeMBean {
 
-	private static final long serialVersionUID = 4555114766903087183L;
-	private int maxEntries;
-	private ReadWriteLock lock = new ReentrantReadWriteLock();
-
-	public ConcurrentLruCache(int maxEntries) {
-		super(maxEntries + 1);
-		this.maxEntries = maxEntries;
-	}
-
-	@Override
-	protected boolean removeEldestEntry(Map.Entry<K, V> eldest) {
-		return super.size() > maxEntries && isRemovable(eldest);
-	}
-
-	protected boolean isRemovable(Map.Entry<K, V> eldest) {
-		return true;
-	}
-
-	@Override
-	public V get(Object key) {
-		try {
-			lock.readLock().lock();
-			return super.get(key);
-		} finally {
-			lock.readLock().unlock();
-		}
-	}
-
-	@Override
-	public V put(K key, V value) {
-		try {
-			lock.writeLock().lock();
-			return super.put(key, value);
-		} finally {
-			lock.writeLock().unlock();
-		}
-	}
+	public void reloadBundles();
+	public void clearAllCache();
+	public void clearAssetCache();
 }

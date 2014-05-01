@@ -41,7 +41,7 @@ import com.github.dandelion.core.Context;
 
 /**
  * <p>
- * Configures the HTTP headers of a {@link HttpServletResponse}s.
+ * Configures the HTTP headers of a {@link HttpServletResponse}.
  * 
  * @author Thibault Duchateau
  * @since 0.10.0

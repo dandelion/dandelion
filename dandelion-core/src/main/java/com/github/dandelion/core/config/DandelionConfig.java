@@ -29,6 +29,7 @@
  */
 package com.github.dandelion.core.config;
 
+import com.github.dandelion.core.Beta;
 import com.github.dandelion.core.DandelionMode;
 
 /**
@@ -46,6 +47,7 @@ public enum DandelionConfig {
 	DANDELION_MODE("dandelion.mode", "development", ""), 
 	MINIFICATION("minification", "false", "true"),
 	OVERRIDE_SERVLET3("override.servlet3", "", ""),
+	@Beta JMX_ENABLED("jmx", "false", "false"),
 
 	// Asset configurations
 	ASSET_LOCATIONS_RESOLUTION_STRATEGY("asset.locations.resolution.strategy", "webapp,webjar,jar,cdn", "webapp,webjar,jar,cdn"), 
@@ -55,6 +57,7 @@ public enum DandelionConfig {
 	ASSET_CSS_EXCLUDES("asset.css.excludes", "", ""),
 
 	// Cache configurations
+	CACHE_NAME("cache.name", "", ""),
 	CACHE_ASSET_MAX_SIZE("cache.asset.max.size", "50", "50"), 
 	CACHE_REQUEST_MAX_SIZE("cache.request.max.size", "50", "50"), 
 	CACHE_MANAGER_NAME("cache.manager.name", "", ""), 

@@ -51,6 +51,9 @@ import com.github.dandelion.core.utils.StringUtils;
  * All configuration present in the {@link DandelionConfig} enum are read using
  * a particular strategy. See {@link #readConfig(DandelionConfig)}.
  * 
+ * <p>
+ * There should be only one instance of this class in the application.
+ * 
  * @author Thibault Duchateau
  * @since 0.10.0
  */
@@ -60,7 +63,8 @@ public class Configuration {
 
 	private FilterConfig filterConfig;
 	private Properties userProperties;
-	private boolean servlet3InUse;
+	private boolean servlet3Enabled;
+	private boolean jmxEnabled;
 
 	private DandelionMode dandelionMode;
 	private boolean minificationEnabled;
@@ -69,6 +73,7 @@ public class Configuration {
 	private String assetProcessorEncoding;
 	private List<String> assetJsExcludes;
 	private List<String> assetCssExcludes;
+	private String cacheName;
 	private int cacheAssetMaxSize;
 	private int cacheRequestMaxSize;
 	private String cacheManagerName;
@@ -99,6 +104,7 @@ public class Configuration {
 
 		// Main properties
 		this.minificationEnabled = Boolean.parseBoolean(readConfig(DandelionConfig.MINIFICATION));
+		this.jmxEnabled = Boolean.parseBoolean(readConfig(DandelionConfig.JMX_ENABLED));
 
 		// Bundles-related properties
 		this.bundleIncludes = PropertiesUtils.propertyAsList(readConfig(DandelionConfig.BUNDLE_INCLUDES), ",");
@@ -113,6 +119,7 @@ public class Configuration {
 		this.assetCssExcludes = PropertiesUtils.propertyAsList(readConfig(DandelionConfig.ASSET_CSS_EXCLUDES), ",");
 
 		// Caching-related properties
+		this.cacheName = readConfig(DandelionConfig.CACHE_NAME);
 		try {
 			this.cacheAssetMaxSize = Integer.parseInt(readConfig(DandelionConfig.CACHE_ASSET_MAX_SIZE));
 		}
@@ -136,11 +143,11 @@ public class Configuration {
 
 		// Configure Servlet3 flag
 		String overrideServlet3 = readConfig(DandelionConfig.OVERRIDE_SERVLET3);
-		if (StringUtils.isBlank(overrideServlet3)) {
-			servlet3InUse = filterConfig.getServletContext().getMajorVersion() == 3;
+		if (StringUtils.isBlank(overrideServlet3) && filterConfig != null) {
+			this.servlet3Enabled = filterConfig.getServletContext().getMajorVersion() == 3;
 		}
 		else {
-			servlet3InUse = Boolean.parseBoolean(overrideServlet3);
+			this.servlet3Enabled = Boolean.parseBoolean(overrideServlet3);
 		}
 	}
 
@@ -208,12 +215,20 @@ public class Configuration {
 		return userProperties.getProperty(key, defaultValue);
 	}
 
-	public boolean isServlet3InUse() {
-		return servlet3InUse;
+	public boolean isServlet3Enabled() {
+		return servlet3Enabled;
 	}
 
-	public void setServlet3InUse(boolean used) {
-		servlet3InUse = used;
+	public void setServlet3Enabled(boolean servlet3Enabled) {
+		this.servlet3Enabled = servlet3Enabled;
+	}
+
+	public boolean isJmxEnabled() {
+		return jmxEnabled;
+	}
+
+	public void setJmxEnabled(boolean jmxEnabled) {
+		this.jmxEnabled = jmxEnabled;
 	}
 
 	/**
@@ -288,6 +303,14 @@ public class Configuration {
 
 	public void setAssetCssExcludes(List<String> assetCssExcludes) {
 		this.assetCssExcludes = assetCssExcludes;
+	}
+
+	public String getCacheName() {
+		return cacheName;
+	}
+
+	public void setCacheName(String cacheName) {
+		this.cacheName = cacheName;
 	}
 
 	public void setCacheAssetMaxSize(int cacheAssetMaxSize) {

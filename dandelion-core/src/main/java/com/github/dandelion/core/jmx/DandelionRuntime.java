@@ -2,20 +2,20 @@
  * [The "BSD licence"]
  * Copyright (c) 2013-2014 Dandelion
  * All rights reserved.
- *
+ * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
  * are met:
- *
+ * 
  * 1. Redistributions of source code must retain the above copyright
  * notice, this list of conditions and the following disclaimer.
  * 2. Redistributions in binary form must reproduce the above copyright
  * notice, this list of conditions and the following disclaimer in the
  * documentation and/or other materials provided with the distribution.
  * 3. Neither the name of Dandelion nor the names of its contributors
- * may be used to endorse or promote products derived from this software
+ * may be used to endorse or promote products derived from this software 
  * without specific prior written permission.
- *
+ * 
  * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
  * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
  * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
@@ -27,63 +27,50 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+package com.github.dandelion.core.jmx;
 
-package com.github.dandelion.core.asset.locator.impl;
+import javax.servlet.FilterConfig;
 
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
+import com.github.dandelion.core.Beta;
 import com.github.dandelion.core.Context;
-import com.github.dandelion.core.asset.locator.Servlet3Compatible;
-import com.github.dandelion.core.asset.locator.spi.AbstractAssetLocator;
-import com.github.dandelion.core.storage.AssetStorageUnit;
-import com.github.dandelion.core.utils.ResourceUtils;
 
 /**
- * <p>
- * Servlet 3.x compatible locator for assets that use {@code jar} as a location
- * key.
- * 
- * <p>
- * This locator will be automatically selected if the Servlet 3.x API is being
- * used. See {@link Context#initAssetLocators()}.
  * 
  * @author Thibault Duchateau
  * @since 0.10.0
  */
-public class JarLocator extends AbstractAssetLocator implements Servlet3Compatible {
+@Beta
+public class DandelionRuntime implements DandelionRuntimeMBean {
 
+	private Context context;
+	
+	public DandelionRuntime(Context context, FilterConfig filterConfig){
+		this.context = context;
+	}
+	
 	/**
-	 * {@inheritDoc}
+	 * Blabla
 	 */
 	@Override
-	public String getLocationKey() {
-		return "jar";
+	public void reloadBundles() {
+		// TODO Auto-generated method stub
+		System.out.println("RELOADING!!!");
+		context.initBundleStorage();
+		System.out.println("Context reloaded");
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
-	public boolean isCachingForced() {
-		return false;
+	public void clearAllCache() {
+		System.out.println("Clearing all cache");
+		context.getAssetCache().clearAll();
+		System.out.println("All caches cleared");
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
-	public String doGetLocation(AssetStorageUnit asu, HttpServletRequest request) {
-		String location = asu.getLocations().get(getLocationKey());
-		return request.getContextPath() + "/" + (location.startsWith("/") ? location.substring(1) : location);
+	public void clearAssetCache() {
+		// TODO Auto-generated method stub
+		
 	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected String doGetContent(String location, Map<String, Object> parameters, HttpServletRequest request) {
-		return ResourceUtils.getContentFromUrl(request, location, true);
-	}
+	
+	
 }

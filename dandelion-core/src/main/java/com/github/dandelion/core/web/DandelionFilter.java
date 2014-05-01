@@ -86,6 +86,7 @@ public class DandelionFilter implements Filter {
 		
 		HttpServletRequest request = (HttpServletRequest) servletRequest;
 		HttpServletResponse response = (HttpServletResponse) serlvetResponse;
+
 		request.setAttribute(WebConstants.DANDELION_CONTEXT_ATTRIBUTE, context);
 
 		// Override the response with the graph viewer
@@ -94,10 +95,6 @@ public class DandelionFilter implements Filter {
 			response.getWriter().println(graphViewer.getView(request, response, filterChain));
 			return;
 		}
-
-//		if(context.isDevModeEnabled()) {
-//			init(filterConfig);
-//		}
 		
 		// Only filter requests that accept HTML
 		if (isFilterApplyable(request)) {
@@ -207,9 +204,9 @@ public class DandelionFilter implements Filter {
 		// }
 		return true;
 	}
-
+	
 	@Override
 	public void destroy() {
-		// Nothing to do here
+		context.destroy();
 	}
 }

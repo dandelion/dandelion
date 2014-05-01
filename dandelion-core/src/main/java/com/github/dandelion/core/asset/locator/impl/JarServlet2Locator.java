@@ -48,7 +48,7 @@ import com.github.dandelion.core.utils.UrlUtils;
  * 
  * <p>
  * This locator will be automatically selected if the Servlet 2.x API is being
- * used. See {@link Context#initializeAssetLocators()}.
+ * used. See {@link Context#initAssetLocators()}.
  * 
  * @author Thibault Duchateau
  * @since 0.10.0

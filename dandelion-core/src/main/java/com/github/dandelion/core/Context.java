@@ -29,6 +29,7 @@
  */
 package com.github.dandelion.core;
 
+import java.lang.management.ManagementFactory;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -36,6 +37,9 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.ServiceLoader;
 
+import javax.management.JMException;
+import javax.management.MBeanServer;
+import javax.management.ObjectName;
 import javax.servlet.FilterConfig;
 
 import org.slf4j.Logger;
@@ -55,14 +59,16 @@ import com.github.dandelion.core.bundle.loader.spi.BundleLoader;
 import com.github.dandelion.core.config.Configuration;
 import com.github.dandelion.core.config.ConfigurationLoader;
 import com.github.dandelion.core.config.StandardConfigurationLoader;
+import com.github.dandelion.core.jmx.DandelionRuntime;
 import com.github.dandelion.core.storage.BundleStorage;
 import com.github.dandelion.core.utils.ClassUtils;
 import com.github.dandelion.core.utils.StringUtils;
 
 /**
  * <p>
- * The {@link Context} is used to pick up different classes in charge of the
- * configuration loading, instantiate them and cache them.
+ * This class is in charge of discovering and storing several configuration
+ * points, such as the configured {@link AssetCache} implementation or the
+ * active {@link AssetProcessor}s.
  * 
  * <p>
  * There should be only one instance of this class in the application.
@@ -73,14 +79,6 @@ import com.github.dandelion.core.utils.StringUtils;
 public class Context {
 
 	private static Logger LOG = LoggerFactory.getLogger(Context.class);
-
-	/**
-	 * Service loaders
-	 */
-	private ServiceLoader<AssetCache> assetCacheServiceLoader = ServiceLoader.load(AssetCache.class);
-	private ServiceLoader<AssetLocator> alServiceLoader = ServiceLoader.load(AssetLocator.class);
-	private ServiceLoader<AssetProcessor> apServiceLoader = ServiceLoader.load(AssetProcessor.class);
-	private ServiceLoader<BundleLoader> blServiceLoader = ServiceLoader.load(BundleLoader.class);
 
 	private AssetCache assetCache;
 	private Map<String, AssetProcessor> processorsMap;
@@ -93,8 +91,14 @@ public class Context {
 	private BundleStorage bundleStorage;
 	private Configuration configuration;
 
+	/**
+	 * Public constructor.
+	 * 
+	 * @param filterConfig
+	 *            The servlet filter configuration.
+	 */
 	public Context(FilterConfig filterConfig) {
-		initialize(filterConfig);
+		init(filterConfig);
 	}
 
 	/**
@@ -102,20 +106,21 @@ public class Context {
 	 * Performs all the required initializations of the Dandelion context.
 	 * 
 	 * @param filterConfig
-	 *            The filter configuration.
+	 *            The servlet filter configuration.
 	 */
-	public void initialize(FilterConfig filterConfig) {
+	public void init(FilterConfig filterConfig) {
 
-		initializeConfiguration(filterConfig);
-		initializeBundleLoaders();
-		initializeAssetLocators();
-		initializeAssetCache();
-		initializeAssetProcessors();
+		initConfiguration(filterConfig);
+		initBundleLoaders();
+		initAssetLocators();
+		initAssetCache();
+		initAssetProcessors();
 
 		assetProcessorManager = new AssetProcessorManager(this);
 		assetCacheManager = new AssetCacheManager(this);
 
-		initializeBundleStorage();
+		initBundleStorage();
+		initMBean(filterConfig);
 	}
 
 	/**
@@ -131,7 +136,7 @@ public class Context {
 	 * 
 	 * @return an implementation of {@link ConfigurationLoader}.
 	 */
-	public void initializeConfiguration(FilterConfig filterConfig) {
+	public void initConfiguration(FilterConfig filterConfig) {
 
 		ConfigurationLoader configurationLoader = null;
 
@@ -170,10 +175,11 @@ public class Context {
 	 * <li>Finally the {@link DandelionBundleLoader} which loads "user bundles"</li>
 	 * </ol>
 	 */
-	public void initializeBundleLoaders() {
+	public void initBundleLoaders() {
+		ServiceLoader<BundleLoader> blServiceLoader = ServiceLoader.load(BundleLoader.class);
+		
 		VendorBundleLoader vendorLoader = new VendorBundleLoader();
 		vendorLoader.initLoader(this);
-
 		DandelionBundleLoader dandelionLoader = new DandelionBundleLoader();
 		dandelionLoader.initLoader(this);
 
@@ -194,34 +200,31 @@ public class Context {
 	}
 
 	/**
-	 * <p>
-	 * Initializes the {@link AssetCache} to use for caching.
+	 * Initializes the service provider of {@link AssetCache} to use for
+	 * caching.
 	 */
-	public void initializeAssetCache() {
+	public void initAssetCache() {
+		ServiceLoader<AssetCache> assetCacheServiceLoader = ServiceLoader.load(AssetCache.class);
+		
 		Map<String, AssetCache> caches = new HashMap<String, AssetCache>();
 		for (AssetCache ac : assetCacheServiceLoader) {
-			ac.initCache(this);
-			caches.put(ac.getCacheName(), ac);
-			LOG.info("Asset cache found: {}", ac.getClass().getSimpleName());
+			caches.put(ac.getCacheName().toLowerCase().trim(), ac);
+			LOG.info("Asset caching system found: {}", ac.getClass().getSimpleName());
 		}
 
-		String cacheName = configuration.getCacheManagerName();
-		if (!caches.isEmpty()) {
-			if (caches.containsKey(cacheName)) {
-				assetCache = caches.get(cacheName);
-			}
-			else if (cacheName == null && caches.size() == 1) {
-				assetCache = caches.values().iterator().next();
+		String desiredCacheName = configuration.getCacheName();
+		if(StringUtils.isNotBlank(desiredCacheName)) {
+			if(caches.containsKey(desiredCacheName)) {
+				assetCache = caches.get(desiredCacheName);
 			}
 			else {
-				LOG.warn("Asset Cache Strategy is set with {}, but only caches with names {} have been found.",
-						cacheName, caches.keySet());
+				LOG.warn(
+						"The desired caching system ({}) hasn't been found in the classpath. Did you forget to add a dependency? The default one will be used.",
+						desiredCacheName);
 			}
 		}
-		else if (cacheName != null) {
-			LOG.warn("Asset Cache Strategy is set with {}, but we don't find any cache", cacheName);
-		}
 
+		// If no caching system is detected, it defaults to memory caching
 		if (assetCache == null) {
 			assetCache = new MemoryAssetCache();
 		}
@@ -233,17 +236,18 @@ public class Context {
 	}
 
 	/**
-	 * <p>
 	 * Initializes all service providers of the {@link AssetLocator} SPI. The
 	 * order doesn't matter.
 	 */
-	public void initializeAssetLocators() {
+	public void initAssetLocators() {
+		ServiceLoader<AssetLocator> alServiceLoader = ServiceLoader.load(AssetLocator.class);
+		
 		assetLocatorsMap = new HashMap<String, AssetLocator>();
 		for (AssetLocator al : alServiceLoader) {
 
 			// Only register Servlet3-compatible asset locators if Servlet 3.x
 			// is being used
-			if (this.getConfiguration().isServlet3InUse()) {
+			if (this.getConfiguration().isServlet3Enabled()) {
 				if (Servlet3Compatible.class.isAssignableFrom(al.getClass())) {
 					al.initLocator(this);
 					assetLocatorsMap.put(al.getLocationKey(), al);
@@ -270,8 +274,10 @@ public class Context {
 	 * If minification is enabled, the {@link #activeProcessors} is filled with
 	 * default service providers.
 	 */
-	public void initializeAssetProcessors() {
+	public void initAssetProcessors() {
 
+		ServiceLoader<AssetProcessor> apServiceLoader = ServiceLoader.load(AssetProcessor.class);
+		
 		processorsMap = new HashMap<String, AssetProcessor>();
 		activeProcessors = new ArrayList<AssetProcessor>();
 
@@ -304,7 +310,7 @@ public class Context {
 	 * <p>
 	 * Once loader, some checks are performed on the {@link BundleStorage}.
 	 */
-	public void initializeBundleStorage() {
+	public void initBundleStorage() {
 		bundleStorage = new BundleStorage();
 		for (BundleLoader bundleLoader : getBundleLoaders()) {
 			bundleStorage.storeBundles(bundleLoader.loadBundles());
@@ -312,6 +318,43 @@ public class Context {
 		bundleStorage.checkBundleDag();
 	}
 
+	/**
+	 * If JMX is enabled, initializes a MBean allowing to reload bundles and
+	 * access cache.
+	 * 
+	 * @param filterConfig
+	 *            The servlet filter configuration.
+	 */
+	public void initMBean(FilterConfig filterConfig) {
+		if (configuration.isJmxEnabled()) {
+			try {
+				MBeanServer mbeanServer = ManagementFactory.getPlatformMBeanServer();
+				ObjectName name = new ObjectName("com.github.dandelion", "type", DandelionRuntime.class.getSimpleName());
+				if (!mbeanServer.isRegistered(name)) {
+					mbeanServer.registerMBean(new DandelionRuntime(this, filterConfig), name);
+				}
+			}
+			catch (final JMException e) {
+				LOG.error("An exception occured while registering the DandelionRuntimeMBean", e);
+			}
+		}
+	}
+	
+	public void destroy(){
+		if (configuration.isJmxEnabled()) {
+			try {
+				MBeanServer mbeanServer = ManagementFactory.getPlatformMBeanServer();
+				ObjectName name = new ObjectName("com.github.dandelion", "type", DandelionRuntime.class.getSimpleName());
+				if (mbeanServer.isRegistered(name)) {
+					mbeanServer.unregisterMBean(name);
+				}
+			}
+			catch (final JMException e) {
+				LOG.error("An exception occured while unregistering the DandelionRuntimeMBean", e);
+			}
+		}
+	}
+	
 	public AssetCache getAssetCache() {
 		return assetCache;
 	}

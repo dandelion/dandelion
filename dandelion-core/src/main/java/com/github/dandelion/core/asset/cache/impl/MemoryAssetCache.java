@@ -48,8 +48,8 @@ import com.github.dandelion.core.asset.cache.spi.AssetCache;
  */
 public class MemoryAssetCache extends AbstractAssetCache {
 
-	private Map<String, String> cache;
-	private Map<String, Set<Asset>> assets;
+	private Map<String, String> mapAssetContent;
+	private Map<String, Set<Asset>> mapRequestAssets;
 
 	/**
 	 * {@inheritDoc}
@@ -57,8 +57,8 @@ public class MemoryAssetCache extends AbstractAssetCache {
 	@Override
 	public void initCache(Context context) {
 		super.initCache(context);
-		cache = new ConcurrentLruCache<String, String>(context.getConfiguration().getCacheAssetMaxSize());
-		assets = new ConcurrentLruCache<String, Set<Asset>>(context.getConfiguration().getCacheRequestMaxSize());
+		mapAssetContent = new ConcurrentLruCache<String, String>(context.getConfiguration().getCacheAssetMaxSize());
+		mapRequestAssets = new ConcurrentLruCache<String, Set<Asset>>(context.getConfiguration().getCacheRequestMaxSize());
 	}
 
 	/**
@@ -72,38 +72,47 @@ public class MemoryAssetCache extends AbstractAssetCache {
 	 * {@inheritDoc}
 	 */
 	public String getAssetContent(String cacheKey) {
-		return cache.get(cacheKey);
+		return mapAssetContent.get(cacheKey);
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	public Set<Asset> getRequestAssets(String cacheKey) {
-		return assets.get(cacheKey);
+		return mapRequestAssets.get(cacheKey);
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	public void storeAssetContent(String cacheKey, String cacheContent) {
-		cache.put(cacheKey, cacheContent);
+		mapAssetContent.put(cacheKey, cacheContent);
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	public void storeRequestAssets(String cacheKey, Set<Asset> a) {
-		assets.put(cacheKey, a);
+		mapRequestAssets.put(cacheKey, a);
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	public void remove(String cacheKey) {
-		cache.remove(cacheKey);
+		mapAssetContent.remove(cacheKey);
 	}
 	
 	public Map<String, String> getCache(){
-		return cache;
+		return mapAssetContent;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void clearAll() {
+		mapAssetContent.clear();
+		mapRequestAssets.clear();
 	}
 }

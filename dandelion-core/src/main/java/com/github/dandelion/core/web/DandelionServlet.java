@@ -63,18 +63,14 @@ public class DandelionServlet extends HttpServlet {
 	public static final String DANDELION_ASSETS_URL = "/dandelion-assets/";
 	public static final String DANDELION_ASSETS_URL_PATTERN = "/dandelion-assets/*";
 
-	private HttpHeadersConfigurer httpHeadersConfigurer;
-	
-
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		getLogger().debug("Dandelion Asset servlet captured GET request {}", request.getRequestURI());
 
 		Context context = (Context) request.getAttribute(WebConstants.DANDELION_CONTEXT_ATTRIBUTE);
-		httpHeadersConfigurer = new HttpHeadersConfigurer(context);
+		HttpHeadersConfigurer httpHeadersConfigurer = new HttpHeadersConfigurer(context);
 		
 		// Get the asset content thanks to the cache key
-		System.out.println("context = " + context);
 		String assetKey = context.getCacheManager().getCacheKeyFromRequest(request);
 		AssetType assetType = AssetType.typeOfAsset(assetKey);
 		

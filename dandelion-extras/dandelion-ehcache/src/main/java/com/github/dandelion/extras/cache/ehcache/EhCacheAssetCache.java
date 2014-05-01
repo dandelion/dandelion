@@ -108,16 +108,19 @@ public class EhCacheAssetCache extends AbstractAssetCache {
 		// First try to get an existing CacheManager
 		if (StringUtils.isNotBlank(cacheManagerName)) {
 			cacheManager = CacheManager.getCacheManager(cacheManagerName);
+			LOG.warn("No cache manager found with the name '{}'. Dandelion will create one.", cacheManagerName);
 		}
-		// Otherwise create one
-		else {
+		
+		if(cacheManager == null){
 			InputStream stream = null;
 
 			String cacheConfigurationPath = context.getConfiguration().getCacheConfigurationLocation();
 
 			if (StringUtils.isBlank(cacheConfigurationPath)) {
+				LOG.warn("The 'cache.configuration.location' configuration is not set. Dandelion will scan for any ehcache.xml file inside the classpath.");
 				try {
 					cacheConfigurationPath = ResourceScanner.findResourcePath("", "ehcache.xml");
+					LOG.debug("ehcache.xml file found: {}", cacheConfigurationPath);
 				}
 				catch (IOException e) {
 					LOG.warn("No ehcache.xml configuration file has been found. Dandelion will let EhCache use the default configuration.");
@@ -128,10 +131,10 @@ public class EhCacheAssetCache extends AbstractAssetCache {
 			cacheManager = stream == null ? CacheManager.create() : CacheManager.create(stream);
 		}
 
-		if (!cacheManager.cacheExists(DANDELION_CACHE_NAME)) {
+		if(!cacheManager.cacheExists(DANDELION_CACHE_NAME)){
 			cacheManager.addCache(DANDELION_CACHE_NAME);
+			LOG.debug("Added cache called '{}' to the cache manager", DANDELION_CACHE_NAME);
 		}
-
 		cache = cacheManager.getCache(DANDELION_CACHE_NAME);
 	}
 
@@ -184,5 +187,10 @@ public class EhCacheAssetCache extends AbstractAssetCache {
 	@Override
 	public void storeRequestAssets(String cacheKey, Set<Asset> assets) {
 		cache.put(new Element(cacheKey, assets));
+	}
+
+	@Override
+	public void clearAll() {
+		cache.removeAll();
 	}
 }

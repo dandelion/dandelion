@@ -44,8 +44,8 @@ import com.github.dandelion.core.web.DandelionServlet;
 
 /**
  * <p>
- * System in charge of discovering all implementations of {@link AssetCache}
- * available in the classpath and manipulating the configured {@link AssetCache}.
+ * System in charge of manipulating the selected implementation of
+ * {@link AssetCache}.
  * 
  * @author Romain Lespinasse
  * @author Thibault Duchateau
@@ -116,5 +116,9 @@ public class AssetCacheManager {
 
 	public String getCacheName() {
 		return context.getAssetCache().getCacheName();
+	}
+	
+	public void clearCache(){
+		context.getAssetCache();
 	}
 }
