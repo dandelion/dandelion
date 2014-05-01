@@ -73,6 +73,6 @@ public class DandelionFilterResponseWrapper extends HttpServletResponseWrapper {
 	}
 
 	public String getWrappedContent() {
-		return charArrayWriter.toString();
+		return charArrayWriter != null ? charArrayWriter.toString() : "";
 	}
 }
