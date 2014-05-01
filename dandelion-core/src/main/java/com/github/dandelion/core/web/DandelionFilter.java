@@ -162,6 +162,10 @@ public class DandelionFilter implements Filter {
 				&& request.getHeader(HttpHeader.ACCEPT.getName()).contains("text/html")) {
 			applyFilter = true;
 		}
+		
+		if(request.getMethod().equalsIgnoreCase("post")){
+			applyFilter = false;
+		}
 
 		// Then, check whether the filter has been explicitely disabled
 		// (possibly by other components) either from a request attribute...
