@@ -50,10 +50,6 @@ import com.github.dandelion.core.web.DandelionServlet;
  * <p>
  * Used to map an {@link AssetStorageUnit} to an {@link Asset}.
  * 
- * <p>
- * Depending on the {@code skipCaching} parameter, the mapper will skip the
- * caching of the asset in the configured {@link AssetCache}.
- * 
  * @author Thibault Duchateau
  * @since 0.10.0
  */
@@ -105,18 +101,8 @@ public class AssetMapper {
 	 */
 	public Asset mapToAsset(AssetStorageUnit asu) {
 		Asset asset = new Asset(asu);
-		resolveLocation(asset, asu);
-		cacheContent(asset, asu);
-		return asset;
-	}
 
-	/**
-	 * 
-	 * @param asset
-	 * @param asu
-	 */
-	public void resolveLocation(Asset asset, AssetStorageUnit asu) {
-		LOG.debug("Resolving location for the asset {}", asset.toLog());
+		LOG.trace("Resolving location for the asset {}", asset.toLog());
 
 		// no available locations = no locations
 		if (asu.getLocations() == null || asu.getLocations().isEmpty()) {
@@ -131,13 +117,11 @@ public class AssetMapper {
 
 		if (asu.getLocations().size() == 1) {
 			// use the unique location if needed
-			LOG.debug("Only one location found for {}, automatically used", asu.toString());
 			locationKey = asu.getLocations().entrySet().iterator().next().getKey();
 		}
 		else {
 			// otherwise search for the first matching location key among the
 			// configured ones
-			LOG.debug("Search for the right location for {}", asu.toString());
 			for (String searchedLocationKey : context.getConfiguration().getAssetLocationsResolutionStrategy()) {
 				if (asu.getLocations().containsKey(searchedLocationKey)) {
 					String location = asu.getLocations().get(searchedLocationKey);
@@ -148,7 +132,8 @@ public class AssetMapper {
 				}
 			}
 		}
-
+		LOG.trace("Location key '{}' selected for the asset {}", locationKey, asu.toString());
+		
 		Map<String, AssetLocator> locators = context.getAssetLocatorsMap();
 		if (!locators.containsKey(locationKey)) {
 			StringBuilder msg = new StringBuilder("The location key '");
@@ -163,7 +148,7 @@ public class AssetMapper {
 		String location = null;
 		AssetLocator locator = locators.get(locationKey);
 		if (locators.containsKey(locationKey) && locators.get(locationKey).isActive()) {
-			LOG.debug("'{}' locator selected for the assset {}.", locator.getClass().getSimpleName(), asu.toLog());
+			LOG.trace("Locator '{}' will be applied on the asset {}.", locator.getClass().getSimpleName(), asu.toLog());
 			location = locators.get(locationKey).getLocation(asu, request);
 		}
 
@@ -173,46 +158,40 @@ public class AssetMapper {
 
 		asset.setConfigLocationKey(locationKey);
 		asset.setConfigLocation(asu.getLocations().get(locationKey));
-		String context = UrlUtils.getCurrentUrl(request, true).toString();
-		context = context.replaceAll("\\?", "_").replaceAll("&", "_");
-		String cacheKey = this.context.getCacheManager().generateCacheKey(context, asset);
-		asu.setCacheKey(cacheKey);
-		asset.setCacheKey(cacheKey);
 
 		if (locator.isCachingForced()) {
-			asset.setFinalLocation(UrlUtils
-					.getProcessedUrl(DandelionServlet.DANDELION_ASSETS_URL + cacheKey, request, null));
+			String context = UrlUtils.getCurrentUrl(request, true).toString();
+			context = context.replaceAll("\\?", "_").replaceAll("&", "_");
+			String cacheKey = this.context.getCacheManager().generateCacheKey(context, asset);
+			asu.setCacheKey(cacheKey);
+			asset.setCacheKey(cacheKey);
+			asset.setFinalLocation(UrlUtils.getProcessedUrl(DandelionServlet.DANDELION_ASSETS_URL + cacheKey, request,
+					null));
+			
+			// First try to access the asset content in order to see if it must be
+			// cached
+			String content = this.context.getCacheManager().getContent(asset.getCacheKey());
+
+			if (content == null || this.context.isDevModeEnabled()) {
+				Map<String, AssetLocator> assetLocatorsMap = this.context.getAssetLocatorsMap();
+				if (assetLocatorsMap.containsKey(asset.getConfigLocationKey())
+						&& assetLocatorsMap.get(asset.getConfigLocationKey()).isActive()) {
+					// LOG.debug("use location wrapper for {} on {}.", locationKey,
+					// asu);
+					// location = wrappers.get(locationKey).getWrappedLocation(asu,
+					// request);
+
+					content = assetLocatorsMap.get(asset.getConfigLocationKey()).getContent(asu, request);
+
+					// Finally store the final content in cache
+					this.context.getCacheManager().storeContent(asset.getCacheKey(), content);
+				}
+			}
 		}
 		else {
 			asset.setFinalLocation(location);
 		}
-	}
 
-	/**
-	 * 
-	 * @param asset
-	 * @param asu
-	 */
-	public void cacheContent(Asset asset, AssetStorageUnit asu) {
-
-		// First try to access the asset content in order to see if it must be
-		// cached
-		String content = context.getCacheManager().getContent(asset.getCacheKey());
-
-		if (content == null || context.isDevModeEnabled()) {
-			Map<String, AssetLocator> assetLocatorsMap = context.getAssetLocatorsMap();
-			if (assetLocatorsMap.containsKey(asset.getConfigLocationKey())
-					&& assetLocatorsMap.get(asset.getConfigLocationKey()).isActive()) {
-				// LOG.debug("use location wrapper for {} on {}.", locationKey,
-				// asu);
-				// location = wrappers.get(locationKey).getWrappedLocation(asu,
-				// request);
-
-				content = assetLocatorsMap.get(asset.getConfigLocationKey()).getContent(asu, request);
-
-				// Finally store the final content in cache
-				context.getCacheManager().storeContent(asset.getCacheKey(), content);
-			}
-		}
+		return asset;
 	}
 }
