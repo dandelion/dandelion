@@ -47,7 +47,8 @@ public class WebConstants {
 	 * Request parameters
 	 */
 	public static final String DANDELION_SHOW_GRAPH = "showGraph";
-
+	public static final String DANDELION_RELOAD_BUNDLES = "reloadBundles";
+	
 	/**
 	 * Request attributes/parameters
 	 */

@@ -89,11 +89,20 @@ public class DandelionFilter implements Filter {
 
 		request.setAttribute(WebConstants.DANDELION_CONTEXT_ATTRIBUTE, context);
 
-		// Override the response with the graph viewer
-		if (context.isDevModeEnabled() && request.getParameter(WebConstants.DANDELION_SHOW_GRAPH) != null) {
-			GraphViewer graphViewer = new GraphViewer(context);
-			response.getWriter().println(graphViewer.getView(request, response, filterChain));
-			return;
+		// Specific features only compatible when dev mode is enabled
+		if (context.isDevModeEnabled()){
+			// Bundle graph viewer displaying
+			if(request.getParameter(WebConstants.DANDELION_SHOW_GRAPH) != null) {
+				GraphViewer graphViewer = new GraphViewer(context);
+				response.getWriter().println(graphViewer.getView(request, response, filterChain));
+				return;
+			}
+			// Bundles reloading
+			if(request.getParameter(WebConstants.DANDELION_RELOAD_BUNDLES) != null) {
+				LOG.info("Bundle reloading...");
+				context.initBundleStorage();
+				LOG.info("Bundle reloaded");
+			}
 		}
 		
 		// Only filter requests that accept HTML
