@@ -67,8 +67,9 @@ public class HttpHeadersConfigurer {
 		response.setContentType(contentType == null ? "text/plain" : contentType);
 
 		if (context.isDevModeEnabled()) {
-			response.setHeader(HttpHeader.CACHE_CONTROL.getName(), "no-cache");
-			response.setHeader(HttpHeader.EXPIRES.getName(), String.valueOf(1));
+			response.setHeader(HttpHeader.CACHE_CONTROL.getName(), "no-cache, no-store, must-revalidate");
+			response.setHeader(HttpHeader.PRAGMA.getName(), "no-cache");
+			response.setHeader(HttpHeader.EXPIRES.getName(), String.valueOf(0));
 		}
 		else {
 			response.setHeader(HttpHeader.CACHE_CONTROL.getName(), DEFAULT_CACHE_CONTROL);

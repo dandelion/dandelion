@@ -38,8 +38,9 @@ package com.github.dandelion.core.web;
  */
 public enum HttpHeader {
 
-	CACHE_CONTROL("Cache-Control"), 
-	EXPIRES("Expires"), 
+	CACHE_CONTROL("Cache-Control"), // HTTP 1.1
+	EXPIRES("Expires"), // Proxies
+	PRAGMA("Pragma"), // HTTP 1.0
 	LAST_MODIFIED("Last-Modified"),
 	CONTENT_TYPE("Content-Type"),
 	ACCEPT("Accept");
