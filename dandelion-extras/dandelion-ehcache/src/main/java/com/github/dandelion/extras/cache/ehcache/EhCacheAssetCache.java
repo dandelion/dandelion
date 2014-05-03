@@ -98,6 +98,14 @@ public class EhCacheAssetCache extends AbstractAssetCache {
 
 	private Cache cache;
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public String getCacheName() {
+		return "ehcache";
+	}
+	
 	@Override
 	public void initCache(Context context) {
 		super.initCache(context);
@@ -136,14 +144,6 @@ public class EhCacheAssetCache extends AbstractAssetCache {
 			LOG.debug("Added cache called '{}' to the cache manager", DANDELION_CACHE_NAME);
 		}
 		cache = cacheManager.getCache(DANDELION_CACHE_NAME);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public String getCacheName() {
-		return "Ehcache";
 	}
 
 	/**
@@ -189,6 +189,9 @@ public class EhCacheAssetCache extends AbstractAssetCache {
 		cache.put(new Element(cacheKey, assets));
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void clearAll() {
 		cache.removeAll();

@@ -97,7 +97,7 @@ public class DandelionFilter implements Filter {
 				response.getWriter().println(graphViewer.getView(request, response, filterChain));
 				return;
 			}
-			// Bundles reloading
+			// Bundle reloading
 			if(request.getParameter(WebConstants.DANDELION_RELOAD_BUNDLES) != null) {
 				LOG.info("Bundle reloading...");
 				context.initBundleStorage();
