@@ -106,7 +106,7 @@ public class DandelionFilter implements Filter {
 		}
 		
 		// Only filter requests that accept HTML
-		if (isFilterApplyable(request)) {
+		if (isFilterApplyable(request, response)) {
 			LOG.trace("The AssetFilter applies to the request {}", request.getRequestURL().toString());
 
 			DandelionFilterResponseWrapper wrapper = new DandelionFilterResponseWrapper(response);
@@ -158,7 +158,7 @@ public class DandelionFilter implements Filter {
 		}
 	}
 
-	private boolean isFilterApplyable(HttpServletRequest request) {
+	private boolean isFilterApplyable(HttpServletRequest request, HttpServletResponse response) {
 
 		boolean applyFilter = false;
 
@@ -176,6 +176,10 @@ public class DandelionFilter implements Filter {
 			applyFilter = false;
 		}
 
+		if(response.isCommitted()) {
+			applyFilter = false;
+		}
+		
 		// Then, check whether the filter has been explicitely disabled
 		// (possibly by other components) either from a request attribute...
 		if (request.getAttribute(WebConstants.DANDELION_ASSET_FILTER_STATE) != null) {
