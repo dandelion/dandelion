@@ -24,12 +24,19 @@
       </documentation>
    </attribute-processor>
 
-   <attribute-processor name="asset-excludes">
+   <attribute-processor name="js-excludes">
       <documentation>
          <![CDATA[
-            <p>Comma-separated list of asset names to load in the current request.</p>
+            <p>Comma-separated list of JavaScript assets to exclude from the current request.</p>
          ]]>
       </documentation>
    </attribute-processor>
-
+   
+   <attribute-processor name="css-excludes">
+      <documentation>
+         <![CDATA[
+            <p>Comma-separated list of CSS assets to exclude from the current request.</p>
+         ]]>
+      </documentation>
+   </attribute-processor>
 </dialect>
