@@ -159,7 +159,7 @@ public class AssetMapper {
 		asset.setConfigLocationKey(locationKey);
 		asset.setConfigLocation(asu.getLocations().get(locationKey));
 
-		if (locator.isCachingForced()) {
+		if (locator.isCachingForced() || this.context.getConfiguration().isMinificationEnabled()) {
 			String context = UrlUtils.getCurrentUrl(request, true).toString();
 			context = context.replaceAll("\\?", "_").replaceAll("&", "_");
 			String cacheKey = this.context.getCacheManager().generateCacheKey(context, asset);
