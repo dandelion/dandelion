@@ -57,7 +57,7 @@ public class JsMinProcessor extends AbstractAssetProcessor {
 	 */
 	@Override
 	public String getProcessorKey() {
-		return "jsMin";
+		return "jsmin";
 	}
 
 	/**

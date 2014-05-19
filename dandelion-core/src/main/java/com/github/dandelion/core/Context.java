@@ -293,9 +293,9 @@ public class Context {
 			for (String assetProcessorKey : configuration.getAssetProcessors()) {
 				if (processorsMap.containsKey(assetProcessorKey)) {
 					activeProcessors.add(processorsMap.get(assetProcessorKey));
+					LOG.info("Processor enabled: {}", processorsMap.get(assetProcessorKey));
 				}
 			}
-			LOG.info("The following processors are active: {}", activeProcessors);
 		}
 		else {
 			LOG.info("Asset processors disabled. All assets will be left untouched.");

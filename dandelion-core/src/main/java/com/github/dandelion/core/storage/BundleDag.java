@@ -72,7 +72,7 @@ public class BundleDag {
 	public BundleStorageUnit addVertexIfNeeded(String bundleName) {
 		BundleStorageUnit retValue = null;
 
-		// check if vertex is already in DAG
+		// Check if vertex is already in the DAG
 		if (vertexMap.containsKey(bundleName)) {
 			retValue = vertexMap.get(bundleName);
 		}

@@ -69,7 +69,7 @@ public class BundleStorage {
 	 * @return the {@link BundleDag} updated with the new
 	 *         {@link BundleStorageUnit} and {@link AssetStorageUnit}.
 	 * @throws DandelionException
-	 *             as soon as a cycle is introduced in the bundle DAG.
+	 *             as soon as a cycle is detected in the bundle DAG.
 	 */
 	public BundleDag storeBundles(List<BundleStorageUnit> bundleStorageUnits) {
 

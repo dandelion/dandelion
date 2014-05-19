@@ -53,7 +53,7 @@ public class CssMinProcessor extends AbstractAssetProcessor {
 	 */
 	@Override
 	public String getProcessorKey() {
-		return "cssMin";
+		return "cssmin";
 	}
 
 	/**
