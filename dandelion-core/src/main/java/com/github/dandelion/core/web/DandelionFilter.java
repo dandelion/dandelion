@@ -109,7 +109,7 @@ public class DandelionFilter implements Filter {
 		if (isFilterApplyable(request, response)) {
 			LOG.trace("The AssetFilter applies to the request {}", request.getRequestURL().toString());
 
-			DandelionFilterResponseWrapper wrapper = new DandelionFilterResponseWrapper(response);
+			DandelionResponseWrapper wrapper = new DandelionResponseWrapper(response);
 			filterChain.doFilter(request, wrapper);
 
 			String html = wrapper.getWrappedContent();
@@ -212,7 +212,7 @@ public class DandelionFilter implements Filter {
 	 * @return true if the response can be updated.
 	 */
 	private boolean isDandelionApplyable(HttpServletRequest request, AssetRequestContext context,
-			DandelionFilterResponseWrapper wrapper) {
+			DandelionResponseWrapper wrapper) {
 		if (wrapper.getContentType() == null || !wrapper.getContentType().contains("text/html")) {
 			return false;
 		}

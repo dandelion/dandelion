@@ -29,50 +29,47 @@
  */
 package com.github.dandelion.core.web;
 
-import java.io.CharArrayWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.StringWriter;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
 
 /**
- * <p>
- * Response wrapper that allows to access the wrapped response in a String
- * format thanks to the {@link #getWrappedContent()}.
+ * <p/>
+ * Used to wrap the real {@link HttpServletResponse} so that we can modify it
+ * after that the target of the request has delivered its response.
  * 
+ * @author Thibault Duchateau
  * @author Romain Lespinasse
  * @since 0.10.0
  */
-public class DandelionFilterResponseWrapper extends HttpServletResponseWrapper {
+public class DandelionResponseWrapper extends HttpServletResponseWrapper {
 
 	protected PrintWriter printWriter = null;
-	protected CharArrayWriter charArrayWriter = null;
+	protected StringWriter stringWriter = null;
+	protected ServletOutputStream servletOutputStreamWrapper;
 
-	public DandelionFilterResponseWrapper(HttpServletResponse response) {
+	public DandelionResponseWrapper(HttpServletResponse response) {
 		super(response);
+		stringWriter = new StringWriter();
+		servletOutputStreamWrapper = new ServletOutputStreamWrapper(stringWriter);
+		printWriter = new PrintWriter(stringWriter);
 	}
 
 	@Override
 	public ServletOutputStream getOutputStream() throws IOException {
-		throw new IllegalStateException("getWriter() has already been called for this response");
+		return servletOutputStreamWrapper;
 	}
 
 	@Override
 	public PrintWriter getWriter() throws IOException {
-		if (charArrayWriter == null) {
-			charArrayWriter = new CharArrayWriter();
-		}
-
-		if (printWriter == null) {
-			printWriter = new PrintWriter(charArrayWriter);
-		}
-
 		return printWriter;
 	}
 
 	public String getWrappedContent() {
-		return charArrayWriter != null ? charArrayWriter.toString() : "";
+		return stringWriter != null ? stringWriter.toString() : "";
 	}
 }
