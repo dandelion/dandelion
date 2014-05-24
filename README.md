@@ -1,4 +1,3 @@
-[![Stories in Ready](https://badge.waffle.io/dandelion/dandelion.png?label=ready&title=Ready)](https://waffle.io/dandelion/dandelion)
 Dandelion
 ========================
 
@@ -9,7 +8,5 @@ See the documentation here : [http://dandelion.github.io/dandelion](http://dande
 [![Stories in Ready](https://badge.waffle.io/dandelion/dandelion.png?label=ready&title=Ready)](https://waffle.io/dandelion/dandelion)
 [![Build Status](https://dandelion.ci.cloudbees.com/job/dandelion-build/badge/icon)](https://dandelion.ci.cloudbees.com/job/dandelion-build/)
 
-## Others modules
-
-* [Dandelion module for DataTables](https://github.com/dandelion/dandelion-datatables)
-* [Dandelion module for Web analytics](https://github.com/dandelion/dandelion-webanalytics)
+=
+The [Dandelion team](http://dandelion.github.io/team/).
