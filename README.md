@@ -1,4 +1,3 @@
-[![Stories in Ready](https://badge.waffle.io/dandelion/dandelion.png?label=ready&title=Ready)](https://waffle.io/dandelion/dandelion)
 Dandelion
 ========================
 
@@ -6,6 +5,8 @@ Dandelion
 
 See the documentation here : [http://dandelion.github.io/dandelion](http://dandelion.github.io/dandelion)
 
+[![Stories in Ready](https://badge.waffle.io/dandelion/dandelion.png?label=ready&title=Ready)](https://waffle.io/dandelion/dandelion)
+[![Build Status](https://dandelion.ci.cloudbees.com/job/dandelion-build/badge/icon)](https://dandelion.ci.cloudbees.com/job/dandelion-build/)
 
 ## Others modules
 
