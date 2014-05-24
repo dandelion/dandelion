@@ -1,4 +1,6 @@
-# Dandelion [![Build Status](https://dandelion.ci.cloudbees.com/job/dandelion-build/badge/icon)](https://dandelion.ci.cloudbees.com/job/dandelion-build/)
+[![Stories in Ready](https://badge.waffle.io/dandelion/dandelion.png?label=ready&title=Ready)](https://waffle.io/dandelion/dandelion)
+Dandelion
+========================
 
 [Dandelion](http://dandelion.github.io) is the core of all modules that helps you to manage your assets in your application.
 
