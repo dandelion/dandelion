@@ -9,7 +9,7 @@
 
    <groupId>com.github.dandelion</groupId>
    <artifactId>dandelion</artifactId>
-   <version>0.10.0</version>
+   <version>0.10.1-SNAPSHOT</version>
    <packaging>pom</packaging>
    <name>Dandelion</name>
    <description>
