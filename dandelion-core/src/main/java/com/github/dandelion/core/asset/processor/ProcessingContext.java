@@ -27,41 +27,59 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.github.dandelion.core.asset.processor.impl;
+package com.github.dandelion.core.asset.processor;
 
-import java.io.Reader;
-import java.io.Writer;
+import javax.servlet.http.HttpServletRequest;
 
-import com.github.dandelion.core.asset.AssetType;
-import com.github.dandelion.core.asset.processor.CompatibleAssetType;
-import com.github.dandelion.core.asset.processor.ProcessingContext;
-import com.github.dandelion.core.asset.processor.spi.AbstractAssetProcessor;
-import com.github.dandelion.core.asset.processor.vendor.CssCompressor;
+import com.github.dandelion.core.Context;
+import com.github.dandelion.core.asset.Asset;
 
 /**
  * <p>
- * CSS processor based on the {@link CssCompressor} implementation.
+ * Bean holding all needed information from the context when processing assets.
  * 
- * @author Thibault Duchateau
- * @since 0.10.0
+ * @author tduchateau
+ * @since 0.10.1
  */
-@CompatibleAssetType(types = AssetType.css)
-public class CssMinProcessor extends AbstractAssetProcessor {
+public class ProcessingContext {
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public String getProcessorKey() {
-		return "cssmin";
+	// The Dandelion context
+	private Context context;
+
+	// The asset to be processed
+	private Asset asset;
+
+	// The current request
+	private HttpServletRequest request;
+
+	public ProcessingContext(Context context, Asset asset, HttpServletRequest request) {
+		super();
+		this.context = context;
+		this.asset = asset;
+		this.request = request;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void doProcess(Reader reader, Writer writer, ProcessingContext processingContext) throws Exception {
-		new CssCompressor(reader).compress(writer, -1);
-		writer.flush();
+	public Context getContext() {
+		return context;
+	}
+
+	public void setContext(Context context) {
+		this.context = context;
+	}
+
+	public Asset getAsset() {
+		return asset;
+	}
+
+	public void setAsset(Asset asset) {
+		this.asset = asset;
+	}
+
+	public HttpServletRequest getRequest() {
+		return request;
+	}
+
+	public void setRequest(HttpServletRequest request) {
+		this.request = request;
 	}
 }

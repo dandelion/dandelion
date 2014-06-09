@@ -33,40 +33,49 @@ import java.io.Reader;
 import java.io.Writer;
 
 import com.github.dandelion.core.Context;
+import com.github.dandelion.core.DandelionException;
 import com.github.dandelion.core.asset.Asset;
+import com.github.dandelion.core.asset.processor.ProcessingContext;
+import com.github.dandelion.core.config.Configuration;
 
 /**
  * <p>
  * SPI for all asset processors.
  * 
+ * <p>
+ * In order for any custom implementation to be scanned, see <a href=
+ * "http://dandelion.github.io/dandelion/features/asset-processors/plugging-in-your-own-processor.html"
+ * >here</a>.
+ * 
  * @author Thibault Duchateau
+ * @since 0.10.0
+ * 
+ * @see Context#initAssetProcessors()
  */
 public interface AssetProcessor {
 
 	/**
-	 * TODO
-	 * 
-	 * @param context
-	 */
-	void initProcessor(Context context);
-
-	/**
-	 * @return the processor key associated with the processor.
+	 * @return the processor key associated with the processor. The key is used
+	 *         in the in the {@link Configuration} to activate the corresponding
+	 *         processor.
 	 */
 	String getProcessorKey();
 
 	/**
 	 * <p>
-	 * Perform the processing of the given {@link Asset} by reading its content
-	 * from the given {@link Reader} and writing the processed content to the
-	 * {@link Writer}.
+	 * Performs the processing of the {@link Asset} stored in the given
+	 * {@link ProcessingContext} by reading its content from the given
+	 * {@link Reader} and writing the new content to the {@link Writer}.
 	 * 
-	 * @param asset
-	 *            The asset being processed.
 	 * @param reader
 	 *            The reader containig the content to process.
 	 * @param writer
 	 *            The destination writer.
+	 * @param processingContext
+	 *            The processing context that includes the {@link Asset} to be
+	 *            processed.
+	 * @throws DandelionException
+	 *             if something goes wrong during the processing of the asset.
 	 */
-	void process(Asset asset, Reader reader, Writer writer, Context context);
+	void process(Reader reader, Writer writer, ProcessingContext processingContext) throws DandelionException;
 }

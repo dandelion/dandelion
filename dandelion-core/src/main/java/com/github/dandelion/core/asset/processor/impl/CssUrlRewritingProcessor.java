@@ -29,13 +29,10 @@
  */
 package com.github.dandelion.core.asset.processor.impl;
 
-import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,8 +42,10 @@ import com.github.dandelion.core.DandelionException;
 import com.github.dandelion.core.asset.Asset;
 import com.github.dandelion.core.asset.AssetType;
 import com.github.dandelion.core.asset.processor.CompatibleAssetType;
+import com.github.dandelion.core.asset.processor.ProcessingContext;
 import com.github.dandelion.core.asset.processor.spi.AbstractAssetProcessor;
-import com.github.dandelion.core.utils.StringUtils;
+import com.github.dandelion.core.asset.processor.support.CssUrlRewriter;
+import com.github.dandelion.core.utils.StringBuilderUtils;
 
 /**
  * <p>
@@ -89,53 +88,36 @@ import com.github.dandelion.core.utils.StringUtils;
 public class CssUrlRewritingProcessor extends AbstractAssetProcessor {
 
 	private static final Logger LOG = LoggerFactory.getLogger(CssUrlRewritingProcessor.class);
-	private Pattern pattern = Pattern.compile("url\\((.*)\\)", Pattern.CASE_INSENSITIVE);
+	private CssUrlRewriter urlRewriter = new CssUrlRewriter();
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
 	public String getProcessorKey() {
-		return "cssUrlRewriting";
+		return "cssurlrewriting";
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	protected void doProcess(Asset asset, Reader reader, Writer writer) throws Exception {
+	protected void doProcess(Reader reader, Writer writer, ProcessingContext processingContext) throws Exception {
+		Asset asset = processingContext.getAsset();
+		String contextPath = processingContext.getRequest().getContextPath();
+		LOG.debug("Processing {}", asset.toLog());
+		urlRewriter.setContextPath(contextPath);
 
-		BufferedReader bufferedReader = new BufferedReader(reader);
-		BufferedWriter bufferedWriter = new BufferedWriter(writer);
+		StringBuilder assetContent = StringBuilderUtils.toStringBuilder(reader);
 
+		BufferedWriter bufferedWriter = null;
 		try {
-			String line = null;
+			LOG.debug("  Old location: {}", asset.getConfigLocation());
+			LOG.debug("  New location: {}", asset.getFinalLocation());
 
-			while ((line = bufferedReader.readLine()) != null) {
-
-				Matcher matcher = pattern.matcher(line);
-				while (matcher.find()) {
-
-					int lvl = StringUtils.countMatches(line, "..");
-
-					if (lvl > 0) {
-						String tmp2 = null;
-						int c = lvl + 1;
-						for (int i = asset.getFinalLocation().length() - 1; i >= 0; i--) {
-							if (c > 0 && asset.getFinalLocation().charAt(i) == '/') {
-								tmp2 = asset.getFinalLocation().substring(0, i + 1);
-								c--;
-							}
-
-							if (c == 0) {
-								break;
-							}
-						}
-						line = line.replaceAll("(\\.\\./)+", tmp2);
-					}
-				}
-				bufferedWriter.write(line + '\n');
-			}
+			bufferedWriter = new BufferedWriter(writer);
+			bufferedWriter.write(urlRewriter.rewriteUrl("/" + contextPath + asset.getConfigLocation(),
+					asset.getFinalLocation(), assetContent.toString()).toString());
 		}
 		catch (IOException e) {
 			LOG.error("An error occurred when processing relative paths inside the asset " + asset.toLog());
@@ -151,15 +133,9 @@ public class CssUrlRewritingProcessor extends AbstractAssetProcessor {
 				LOG.error("An error occurred when processing relative paths inside the asset " + asset.toLog());
 				throw DandelionException.wrap(e);
 			}
-			try {
-				if (bufferedWriter != null)
-					bufferedWriter.close();
-			}
-			catch (IOException e) {
-				// Should never happen
-				LOG.error("An error occurred when processing relative paths inside the asset " + asset.toLog());
-				throw DandelionException.wrap(e);
-			}
+
+			// Flush and closes the stream
+			bufferedWriter.close();
 		}
 	}
 }

@@ -30,7 +30,7 @@
 package com.github.dandelion.core.asset;
 
 import static java.util.Collections.singletonMap;
-import static org.fest.assertions.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Collections;
 import java.util.HashMap;

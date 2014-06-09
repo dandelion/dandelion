@@ -71,7 +71,7 @@ import com.github.dandelion.core.utils.StringUtils;
  * active {@link AssetProcessor}s.
  * 
  * <p>
- * There should be only one instance of this class in the application.
+ * There should be only one instance of this class per JVM.
  * 
  * @author Thibault Duchateau
  * @since 0.10.0
@@ -172,7 +172,7 @@ public class Context {
 	 * "vendor bundles"</li>
 	 * <li>Then, all service providers of the {@link BundleLoader} SPI present
 	 * in the classpath</li>
-	 * <li>Finally the {@link DandelionBundleLoader} which loads "user bundles"</li>
+	 * <li>Finally the {@link DandelionBundleLoader} which loads all "user bundles"</li>
 	 * </ol>
 	 */
 	public void initBundleLoaders() {
@@ -282,7 +282,6 @@ public class Context {
 		activeProcessors = new ArrayList<AssetProcessor>();
 
 		for (AssetProcessor ape : apServiceLoader) {
-			ape.initProcessor(this);
 			processorsMap.put(ape.getProcessorKey().toLowerCase(), ape);
 			LOG.info("Asset processor found: {}", ape.getClass().getSimpleName());
 		}

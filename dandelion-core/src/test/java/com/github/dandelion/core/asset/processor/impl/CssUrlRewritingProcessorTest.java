@@ -29,39 +29,27 @@
  */
 package com.github.dandelion.core.asset.processor.impl;
 
-import java.io.Reader;
+import static org.assertj.core.api.Assertions.assertThat;
+
+import java.io.StringReader;
+import java.io.StringWriter;
 import java.io.Writer;
 
-import com.github.dandelion.core.asset.AssetType;
-import com.github.dandelion.core.asset.processor.CompatibleAssetType;
-import com.github.dandelion.core.asset.processor.ProcessingContext;
-import com.github.dandelion.core.asset.processor.spi.AbstractAssetProcessor;
-import com.github.dandelion.core.asset.processor.vendor.CssCompressor;
+import org.junit.Test;
 
-/**
- * <p>
- * CSS processor based on the {@link CssCompressor} implementation.
- * 
- * @author Thibault Duchateau
- * @since 0.10.0
- */
-@CompatibleAssetType(types = AssetType.css)
-public class CssMinProcessor extends AbstractAssetProcessor {
+import com.github.dandelion.core.asset.processor.spi.AssetProcessor;
+import com.github.dandelion.core.utils.ResourceUtils;
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public String getProcessorKey() {
-		return "cssmin";
-	}
+public class CssUrlRewritingProcessorTest extends AbstractProcessorTest {
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void doProcess(Reader reader, Writer writer, ProcessingContext processingContext) throws Exception {
-		new CssCompressor(reader).compress(writer, -1);
-		writer.flush();
+	private AssetProcessor assetProcessor = new CssUrlRewritingProcessor();
+
+	@Test
+	public void should_rewrite_image_url_in_css() {
+		Writer writer = new StringWriter();
+		String oldCss = ResourceUtils.getFileContentFromClasspath("processor/css-url-rewriter/source.css");
+		String newCss = ResourceUtils.getFileContentFromClasspath("processor/css-url-rewriter/result.css");
+		assetProcessor.process(new StringReader(oldCss), writer, processingContext);
+		assertThat(writer.toString().replaceAll("\n", "").replaceAll("\r", "")).isEqualTo(newCss.replaceAll("\n", "").replaceAll("\r", ""));
 	}
 }

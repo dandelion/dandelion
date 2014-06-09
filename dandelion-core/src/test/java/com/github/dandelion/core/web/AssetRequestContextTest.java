@@ -1,18 +1,15 @@
 package com.github.dandelion.core.web;
 
-import static org.fest.assertions.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Arrays;
 
-import org.fest.assertions.MapAssert;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.mock.web.MockFilterConfig;
 import org.springframework.mock.web.MockHttpServletRequest;
 
 import com.github.dandelion.core.Context;
-import com.github.dandelion.core.web.AssetRequestContext;
-import com.github.dandelion.core.web.WebConstants;
 
 public class AssetRequestContextTest {
 
@@ -72,8 +69,7 @@ public class AssetRequestContextTest {
 		context.addParameter("asset1", "param1", "value1");
 		context.addParameter("asset1", "param2", "value2");
 
-		assertThat(context.getParameters("asset1")).hasSize(2).includes(MapAssert.entry("param1", "value1"),
-				MapAssert.entry("param2", "value2"));
+		assertThat(context.getParameters("asset1")).hasSize(2).containsEntry("param1", "value1").containsEntry("param2", "value2");
 		assertThat(context.getParameterValue("asset1", "unknown")).isNull();
 	}
 

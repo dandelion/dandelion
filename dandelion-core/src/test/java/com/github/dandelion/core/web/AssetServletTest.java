@@ -1,6 +1,6 @@
 package com.github.dandelion.core.web;
 
-import static org.fest.assertions.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.io.IOException;
 
@@ -15,8 +15,6 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import com.github.dandelion.core.Context;
 import com.github.dandelion.core.asset.Asset;
 import com.github.dandelion.core.asset.AssetType;
-import com.github.dandelion.core.web.DandelionServlet;
-import com.github.dandelion.core.web.WebConstants;
 
 public class AssetServletTest {
 	

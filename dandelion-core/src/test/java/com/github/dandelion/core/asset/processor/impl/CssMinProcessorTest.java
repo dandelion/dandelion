@@ -29,34 +29,25 @@
  */
 package com.github.dandelion.core.asset.processor.impl;
 
-import static org.fest.assertions.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.Writer;
 
-import org.junit.Before;
 import org.junit.Test;
-import org.springframework.mock.web.MockFilterConfig;
 
-import com.github.dandelion.core.Context;
 import com.github.dandelion.core.asset.processor.spi.AssetProcessor;
 
-public class CssMinProcessorTest {
+public class CssMinProcessorTest extends AbstractProcessorTest {
 
 	private AssetProcessor assetProcessor = new CssMinProcessor();
-	private Context context;
 
-	@Before
-	public void setup() {
-		context = new Context(new MockFilterConfig());
-	}
-	
 	@Test
 	public void should_minifiy_css() throws IOException{
 		Writer writer = new StringWriter();
-		assetProcessor.process(null, new StringReader("body {\n	padding-top: 60px;\n padding-bottom: 40px; \n}"), writer, context);
+		assetProcessor.process(new StringReader("body {\n	padding-top: 60px;\n padding-bottom: 40px; \n}"), writer, processingContext);
 		assertThat(writer.toString()).isEqualTo("body{padding-top:60px;padding-bottom:40px}");
 	}
 }

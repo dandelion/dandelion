@@ -1,0 +1,20 @@
+/* Relative URL with quotes */
+.class1 {
+   background:url("../images/my-image.png") no-repeat;
+}
+/* Relative URL with single quotes */
+.class2 {
+   background:url('../images/my-image.png') no-repeat;
+}
+/* Relative URL without quotes */
+.class3 {
+   background:url(../images/my-image.png) no-repeat;
+}
+/* Relative URLs on the same line with single quotes */
+.class4 {
+   background:url('../images/my-image.png') no-repeat; background:url('../images/my-image.png') no-repeat;
+}
+/* Relative URL with white spaces and single quotes */
+.class5 {
+   background:url(  '../images/my-image.png'   ) no-repeat;
+}

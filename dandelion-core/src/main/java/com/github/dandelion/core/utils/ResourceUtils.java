@@ -54,6 +54,10 @@ public final class ResourceUtils {
 		return Thread.currentThread().getContextClassLoader().getResourceAsStream(pathToFile);
 	}
 
+	public static String getFileContentFromClasspath(String pathToFile) {
+		return getFileContentFromClasspath(pathToFile, true);
+	}
+	
 	public static String getFileContentFromClasspath(String pathToFile, boolean neverFail) {
 		try {
 			InputStream in = getFileFromClasspath(pathToFile);
