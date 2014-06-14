@@ -126,24 +126,23 @@ public class DandelionFilter implements Filter {
 
 		request.setAttribute(WebConstants.DANDELION_CONTEXT_ATTRIBUTE, context);
 
-		// Specific features only compatible when dev mode is enabled
-		if (context.isDevModeEnabled()) {
-			// Bundle graph viewer displaying
-			if (request.getParameter(WebConstants.DANDELION_SHOW_GRAPH) != null) {
-				GraphViewer graphViewer = new GraphViewer(context);
-				response.getWriter().print(graphViewer.getView(request, response, filterChain));
-				return;
-			}
-			// Bundle reloading
-			if (request.getParameter(WebConstants.DANDELION_RELOAD_BUNDLES) != null) {
-				LOG.info("Bundle reloading requested via request parameter");
-				context.initBundleStorage();
-				LOG.info("Bundle reloaded");
-			}
+		// Bundle reloading (development mode only)
+		if (context.isDevModeEnabled() && request.getParameter(WebConstants.DANDELION_RELOAD_BUNDLES) != null) {
+			LOG.info("Bundle reloading requested via request parameter");
+			context.initBundleStorage();
+			LOG.info("Bundle reloaded");
 		}
 
+		// Wraps the response before applying the filter chain
 		ByteArrayResponseWrapper wrappedResponse = new ByteArrayResponseWrapper(response);
 		filterChain.doFilter(request, wrappedResponse);
+
+		// Bundle graph viewer display (development mode only)
+		if (context.isDevModeEnabled() && request.getParameter(WebConstants.DANDELION_SHOW_GRAPH) != null) {
+			GraphViewer graphViewer = new GraphViewer(context);
+			response.getWriter().print(graphViewer.getView(request, response, filterChain));
+			return;
+		}
 
 		byte[] bytes = wrappedResponse.toByteArray();
 
