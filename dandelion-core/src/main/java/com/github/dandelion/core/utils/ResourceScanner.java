@@ -31,16 +31,21 @@ package com.github.dandelion.core.utils;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.net.JarURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLDecoder;
 import java.util.Enumeration;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
+import org.jboss.vfs.VFS;
+import org.jboss.vfs.VirtualFile;
+import org.jboss.vfs.VirtualFileFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -177,10 +182,7 @@ public final class ResourceScanner {
 
 				// Computes the physical root of the classpath to later
 				// determine the resource path more easily
-				String resourcePath = URLDecoder.decode(url.getPath(), "UTF-8");
-				if (resourcePath.endsWith("/") && location.length() > 1) {
-					resourcePath = resourcePath.substring(0, resourcePath.length() - 1);
-				}
+				String resourcePath = PathUtils.toFilePath(url);
 				String classpathPhysicalRoot = resourcePath.substring(0, resourcePath.length() - location.length());
 
 				// Gets the folder in which files will be scanned
@@ -193,6 +195,10 @@ public final class ResourceScanner {
 			{
 
 				resourcePaths.addAll(scanForResourcePathsInJarFile(url));
+			}
+			else if("vfs".equals(url.getProtocol())) // JBoss AS / WildFly 
+			{
+				resourcePaths.addAll(scanForResourcePathsInVfs(location, url));
 			}
 			else {
 				StringBuilder sb = new StringBuilder("The protocol ");
@@ -283,6 +289,56 @@ public final class ResourceScanner {
 		return extractedResourcePaths;
 	}
 
+	/**
+	 * <p>
+	 * Scans for all resources in the given {@code url} using the VFS protocol.
+	 * 
+	 * @param location
+	 *            The classpath location where to scan.
+	 * @param url
+	 *            The URL that reffers to an internal resource, inside the
+	 *            classpath.
+	 * @return A set of non-filtered resource paths.
+	 * @throws IOException
+	 *             for any problem accessing the virtual file system
+	 */
+	private static Set<String> scanForResourcePathsInVfs(String location, URL url) throws IOException {
+
+		Set<String> extractedResourcePaths = new HashSet<String>();
+
+		// First convert the JBoss URL to a standard Java URL
+		URL processedUrl = null;
+		try {
+            Class<?> vfsClass = Class.forName("org.jboss.virtual.VFS");
+            Class<?> vfsUtilsClass = Class.forName("org.jboss.virtual.VFSUtils");
+            Class<?> virtualFileClass = Class.forName("org.jboss.virtual.VirtualFile");
+
+            Method getRootMethod = vfsClass.getMethod("getRoot", URL.class);
+            Method getRealURLMethod = vfsUtilsClass.getMethod("getRealURL", virtualFileClass);
+
+            Object root = getRootMethod.invoke(null, url);
+            processedUrl = (URL) getRealURLMethod.invoke(null, root);
+
+		} catch (Exception e) {
+			throw new DandelionException("An error occurred when using the JBoss VFS classes", e);
+        }
+		
+		// Normalize the resource path
+		String resourcePath = PathUtils.toFilePath(processedUrl);
+		String classpathPhysicalRoot = resourcePath.substring(0, resourcePath.length() - location.length());
+
+		List<VirtualFile> files = VFS.getChild(resourcePath).getChildrenRecursively(new VirtualFileFilter() {
+			public boolean accepts(VirtualFile file) {
+				return file.isFile();
+			}
+		});
+		for (VirtualFile file : files) {
+			extractedResourcePaths.add(file.getPathName().substring(classpathPhysicalRoot.length()));
+		}
+
+		return extractedResourcePaths;
+	}
+	
 	/**
 	 * <p>
 	 * Tests whether the given {@code path} is authorized according to the

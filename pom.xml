@@ -52,6 +52,7 @@
       <thymeleaf.version>2.1.1.RELEASE</thymeleaf.version>
       <webjars-locator.version>0.12</webjars-locator.version>
       <yui-compressor.version>2.4.7</yui-compressor.version>
+      <jboss-vfs.version>3.2.5.Final</jboss-vfs.version>
 
       <!-- Test dependencies -->
       <fest-assert.version>1.4</fest-assert.version>
@@ -115,6 +116,15 @@
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
             <version>${jackson-mapper.version}</version>
+         </dependency>
+
+         <!-- JBoss VFS -->
+         <dependency>
+            <groupId>org.jboss</groupId>
+            <artifactId>jboss-vfs</artifactId>
+            <version>${jboss-vfs.version}</version>
+            <scope>provided</scope>
+            <optional>true</optional>
          </dependency>
 
          <!-- YUI Compressor -->
