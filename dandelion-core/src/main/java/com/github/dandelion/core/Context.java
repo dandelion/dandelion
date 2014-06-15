@@ -292,7 +292,7 @@ public class Context {
 			for (String assetProcessorKey : configuration.getAssetProcessors()) {
 				if (processorsMap.containsKey(assetProcessorKey)) {
 					activeProcessors.add(processorsMap.get(assetProcessorKey));
-					LOG.info("Processor enabled: {}", processorsMap.get(assetProcessorKey));
+					LOG.info("Processor enabled: {}", processorsMap.get(assetProcessorKey).getProcessorKey());
 				}
 			}
 		}
