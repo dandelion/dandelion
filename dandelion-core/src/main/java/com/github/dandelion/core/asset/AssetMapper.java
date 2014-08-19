@@ -152,10 +152,6 @@ public class AssetMapper {
 			location = locators.get(locationKey).getLocation(asu, request);
 		}
 
-		if (location == null) {
-			LOG.warn("No location found for {} on {}", locationKey, asu.toString());
-		}
-
 		asset.setConfigLocationKey(locationKey);
 		asset.setConfigLocation(asu.getLocations().get(locationKey));
 
