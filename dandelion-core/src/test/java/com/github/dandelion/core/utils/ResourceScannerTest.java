@@ -29,12 +29,13 @@
  */
 package com.github.dandelion.core.utils;
 
-import static org.fest.assertions.Assertions.assertThat;
-import static org.fest.util.Collections.set;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.util.Sets.newLinkedHashSet;
 
 import java.io.IOException;
 
 import org.junit.Test;
+
 public class ResourceScannerTest {
 
 	@Test
@@ -87,8 +88,8 @@ public class ResourceScannerTest {
 
 	@Test
 	public void should_filter_resources_with_excluded_folder() throws IOException {
-		assertThat(ResourceScanner.findResourcePaths("scanning", set("scanning/subfolder"), null, null, true))
-				.hasSize(5);
+		assertThat(ResourceScanner.findResourcePaths("scanning", newLinkedHashSet("scanning/subfolder"), null, null, true)).hasSize(
+				5);
 	}
 
 	@Test

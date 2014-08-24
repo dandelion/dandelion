@@ -32,49 +32,57 @@ package com.github.dandelion.core.asset.processor.spi;
 import java.io.Reader;
 import java.io.Writer;
 
-import com.github.dandelion.core.Context;
 import com.github.dandelion.core.DandelionException;
 import com.github.dandelion.core.asset.Asset;
+import com.github.dandelion.core.asset.processor.ProcessingContext;
 
 /**
  * <p>
- * Abstract superclass for all asset processors. Mostly used to handle exception
- * thrown by processor.
+ * Abstract superclass for all asset processors. Mostly used to handle
+ * exceptions thrown by any of the active processors.
  * 
  * @author Thibault Duchateau
  * @since 0.10.0
  */
 public abstract class AbstractAssetProcessor implements AssetProcessor {
 
-	protected Context context;
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public void initProcessor(Context context) {
-		this.context = context;
-	}
-
 	/**
 	 * <p>
-	 * Wrapper method for the actual {@link #doProcess(Asset, Reader, Writer)}
-	 * method which handle exceptions.
+	 * Wrapper method for the actual
+	 * {@link #doProcess(Reader, Writer, ProcessingContext)} method which handle
+	 * exceptions.
 	 */
 	@Override
-	public void process(Asset asset, Reader reader, Writer writer, Context context) {
-		this.context = context;
+	public void process(Reader reader, Writer writer, ProcessingContext processingContext) throws DandelionException {
+
 		try {
-			doProcess(asset, reader, writer);
+			doProcess(reader, writer, processingContext);
 		}
 		catch (Exception e) {
 			StringBuilder sb = new StringBuilder("An exception occurred while applying the processor ");
 			sb.append(getProcessorKey());
 			sb.append(" on the asset ");
-			sb.append(asset.toLog());
+			sb.append(processingContext.getAsset().toLog());
 			throw new DandelionException(sb.toString(), e);
 		}
 	}
 
-	protected abstract void doProcess(Asset asset, Reader reader, Writer writer) throws Exception;
+	/**
+	 * <p>
+	 * Performs the processing of the {@link Asset} stored in the given
+	 * {@link ProcessingContext} by reading its content from the given
+	 * {@link Reader} and writing the new content to the {@link Writer}.
+	 * 
+	 * @param reader
+	 *            The reader containig the content to process.
+	 * @param writer
+	 *            The destination writer.
+	 * @param processingContext
+	 *            The processing context that includes the {@link Asset} to be
+	 *            processed.
+	 * @throws Exception
+	 *             if something goes wrong during the processing of the asset.
+	 */
+	protected abstract void doProcess(Reader reader, Writer writer, ProcessingContext processingContext)
+			throws Exception;
 }

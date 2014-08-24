@@ -38,6 +38,7 @@ import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.github.dandelion.core.asset.AssetType;
 
 /**
@@ -98,44 +99,45 @@ public class BundleStorageUnit {
 	}
 
 	@JsonProperty(value = "assets")
+	@JsonDeserialize(as = LinkedHashSet.class)
 	public Set<AssetStorageUnit> getAssetStorageUnits() {
 		return assetStorageUnits;
 	}
 
 	public Set<String> getAssetStorageUnitNames() {
 		Set<String> asus = new HashSet<String>();
-		if(assetStorageUnits != null){
-			for(AssetStorageUnit asu : assetStorageUnits){
+		if (assetStorageUnits != null) {
+			for (AssetStorageUnit asu : assetStorageUnits) {
 				asus.add(asu.getName());
 			}
 		}
 		return asus;
 	}
-	
-	public Set<String> getJsAssetStorageUnitNames(){
+
+	public Set<String> getJsAssetStorageUnitNames() {
 		Set<String> asus = new HashSet<String>();
-		if(assetStorageUnits != null){
-			for(AssetStorageUnit asu : assetStorageUnits){
-				if(asu.getType().equals(AssetType.js)){
+		if (assetStorageUnits != null) {
+			for (AssetStorageUnit asu : assetStorageUnits) {
+				if (asu.getType().equals(AssetType.js)) {
 					asus.add(asu.getName());
 				}
 			}
 		}
 		return asus;
 	}
-	
-	public Set<String> getCssAssetStorageUnitNames(){
+
+	public Set<String> getCssAssetStorageUnitNames() {
 		Set<String> asus = new HashSet<String>();
-		if(assetStorageUnits != null){
-			for(AssetStorageUnit asu : assetStorageUnits){
-				if(asu.getType().equals(AssetType.css)){
+		if (assetStorageUnits != null) {
+			for (AssetStorageUnit asu : assetStorageUnits) {
+				if (asu.getType().equals(AssetType.css)) {
 					asus.add(asu.getName());
 				}
 			}
 		}
 		return asus;
 	}
-	
+
 	public void setAssetStorageUnits(Set<AssetStorageUnit> assetStorageUnits) {
 		this.assetStorageUnits = assetStorageUnits;
 	}

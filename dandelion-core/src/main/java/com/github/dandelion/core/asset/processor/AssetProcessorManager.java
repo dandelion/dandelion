@@ -73,8 +73,11 @@ public final class AssetProcessorManager {
 
 		if (!context.getActiveProcessors().isEmpty()) {
 			LOG.debug("Processing assets with the following processors: {}", context.getActiveProcessors());
+			
+			
 			for (Asset asset : assets) {
 
+				ProcessingContext processingContext = new ProcessingContext(context, asset, request);
 				if (anyProcessorCanBeAppliedFor(asset)) {
 
 					String content = context.getCacheManager().getContent(asset.getCacheKey());
@@ -86,7 +89,7 @@ public final class AssetProcessorManager {
 					for (AssetProcessor assetProcessor : compatibleAssetProcessors) {
 						LOG.trace("Applying processor {} on {}", assetProcessor.getProcessorKey(), asset.toLog());
 						assetWriter = new StringWriter();
-						assetProcessor.process(asset, assetReader, assetWriter, context);
+						assetProcessor.process(assetReader, assetWriter, processingContext);
 						assetReader = new StringReader(assetWriter.toString());
 					}
 

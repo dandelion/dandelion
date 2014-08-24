@@ -29,47 +29,95 @@
  */
 package com.github.dandelion.core.web;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.io.StringWriter;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
 
 /**
- * <p/>
- * Used to wrap the real {@link HttpServletResponse} so that we can modify it
- * after that the target of the request has delivered its response.
+ * <p>
+ * Used to wrap the real {@link HttpServletResponse} so that it can be modified
+ * after the target of the request has delivered its response.
+ * 
+ * <p>
+ * All streams sit on top of an underlying byte-output stream that will be used
+ * in the {@link DandelionFilter} to adapt the response with the requested
+ * assets.
  * 
  * @author Thibault Duchateau
- * @author Romain Lespinasse
- * @since 0.10.0
+ * @since 0.10.1
  */
-public class DandelionResponseWrapper extends HttpServletResponseWrapper {
+public class ByteArrayResponseWrapper extends HttpServletResponseWrapper {
 
-	protected PrintWriter printWriter = null;
-	protected StringWriter stringWriter = null;
-	protected ServletOutputStream servletOutputStreamWrapper;
+	/**
+	 * The underlying byte-output stream.
+	 */
+	private ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
-	public DandelionResponseWrapper(HttpServletResponse response) {
+	/**
+	 * PrintWriter that sits on top of the byte-output stream.
+	 */
+	private PrintWriter pw = new PrintWriter(baos);
+
+	/**
+	 * ServletOutputStream that sits on top of byte-output stream.
+	 */
+	private ServletOutputStream sos = new ByteArrayServletStream(baos);
+
+	public ByteArrayResponseWrapper(HttpServletResponse response) {
 		super(response);
-		stringWriter = new StringWriter();
-		servletOutputStreamWrapper = new ServletOutputStreamWrapper(stringWriter);
-		printWriter = new PrintWriter(stringWriter);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public ServletOutputStream getOutputStream() throws IOException {
-		return servletOutputStreamWrapper;
+		return sos;
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public PrintWriter getWriter() throws IOException {
-		return printWriter;
+		return pw;
 	}
 
-	public String getWrappedContent() {
-		return stringWriter != null ? stringWriter.toString() : "";
+	/**
+	 * <p>
+	 * Gets the content of the underlying byte-output stream.
+	 * 
+	 * @return the byte array containing the response.
+	 */
+	public byte[] toByteArray() {
+
+		pw.flush();
+		return baos.toByteArray();
+	}
+
+	/**
+	 * <p>
+	 * New specific byte-output stream intended to store the passed stream in a
+	 * byte array.
+	 * 
+	 * @author Thibault Duchateau
+	 * @since 0.10.1
+	 */
+	private class ByteArrayServletStream extends ServletOutputStream {
+
+		private ByteArrayOutputStream baos;
+
+		private ByteArrayServletStream(ByteArrayOutputStream baos) {
+			this.baos = baos;
+		}
+
+		@Override
+		public void write(int param) throws IOException {
+			baos.write(param);
+		}
 	}
 }

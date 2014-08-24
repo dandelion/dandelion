@@ -30,7 +30,7 @@
 
 package com.github.dandelion.core.utils;
 
-import static org.fest.assertions.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;

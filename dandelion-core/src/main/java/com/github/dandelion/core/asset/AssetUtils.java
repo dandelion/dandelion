@@ -134,14 +134,20 @@ public final class AssetUtils {
 	 */
 	public static Set<Asset> filtersByDomPosition(Set<Asset> assets, AssetDomPosition desiredPosition) {
 		Set<Asset> filteredAsus = new LinkedHashSet<Asset>();
+		Set<Asset> filteredJsAsus = new LinkedHashSet<Asset>();
 		for (Asset asset : assets) {
 
 			AssetDomPosition assetPosition = asset.getDom() == null ? asset.getType().getDefaultDom() : asset.getDom();
-			if (assetPosition.equals(desiredPosition)) {
+			if (assetPosition.equals(desiredPosition) && asset.getType().equals(AssetType.js)) {
+				filteredJsAsus.add(asset);
+			}
+			else if (assetPosition.equals(desiredPosition) && !asset.getType().equals(AssetType.js)) {
 				filteredAsus.add(asset);
 			}
 		}
 
+		filteredAsus.addAll(filteredJsAsus);
+		
 		return filteredAsus;
 	}
 

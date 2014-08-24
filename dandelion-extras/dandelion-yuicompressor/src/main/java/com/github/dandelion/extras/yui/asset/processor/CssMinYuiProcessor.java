@@ -37,9 +37,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.github.dandelion.core.DandelionException;
-import com.github.dandelion.core.asset.Asset;
 import com.github.dandelion.core.asset.AssetType;
 import com.github.dandelion.core.asset.processor.CompatibleAssetType;
+import com.github.dandelion.core.asset.processor.ProcessingContext;
 import com.github.dandelion.core.asset.processor.spi.AbstractAssetProcessor;
 import com.yahoo.platform.yui.compressor.CssCompressor;
 
@@ -61,14 +61,14 @@ public class CssMinYuiProcessor extends AbstractAssetProcessor {
 	}
 
 	@Override
-	protected void doProcess(Asset asset, Reader reader, Writer writer) throws Exception {
+	protected void doProcess(Reader reader, Writer writer, ProcessingContext processingContext) throws Exception {
 
 		try {
 			CssCompressor compressor = new CssCompressor(reader);
 			compressor.compress(writer, -1);
 		}
 		catch (IOException e) {
-			LOG.error("YUI compressor can't access to the content of {}", asset.toLog());
+			LOG.error("YUI compressor can't access to the content of {}", processingContext.getAsset().toLog());
 			throw DandelionException.wrap(e);
 		}
 	}

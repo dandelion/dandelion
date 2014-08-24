@@ -1,6 +1,6 @@
 package com.github.dandelion.core.asset;
 
-import static org.fest.assertions.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -17,7 +17,7 @@ public class AssetUtilsTest {
 		assets.add(new Asset("name2", "1.0.0", AssetType.js));
 		assets.add(new Asset("name3", "1.0.0", AssetType.css));
 
-		assertThat(AssetUtils.filtersByType(assets, AssetType.css)).onProperty("name").contains("name3");
+		assertThat(AssetUtils.filtersByType(assets, AssetType.css)).extracting("name").contains("name3");
 	}
 
 	@Test
@@ -28,7 +28,7 @@ public class AssetUtilsTest {
 		assets.add(new Asset("name2", "1.0.0", AssetType.js));
 		assets.add(new Asset("name3", "1.0.0", AssetType.js));
 
-		assertThat(AssetUtils.filtersByName(assets, new String[] { "name2" })).onProperty("name").contains("name1",
+		assertThat(AssetUtils.filtersByName(assets, new String[] { "name2" })).extracting("name").contains("name1",
 				"name3");
 	}
 
@@ -40,7 +40,7 @@ public class AssetUtilsTest {
 		assets.add(new Asset("name2", "1.0.0", AssetType.js));
 		assets.add(new Asset("name3", "1.0.0", AssetType.js));
 
-		assertThat(AssetUtils.filtersByName(assets, new String[] { "name5" })).onProperty("name").contains("name1",
+		assertThat(AssetUtils.filtersByName(assets, new String[] { "name5" })).extracting("name").contains("name1",
 				"name2", "name3");
 	}
 
@@ -52,7 +52,7 @@ public class AssetUtilsTest {
 		assets.add(new Asset("name2", "1.0.0", AssetType.js, AssetDomPosition.body));
 		assets.add(new Asset("name3", "1.0.0", AssetType.js, AssetDomPosition.head));
 
-		assertThat(AssetUtils.filtersByDomPosition(assets, AssetDomPosition.head)).onProperty("name").contains("name3");
+		assertThat(AssetUtils.filtersByDomPosition(assets, AssetDomPosition.head)).extracting("name").contains("name3");
 	}
 
 	@Test
@@ -63,7 +63,7 @@ public class AssetUtilsTest {
 		assets.add(new Asset("name2", "1.0.0", AssetType.js));
 		assets.add(new Asset("name3", "1.0.0", AssetType.css));
 
-		assertThat(AssetUtils.filtersByDomPosition(assets, AssetDomPosition.body)).onProperty("name").contains("name1",
+		assertThat(AssetUtils.filtersByDomPosition(assets, AssetDomPosition.body)).extracting("name").contains("name1",
 				"name2");
 	}
 }

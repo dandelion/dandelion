@@ -56,7 +56,6 @@ import com.github.dandelion.core.storage.BundleStorageUnit;
 import com.github.dandelion.core.utils.ResourceUtils;
 import com.github.dandelion.core.utils.UrlUtils;
 import com.github.dandelion.core.web.AssetRequestContext;
-import com.github.dandelion.core.web.DandelionResponseWrapper;
 import com.github.dandelion.core.web.WebConstants;
 
 /**
@@ -91,9 +90,6 @@ public class GraphViewer {
 
 	public String getView(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
 			throws IOException, ServletException {
-
-		DandelionResponseWrapper wrapper = new DandelionResponseWrapper(response);
-		filterChain.doFilter(request, wrapper);
 
 		assetMapper = new AssetMapper(request, context);
 		StringBuilder sbNodesRequest = new StringBuilder();
