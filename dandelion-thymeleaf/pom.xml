@@ -4,7 +4,7 @@
    <parent>
       <artifactId>dandelion</artifactId>
       <groupId>com.github.dandelion</groupId>
-      <version>0.10.1-SNAPSHOT</version>
+      <version>0.10.1</version>
    </parent>
 
    <artifactId>dandelion-thymeleaf</artifactId>
