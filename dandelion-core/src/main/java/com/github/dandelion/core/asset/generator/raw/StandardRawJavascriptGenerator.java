@@ -31,6 +31,7 @@ package com.github.dandelion.core.asset.generator.raw;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.github.dandelion.core.asset.generator.AbstractJavascriptGenerator;
 import com.github.dandelion.core.asset.generator.AssetBuffer;
 import com.github.dandelion.core.asset.generator.JavascriptGenerator;
 import com.github.dandelion.core.asset.generator.StandardAssetBuffer;
@@ -43,7 +44,7 @@ import com.github.dandelion.core.asset.generator.StandardAssetBuffer;
  * @author Thibault Duchateau
  * @since 0.11.0
  */
-public class StandardRawJavascriptGenerator implements JavascriptGenerator {
+public class StandardRawJavascriptGenerator extends AbstractJavascriptGenerator {
 
 	/**
 	 * The buffer in which components will apped Javascript code.

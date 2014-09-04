@@ -31,25 +31,40 @@ package com.github.dandelion.core.asset.generator;
 
 import javax.servlet.http.HttpServletRequest;
 
-import com.github.dandelion.core.asset.locator.impl.DelegateLocator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.github.dandelion.core.Context;
+import com.github.dandelion.core.scripting.ScriptingUtils;
+import com.github.dandelion.core.web.WebConstants;
 
 /**
  * <p>
- * Common interface for all asset generators.
+ * Abstract base implementation of all Javascript generators.
  * 
  * @author Thibault Duchateau
  * @since 0.11.0
  */
-public interface AssetGenerator {
+public abstract class AbstractJavascriptGenerator implements JavascriptGenerator {
+
+	private static final Logger LOG = LoggerFactory.getLogger(AbstractJavascriptGenerator.class);
 
 	/**
-	 * <p>
-	 * Generates a string that will be used for the asset content.
-	 * 
-	 * @param request
-	 *            The {@link HttpServletRequest} that may be used by generators.
-	 * @return The code to be injected into the asset when the
-	 *         {@link DelegateLocator} is used for assets.
+	 * {@inheritDoc}
 	 */
-	public String getAssetContent(HttpServletRequest request);
+	public String getAssetContent(HttpServletRequest request) {
+
+		Context context = (Context) request.getAttribute(WebConstants.DANDELION_CONTEXT_ATTRIBUTE);
+
+		LOG.debug("Generating asset...");
+		String generatedAsset = getGeneratedAsset(request);
+		LOG.debug("Asset generated successfully");
+		
+		if (context.isDevModeEnabled()) {
+			return ScriptingUtils.prettyPrint(generatedAsset);
+		}
+		return generatedAsset;
+	}
+
+	public abstract String getGeneratedAsset(HttpServletRequest request);
 }

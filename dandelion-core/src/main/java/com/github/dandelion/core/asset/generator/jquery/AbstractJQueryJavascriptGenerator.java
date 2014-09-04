@@ -31,6 +31,7 @@ package com.github.dandelion.core.asset.generator.jquery;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.github.dandelion.core.asset.generator.AbstractJavascriptGenerator;
 import com.github.dandelion.core.asset.generator.AssetBuffer;
 import com.github.dandelion.core.asset.generator.JavascriptGenerator;
 import com.github.dandelion.core.asset.processor.spi.AssetProcessor;
@@ -75,7 +76,7 @@ import com.github.dandelion.core.utils.Validate;
  * @since 0.11.0
  * @see StandardJQueryJavascriptGenerator
  */
-public abstract class AbstractJQueryJavascriptGenerator implements JavascriptGenerator {
+public abstract class AbstractJQueryJavascriptGenerator extends AbstractJavascriptGenerator {
 
 	public static final String INDENTATION = "   ";
 	public static final String NEWLINE = "\n";
@@ -175,8 +176,7 @@ public abstract class AbstractJQueryJavascriptGenerator implements JavascriptGen
 	}
 
 	/**
-	 * TODO gérer jQuery.noConflict TODO remove all NEWLINE => new processor
-	 * JsFormatter
+	 * TODO gérer jQuery.noConflict 
 	 */
 	@Override
 	public String getGeneratedAsset(HttpServletRequest request) {

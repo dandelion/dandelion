@@ -87,6 +87,6 @@ public class DelegateLocator extends AbstractAssetLocator implements Servlet2Com
 	 */
 	@Override
 	protected String doGetContent(String location, Map<String, Object> parameters, HttpServletRequest request) {
-		return ((AssetGenerator) parameters.get(DELEGATED_CONTENT_PARAM)).getGeneratedAsset(request);
+		return ((AssetGenerator) parameters.get(DELEGATED_CONTENT_PARAM)).getAssetContent(request);
 	}
 }

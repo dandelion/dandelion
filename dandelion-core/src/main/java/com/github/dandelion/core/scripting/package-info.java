@@ -1,21 +1,21 @@
 /*
  * [The "BSD licence"]
- * Copyright (c) 2012 Dandelion
+ * Copyright (c) 2013-2014 Dandelion
  * All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
  * are met:
- * 
+ *
  * 1. Redistributions of source code must retain the above copyright
  * notice, this list of conditions and the following disclaimer.
  * 2. Redistributions in binary form must reproduce the above copyright
  * notice, this list of conditions and the following disclaimer in the
  * documentation and/or other materials provided with the distribution.
- * 3. Neither the name of Dandelion nor the names of its contributors 
- * may be used to endorse or promote products derived from this software 
+ * 3. Neither the name of Dandelion nor the names of its contributors
+ * may be used to endorse or promote products derived from this software
  * without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
  * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
  * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
@@ -27,46 +27,10 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.github.dandelion.core.utils;
-
-import java.io.StringWriter;
-
 /**
- * Custom writer that pretty prints a JSON object as a String.
+ * All scripting-related utilies.
  * 
- * @author Elad Tabak
- * @since 28-Nov-2011
- * @version 0.1
+ * @author Thibault Duchateau
+ * @since 0.11.0
  */
-public class JsonIndentingWriter extends StringWriter {
-
-	private int indent = 0;
-
-	@Override
-	public void write(int c) {
-		if (((char) c) == '[' || ((char) c) == '{') {
-			super.write(c);
-			super.write('\n');
-			indent++;
-			writeIndentation();
-		} else if (((char) c) == ',') {
-			super.write(c);
-			super.write('\n');
-			writeIndentation();
-		} else if (((char) c) == ']' || ((char) c) == '}') {
-			super.write('\n');
-			indent--;
-			writeIndentation();
-			super.write(c);
-		} else {
-			super.write(c);
-		}
-
-	}
-
-	private void writeIndentation() {
-		for (int i = 0; i < indent; i++) {
-			super.write("   ");
-		}
-	}
-}
+package com.github.dandelion.core.scripting;

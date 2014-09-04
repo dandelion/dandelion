@@ -27,29 +27,45 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.github.dandelion.core.asset.generator;
+package com.github.dandelion.core.scripting;
 
-import javax.servlet.http.HttpServletRequest;
+import javax.script.Bindings;
+import javax.script.ScriptContext;
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
+import javax.script.ScriptException;
 
-import com.github.dandelion.core.asset.locator.impl.DelegateLocator;
+public class ScriptBuilder {
 
-/**
- * <p>
- * Common interface for all asset generators.
- * 
- * @author Thibault Duchateau
- * @since 0.11.0
- */
-public interface AssetGenerator {
-
-	/**
-	 * <p>
-	 * Generates a string that will be used for the asset content.
-	 * 
-	 * @param request
-	 *            The {@link HttpServletRequest} that may be used by generators.
-	 * @return The code to be injected into the asset when the
-	 *         {@link DelegateLocator} is used for assets.
-	 */
-	public String getAssetContent(HttpServletRequest request);
+	private ScriptEngineManager scriptEngineManager;
+	private ScriptEngine scriptEngine;
+	private Bindings bindings;
+	
+	public ScriptBuilder(){
+		this.scriptEngineManager = new ScriptEngineManager();
+		this.scriptEngine = scriptEngineManager.getEngineByName("rhino");
+		this.bindings = scriptEngine.getBindings(ScriptContext.ENGINE_SCOPE);
+		bindings.clear();
+	}
+	
+	public ScriptBuilder addBinding(String name, Object value) {
+		this.bindings.put(name, value);
+		return this;
+	}
+	
+	public ScriptBuilder eval(String javascript) {
+		try {
+			this.scriptEngine.eval(javascript, this.bindings);
+		}
+		catch (ScriptException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return this;
+	}
+	
+	public String get(String name) {
+		String result = (String) this.bindings.get(name);
+		return result;
+	}
 }

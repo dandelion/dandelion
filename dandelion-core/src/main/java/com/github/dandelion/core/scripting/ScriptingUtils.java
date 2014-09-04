@@ -27,29 +27,23 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.github.dandelion.core.asset.generator;
+package com.github.dandelion.core.scripting;
 
-import javax.servlet.http.HttpServletRequest;
+import com.github.dandelion.core.utils.ResourceUtils;
 
-import com.github.dandelion.core.asset.locator.impl.DelegateLocator;
+public class ScriptingUtils {
 
-/**
- * <p>
- * Common interface for all asset generators.
- * 
- * @author Thibault Duchateau
- * @since 0.11.0
- */
-public interface AssetGenerator {
-
-	/**
-	 * <p>
-	 * Generates a string that will be used for the asset content.
-	 * 
-	 * @param request
-	 *            The {@link HttpServletRequest} that may be used by generators.
-	 * @return The code to be injected into the asset when the
-	 *         {@link DelegateLocator} is used for assets.
-	 */
-	public String getAssetContent(HttpServletRequest request);
+	public static String prettyPrint(String javascript) {
+		
+		String beautifySources = ResourceUtils.getFileContentFromClasspath("dandelion/internal/scripting/beautify.js");
+		
+		String prettyPrintedJavascript = new ScriptBuilder()
+			.addBinding("source", javascript)
+			.eval("var global = {};")
+			.eval(beautifySources)
+			.eval("prettyPrinted = global.js_beautify(source);")
+			.get("prettyPrinted");
+		
+		return prettyPrintedJavascript;
+	}
 }

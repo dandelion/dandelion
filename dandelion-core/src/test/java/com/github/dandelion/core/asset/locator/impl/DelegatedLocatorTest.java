@@ -90,7 +90,7 @@ public class DelegatedLocatorTest {
 				new AssetGenerator() {
 					
 					@Override
-					public String getGeneratedAsset(HttpServletRequest request) {
+					public String getAssetContent(HttpServletRequest request) {
 						return "/* delegated content */";
 					}
 				});
