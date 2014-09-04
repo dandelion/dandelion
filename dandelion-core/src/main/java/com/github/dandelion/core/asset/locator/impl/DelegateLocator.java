@@ -34,6 +34,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.github.dandelion.core.asset.generator.AssetGenerator;
 import com.github.dandelion.core.asset.locator.Servlet2Compatible;
 import com.github.dandelion.core.asset.locator.Servlet3Compatible;
 import com.github.dandelion.core.asset.locator.spi.AbstractAssetLocator;
@@ -86,6 +87,6 @@ public class DelegateLocator extends AbstractAssetLocator implements Servlet2Com
 	 */
 	@Override
 	protected String doGetContent(String location, Map<String, Object> parameters, HttpServletRequest request) {
-		return ((DelegatedContent) parameters.get(DELEGATED_CONTENT_PARAM)).getContent(request);
+		return ((AssetGenerator) parameters.get(DELEGATED_CONTENT_PARAM)).getGeneratedAsset(request);
 	}
 }

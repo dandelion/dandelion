@@ -27,44 +27,35 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.github.dandelion.core.utils;
+package com.github.dandelion.core.asset.generator.jquery;
 
-import java.util.ArrayList;
+/**
+ * <p>
+ * Standard implementation of {@link AbstractJQueryJavascriptGenerator} which
+ * transfers data from a {@link JQueryAssetBuffer} to each {@link Placeholder}
+ * if the generator correspondingly.
+ * 
+ * <p>
+ * Users may override the {@link #fillBuffer(JQueryAssetBuffer)} method to
+ * customize the way the Javascript code is appended to the different
+ * {@link Placeholder}.
+ * 
+ * @author Thibault Duchateau
+ * @since 0.11.0
+ */
+public class StandardJQueryJavascriptGenerator extends AbstractJQueryJavascriptGenerator {
 
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+	/**
+	 * {@inheritDoc}
+	 */
+	public void fillBuffer(JQueryAssetBuffer jab) {
 
-public class ValidateTest {
-
-	@Rule
-	public ExpectedException exception = ExpectedException.none();
-
-	@Test
-	public void should_fail_if_object_is_null() {
-		exception.expect(IllegalArgumentException.class);
-		exception.expectMessage("Cannot be null");
-		Validate.notNull(null, "Cannot be null");
-	}
-
-	@Test
-	public void should_fail_if_string_is_empty() {
-		exception.expect(IllegalArgumentException.class);
-		exception.expectMessage("Cannot be blank");
-		Validate.notBlank("", "Cannot be blank");
-	}
-
-	@Test
-	public void should_fail_if_array_is_empty() {
-		exception.expect(IllegalArgumentException.class);
-		exception.expectMessage("Cannot be empty");
-		Validate.notEmpty(new ArrayList<String>(), "Cannot be empty");
-	}
-
-	@Test
-	public void should_fail_if_boolean_is_false() {
-		exception.expect(IllegalArgumentException.class);
-		exception.expectMessage("Cannot be false");
-		Validate.isTrue(false, "Cannot be false");
+		appendToPlaceholder(Placeholder.BEFORE_ALL, jab.getBeforeAll());
+		appendToPlaceholder(Placeholder.BEFORE_START_DOCUMENT_READY, jab.getBeforeStartDocumentReady());
+		appendToPlaceholder(Placeholder.AFTER_START_DOCUMENT_READY, jab.getAfterStartDocumentReady());
+		appendToPlaceholder(Placeholder.COMPONENT_CONFIGURATION, jab.getComponentConf());
+		appendToPlaceholder(Placeholder.BEFORE_END_DOCUMENT_READY, jab.getBeforeEndDocumentReady());
+		appendToPlaceholder(Placeholder.AFTER_END_DOCUMENT_READY, jab.getAfterEndDocumentReady());
+		appendToPlaceholder(Placeholder.AFTER_ALL, jab.getAfterAll());
 	}
 }

@@ -27,44 +27,29 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.github.dandelion.core.utils;
+package com.github.dandelion.core.asset.generator;
 
-import java.util.ArrayList;
+import javax.servlet.http.HttpServletRequest;
 
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import com.github.dandelion.core.asset.locator.impl.DelegateLocator;
 
-public class ValidateTest {
+/**
+ * <p>
+ * Common interface for all asset generators.
+ * 
+ * @author Thibault Duchateau
+ * @since 0.11.0
+ */
+public interface AssetGenerator {
 
-	@Rule
-	public ExpectedException exception = ExpectedException.none();
-
-	@Test
-	public void should_fail_if_object_is_null() {
-		exception.expect(IllegalArgumentException.class);
-		exception.expectMessage("Cannot be null");
-		Validate.notNull(null, "Cannot be null");
-	}
-
-	@Test
-	public void should_fail_if_string_is_empty() {
-		exception.expect(IllegalArgumentException.class);
-		exception.expectMessage("Cannot be blank");
-		Validate.notBlank("", "Cannot be blank");
-	}
-
-	@Test
-	public void should_fail_if_array_is_empty() {
-		exception.expect(IllegalArgumentException.class);
-		exception.expectMessage("Cannot be empty");
-		Validate.notEmpty(new ArrayList<String>(), "Cannot be empty");
-	}
-
-	@Test
-	public void should_fail_if_boolean_is_false() {
-		exception.expect(IllegalArgumentException.class);
-		exception.expectMessage("Cannot be false");
-		Validate.isTrue(false, "Cannot be false");
-	}
+	/**
+	 * <p>
+	 * Generates a string that will be used for the asset content.
+	 * 
+	 * @param request
+	 *            The {@link HttpServletRequest} that may be used by generators.
+	 * @return The code to be injected into the asset when the
+	 *         {@link DelegateLocator} is used for assets.
+	 */
+	public String getGeneratedAsset(HttpServletRequest request);
 }

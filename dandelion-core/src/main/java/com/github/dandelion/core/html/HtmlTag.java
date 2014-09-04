@@ -29,6 +29,7 @@
  */
 package com.github.dandelion.core.html;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -47,22 +48,96 @@ public abstract class HtmlTag {
 	/**
 	 * Plain old HTML <code>class</code> attribute.
 	 */
-	protected StringBuffer cssClass;
+	protected StringBuilder cssClass;
 
 	/**
 	 * Plain old HTML <code>style</code> attribute.
 	 */
-	protected StringBuffer cssStyle;
+	protected StringBuilder cssStyle;
 
+
+	/**
+	 * Dynamic native HTML attributes.
+	 */
+	protected Map<String, String> dynamicAttributes;
+	
 	protected Map<String, String> attributes;
 	private String[] attributesOnlyName;
 
+	public static final char CLASS_SEPARATOR = ' ';
+	public static final char STYLE_SEPARATOR = ';';
+	
 	/**
+	 * Tag label.
+	 */
+	protected String tag;
+
+        /**
 	 * Render the tag in HTML code.
 	 * 
 	 * @return the HTML code corresponding to the tag.
 	 */
-	public abstract String toHtml();
+	public StringBuilder toHtml() {
+		StringBuilder html = new StringBuilder();
+		html.append(getHtmlOpeningTag());
+		html.append(getHtmlClosingTag());
+		return html;
+	}
+
+	protected StringBuilder getHtmlOpeningTag() {
+		StringBuilder html = new StringBuilder();
+		html.append('<');
+		html.append(this.tag);
+		html.append(getHtmlAttributes());
+		html.append(getDynamicHtmlAttributes());
+		html.append('>');
+		return html;
+	}
+
+	protected StringBuilder getHtmlAttributes() {
+		StringBuilder html = new StringBuilder();
+		html.append(writeAttribute("id", this.id));
+		html.append(writeAttribute("class", this.cssClass));
+		html.append(writeAttribute("style", this.cssStyle));
+		return html;
+	}
+
+	protected StringBuilder getDynamicHtmlAttributes() {
+
+		// If no dynamicAttributes set, return empty StringBuilder
+		if(dynamicAttributes == null) {
+			return new StringBuilder();
+		}
+		StringBuilder html = new StringBuilder();
+		for(Map.Entry<String, String> attribute : dynamicAttributes.entrySet()) {
+			html.append(writeAttribute(attribute.getKey(), attribute.getValue()));
+		}
+		return html;
+	}
+	
+	protected static StringBuilder writeAttribute(String name, Object data) {
+		StringBuilder html = new StringBuilder();
+		if(data != null) {
+			html.append(' ');
+			html.append(name);
+			html.append("=\"");
+			html.append(data.toString());
+			html.append('"');
+		}
+		return html;
+	}
+
+	protected StringBuilder getHtmlClosingTag() {
+		StringBuilder html = new StringBuilder();
+		html.append("</");
+		html.append(this.tag);
+		html.append('>');
+		return html;
+	}
+
+	public String getTag() {
+		return tag;
+	}
 
 	public String getId() {
 		return id;
@@ -72,39 +147,74 @@ public abstract class HtmlTag {
 		this.id = id;
 	}
 
-	public StringBuffer getCssClass() {
+	public StringBuilder getCssClass() {
 		return cssClass;
 	}
 
-	public void setCssClass(StringBuffer cssClass) {
+	public void setCssClass(StringBuilder cssClass) {
 		this.cssClass = cssClass;
 	}
 
-	public StringBuffer getCssStyle() {
+	public StringBuilder getCssStyle() {
 		return cssStyle;
 	}
 
-	public void setCssStyle(StringBuffer cssStyle) {
+	public void setCssStyle(StringBuilder cssStyle) {
 		this.cssStyle = cssStyle;
 	}
 
-	public void addCssClass(String cssClass) {
-		if (this.cssClass == null) {
-			this.cssClass = new StringBuffer();
+	public Map<String, String> getDynamicAttributes() {
+		return dynamicAttributes;
+	}
+
+	public String getDynamicAttributeValue(String attributeName) {
+		if (this.dynamicAttributes != null) {
+			return this.dynamicAttributes.get(attributeName);
 		}
-		this.cssClass.append(" ");
+		return null;
+	}
+	
+	public void setDynamicAttributes(Map<String, String> dynamicAttributes) {
+		this.dynamicAttributes = dynamicAttributes;
+	}
+
+	public void addDynamicAttribute(String name, String value) {
+		if (this.dynamicAttributes == null) {
+			this.dynamicAttributes = new HashMap<String, String>();
+		}
+		this.dynamicAttributes.put(name, value);
+	}
+
+	public void removeDynamicAttribute(String attributeName) {
+		if (this.dynamicAttributes != null) {
+			this.dynamicAttributes.remove(attributeName);
+		}
+	}
+	
+	public void addCssClass(String cssClass) {
+		if(this.cssClass == null) {
+			this.cssClass = new StringBuilder();
+		} else {
+			this.cssClass.append(CLASS_SEPARATOR);
+		}
 		this.cssClass.append(cssClass);
 	}
 
 	public void addCssStyle(String cssStyle) {
-		if (this.cssStyle == null) {
-			this.cssStyle = new StringBuffer();
+		if(this.cssStyle == null) {
+			this.cssStyle = new StringBuilder();
+		} else {
+			this.cssStyle.append(STYLE_SEPARATOR);
 		}
 		this.cssStyle.append(cssStyle);
-		if (!cssStyle.endsWith(";")) {
-			this.cssStyle.append(";");
-		}
 	}
+	
+	/**
+	 * Render the tag in HTML code.
+	 * 
+	 * @return the HTML code corresponding to the tag.
+	 */
+//	public abstract String toHtml();
 
 	public void addAttributes(Map<String, String> attributes) {
 		this.attributes = attributes;

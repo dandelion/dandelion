@@ -42,6 +42,14 @@ import java.io.Reader;
  */
 public class StringBuilderUtils {
 
+	public static boolean isNotBlank(StringBuilder stringBuilder) {
+		return stringBuilder != null && stringBuilder.length() > 0;
+	}
+
+	public static boolean isBlank(StringBuilder stringBuilder) {
+		return !isNotBlank(stringBuilder);
+	}
+	
 	public static StringBuilder toStringBuilder(Reader reader) throws IOException {
 
 		BufferedReader in = new BufferedReader(reader);

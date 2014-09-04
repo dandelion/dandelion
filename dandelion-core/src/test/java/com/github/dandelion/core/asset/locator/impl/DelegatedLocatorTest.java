@@ -45,6 +45,7 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import com.github.dandelion.core.Context;
 import com.github.dandelion.core.DandelionException;
 import com.github.dandelion.core.asset.AssetType;
+import com.github.dandelion.core.asset.generator.AssetGenerator;
 import com.github.dandelion.core.storage.AssetStorageUnit;
 import com.github.dandelion.core.web.AssetRequestContext;
 import com.github.dandelion.core.web.WebConstants;
@@ -86,9 +87,10 @@ public class DelegatedLocatorTest {
 	public void should_return_the_content() {
 
 		AssetRequestContext.get(request).addParameter("my-js", DelegateLocator.DELEGATED_CONTENT_PARAM,
-				new DelegatedContent() {
+				new AssetGenerator() {
+					
 					@Override
-					public String getContent(HttpServletRequest request) {
+					public String getGeneratedAsset(HttpServletRequest request) {
 						return "/* delegated content */";
 					}
 				});

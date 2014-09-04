@@ -52,6 +52,13 @@ public final class Validate {
 		}
 	}
 
+	public static void notBlank(StringBuilder object, String message) {
+		Validate.notNull(object, message);
+		if (object.length() == 0) {
+			throw new IllegalArgumentException(message);
+		}
+	}
+
 	public static void notEmpty(Collection<?> object, String message) {
 		if (object == null || object.size() == 0) {
 			throw new IllegalArgumentException(message);

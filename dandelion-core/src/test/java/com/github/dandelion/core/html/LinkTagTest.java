@@ -38,9 +38,9 @@ public class LinkTagTest {
 
 	@Test
 	public void should_have_correct_html_rendering() {
-		assertThat(new LinkTag().toHtml()).isEqualTo("<link rel=\"stylesheet\"/>");
-		assertThat(new LinkTag("url").toHtml()).isEqualTo("<link rel=\"stylesheet\" href=\"url\"/>");
-		assertThat(new LinkTag("url", "rel").toHtml()).isEqualTo("<link rel=\"rel\" href=\"url\"/>");
+		assertThat(new LinkTag().toHtml().toString()).isEqualTo("<link rel=\"stylesheet\"/>");
+		assertThat(new LinkTag("url").toHtml().toString()).isEqualTo("<link rel=\"stylesheet\" href=\"url\"/>");
+		assertThat(new LinkTag("url", "rel").toHtml().toString()).isEqualTo("<link rel=\"rel\" href=\"url\"/>");
 	}
 
 	@Test

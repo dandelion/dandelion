@@ -52,8 +52,8 @@ public class ScriptTag extends HtmlTag {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public String toHtml() {
-		StringBuffer html = new StringBuffer();
+	public StringBuilder toHtml() {
+		StringBuilder html = new StringBuilder();
 		html.append("<script");
 
 		if (this.src != null) {
@@ -67,7 +67,7 @@ public class ScriptTag extends HtmlTag {
 
 		html.append("></script>");
 
-		return html.toString();
+		return html;
 	}
 
 	public String getSrc() {

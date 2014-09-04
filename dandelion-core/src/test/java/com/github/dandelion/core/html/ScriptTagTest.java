@@ -38,8 +38,8 @@ public class ScriptTagTest {
 
 	@Test
 	public void should_have_correct_html_rendering() {
-		assertThat(new ScriptTag().toHtml()).isEqualTo("<script></script>");
-		assertThat(new ScriptTag("url").toHtml()).isEqualTo("<script src=\"url\"></script>");
+		assertThat(new ScriptTag().toHtml().toString()).isEqualTo("<script></script>");
+		assertThat(new ScriptTag("url").toHtml().toString()).isEqualTo("<script src=\"url\"></script>");
 	}
 
 	@Test

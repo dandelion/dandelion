@@ -38,14 +38,14 @@ public class HtmlTagTest {
 
 	static HtmlTag tag = new HtmlTag() {
 		@Override
-		public String toHtml() {
-			return "test";
+		public StringBuilder toHtml() {
+			return new StringBuilder("test");
 		}
 	};
 
 	@Test
 	public void should_have_correct_html_rendering() {
-		assertThat(tag.toHtml()).isEqualTo("test");
+		assertThat(tag.toHtml().toString()).isEqualTo("test");
 	}
 
 	@Test
@@ -54,21 +54,21 @@ public class HtmlTagTest {
 		assertThat(tag.getId()).isEqualTo("id");
 
 		tag.addCssClass("class1");
-		assertThat(tag.getCssClass().toString()).isEqualTo(" class1");
-
-		tag.addCssStyle("style1");
-		assertThat(tag.getCssStyle().toString()).isEqualTo("style1;");
-
-		tag.addCssClass("class2");
-		assertThat(tag.getCssClass().toString()).isEqualTo(" class1 class2");
-
-		tag.addCssStyle("style2");
-		assertThat(tag.getCssStyle().toString()).isEqualTo("style1;style2;");
-
-		tag.setCssClass(new StringBuffer("class1"));
 		assertThat(tag.getCssClass().toString()).isEqualTo("class1");
 
-		tag.setCssStyle(new StringBuffer("style1"));
+		tag.addCssStyle("style1");
+		assertThat(tag.getCssStyle().toString()).isEqualTo("style1");
+
+		tag.addCssClass("class2");
+		assertThat(tag.getCssClass().toString()).isEqualTo("class1 class2");
+
+		tag.addCssStyle("style2");
+		assertThat(tag.getCssStyle().toString()).isEqualTo("style1;style2");
+
+		tag.setCssClass(new StringBuilder("class1"));
+		assertThat(tag.getCssClass().toString()).isEqualTo("class1");
+
+		tag.setCssStyle(new StringBuilder("style1"));
 		assertThat(tag.getCssStyle().toString()).isEqualTo("style1");
 	}
 }

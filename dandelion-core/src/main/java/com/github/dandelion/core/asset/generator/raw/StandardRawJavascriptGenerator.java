@@ -27,44 +27,47 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.github.dandelion.core.utils;
+package com.github.dandelion.core.asset.generator.raw;
 
-import java.util.ArrayList;
+import javax.servlet.http.HttpServletRequest;
 
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import com.github.dandelion.core.asset.generator.AssetBuffer;
+import com.github.dandelion.core.asset.generator.JavascriptGenerator;
+import com.github.dandelion.core.asset.generator.StandardAssetBuffer;
 
-public class ValidateTest {
+/**
+ * <p>
+ * Standard implementation of {@link JavascriptGenerator}, meant to generate raw
+ * Javascript code.
+ * 
+ * @author Thibault Duchateau
+ * @since 0.11.0
+ */
+public class StandardRawJavascriptGenerator implements JavascriptGenerator {
 
-	@Rule
-	public ExpectedException exception = ExpectedException.none();
+	/**
+	 * The buffer in which components will apped Javascript code.
+	 */
+	private StandardAssetBuffer standardAssetBuffer;
 
-	@Test
-	public void should_fail_if_object_is_null() {
-		exception.expect(IllegalArgumentException.class);
-		exception.expectMessage("Cannot be null");
-		Validate.notNull(null, "Cannot be null");
+	public StandardRawJavascriptGenerator() {
+		this.standardAssetBuffer = new StandardAssetBuffer();
 	}
 
-	@Test
-	public void should_fail_if_string_is_empty() {
-		exception.expect(IllegalArgumentException.class);
-		exception.expectMessage("Cannot be blank");
-		Validate.notBlank("", "Cannot be blank");
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public void fillBuffer(AssetBuffer assetBuffer) {
+		this.standardAssetBuffer.append(((StandardAssetBuffer) assetBuffer).getJavascript());
+
 	}
 
-	@Test
-	public void should_fail_if_array_is_empty() {
-		exception.expect(IllegalArgumentException.class);
-		exception.expectMessage("Cannot be empty");
-		Validate.notEmpty(new ArrayList<String>(), "Cannot be empty");
-	}
-
-	@Test
-	public void should_fail_if_boolean_is_false() {
-		exception.expect(IllegalArgumentException.class);
-		exception.expectMessage("Cannot be false");
-		Validate.isTrue(false, "Cannot be false");
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public String getGeneratedAsset(HttpServletRequest request) {
+		return standardAssetBuffer.getJavascript().toString();
 	}
 }

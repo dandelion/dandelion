@@ -27,44 +27,20 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.github.dandelion.core.utils;
+package com.github.dandelion.core.asset.generator;
 
-import java.util.ArrayList;
+public class StandardAssetBuffer implements AssetBuffer {
 
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+	private StringBuilder javascript;
 
-public class ValidateTest {
-
-	@Rule
-	public ExpectedException exception = ExpectedException.none();
-
-	@Test
-	public void should_fail_if_object_is_null() {
-		exception.expect(IllegalArgumentException.class);
-		exception.expectMessage("Cannot be null");
-		Validate.notNull(null, "Cannot be null");
+	public StringBuilder getJavascript() {
+		return javascript;
 	}
 
-	@Test
-	public void should_fail_if_string_is_empty() {
-		exception.expect(IllegalArgumentException.class);
-		exception.expectMessage("Cannot be blank");
-		Validate.notBlank("", "Cannot be blank");
-	}
-
-	@Test
-	public void should_fail_if_array_is_empty() {
-		exception.expect(IllegalArgumentException.class);
-		exception.expectMessage("Cannot be empty");
-		Validate.notEmpty(new ArrayList<String>(), "Cannot be empty");
-	}
-
-	@Test
-	public void should_fail_if_boolean_is_false() {
-		exception.expect(IllegalArgumentException.class);
-		exception.expectMessage("Cannot be false");
-		Validate.isTrue(false, "Cannot be false");
+	public void append(StringBuilder javascript) {
+		if (this.javascript == null) {
+			this.javascript = new StringBuilder();
+		}
+		this.javascript.append(javascript);
 	}
 }
