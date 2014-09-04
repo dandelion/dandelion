@@ -56,7 +56,7 @@ public class JQueryAssetBuffer implements AssetBuffer {
 		if (this.beforeAll == null) {
 			this.beforeAll = new StringBuilder();
 		}
-		this.beforeAll.append(beforeAll);
+		this.beforeAll.append(beforeAll != null ? beforeAll : "");
 	}
 
 	public StringBuilder getBeforeStartDocumentReady() {
@@ -67,7 +67,7 @@ public class JQueryAssetBuffer implements AssetBuffer {
 		if (this.beforeStartDocumentReady == null) {
 			this.beforeStartDocumentReady = new StringBuilder();
 		}
-		this.beforeStartDocumentReady.append(beforeStartDocumentReady);
+		this.beforeStartDocumentReady.append(beforeStartDocumentReady != null ? beforeStartDocumentReady : "");
 	}
 
 	public StringBuilder getAfterStartDocumentReady() {
@@ -78,7 +78,7 @@ public class JQueryAssetBuffer implements AssetBuffer {
 		if (this.afterStartDocumentReady == null) {
 			this.afterStartDocumentReady = new StringBuilder();
 		}
-		this.afterStartDocumentReady.append(afterStartDocumentReady);
+		this.afterStartDocumentReady.append(afterStartDocumentReady != null ? afterStartDocumentReady : "");
 	}
 
 	public StringBuilder getComponentConf() {
@@ -89,7 +89,7 @@ public class JQueryAssetBuffer implements AssetBuffer {
 		if (this.componentConf == null) {
 			this.componentConf = new StringBuilder();
 		}
-		this.componentConf.append(componentConf);
+		this.componentConf.append(componentConf != null ? componentConf : "");
 	}
 
 	public StringBuilder getBeforeEndDocumentReady() {
@@ -100,7 +100,7 @@ public class JQueryAssetBuffer implements AssetBuffer {
 		if (this.beforeEndDocumentReady == null) {
 			this.beforeEndDocumentReady = new StringBuilder();
 		}
-		this.beforeEndDocumentReady.append(beforeEndDocumentReady);
+		this.beforeEndDocumentReady.append(beforeEndDocumentReady != null ? beforeEndDocumentReady : "");
 	}
 
 	public StringBuilder getAfterAll() {
@@ -118,7 +118,7 @@ public class JQueryAssetBuffer implements AssetBuffer {
 		if (this.afterEndDocumentReady == null) {
 			this.afterEndDocumentReady = new StringBuilder();
 		}
-		this.afterEndDocumentReady.append(afterEndDocumentReady);
+		this.afterEndDocumentReady.append(afterEndDocumentReady != null ? afterEndDocumentReady : "");
 	}
 
 	public StringBuilder getAfterEndDocumentReady() {

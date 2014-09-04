@@ -78,9 +78,6 @@ import com.github.dandelion.core.utils.Validate;
  */
 public abstract class AbstractJQueryJavascriptGenerator extends AbstractJavascriptGenerator {
 
-	public static final String INDENTATION = "   ";
-	public static final String NEWLINE = "\n";
-
 	private StringBuilder beforeAll;
 	private StringBuilder beforeStartDocumentReady;
 	private StringBuilder afterStartDocumentReady;
@@ -176,7 +173,7 @@ public abstract class AbstractJQueryJavascriptGenerator extends AbstractJavascri
 	}
 
 	/**
-	 * TODO gérer jQuery.noConflict 
+	 * TODO gérer jQuery.noConflict
 	 */
 	@Override
 	public String getGeneratedAsset(HttpServletRequest request) {
@@ -212,5 +209,33 @@ public abstract class AbstractJQueryJavascriptGenerator extends AbstractJavascri
 		}
 
 		return retval.toString();
+	}
+
+	public StringBuilder getBeforeAll() {
+		return beforeAll;
+	}
+
+	public StringBuilder getBeforeStartDocumentReady() {
+		return beforeStartDocumentReady;
+	}
+
+	public StringBuilder getAfterStartDocumentReady() {
+		return afterStartDocumentReady;
+	}
+
+	public StringBuilder getComponentConfiguration() {
+		return componentConfiguration;
+	}
+
+	public StringBuilder getBeforeEndDocumentReady() {
+		return beforeEndDocumentReady;
+	}
+
+	public StringBuilder getAfterEndDocumentReady() {
+		return afterEndDocumentReady;
+	}
+
+	public StringBuilder getAfterAll() {
+		return afterAll;
 	}
 }

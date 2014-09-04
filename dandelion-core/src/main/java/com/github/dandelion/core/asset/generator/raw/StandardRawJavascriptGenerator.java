@@ -35,6 +35,7 @@ import com.github.dandelion.core.asset.generator.AbstractJavascriptGenerator;
 import com.github.dandelion.core.asset.generator.AssetBuffer;
 import com.github.dandelion.core.asset.generator.JavascriptGenerator;
 import com.github.dandelion.core.asset.generator.StandardAssetBuffer;
+import com.github.dandelion.core.utils.StringBuilderUtils;
 
 /**
  * <p>
@@ -60,8 +61,10 @@ public class StandardRawJavascriptGenerator extends AbstractJavascriptGenerator 
 	 */
 	@Override
 	public void fillBuffer(AssetBuffer assetBuffer) {
-		this.standardAssetBuffer.append(((StandardAssetBuffer) assetBuffer).getJavascript());
-
+		StringBuilder code = ((StandardAssetBuffer) assetBuffer).getJavascript();
+		if (StringBuilderUtils.isNotBlank(code)) {
+			this.standardAssetBuffer.append(code);
+		}
 	}
 
 	/**
@@ -69,6 +72,6 @@ public class StandardRawJavascriptGenerator extends AbstractJavascriptGenerator 
 	 */
 	@Override
 	public String getGeneratedAsset(HttpServletRequest request) {
-		return standardAssetBuffer.getJavascript().toString();
+		return standardAssetBuffer.getJavascript() != null ? standardAssetBuffer.getJavascript().toString() : null;
 	}
 }
