@@ -32,22 +32,50 @@ package com.github.dandelion.core.html;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import org.junit.Before;
 import org.junit.Test;
 
-public class ScriptTagTest {
+public class HtmlLinkTest {
 
-	@Test
-	public void should_have_correct_html_rendering() {
-		assertThat(new ScriptTag().toHtml().toString()).isEqualTo("<script></script>");
-		assertThat(new ScriptTag("url").toHtml().toString()).isEqualTo("<script src=\"url\"></script>");
+//	@Test
+//	public void should_have_correct_html_rendering() {
+//		assertThat(new HtmlLink().toHtml().toString()).isEqualTo("<link rel=\"stylesheet\"/>");
+//		assertThat(new HtmlLink("url").toHtml().toString()).isEqualTo("<link rel=\"stylesheet\" href=\"url\"/>");
+//		assertThat(new HtmlLink("url", "rel").toHtml().toString()).isEqualTo("<link rel=\"rel\" href=\"url\"/>");
+//	}
+//
+//	@Test
+//	public void should_have_full_access_to_the_tag() {
+//		HtmlLink tag = new HtmlLink("url", "rel");
+//		assertThat(tag.getHref()).isEqualTo("url");
+//		assertThat(tag.getRel()).isEqualTo("rel");
+//
+//		tag.setHref("anotherHref");
+//		tag.setRel("anotherRel");
+//		assertThat(tag.getHref()).isEqualTo("anotherHref");
+//		assertThat(tag.getRel()).isEqualTo("anotherRel");
+//	}
+	
+	protected AbstractHtmlTag tag;
+	private HtmlLink link;
+
+	@Before
+	public void createHtmlTag() {
+		tag = link = new HtmlLink();
 	}
 
 	@Test
-	public void should_have_full_access_to_the_tag() {
-		ScriptTag tag = new ScriptTag("url");
-		assertThat(tag.getSrc()).isEqualTo("url");
+	public void should_generate_link_tag_with_href() {
+		tag = link = new HtmlLink("myHref");
+		assertThat(link.toHtml().toString()).isEqualTo("<link rel=\"stylesheet\" href=\"myHref\"></link>");
+	}
 
-		tag.setSrc("anotherUrl");
-		assertThat(tag.getSrc()).isEqualTo("anotherUrl");
+	@Test
+	public void should_generate_full_ops_div_tag() {
+		link.setId("fullId");
+		link.addCssClass("classy");
+		link.addCssStyle("styly");
+		link.setHref("fullyHref");
+		assertThat(link.toHtml().toString()).isEqualTo("<link id=\"fullId\" class=\"classy\" style=\"styly\" rel=\"stylesheet\" href=\"fullyHref\"></link>");
 	}
 }

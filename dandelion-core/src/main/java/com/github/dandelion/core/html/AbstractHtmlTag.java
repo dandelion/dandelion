@@ -38,7 +38,7 @@ import java.util.Map;
  * @author Thibault Duchateau
  * @since 0.2.0
  */
-public abstract class HtmlTag {
+public abstract class AbstractHtmlTag {
 
 	/**
 	 * Plain old HTML <code>id</code> attribute.

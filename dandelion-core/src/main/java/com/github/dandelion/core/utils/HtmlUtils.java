@@ -31,9 +31,9 @@
 package com.github.dandelion.core.utils;
 
 import com.github.dandelion.core.asset.Asset;
-import com.github.dandelion.core.html.HtmlTag;
-import com.github.dandelion.core.html.LinkTag;
-import com.github.dandelion.core.html.ScriptTag;
+import com.github.dandelion.core.html.AbstractHtmlTag;
+import com.github.dandelion.core.html.HtmlLink;
+import com.github.dandelion.core.html.HtmlScript;
 
 /**
  * <p>
@@ -44,14 +44,14 @@ import com.github.dandelion.core.html.ScriptTag;
  */
 public class HtmlUtils {
 
-	public static HtmlTag transformAsset(Asset asset) {
-		HtmlTag tag;
+	public static AbstractHtmlTag transformAsset(Asset asset) {
+		AbstractHtmlTag tag;
 		switch (asset.getType()) {
 		case css:
-			tag = new LinkTag(asset.getFinalLocation());
+			tag = new HtmlLink(asset.getFinalLocation());
 			break;
 		case js:
-			tag = new ScriptTag(asset.getFinalLocation());
+			tag = new HtmlScript(asset.getFinalLocation());
 			break;
 		default:
 			tag = null;

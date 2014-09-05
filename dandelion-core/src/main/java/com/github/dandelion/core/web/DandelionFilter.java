@@ -49,7 +49,7 @@ import com.github.dandelion.core.asset.Asset;
 import com.github.dandelion.core.asset.AssetDomPosition;
 import com.github.dandelion.core.asset.AssetQuery;
 import com.github.dandelion.core.asset.processor.spi.AssetProcessor;
-import com.github.dandelion.core.html.HtmlTag;
+import com.github.dandelion.core.html.AbstractHtmlTag;
 import com.github.dandelion.core.monitoring.GraphViewer;
 import com.github.dandelion.core.utils.HtmlUtils;
 
@@ -155,7 +155,7 @@ public class DandelionFilter implements Filter {
 			if (!assetsHead.isEmpty()) {
 				StringBuilder htmlHead = new StringBuilder();
 				for (Asset asset : assetsHead) {
-					HtmlTag tag = HtmlUtils.transformAsset(asset);
+					AbstractHtmlTag tag = HtmlUtils.transformAsset(asset);
 					htmlHead.append(tag.toHtml());
 					htmlHead.append('\n');
 				}
@@ -168,7 +168,7 @@ public class DandelionFilter implements Filter {
 			if (!assetsBody.isEmpty()) {
 				StringBuilder htmlBody = new StringBuilder();
 				for (Asset asset : assetsBody) {
-					HtmlTag tag = HtmlUtils.transformAsset(asset);
+					AbstractHtmlTag tag = HtmlUtils.transformAsset(asset);
 					htmlBody.append(tag.toHtml());
 					htmlBody.append('\n');
 				}

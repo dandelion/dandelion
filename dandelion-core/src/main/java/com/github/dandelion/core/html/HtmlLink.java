@@ -2,20 +2,20 @@
  * [The "BSD licence"]
  * Copyright (c) 2013-2014 Dandelion
  * All rights reserved.
- *
+ * 
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
  * are met:
- *
+ * 
  * 1. Redistributions of source code must retain the above copyright
  * notice, this list of conditions and the following disclaimer.
  * 2. Redistributions in binary form must reproduce the above copyright
  * notice, this list of conditions and the following disclaimer in the
  * documentation and/or other materials provided with the distribution.
  * 3. Neither the name of Dandelion nor the names of its contributors
- * may be used to endorse or promote products derived from this software
+ * may be used to endorse or promote products derived from this software 
  * without specific prior written permission.
- *
+ * 
  * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
  * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
  * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
@@ -27,48 +27,59 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
 package com.github.dandelion.core.html;
 
-import static org.assertj.core.api.Assertions.assertThat;
+/**
+ * Plain old HTML <code>link</code> tag.
+ * 
+ * @author Thibault Duchateau
+ */
+public class HtmlLink extends AbstractHtmlTag {
 
-import org.junit.Test;
+	/**
+	 * Plain old HTML <code>href</code> attribute.
+	 */
+	private String href;
+	/**
+	 * Plain old HTML <code>rel</code> attribute (by default 'stylesheet').
+	 */
+	private String rel = "stylesheet";
 
-public class HtmlTagTest {
-
-	static HtmlTag tag = new HtmlTag() {
-		@Override
-		public StringBuilder toHtml() {
-			return new StringBuilder("test");
-		}
-	};
-
-	@Test
-	public void should_have_correct_html_rendering() {
-		assertThat(tag.toHtml().toString()).isEqualTo("test");
+	public HtmlLink() {
+		this.tag = "link";
 	}
 
-	@Test
-	public void should_have_full_access_to_the_tag() {
-		tag.setId("id");
-		assertThat(tag.getId()).isEqualTo("id");
+	public HtmlLink(String href) {
+		this.tag = "link";
+		this.href = href;
+	}
 
-		tag.addCssClass("class1");
-		assertThat(tag.getCssClass().toString()).isEqualTo("class1");
+	public HtmlLink(String href, String rel) {
+		this(href);
+		this.rel = rel;
+	}
 
-		tag.addCssStyle("style1");
-		assertThat(tag.getCssStyle().toString()).isEqualTo("style1");
+	@Override
+	protected StringBuilder getHtmlAttributes() {
+		StringBuilder html = super.getHtmlAttributes();
+		html.append(writeAttribute("rel", "stylesheet"));
+		html.append(writeAttribute("href", this.href));
+		return html;
+	}
+	
+	public String getHref() {
+		return href;
+	}
 
-		tag.addCssClass("class2");
-		assertThat(tag.getCssClass().toString()).isEqualTo("class1 class2");
+	public void setHref(String href) {
+		this.href = href;
+	}
 
-		tag.addCssStyle("style2");
-		assertThat(tag.getCssStyle().toString()).isEqualTo("style1;style2");
+	public String getRel() {
+		return rel;
+	}
 
-		tag.setCssClass(new StringBuilder("class1"));
-		assertThat(tag.getCssClass().toString()).isEqualTo("class1");
-
-		tag.setCssStyle(new StringBuilder("style1"));
-		assertThat(tag.getCssStyle().toString()).isEqualTo("style1");
+	public void setRel(String rel) {
+		this.rel = rel;
 	}
 }
