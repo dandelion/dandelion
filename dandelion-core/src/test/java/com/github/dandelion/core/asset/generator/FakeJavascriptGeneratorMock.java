@@ -31,40 +31,16 @@ package com.github.dandelion.core.asset.generator;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+public class FakeJavascriptGeneratorMock extends AbstractJavascriptGenerator {
 
-import com.github.dandelion.core.Context;
-import com.github.dandelion.core.scripting.ScriptingUtils;
-import com.github.dandelion.core.web.WebConstants;
-
-/**
- * <p>
- * Abstract base implementation of all Javascript generators.
- * 
- * @author Thibault Duchateau
- * @since 0.11.0
- */
-public abstract class AbstractJavascriptGenerator implements JavascriptGenerator {
-
-	private static final Logger LOG = LoggerFactory.getLogger(AbstractJavascriptGenerator.class);
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public final String getAssetContent(HttpServletRequest request) {
-
-		Context context = (Context) request.getAttribute(WebConstants.DANDELION_CONTEXT_ATTRIBUTE);
-
-		LOG.debug("Generating asset...");
-		String generatedAsset = getGeneratedAsset(request);
-		LOG.debug("Asset generated successfully");
-		
-		if (context.isDevModeEnabled()) {
-			return ScriptingUtils.prettyPrint(generatedAsset);
-		}
-		return generatedAsset;
+	@Override
+	public void fillBuffer(AssetBuffer assetBuffer) {
+		// Not used
 	}
 
-	public abstract String getGeneratedAsset(HttpServletRequest request);
+	@Override
+	public String getGeneratedAsset(HttpServletRequest request) {
+		return "function(){var o = new Object();}";
+	}
+
 }
