@@ -63,7 +63,7 @@ public class StandardConfigurationLoaderTest {
 
 	@Test
 	public void should_load_user_properties_from_system_property() throws Exception {
-		String path = new File("src/test/resources/dandelion-test/configuration-loader/".replace("/", File.separator))
+		String path = new File("src/test/resources/configuration-loader/".replace("/", File.separator))
 				.getAbsolutePath();
 		System.setProperty(StandardConfigurationLoader.DANDELION_CONFIGURATION, path);
 

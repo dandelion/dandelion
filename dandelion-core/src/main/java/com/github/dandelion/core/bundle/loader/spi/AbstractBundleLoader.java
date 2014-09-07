@@ -43,7 +43,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.dandelion.core.Context;
 import com.github.dandelion.core.DandelionException;
 import com.github.dandelion.core.storage.BundleStorageUnit;
+import com.github.dandelion.core.utils.BundleStorageLogBuilder;
 import com.github.dandelion.core.utils.ResourceScanner;
+import com.github.dandelion.core.utils.StringBuilderUtils;
 
 /**
  * <p>
@@ -83,10 +85,10 @@ public abstract class AbstractBundleLoader implements BundleLoader {
 		mapper.configure(JsonParser.Feature.ALLOW_BACKSLASH_ESCAPING_ANY_CHARACTER, true);
 
 		List<BundleStorageUnit> bundles = new ArrayList<BundleStorageUnit>();
-
+				
 		Set<String> resourcePaths = null;
 		try {
-			resourcePaths = ResourceScanner.findResourcePaths(getPath(), getExcludedPaths(), null, ".json",
+			resourcePaths = ResourceScanner.findResourcePaths(getBundleLocation(), getExcludedPaths(), null, ".json",
 					isRecursive());
 		}
 		catch (IOException e) {
@@ -98,6 +100,8 @@ public abstract class AbstractBundleLoader implements BundleLoader {
 
 		ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
 
+		BundleStorageLogBuilder bslb = new BundleStorageLogBuilder();
+		
 		for (String resourcePath : resourcePaths) {
 			try {
 				InputStream configFileStream = classLoader.getResourceAsStream(resourcePath);
@@ -106,11 +110,15 @@ public abstract class AbstractBundleLoader implements BundleLoader {
 				bundles.add(bsu);
 			}
 			catch (IOException e) {
-				StringBuilder sb = new StringBuilder("The file '");
-				sb.append(resourcePath);
-				sb.append("' is wrongly formatted. Please correct it before continuing.");
-				throw new DandelionException(sb.toString(), e);
+				StringBuilder error = new StringBuilder("- The file '");
+				error.append(resourcePath);
+				error.append("' is wrongly formatted for the following reason: " + e.getMessage());
+				bslb.error("Wrong bundle format:", error.toString());
 			}
+		}
+		
+		if(bslb.hasError()) {
+			throw new DandelionException(bslb.toString());
 		}
 
 		return bundles;
@@ -128,5 +136,17 @@ public abstract class AbstractBundleLoader implements BundleLoader {
 	 */
 	public Set<String> getExcludedPaths() {
 		return Collections.emptySet();
+	}
+	
+	private String getBundleLocation() {
+
+		StringBuilder bundleBaseLocation = new StringBuilder(context.getConfiguration().getBundleLocation());
+		if (StringBuilderUtils.isNotBlank(bundleBaseLocation)) {
+			bundleBaseLocation.append("/");
+		}
+
+		bundleBaseLocation.append(getPath());
+		
+		return bundleBaseLocation.toString();
 	}
 }

@@ -53,14 +53,19 @@ public class AssetQueryTest {
 	@Before
 	public void setup() {
 		System.clearProperty(StandardConfigurationLoader.DANDELION_CONFIGURATION);
-		String path = new File("src/test/resources/dandelion-test/asset-query/".replace("/", File.separator))
-		.getAbsolutePath();
+		String path = new File("src/test/resources/asset-query/json/dandelion/".replace("/", File.separator))
+				.getAbsolutePath();
 		System.setProperty(StandardConfigurationLoader.DANDELION_CONFIGURATION, path);
+
 		context = new Context(new MockFilterConfig());
-		
 		request = new MockHttpServletRequest();
 		request.setContextPath("/context");
 		request.setAttribute(WebConstants.DANDELION_CONTEXT_ATTRIBUTE, context);
+	}
+
+	@After
+	public void teardown() {
+		System.clearProperty(StandardConfigurationLoader.DANDELION_CONFIGURATION);
 	}
 
 	@Test
@@ -72,14 +77,14 @@ public class AssetQueryTest {
 		Asset asset = assets.iterator().next();
 		assertThat(context.getCacheManager().getContent(asset.getCacheKey())).isEqualTo("\nvar v={};");
 	}
-	
+
 	@Test
 	public void should_return_only_head_assets() {
 
 		AssetRequestContext.get(request).addBundles("bundle5");
 		Set<Asset> assets = new AssetQuery(request, context).withPosition(AssetDomPosition.head).perform();
 		assertThat(assets).extracting("name").containsExactly("a5_4", "a5_5");
-	}	
+	}
 
 	@Test
 	public void should_return_only_head_assets_with_js_in_last() {
@@ -88,7 +93,7 @@ public class AssetQueryTest {
 		Set<Asset> assets = new AssetQuery(request, context).withPosition(AssetDomPosition.head).perform();
 		assertThat(assets).extracting("name").containsExactly("a5_4", "a5_5", "a6_2", "a6_1");
 	}
-	
+
 	@Test
 	public void should_return_only_body_assets() {
 
@@ -96,7 +101,7 @@ public class AssetQueryTest {
 		Set<Asset> assets = new AssetQuery(request, context).withPosition(AssetDomPosition.body).perform();
 		assertThat(assets).extracting("name").containsExactly("a5_1", "a5_2", "a5_3");
 	}
-	
+
 	@Test
 	public void should_return_only_body_assets_with_1_js_excluded() {
 
@@ -104,7 +109,7 @@ public class AssetQueryTest {
 		Set<Asset> assets = new AssetQuery(request, context).withPosition(AssetDomPosition.body).perform();
 		assertThat(assets).extracting("name").containsExactly("a5_2", "a5_3");
 	}
-	
+
 	@Test
 	public void should_return_all_assets_with_1_js_and_1_css_excluded() {
 
@@ -112,7 +117,7 @@ public class AssetQueryTest {
 		Set<Asset> assets = new AssetQuery(request, context).perform();
 		assertThat(assets).extracting("name").containsExactly("a5_2", "a5_3", "a5_4");
 	}
-	
+
 	@Test
 	public void should_return_all_assets_with_1_css_excluded() {
 
@@ -120,7 +125,7 @@ public class AssetQueryTest {
 		Set<Asset> assets = new AssetQuery(request, context).perform();
 		assertThat(assets).extracting("name").containsExactly("a5_1", "a5_2", "a5_3", "a5_4");
 	}
-	
+
 	@Test
 	public void should_return_all_assets_with_1_css_with_malformatted_name_excluded() {
 
@@ -128,7 +133,7 @@ public class AssetQueryTest {
 		Set<Asset> assets = new AssetQuery(request, context).perform();
 		assertThat(assets).extracting("name").containsExactly("a5_1", "a5_2", "a5_3", "a5_4");
 	}
-	
+
 	@Test
 	public void should_return_all_assets() {
 
@@ -136,9 +141,13 @@ public class AssetQueryTest {
 		Set<Asset> assets = new AssetQuery(request, context).perform();
 		assertThat(assets).extracting("name").containsExactly("a5_1", "a5_2", "a5_3", "a5_4", "a5_5");
 	}
-	
-	@After
-	public void teardown() {
-		System.clearProperty(StandardConfigurationLoader.DANDELION_CONFIGURATION);
+
+	@Test
+	public void should_return_all_assets_with_name_and_type() {
+
+		AssetRequestContext.get(request).addBundles("bundle7");
+		Set<Asset> assets = new AssetQuery(request, context).perform();
+		assertThat(assets).extracting("name").containsExactly("a7_1", "a7_2", "a7_3");
+		assertThat(assets).extracting("type").containsExactly(AssetType.js, AssetType.css, AssetType.js);
 	}
 }

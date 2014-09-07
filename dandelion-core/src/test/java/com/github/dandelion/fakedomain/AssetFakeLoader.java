@@ -10,7 +10,6 @@ import java.util.Map;
 
 import org.slf4j.Logger;
 
-import com.github.dandelion.core.asset.AssetType;
 import com.github.dandelion.core.bundle.loader.spi.AbstractBundleLoader;
 import com.github.dandelion.core.storage.AssetStorageUnit;
 import com.github.dandelion.core.storage.BundleStorageUnit;
@@ -26,9 +25,19 @@ public class AssetFakeLoader extends AbstractBundleLoader {
 		locations.put("remote", "remoteURL2");
 		locations.put("local", "localPath2");
 
+		AssetStorageUnit fakeAsset1 = new AssetStorageUnit();
+		fakeAsset1.setName("name1");
+		fakeAsset1.setVersion("version");
+		fakeAsset1.setLocations(locations);
+		
+		AssetStorageUnit fakeAsset2 = new AssetStorageUnit();
+		fakeAsset2.setName("name2");
+		fakeAsset2.setVersion("version");
+		fakeAsset2.setLocations(locations2);
+		
 		return newArrayList(
 				new BundleStorageUnit("default", new HashSet<AssetStorageUnit>()),
-				new BundleStorageUnit("fake", newLinkedHashSet(new AssetStorageUnit("name", "version", AssetType.js, locations), new AssetStorageUnit("name2", "version2", AssetType.js, locations2))));
+				new BundleStorageUnit("fake", newLinkedHashSet(fakeAsset1, fakeAsset2)));
 	}
 
 	@Override

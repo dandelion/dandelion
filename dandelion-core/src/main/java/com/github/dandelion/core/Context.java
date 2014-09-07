@@ -61,6 +61,8 @@ import com.github.dandelion.core.config.ConfigurationLoader;
 import com.github.dandelion.core.config.StandardConfigurationLoader;
 import com.github.dandelion.core.jmx.DandelionRuntime;
 import com.github.dandelion.core.storage.BundleStorage;
+import com.github.dandelion.core.storage.BundleStorageUnit;
+import com.github.dandelion.core.utils.BundleStorageLogBuilder;
 import com.github.dandelion.core.utils.ClassUtils;
 import com.github.dandelion.core.utils.StringUtils;
 
@@ -310,11 +312,33 @@ public class Context {
 	 * Once loader, some checks are performed on the {@link BundleStorage}.
 	 */
 	public void initBundleStorage() {
+		LOG.debug("Bundle storage initializating...");
+		
 		bundleStorage = new BundleStorage();
+		
 		for (BundleLoader bundleLoader : getBundleLoaders()) {
-			bundleStorage.storeBundles(bundleLoader.loadBundles());
+			LOG.debug("Loading bundles using the {}", bundleLoader.getClass().getSimpleName());
+			
+			// Load all bundles using the current BundleLoader
+			List<BundleStorageUnit> loadedBundles = bundleLoader.loadBundles();
+			
+			// First check: required configuration
+			BundleStorageLogBuilder bslb = bundleStorage.checkRequiredConfiguration(loadedBundles);
+			if(bslb.hasError()) {
+				throw new DandelionException(bslb.toString());
+			}
+			
+			LOG.debug("Found {} bundle{}: {}", loadedBundles.size(), loadedBundles.size() <= 1 ? "" : "s",
+					loadedBundles);
+			
+			bundleStorage.finalizeBundleConfiguration(loadedBundles);
+			bundleStorage.storeBundles(loadedBundles);
+			
+			// Second and last check: consistency
+			bundleStorage.checkBundleConsistency(loadedBundles);
 		}
-		bundleStorage.checkBundleDag();
+		
+		LOG.debug("Bundle storage initialized.");
 	}
 
 	/**

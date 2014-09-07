@@ -232,6 +232,7 @@ public class BundleStorageUnit {
 
 	@Override
 	public String toString() {
-		return "BundleStorageUnit [name=" + name + ", dependencies=" + dependencies + "]";
+		return "BundleStorageUnit [name=" + name + ", dependencies=" + dependencies + ", assetStorageUnits="
+				+ assetStorageUnits + "]";
 	}
 }

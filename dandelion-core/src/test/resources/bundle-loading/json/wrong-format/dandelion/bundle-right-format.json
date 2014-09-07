@@ -1,0 +1,10 @@
+{
+    "bundle": "bundle-right-format",
+    "assets": [
+       {
+           "locations": {
+           	"webapp": "/webapp/path/to/asset.js"
+           }
+       }
+   ]
+}

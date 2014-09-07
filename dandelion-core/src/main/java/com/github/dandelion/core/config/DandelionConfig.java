@@ -64,6 +64,7 @@ public enum DandelionConfig {
 	CACHE_CONFIGURATION_LOCATION("cache.configuration.location", "", ""),
 
 	// Bundle configurations
+	BUNDLE_LOCATION("bundle.location", "", ""),
 	BUNDLE_INCLUDES("bundle.includes", "", ""), 
 	BUNDLE_EXCLUDES("bundle.excludes", "", "");
 

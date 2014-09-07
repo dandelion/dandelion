@@ -48,5 +48,13 @@
          <artifactId>assertj-core</artifactId>
          <scope>test</scope>
       </dependency>
+
+      <!-- Logging -->
+      <dependency>
+         <groupId>ch.qos.logback</groupId>
+         <artifactId>logback-classic</artifactId>
+         <version>1.1.2</version>
+         <scope>test</scope>
+      </dependency>
    </dependencies>
 </project>

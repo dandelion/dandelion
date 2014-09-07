@@ -79,7 +79,7 @@ public class DelegateLocator extends AbstractAssetLocator implements Servlet2Com
 
 	@Override
 	public String doGetLocation(AssetStorageUnit asu, HttpServletRequest request) {
-		return null;
+		return asu.getLocations().get(getLocationKey());
 	}
 
 	/**

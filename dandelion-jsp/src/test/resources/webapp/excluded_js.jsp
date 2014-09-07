@@ -7,6 +7,6 @@
 </head>
 <body>
 <dandelion:bundle includes="bundle1" />
-<dandelion:asset jsExcludes="asset1" />
+<dandelion:asset jsExcludes="b1a1" />
 </body>
 </html>

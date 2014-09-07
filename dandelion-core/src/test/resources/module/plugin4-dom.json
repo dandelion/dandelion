@@ -8,8 +8,8 @@
             "type": "js",
             "dom": "head",
             "locations": {
-                "remote": "remoteURL3",
-                "local": "localPath3"
+                "remote": "remoteURL3.js",
+                "local": "localPath3.js"
             }
         },
         {
@@ -17,8 +17,8 @@
             "version": "3",
             "type": "css",
             "locations": {
-                "remote": "remoteURL3",
-                "local": "localPath3"
+                "remote": "remoteURL3.css",
+                "local": "localPath3.css"
             }
         },
         {
@@ -27,8 +27,8 @@
             "type": "js",
             "dom": "body",
             "locations": {
-                "remote": "remoteURL2",
-                "local": "localPath2"
+                "remote": "remoteURL2.js",
+                "local": "localPath2.js"
             }
         }
     ]

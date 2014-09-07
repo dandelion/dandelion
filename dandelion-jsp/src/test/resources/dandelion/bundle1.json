@@ -2,30 +2,21 @@
     "bundle": "bundle1",
     "assets": [
         {
-            "name": "asset1",
-            "version": "1",
-            "type": "js",
             "locations": {
-                "cdn": "assets_bundles_1_remoteURL",
-                "classpath": "assets_bundles_1_localPath"
+                "cdn": "http://any.cdn/b1a1.js",
+                "classpath": "folder/subfolder/b1a1.js"
             }
         },
         {
-            "name": "asset2",
-            "version": "1",
-            "type": "js",
             "locations": {
-                "cdn": "assets_bundles_2_remoteURL",
-                "classpath": "assets_bundles_2_localPath"
+                "cdn": "http://any.cdn/b1a2.js",
+                "classpath": "folder/subfolder/b1a2.js"
             }
         },
         {
-            "name": "asset3",
-            "version": "1",
-            "type": "css",
             "locations": {
-                "cdn": "assets_bundles_3_remoteURL",
-                "classpath": "assets_bundles_3_localPath"
+                "cdn": "http://any.cdn/b1a3.css",
+                "classpath": "folder/subfolder/b1a3.css"
             }
         }
     ]

@@ -6,7 +6,7 @@
                    "version": "1.0.0",
                    "type": "js",
                    "locations": {
-                       "classpath": "dandelion/asset.js"
+                       "classpath": "asset-query/json/dandelion/assets/a4_1.js"
                    }
                }
            ]

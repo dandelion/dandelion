@@ -43,6 +43,7 @@ import com.github.dandelion.core.DandelionException;
 import com.github.dandelion.core.asset.cache.spi.AssetCache;
 import com.github.dandelion.core.asset.locator.spi.AssetLocator;
 import com.github.dandelion.core.storage.AssetStorageUnit;
+import com.github.dandelion.core.utils.AssetUtils;
 import com.github.dandelion.core.utils.UrlUtils;
 import com.github.dandelion.core.web.DandelionServlet;
 
@@ -100,6 +101,7 @@ public class AssetMapper {
 	 *             if the {@link AssetStorageUnit} is not configured properly.
 	 */
 	public Asset mapToAsset(AssetStorageUnit asu) {
+
 		Asset asset = new Asset(asu);
 
 		LOG.trace("Resolving location for the asset {}", asset.toLog());
@@ -152,6 +154,8 @@ public class AssetMapper {
 			location = locators.get(locationKey).getLocation(asu, request);
 		}
 
+		asset.setName(AssetUtils.extractName(location));
+		asset.setType(AssetType.typeOf(location));
 		asset.setConfigLocationKey(locationKey);
 		asset.setConfigLocation(asu.getLocations().get(locationKey));
 

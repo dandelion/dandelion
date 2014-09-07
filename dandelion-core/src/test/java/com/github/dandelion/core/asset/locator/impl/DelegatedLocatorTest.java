@@ -43,8 +43,6 @@ import org.springframework.mock.web.MockFilterConfig;
 import org.springframework.mock.web.MockHttpServletRequest;
 
 import com.github.dandelion.core.Context;
-import com.github.dandelion.core.DandelionException;
-import com.github.dandelion.core.asset.AssetType;
 import com.github.dandelion.core.asset.generator.AssetGenerator;
 import com.github.dandelion.core.storage.AssetStorageUnit;
 import com.github.dandelion.core.web.AssetRequestContext;
@@ -57,7 +55,7 @@ public class DelegatedLocatorTest {
 
 	@Rule
 	public ExpectedException exception = ExpectedException.none();
-	
+
 	@Before
 	public void setup() {
 		request = new MockHttpServletRequest();
@@ -67,20 +65,10 @@ public class DelegatedLocatorTest {
 	}
 
 	@Test
-	public void should_throw_an_exception_when_using_an_empty_location(){
-		exception.expect(DandelionException.class);
-		exception
-				.expectMessage("The asset 'my.js' (js, v1.0.0) configured with a 'delegate' location key has a blank location. Please correct this location in the corresponding JSON file.");
-		
-		AssetStorageUnit asu = new AssetStorageUnit("my.js", "1.0.0", AssetType.js, singletonMap("delegate", ""));
-		locator.getLocation(asu, null);
-	}
-	
-	@Test
 	public void should_return_the_same_absolute_url() {
 		AssetStorageUnit asu = new AssetStorageUnit("my-js", singletonMap("delegate", "my.js"));
 		String location = locator.getLocation(asu, request);
-		assertThat(location).isNull();
+		assertThat(location).isEqualTo("my.js");
 	}
 
 	@Test
@@ -88,15 +76,17 @@ public class DelegatedLocatorTest {
 
 		AssetRequestContext.get(request).addParameter("my-js", DelegateLocator.DELEGATED_CONTENT_PARAM,
 				new AssetGenerator() {
-					
+
 					@Override
 					public String getAssetContent(HttpServletRequest request) {
 						return "/* delegated content */";
 					}
 				});
 
-		AssetStorageUnit asset = new AssetStorageUnit("my-js", "1.0", AssetType.js, singletonMap(
-				locator.getLocationKey(), "my.js"));
+		AssetStorageUnit asset = new AssetStorageUnit();
+		asset.setName("my-js");
+		asset.setVersion("1.0");
+		asset.setLocations(singletonMap(locator.getLocationKey(), "my.js"));
 		String content = locator.getContent(asset, request);
 		assertThat(content).isEqualTo("/* delegated content */");
 	}

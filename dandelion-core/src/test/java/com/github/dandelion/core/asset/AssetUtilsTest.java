@@ -7,6 +7,8 @@ import java.util.Set;
 
 import org.junit.Test;
 
+import com.github.dandelion.core.utils.AssetUtils;
+
 public class AssetUtilsTest {
 
 	@Test
@@ -65,5 +67,18 @@ public class AssetUtilsTest {
 
 		assertThat(AssetUtils.filtersByDomPosition(assets, AssetDomPosition.body)).extracting("name").contains("name1",
 				"name2");
+	}
+	
+	@Test
+	public void should_extract_the_asset_name(){
+		
+		String location = "/assets/js/jquery.js";
+		assertThat(AssetUtils.extractName(location)).isEqualTo("jquery");
+		
+		location = "jquery.js";
+		assertThat(AssetUtils.extractName(location)).isEqualTo("jquery");
+
+		location = "jquery.js";
+		assertThat(AssetUtils.extractName(location)).isEqualTo("jquery");
 	}
 }

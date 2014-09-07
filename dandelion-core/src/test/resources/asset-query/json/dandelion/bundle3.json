@@ -6,8 +6,8 @@
                    "version": "1",
                    "type": "js",
                    "locations": {
-                       "cdn": "//some.cdn/asset3_1",
-                       "webapp": "/localPath"
+                       "cdn": "//some.cdn/asset3_1.js",
+                       "webapp": "/localPath/a.js"
                    }
                },
                {
@@ -15,7 +15,7 @@
                    "version": "1",
                    "type": "css",
                    "locations": {
-                       "webapp": "/localPath"
+                       "webapp": "/localPath/a.css"
                    }
                }
            ]

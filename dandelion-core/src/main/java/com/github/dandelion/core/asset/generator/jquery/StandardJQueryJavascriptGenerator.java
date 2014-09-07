@@ -29,10 +29,6 @@
  */
 package com.github.dandelion.core.asset.generator.jquery;
 
-import javax.servlet.http.HttpServletRequest;
-
-import com.github.dandelion.core.asset.generator.AssetBuffer;
-
 /**
  * <p>
  * Standard implementation of {@link AbstractJQueryJavascriptGenerator} which
@@ -62,5 +58,4 @@ public class StandardJQueryJavascriptGenerator extends AbstractJQueryJavascriptG
 		appendToPlaceholder(Placeholder.AFTER_END_DOCUMENT_READY, jab.getAfterEndDocumentReady());
 		appendToPlaceholder(Placeholder.AFTER_ALL, jab.getAfterAll());
 	}
-
 }

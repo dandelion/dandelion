@@ -40,47 +40,105 @@ import com.github.dandelion.core.asset.AssetType;
  * <p>
  * Asset storage unit used by the configured JSON deserializer.
  * 
+ * TODO : l'attribut location doit etre renseigne l'attribut location doit au
+ * moins avoir une paire cle/valeur.
+ * 
+ * <p>
+ * The default empty constructor is required by Jackson when deserializing.
+ * 
  * @author Thibault Duchateau
  * @since 0.10.0
  */
 public class AssetStorageUnit {
 
+	/**
+	 * <p>
+	 * Name of the asset storage unit.
+	 * <p>
+	 * Optional.
+	 */
 	private String name;
 	private String version;
+	
+	/**
+	 * <p>
+	 * Version of the asset storage unit.
+	 * <p>
+	 * Optional.
+	 */
 	private AssetType type;
 	private AssetDomPosition dom;
+	
+	/**
+	 * <p>
+	 * Location key/location pairs.
+	 * <p>
+	 * Required.
+	 */
 	private Map<String, String> locations;
+	
+	/**
+	 * <p>
+	 * Attribute name/value pairs.
+	 * <p>
+	 * Optional.
+	 */
 	private Map<String, String> attributes;
+	
 	private String[] attributesOnlyName;
 	private String cacheKey;
 
+	/**
+	 * <p>
+	 * Required by Jackson for deserialization.
+	 */
 	public AssetStorageUnit() {
 	}
 
+	/**
+	 * <p>
+	 * Testing only.
+	 * 
+	 * @param name
+	 * @param version
+	 * @param type
+	 */
 	public AssetStorageUnit(String name, String version, AssetType type) {
 		this.name = name;
 		this.version = version;
 		this.type = type;
 	}
 
+	/**
+	 * <p>
+	 * Testing only.
+	 * 
+	 * @param name
+	 * @param locations
+	 */
 	public AssetStorageUnit(String name, Map<String, String> locations) {
 		this.name = name;
 		this.locations = locations;
+		this.type = AssetType.typeOf(locations.values().iterator().next());
 	}
 
-	public AssetStorageUnit(String name, String version, AssetType type, AssetDomPosition position) {
-		this.name = name;
-		this.version = version;
-		this.type = type;
-		this.dom = position;
-	}
-
-	public AssetStorageUnit(String name, String version, AssetType type, Map<String, String> locations) {
-		this.name = name;
-		this.version = version;
-		this.type = type;
-		this.locations = locations;
-	}
+//	/**
+//	 * <p>
+//	 * TESTING ONLY.
+//	 * 
+//	 * @param name
+//	 * @param version
+//	 * @param locations
+//	 */
+//	public AssetStorageUnit(String name, String version, Map<String, String> locations) {
+//		
+//		String firstLocation = locations.values().iterator().next();
+////		this.name = name;
+//		this.name = AssetUtils.extractName(firstLocation);
+//		this.version = version;
+//		this.locations = locations;
+//		this.type = AssetType.typeOf(firstLocation);
+//	}
 
 	public String getName() {
 		return name;
@@ -155,35 +213,6 @@ public class AssetStorageUnit {
 	 */
 	public boolean isValid() {
 		return name != null && version != null && type != null && locations != null;
-	}
-
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((name == null) ? 0 : name.hashCode());
-		result = prime * result + ((type == null) ? 0 : type.hashCode());
-		return result;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		AssetStorageUnit other = (AssetStorageUnit) obj;
-		if (name == null) {
-			if (other.name != null)
-				return false;
-		}
-		else if (!name.equals(other.name))
-			return false;
-		if (type != other.type)
-			return false;
-		return true;
 	}
 
 	public String getAssetKey() {

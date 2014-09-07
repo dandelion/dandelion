@@ -41,8 +41,6 @@ import org.springframework.mock.web.MockFilterConfig;
 import org.springframework.mock.web.MockHttpServletRequest;
 
 import com.github.dandelion.core.Context;
-import com.github.dandelion.core.DandelionException;
-import com.github.dandelion.core.asset.AssetType;
 import com.github.dandelion.core.storage.AssetStorageUnit;
 import com.github.dandelion.core.web.WebConstants;
 
@@ -58,16 +56,6 @@ public class ClasspathLocatorTest {
 	public void setup() {
 		request = new MockHttpServletRequest();
 		request.setAttribute(WebConstants.DANDELION_CONTEXT_ATTRIBUTE, new Context(new MockFilterConfig()));
-	}
-
-	@Test
-	public void should_throw_an_exception_when_using_an_empty_location() {
-		exception.expect(DandelionException.class);
-		exception
-				.expectMessage("The asset 'my.js' (js, v1.0.0) configured with a 'classpath' location key has a blank location. Please correct this location in the corresponding JSON file.");
-
-		AssetStorageUnit asu = new AssetStorageUnit("my.js", "1.0.0", AssetType.js, singletonMap("classpath", ""));
-		locator.getLocation(asu, null);
 	}
 
 	@Test

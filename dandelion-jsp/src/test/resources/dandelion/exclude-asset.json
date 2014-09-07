@@ -2,21 +2,15 @@
     "bundle": "exclude-asset",
     "assets": [
         {
-            "name": "excluded-assets1",
-            "version": "1",
-            "type": "js",
             "locations": {
-                "cdn": "assets_excludedAssets_1_remoteURL",
-                "classpath": "assets_excludedAssets_1_localPath"
+                "cdn": "http://any.cdn/a1.js",
+                "classpath": "folder/subfolder/a1.js"
             }
         },
         {
-            "name": "excluded-assets2",
-            "version": "1",
-            "type": "js",
             "locations": {
-                "cdn": "assets_excludedAssets_2_remoteURL",
-                "classpath": "assets_excludedAssets_2_localPath"
+                "cdn": "http://any.cdn/a2.js",
+                "classpath": "folder/subfolder/a2.js"
             }
         }
     ]

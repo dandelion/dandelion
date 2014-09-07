@@ -1,0 +1,20 @@
+{
+    "bundle": "missing-extension",
+    "assets": [
+       {
+           "locations": {
+              "webapp" : "/assets/js/a.js"
+           }
+       },
+       {
+           "locations": {
+              "webapp": "/assets/js/b"
+           }
+       },
+       {
+           "locations": {
+              "webapp": "/assets/css/c"
+           }
+       }
+   ]
+}

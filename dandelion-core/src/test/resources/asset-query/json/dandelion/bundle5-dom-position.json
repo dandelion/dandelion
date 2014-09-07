@@ -2,43 +2,33 @@
     "bundle": "bundle5",
     "assets": [
                {
-                   "name": "a5_1",
                    "version": "1.0.0",
-                   "type": "js",
                    "locations": {
-                       "classpath": "dandelion/asset.js"
+                       "classpath": "asset-query/json/dandelion/assets/a5_1.js"
                    }
                },
                {
-                   "name": "a5_2",
                    "version": "1.0.0",
-                   "type": "js",
                    "locations": {
-                       "classpath": "dandelion/asset.js"
+                       "classpath": "asset-query/json/dandelion/assets/a5_2.js"
                    }
                },
                {
-                   "name": "a5_3",
                    "version": "1.0.0",
-                   "type": "js",
                    "locations": {
-                       "classpath": "dandelion/asset.js"
+                       "classpath": "asset-query/json/dandelion/assets/a5_3.js"
                    }
                },
                {
-                   "name": "a5_4",
                    "version": "1.0.0",
-                   "type": "css",
                    "locations": {
-                       "classpath": "dandelion/asset.css"
+                       "classpath": "asset-query/json/dandelion/assets/a5_4.css"
                    }
                },
                {
-                   "name": "a5_5",
                    "version": "1.0.0",
-                   "type": "css",
                    "locations": {
-                       "classpath": "dandelion/asset.css"
+                       "classpath": "asset-query/json/dandelion/assets/a5_5.css"
                    }
                }
            ]

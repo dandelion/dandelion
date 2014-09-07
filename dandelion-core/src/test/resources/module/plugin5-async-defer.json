@@ -11,8 +11,8 @@
                 "async"
             ],
             "locations": {
-                "remote": "remoteURL",
-                "local": "localPath"
+                "remote": "remoteURL.js",
+                "local": "localPath.js"
             }
         },
         {
@@ -24,8 +24,8 @@
                 "defer"
             ],
             "locations": {
-                "remote": "remoteURL",
-                "local": "localPath"
+                "remote": "remoteURL.js",
+                "local": "localPath.js"
             }
         },
         {
@@ -37,8 +37,8 @@
                 "async", "defer"
             ],
             "locations": {
-                "remote": "remoteURL",
-                "local": "localPath"
+                "remote": "remoteURL.js",
+                "local": "localPath.js"
             }
         }
     ]

@@ -59,9 +59,18 @@ public enum AssetType {
 		return defaultDom;
 	}
 
-	public static AssetType typeOfAsset(String resource) {
+	public static AssetType typeOfAsset(String assetName) {
 		for (AssetType type : values()) {
-			if (resource.endsWith(type.name())) {
+			if (assetName.toLowerCase().endsWith(type.name())) {
+				return type;
+			}
+		}
+		return null;
+	}
+	
+	public static AssetType typeOf(String assetLocation) {
+		for (AssetType type : values()) {
+			if (assetLocation.toLowerCase().endsWith(type.name())) {
 				return type;
 			}
 		}

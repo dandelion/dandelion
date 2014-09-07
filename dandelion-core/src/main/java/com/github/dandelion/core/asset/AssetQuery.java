@@ -39,6 +39,7 @@ import com.github.dandelion.core.Context;
 import com.github.dandelion.core.storage.AssetStorageUnit;
 import com.github.dandelion.core.storage.BundleStorage;
 import com.github.dandelion.core.storage.BundleStorageUnit;
+import com.github.dandelion.core.utils.AssetUtils;
 import com.github.dandelion.core.utils.UrlUtils;
 import com.github.dandelion.core.web.AssetRequestContext;
 

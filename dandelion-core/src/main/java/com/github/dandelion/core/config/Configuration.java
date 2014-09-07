@@ -78,6 +78,7 @@ public class Configuration {
 	private int cacheRequestMaxSize;
 	private String cacheManagerName;
 	private String cacheConfigurationLocation;
+	private String bundleLocation;
 	private List<String> bundleIncludes;
 	private List<String> bundleExcludes;
 
@@ -107,6 +108,7 @@ public class Configuration {
 		this.jmxEnabled = Boolean.parseBoolean(readConfig(DandelionConfig.JMX_ENABLED));
 
 		// Bundles-related properties
+		this.bundleLocation = readConfig(DandelionConfig.BUNDLE_LOCATION);
 		this.bundleIncludes = PropertiesUtils.propertyAsList(readConfig(DandelionConfig.BUNDLE_INCLUDES), ",");
 		this.bundleExcludes = PropertiesUtils.propertyAsList(readConfig(DandelionConfig.BUNDLE_EXCLUDES), ",");
 
@@ -193,6 +195,10 @@ public class Configuration {
 
 	public String getCacheConfigurationLocation() {
 		return cacheConfigurationLocation;
+	}
+
+	public String getBundleLocation() {
+		return bundleLocation;
 	}
 
 	public List<String> getBundleIncludes() {
