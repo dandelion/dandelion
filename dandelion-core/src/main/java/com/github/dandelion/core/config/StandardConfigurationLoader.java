@@ -30,41 +30,37 @@
 package com.github.dandelion.core.config;
 
 import java.io.File;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.util.Locale;
-import java.util.MissingResourceException;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.Properties;
-import java.util.ResourceBundle;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.github.dandelion.core.Context;
+import com.github.dandelion.core.DandelionException;
 import com.github.dandelion.core.utils.PropertiesUtils;
 import com.github.dandelion.core.utils.StringUtils;
-import com.github.dandelion.core.utils.UTF8Control;
 
 /**
  * <p>
  * Default implementation of the {@link ConfigurationLoader}.
+ * </p>
  * 
  * <p>
  * Note that a custom {@link ConfigurationLoader} can be used thanks to the
  * {@link Context}.
+ * </p>
  * 
  * @author Thibault Duchateau
  * @author Romain Lespinasse
  * @since 0.10.0
- * @see ConfigurationLoader
  * @see Context
- * @see ConfigurationError
  */
 public class StandardConfigurationLoader implements ConfigurationLoader {
 
-	// Logger
-	private static Logger LOG = LoggerFactory.getLogger(StandardConfigurationLoader.class);
+	private static Logger logger = LoggerFactory.getLogger(StandardConfigurationLoader.class);
 
 	public static final String DANDELION_USER_PROPERTIES = "dandelion";
 	public static final String DANDELION_CONFIGURATION = "dandelion.configuration";
@@ -74,53 +70,77 @@ public class StandardConfigurationLoader implements ConfigurationLoader {
 	 */
 	public Properties loadUserConfiguration() {
 
-		LOG.debug("Loading user configuration...");
+		logger.debug("Loading user configuration...");
 
-		ResourceBundle userBundle = null;
-		ResourceBundle.clearCache();
+		Properties userProperties = null;
+
+		// Get the Dandelion mode
+		String activeRawProfile = Profile.getActiveRawProfile();
+
+		// Get the configuration base path, if set
+		String dandelionBasePath = System.getProperty(DANDELION_CONFIGURATION);
+
+		// Compute the name of the file to load
+		String dandelionFileName = null;
+		if (StringUtils.isBlank(activeRawProfile)) {
+			dandelionFileName = DANDELION_USER_PROPERTIES + ".properties";
+		}
+		else if (StringUtils.isNotBlank(activeRawProfile)) {
+			dandelionFileName = DANDELION_USER_PROPERTIES + "_" + activeRawProfile + ".properties";
+		}
+
+		// Compute the full path
+		String dandelionFilePath = null;
 
 		// First check if the resource bundle is externalized
-		if (StringUtils.isNotBlank(System.getProperty(DANDELION_CONFIGURATION))) {
+		if (StringUtils.isNotBlank(dandelionBasePath)) {
 
-			String path = System.getProperty(DANDELION_CONFIGURATION);
+			if (!dandelionBasePath.endsWith(String.valueOf(File.separatorChar))) {
+				dandelionBasePath += File.separator;
+			}
+			dandelionFilePath = dandelionBasePath + dandelionFileName;
+			logger.debug("Trying to load the configuration from \"{}\"", dandelionFilePath);
 
 			try {
-				URL resourceURL = new File(path).toURI().toURL();
-				URLClassLoader urlLoader = new URLClassLoader(new URL[] { resourceURL });
-				userBundle = ResourceBundle.getBundle(DANDELION_USER_PROPERTIES, Locale.getDefault(), urlLoader,
-						new UTF8Control());
-				LOG.debug("User configuration loaded");
+				userProperties = PropertiesUtils.loadFromFileSystem(dandelionFilePath, "UTF-8");
 			}
-			catch (MalformedURLException e) {
-				LOG.warn("Wrong path to the externalized bundle", e);
+			catch (FileNotFoundException e) {
+				StringBuilder error = new StringBuilder("The file \"");
+				error.append(dandelionFilePath);
+				error.append("\" doesn't exist.");
+				throw new DandelionException(error.toString(), e);
 			}
-			catch (MissingResourceException e) {
-				LOG.info("No *.properties file in {}. Trying to lookup in classpath...", path);
+			catch (UnsupportedEncodingException e) {
+				StringBuilder error = new StringBuilder("The file \"");
+				error.append(dandelionFilePath);
+				error.append("\" cannot be encoded into UTF-8.");
+				throw new DandelionException(error.toString(), e);
+			}
+			catch (IOException e) {
+				StringBuilder error = new StringBuilder("An error occurred when ");
+				error.append("reading from the file \"");
+				error.append(dandelionFilePath);
+				error.append("\"");
+				throw new DandelionException(error.toString(), e);
 			}
 		}
 
 		// No system property is set, retrieves the bundle from the classpath
-		if (userBundle == null) {
+		if (userProperties == null) {
+
+			dandelionFilePath = "dandelion/" + dandelionFileName;
+			logger.debug("Trying to load the configuration from \"{}\"", dandelionFilePath);
+
 			try {
-				// The user bundle is read using UTF-8
-				userBundle = ResourceBundle
-						.getBundle(DANDELION_USER_PROPERTIES, Locale.getDefault(), new UTF8Control());
-				LOG.debug("User configuration loaded");
+				userProperties = PropertiesUtils.loadFromClasspath(dandelionFilePath, "UTF-8");
 			}
-			catch (MissingResourceException e) {
-				// if no resource bundle is found, try using the context
-				// classloader
-				try {
-					userBundle = ResourceBundle.getBundle("dandelion/" + DANDELION_USER_PROPERTIES,
-							Locale.getDefault(), Thread.currentThread().getContextClassLoader(), new UTF8Control());
-					LOG.debug("User configuration loaded");
-				}
-				catch (MissingResourceException mre) {
-					LOG.debug("No custom configuration. Using default one.");
-				}
+			catch (Exception e) {
+				logger.warn("No file \"dandelion.properties\" was found. The default set of configurations will be used.");
 			}
 		}
 
-		return PropertiesUtils.bundleToProperties(userBundle);
+		logger.debug("User configuration loaded");
+
+		return userProperties;
 	}
 }

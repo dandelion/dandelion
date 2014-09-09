@@ -52,26 +52,21 @@ public class HttpHeadersConfigurer {
 	public static final String DEFAULT_CACHE_CONTROL = "public, max-age=315360000";
 	private static final SimpleDateFormat DATE_FORMAT;
 	private Context context;
-	
+
 	static {
 		DATE_FORMAT = new SimpleDateFormat("E, dd MMM yyyy HH:mm:ss z", Locale.US);
 		DATE_FORMAT.setTimeZone(TimeZone.getTimeZone("GMT"));
 	}
 
-	public HttpHeadersConfigurer(Context context){
+	public HttpHeadersConfigurer(Context context) {
 		this.context = context;
 	}
-	
+
 	public void configureResponseHeaders(HttpServletResponse response, String contentType) {
 
 		response.setContentType(contentType == null ? "text/plain" : contentType);
 
-		if (context.isDevModeEnabled()) {
-			response.setHeader(HttpHeader.CACHE_CONTROL.getName(), "no-cache, no-store, must-revalidate");
-			response.setHeader(HttpHeader.PRAGMA.getName(), "no-cache");
-			response.setHeader(HttpHeader.EXPIRES.getName(), String.valueOf(0));
-		}
-		else {
+		if (context.getConfiguration().isAssetCachingEnabled()) {
 			response.setHeader(HttpHeader.CACHE_CONTROL.getName(), DEFAULT_CACHE_CONTROL);
 			response.setHeader(HttpHeader.EXPIRES.getName(), String.valueOf(ONE_YEAR_IN_MILLISECONDS));
 
@@ -81,6 +76,11 @@ public class HttpHeadersConfigurer {
 			lastModified = TimeUnit.MILLISECONDS.toSeconds(lastModified);
 			lastModified = TimeUnit.SECONDS.toMillis(lastModified);
 			response.setHeader(HttpHeader.LAST_MODIFIED.getName(), DATE_FORMAT.format(lastModified));
+		}
+		else {
+			response.setHeader(HttpHeader.CACHE_CONTROL.getName(), "no-cache, no-store, must-revalidate");
+			response.setHeader(HttpHeader.PRAGMA.getName(), "no-cache");
+			response.setHeader(HttpHeader.EXPIRES.getName(), String.valueOf(0));
 		}
 	}
 }

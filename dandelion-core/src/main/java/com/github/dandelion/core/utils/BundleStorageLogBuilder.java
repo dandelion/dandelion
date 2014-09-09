@@ -29,16 +29,24 @@
  */
 package com.github.dandelion.core.utils;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.github.dandelion.core.storage.BundleStorage;
+
+/**
+ * <p>
+ * Extension of the {@link LogBuilder} used when building the
+ * {@link BundleStorage}.
+ * </p>
+ * 
+ * @author Thibault Duchateau
+ * @since 0.11.0
+ */
 public class BundleStorageLogBuilder extends LogBuilder {
 
-	private static String PLACEHOLDER = "\\{\\}";
 	private Map<String, Set<String>> errorMap;
 
 	public BundleStorageLogBuilder() {
@@ -56,13 +64,13 @@ public class BundleStorageLogBuilder extends LogBuilder {
 			errorMap.put(errorType, errorMessages);
 		}
 	}
-	
+
 	public void error(String errorType, String bundleName, String errorMessage) {
 		StringBuilder error = new StringBuilder("   [");
 		error.append(bundleName);
 		error.append("] ");
 		error.append(errorMessage);
-		
+
 		if (errorMap.containsKey(errorType)) {
 			errorMap.get(errorType).add(error.toString());
 		}

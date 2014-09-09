@@ -30,46 +30,67 @@
 package com.github.dandelion.core.config;
 
 import com.github.dandelion.core.Beta;
-import com.github.dandelion.core.DandelionMode;
 
 /**
  * <p>
  * Enum containing all configuration properties and their associated value both
- * in {@link DandelionMode#DEVELOPMENT} and {@link DandelionMode#PRODUCTION}
+ * in {@link Profile#DEVELOPMENT} and {@link Profile#PRODUCTION}
  * mode.
+ * </p>
  * 
  * @author Thibault Duchateau
  * @since 0.10.0
  */
 public enum DandelionConfig {
 
-	// Main configurations
-	DANDELION_MODE("dandelion.mode", "development", ""), 
-	MINIFICATION("minification", "false", "true"),
-	OVERRIDE_SERVLET3("override.servlet3", "", ""),
-	@Beta JMX_ENABLED("jmx", "false", "false"),
-
-	// Asset configurations
+	// Asset-related configurations
+	ASSET_MINIFICATION("asset.minification", "false", "true"),
 	ASSET_LOCATIONS_RESOLUTION_STRATEGY("asset.locations.resolution.strategy", "webapp,webjar,jar,cdn", "webapp,webjar,jar,cdn"), 
 	ASSET_PROCESSORS("asset.processors", "cssurlrewriting,jsmin,cssmin", "cssurlrewriting,jsmin,cssmin"), 
 	ASSET_PROCESSORS_ENCODING("asset.processors.encoding", "UTF-8", "UTF-8"), 
 	ASSET_JS_EXCLUDES("asset.js.excludes", "", ""), 
 	ASSET_CSS_EXCLUDES("asset.css.excludes", "", ""),
 
-	// Cache configurations
+	// Caching-related configurations
+	ASSET_CACHING("asset.caching", "false", "true"),
 	CACHE_NAME("cache.name", "", ""),
 	CACHE_ASSET_MAX_SIZE("cache.asset.max.size", "50", "50"), 
 	CACHE_REQUEST_MAX_SIZE("cache.request.max.size", "50", "50"), 
 	CACHE_MANAGER_NAME("cache.manager.name", "", ""), 
 	CACHE_CONFIGURATION_LOCATION("cache.configuration.location", "", ""),
 
-	// Bundle configurations
+	// Bundle-related configurations
 	BUNDLE_LOCATION("bundle.location", "", ""),
 	BUNDLE_INCLUDES("bundle.includes", "", ""), 
-	BUNDLE_EXCLUDES("bundle.excludes", "", "");
+	BUNDLE_EXCLUDES("bundle.excludes", "", ""),
 
+	// Tooling-related configurations
+	TOOL_ASSET_PRETTY_PRINTING("tool.asset.pretty.printing", "true", "false"), 
+	TOOL_BUNDLE_GRAPH("tool.bundle.graph", "true", "false"), 
+	TOOL_BUNDLE_RELOADING("tool.bundle.reloading", "true", "false"),
+	
+	// Moniroting configurations
+	@Beta MONITORING_JMX("monitoring.jmx", "false", "false"),
+	
+	// Misc configurations
+	OVERRIDE_SERVLET3("override.servlet3", "", "");
+	
+	/**
+	 * The configuration name.
+	 */
 	private String propertyName;
+	
+	/**
+	 * The default value to be used if the {@link Profile#DEFAULT_DEV_PROFILE}
+	 * is activated or if a custom profile is activated but the corresponding
+	 * configuration is not specified.
+	 */
 	private String defaultDevValue;
+	
+	/**
+	 * The default value to be used if the {@link Profile#DEFAULT_PROD_PROFILE}
+	 * is activated.
+	 */
 	private String defaultProdValue;
 
 	private DandelionConfig(String propertyName, String defaultDevValue, String defaultProdValue) {
@@ -82,11 +103,11 @@ public enum DandelionConfig {
 		return propertyName;
 	}
 
-	public String getDefaultDevValue() {
+	public String defaultDevValue() {
 		return defaultDevValue;
 	}
 
-	public String getDefaultProdValue() {
+	public String defaultProdValue() {
 		return defaultProdValue;
 	}
 }

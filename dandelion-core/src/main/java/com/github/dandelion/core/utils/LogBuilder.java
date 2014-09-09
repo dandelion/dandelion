@@ -31,8 +31,9 @@ package com.github.dandelion.core.utils;
 
 /**
  * <p>
- * Utility used to buffer logs mainly raised by exceptions, before being flushed
- * - pretty-printed - in the configured logger.
+ * Utility used to buffer logs mainly raised by exceptions, before being
+ * pretty-printed flushed using the configured logger.
+ * </p>
  * 
  * @author Thibault Duchateau
  * @since 0.11.0

@@ -29,8 +29,13 @@
  */
 package com.github.dandelion.core.utils;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
@@ -40,6 +45,7 @@ import java.util.ResourceBundle;
 /**
  * <p>
  * Collection of utilities to ease working with {@link Properties}.
+ * </p>
  * 
  * @author Romain Lespinasse
  * @author Thibault Duchateau
@@ -48,7 +54,10 @@ import java.util.ResourceBundle;
 public class PropertiesUtils {
 
 	/**
-	 * <p>Filters properties which begin with the supplied prefix.
+	 * <p>
+	 * Returns a filtered list of properties which begin with the supplied
+	 * prefix.
+	 * </p>
 	 * 
 	 * @param prefix
 	 *            The prefix used to filter the properties.
@@ -64,6 +73,127 @@ public class PropertiesUtils {
 			}
 		}
 		return values;
+	}
+
+	/**
+	 * <p>
+	 * Returns a {@link Properties} instance, loaded from the specified
+	 * {@code filePath}, absolute path in the file system.
+	 * </p>
+	 * 
+	 * <p>
+	 * The {@link Properties} instance is loaded using the specified named
+	 * {@code charset} .
+	 * </p>
+	 * 
+	 * @param filePath
+	 *            The absolute file path to use in order to load the
+	 *            {@link Properties} instance.
+	 * @param charset
+	 *            The named charset to use when creating the
+	 *            {@link InputStreamReader}.
+	 * @return a loaded instance of {@link Properties}.
+	 * @throws FileNotFoundException
+	 *             if the file doesn't exist.
+	 * @throws UnsupportedEncodingException
+	 *             if the named charset is not supported
+	 * @throws IOException
+	 *             if any other error occurred when reading from the input
+	 *             stream.
+	 */
+	public static Properties loadFromFileSystem(String filePath, String charset) throws FileNotFoundException,
+			UnsupportedEncodingException, IOException {
+
+		FileInputStream fis = null;
+		InputStreamReader isr = null;
+		Properties properties = null;
+		try {
+			fis = new FileInputStream(filePath);
+			isr = new InputStreamReader(fis, charset);
+			properties = new Properties();
+			properties.load(isr);
+		}
+		finally {
+			try {
+				if (fis != null) {
+					fis.close();
+				}
+			}
+			catch (IOException e) {
+				// Nothing to do
+			}
+			try {
+				if (isr != null) {
+					isr.close();
+				}
+			}
+			catch (IOException e) {
+				// Nothing to do
+			}
+		}
+
+		return properties;
+	}
+
+	/**
+	 * <p>
+	 * Returns a {@link Properties} instance, loaded from the specified
+	 * {@code filePath} and using the context {@link ClassLoader} of the current
+	 * thread.
+	 * </p>
+	 * 
+	 * <p>
+	 * The {@link Properties} instance is loaded using the named {@code charset}
+	 * .
+	 * </p>
+	 * 
+	 * @param filePath
+	 *            The relative file path inside the classpath.
+	 * @param charset
+	 *            The named charset to use when creating the
+	 *            {@link InputStreamReader}.
+	 * @return a loaded instance of {@link Properties}.
+	 * @throws FileNotFoundException
+	 *             if the file doesn't exist.
+	 * @throws UnsupportedEncodingException
+	 *             if the named charset is not supported
+	 * @throws IOException
+	 *             if any other error occurred when reading from the input
+	 *             stream.
+	 */
+	public static Properties loadFromClasspath(String filePath, String encoding) throws UnsupportedEncodingException,
+			IOException {
+
+		InputStream is = null;
+		InputStreamReader isr = null;
+		Properties properties;
+
+		try {
+			is = Thread.currentThread().getContextClassLoader().getResourceAsStream(filePath);
+			isr = new InputStreamReader(is, encoding);
+			properties = new Properties();
+			properties.load(isr);
+		}
+		finally {
+			try {
+				if (is != null) {
+					is.close();
+				}
+			}
+			catch (IOException e) {
+				// Nothing to do
+			}
+			try {
+				if (isr != null) {
+					isr.close();
+				}
+			}
+			catch (IOException e) {
+				// Nothing to do
+			}
+		}
+
+		return properties;
 	}
 
 	/**
@@ -86,10 +216,43 @@ public class PropertiesUtils {
 		return properties;
 	}
 
+	/**
+	 * <p>
+	 * Returns a list from the specified {@code values}, using "," as a default
+	 * delimiter to perform the splip operation.
+	 * </p>
+	 * 
+	 * @param values
+	 *            a {@link String} containing the element to return as a
+	 *            {@link List} and containing "," as a default delimiter.
+	 * @return a list of {@link String}s.
+	 */
+	public static List<String> propertyAsList(String values) {
+		return propertyAsList(values, ",");
+	}
+
+	/**
+	 * <p>
+	 * Returns a list from the specified {@code values}, using the specified
+	 * delimiter to perform the splip operation.
+	 * </p>
+	 * 
+	 * @param values
+	 *            a {@link String} containing the element to return as a
+	 *            {@link List}.
+	 * @param delimiter
+	 *            The delimiter to use to perform the split operation against
+	 *            the {@link String}.
+	 * @return a list of {@link String}s.
+	 */
 	public static List<String> propertyAsList(String values, String delimiter) {
 		if (values == null || values.isEmpty()) {
 			return Collections.emptyList();
 		}
-		return Arrays.asList(values.split(delimiter));
+		List<String> retval = new ArrayList<String>();
+		for (String val : values.trim().split(delimiter)) {
+			retval.add(val.trim());
+		}
+		return retval;
 	}
 }

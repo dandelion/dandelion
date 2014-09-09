@@ -127,7 +127,8 @@ public class DandelionFilter implements Filter {
 		request.setAttribute(WebConstants.DANDELION_CONTEXT_ATTRIBUTE, context);
 
 		// Bundle reloading (development mode only)
-		if (context.isDevModeEnabled() && request.getParameter(WebConstants.DANDELION_RELOAD_BUNDLES) != null) {
+		if (context.getConfiguration().isToolBundleReloadingEnabled()
+				&& request.getParameter(WebConstants.DANDELION_RELOAD_BUNDLES) != null) {
 			LOG.info("Bundle reloading requested via request parameter");
 			context.initBundleStorage();
 			LOG.info("Bundle reloaded");
@@ -138,7 +139,7 @@ public class DandelionFilter implements Filter {
 		filterChain.doFilter(request, wrappedResponse);
 
 		// Bundle graph viewer display (development mode only)
-		if (context.isDevModeEnabled() && request.getParameter(WebConstants.DANDELION_SHOW_GRAPH) != null) {
+		if (context.getConfiguration().isToolBundleGraphEnabled() && request.getParameter(WebConstants.DANDELION_SHOW_GRAPH) != null) {
 			GraphViewer graphViewer = new GraphViewer(context);
 			response.getWriter().print(graphViewer.getView(request, response, filterChain));
 			return;

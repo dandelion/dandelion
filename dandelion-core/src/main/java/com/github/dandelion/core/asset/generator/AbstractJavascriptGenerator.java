@@ -41,13 +41,14 @@ import com.github.dandelion.core.web.WebConstants;
 /**
  * <p>
  * Abstract base implementation of all Javascript generators.
+ * </p>
  * 
  * @author Thibault Duchateau
  * @since 0.11.0
  */
 public abstract class AbstractJavascriptGenerator implements JavascriptGenerator {
 
-	private static final Logger LOG = LoggerFactory.getLogger(AbstractJavascriptGenerator.class);
+	private static final Logger logger = LoggerFactory.getLogger(AbstractJavascriptGenerator.class);
 
 	/**
 	 * {@inheritDoc}
@@ -56,11 +57,11 @@ public abstract class AbstractJavascriptGenerator implements JavascriptGenerator
 
 		Context context = (Context) request.getAttribute(WebConstants.DANDELION_CONTEXT_ATTRIBUTE);
 
-		LOG.debug("Generating asset...");
+		logger.debug("Generating asset...");
 		String generatedAsset = getGeneratedAsset(request);
-		LOG.debug("Asset generated successfully");
-		
-		if (context.isDevModeEnabled()) {
+		logger.debug("Asset generated successfully");
+
+		if (context.getConfiguration().isToolAssetPrettyPrintingEnabled()) {
 			return ScriptingUtils.prettyPrint(generatedAsset);
 		}
 		return generatedAsset;

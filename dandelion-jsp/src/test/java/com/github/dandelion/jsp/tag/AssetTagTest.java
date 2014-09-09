@@ -32,22 +32,11 @@ package com.github.dandelion.jsp.tag;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import java.io.File;
-
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
-import com.github.dandelion.core.config.StandardConfigurationLoader;
 import com.github.dandelion.jsp.PhantomJsTest;
 
 public class AssetTagTest extends PhantomJsTest {
-
-	@BeforeClass
-	public static void setup() {
-		String propertiesPath = new File("src/test/resources/dandelion/").getAbsolutePath();
-		System.setProperty(StandardConfigurationLoader.DANDELION_CONFIGURATION, propertiesPath);
-	}
 
 	@Test
 	public void should_exclude_1_js() {
@@ -61,10 +50,5 @@ public class AssetTagTest extends PhantomJsTest {
 		goTo("/excluded_css.jsp");
 		assertThat(text("script")).hasSize(2);
 		assertThat(text("link")).hasSize(0);
-	}
-
-	@AfterClass
-	public static void tearDown() {
-		System.clearProperty(StandardConfigurationLoader.DANDELION_CONFIGURATION);
 	}
 }

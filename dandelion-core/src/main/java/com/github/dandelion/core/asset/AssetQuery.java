@@ -64,7 +64,7 @@ public class AssetQuery {
 		String key = UrlUtils.getCurrentUri(request).toString();
 		this.requestedAssets = context.getCacheManager().getAssets(key);
 
-		if (this.requestedAssets == null || context.isDevModeEnabled()) {
+		if (this.requestedAssets == null || context.getConfiguration().isAssetCachingEnabled()) {
 
 			// All asset storage units are fetched in an ordered set
 			Set<AssetStorageUnit> assetStorageUnits = new LinkedHashSet<AssetStorageUnit>();

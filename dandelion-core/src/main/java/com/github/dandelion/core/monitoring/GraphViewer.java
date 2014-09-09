@@ -46,7 +46,6 @@ import javax.servlet.http.HttpServletResponse;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.dandelion.core.Context;
-import com.github.dandelion.core.DandelionMode;
 import com.github.dandelion.core.asset.Asset;
 import com.github.dandelion.core.asset.AssetDomPosition;
 import com.github.dandelion.core.asset.AssetMapper;
@@ -67,7 +66,7 @@ import com.github.dandelion.core.web.WebConstants;
  * Once built, the page is directly written in the {@link HttpServletResponse}.
  * 
  * <p>
- * This development tool is only accessible when the {@link DandelionMode#DEVELOPMENT} is enabled.
+ * This development tool is only accessible when the {@link Profile#DEVELOPMENT} is enabled.
  * 
  * @author Thibault Duchateau
  * @since 0.10.0

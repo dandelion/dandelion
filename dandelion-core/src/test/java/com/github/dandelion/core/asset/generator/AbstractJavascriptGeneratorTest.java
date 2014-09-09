@@ -37,7 +37,6 @@ import org.springframework.mock.web.MockFilterConfig;
 import org.springframework.mock.web.MockHttpServletRequest;
 
 import com.github.dandelion.core.Context;
-import com.github.dandelion.core.DandelionMode;
 import com.github.dandelion.core.web.WebConstants;
 
 public class AbstractJavascriptGeneratorTest {
@@ -57,7 +56,7 @@ public class AbstractJavascriptGeneratorTest {
 
 	@Test
 	public void should_pretty_print_in_devMode() {
-		context.getConfiguration().setDandelionMode(DandelionMode.DEVELOPMENT);
+		context.getConfiguration().setToolAssetPrettyPrintingEnabled(true);
 		request.setAttribute(WebConstants.DANDELION_CONTEXT_ATTRIBUTE, context);
 
 		String generatedAsset = javascriptGenerator.getAssetContent(request);
@@ -66,7 +65,7 @@ public class AbstractJavascriptGeneratorTest {
 
 	@Test
 	public void should_not_pretty_print_in_prodMode() {
-		context.getConfiguration().setDandelionMode(DandelionMode.PRODUCTION);
+		context.getConfiguration().setToolAssetPrettyPrintingEnabled(false);
 		request.setAttribute(WebConstants.DANDELION_CONTEXT_ATTRIBUTE, context);
 
 		String generatedAsset = javascriptGenerator.getAssetContent(request);
