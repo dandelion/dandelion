@@ -226,6 +226,10 @@ public class Configuration {
 		return StringUtils.isNotBlank(retval) ? retval.trim() : retval;
 	}
 
+	public String getActiveProfile() {
+		return this.activeProfile;
+	}
+	
 	public String getActiveRawProfile() {
 		return this.activeRawProfile;
 	}
