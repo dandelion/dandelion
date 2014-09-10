@@ -92,7 +92,7 @@ public class StandardConfigurationLoaderTest {
 		System.setProperty(Profile.DANDELION_PROFILE_ACTIVE, "missing");
 
 		exception.expect(DandelionException.class);
-		exception.expectMessage("The file \"" + path + "\\dandelion_missing.properties\" doesn't exist.");
+		exception.expectMessage("The file \"" + path + File.separatorChar + "dandelion_missing.properties\" doesn't exist.");
 
 		loader.loadUserConfiguration();
 	}
