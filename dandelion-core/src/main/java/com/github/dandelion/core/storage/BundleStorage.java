@@ -59,7 +59,7 @@ import com.github.dandelion.core.utils.StringUtils;
 public class BundleStorage {
 
 	private static final Logger logger = LoggerFactory.getLogger(BundleStorage.class);
-	
+
 	private final BundleDag bundleDag;
 
 	public BundleStorage() {
@@ -263,13 +263,16 @@ public class BundleStorage {
 						asu.setType(AssetType.typeOf(firstFoundLocation));
 					}
 				}
-				
-				// Perform variable substitutions
-				for (AssetStorageUnit asu : bsu.getAssetStorageUnits()) {
-					Map<String, String> locations = asu.getLocations();
-					for (Entry<String, String> locationEntry : asu.getLocations().entrySet()) {
-						locations.put(locationEntry.getKey(), StringUtils.substitute(locationEntry.getValue(), context
-								.getConfiguration().getProperties()));
+
+				// Perform variable substitutions only if the user uses a
+				// configuration file
+				if (context.getConfiguration().getProperties() != null) {
+					for (AssetStorageUnit asu : bsu.getAssetStorageUnits()) {
+						Map<String, String> locations = asu.getLocations();
+						for (Entry<String, String> locationEntry : asu.getLocations().entrySet()) {
+							locations.put(locationEntry.getKey(), StringUtils.substitute(locationEntry.getValue(),
+									context.getConfiguration().getProperties()));
+						}
 					}
 				}
 			}
@@ -285,7 +288,7 @@ public class BundleStorage {
 		// TODO Auto-generated method stub
 
 	}
-	
+
 	/**
 	 * @return the internal {@link BundleDag} used to store the bundle graph.
 	 */
