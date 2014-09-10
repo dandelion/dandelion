@@ -108,7 +108,7 @@ public class BundleStorageUnit {
 		Set<String> asus = new HashSet<String>();
 		if (assetStorageUnits != null) {
 			for (AssetStorageUnit asu : assetStorageUnits) {
-				asus.add(asu.getName());
+				asus.add(asu.getName().toLowerCase());
 			}
 		}
 		return asus;
@@ -119,7 +119,7 @@ public class BundleStorageUnit {
 		if (assetStorageUnits != null) {
 			for (AssetStorageUnit asu : assetStorageUnits) {
 				if (asu.getType().equals(AssetType.js)) {
-					asus.add(asu.getName());
+					asus.add(asu.getName().toLowerCase());
 				}
 			}
 		}
@@ -131,7 +131,7 @@ public class BundleStorageUnit {
 		if (assetStorageUnits != null) {
 			for (AssetStorageUnit asu : assetStorageUnits) {
 				if (asu.getType().equals(AssetType.css)) {
-					asus.add(asu.getName());
+					asus.add(asu.getName().toLowerCase());
 				}
 			}
 		}

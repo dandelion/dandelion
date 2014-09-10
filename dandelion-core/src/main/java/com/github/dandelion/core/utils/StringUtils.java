@@ -29,7 +29,10 @@
  */
 package com.github.dandelion.core.utils;
 
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
+import java.util.Properties;
 
 /**
  * <p>
@@ -430,5 +433,155 @@ public class StringUtils {
 	 */
 	public static int indexOf(CharSequence cs, CharSequence searchChar, int start) {
 		return cs.toString().indexOf(searchChar.toString(), start);
+	}
+
+	/**
+	 * <p>
+	 * First convert the supplied {@link Properties} into a {@link Map} and then
+	 * call {@link #substitute(String, Map)}.
+	 * </p>
+	 * 
+	 * @param source
+	 *            the string containing possible variable references
+	 * @param variablesAndValues
+	 *            the {@link Map} to use to resolve the variables' values.
+	 * @return The updated source {@link String}.
+	 * @throws IllegalArgumentException
+	 *             <ul>
+	 *             <li>if the source {@link String} is null</li>
+	 *             <li>if the {@link Map} of variables is null</li>
+	 *             <li>
+	 *             or if the source {@link String} references a variable which
+	 *             doesn't exist in the variable {@link Map}.</li>
+	 *             </ul>
+	 */
+	public static String substitute(String source, Properties variablesAndValues) {
+
+		Validate.notNull(source, "The source cannot be null");
+		Validate.notNull(variablesAndValues, "The Properties cannot be null");
+
+		Map<String, String> map = new HashMap<String, String>();
+		for (String key : variablesAndValues.stringPropertyNames()) {
+			map.put(key, variablesAndValues.getProperty(key));
+		}
+
+		return substitute(source, map);
+	}
+
+	/**
+	 * <p>
+	 * Substitute all variable referenced in the specified {@code source} with
+	 * the syntax {@code %VARIABLE_NAME%}.
+	 * </p>
+	 * 
+	 * <p>
+	 * All variables (and associated values) must be supplied in a {@link Map}
+	 * where all keys are the variable names and values are their associated
+	 * value.
+	 * </p>
+	 * 
+	 * <p>
+	 * To include a literal "%" character in the source String, just double it.
+	 * </p>
+	 * 
+	 * @param source
+	 *            the string containing possible variable references
+	 * @param variablesAndValues
+	 *            the {@link Map} to use to resolve the variables' values.
+	 * @return The updated source {@link String}.
+	 * @throws IllegalArgumentException
+	 *             <ul>
+	 *             <li>if the source {@link String} is null</li>
+	 *             <li>if the {@link Map} of variables is null</li>
+	 *             <li>
+	 *             or if the source {@link String} references a variable which
+	 *             doesn't exist in the variable {@link Map}.</li>
+	 *             </ul>
+	 */
+	public static String substitute(String source, Map<String, String> variablesAndValues) {
+
+		Validate.notNull(source, "The source cannot be null");
+		Validate.notNull(variablesAndValues, "The Properties cannot be null");
+
+		StringBuilder result = new StringBuilder();
+		int len = source.length();
+		char prev = '\0';
+		StringBuilder var = new StringBuilder();
+		boolean inVar = false;
+		boolean syntaxError = false;
+		char ch[];
+
+		ch = source.toCharArray();
+		for (int i = 0; i < len; i++) {
+			char c = ch[i];
+
+			if (c == '%') {
+				if (inVar) {
+					if (prev == '%') {
+						// Doubled "%". Insert one literal "%".
+
+						inVar = false;
+						result.append('%');
+					}
+					else {
+						// End of variable reference. If the variable name
+						// is syntactically incorrect, just store the
+						// entire original sequence in the result string.
+
+						String varName = var.toString();
+						if (syntaxError) {
+							result.append('%' + varName + '%');
+						}
+
+						else {
+							if (!variablesAndValues.containsKey(varName)) {
+								StringBuilder error = new StringBuilder("The supplied set of variables doesn't contain");
+								error.append(" a variable named \"");
+								error.append(varName);
+								error.append("\"");
+								throw new IllegalArgumentException(error.toString());
+							}
+							else {
+								String value = variablesAndValues.get(varName);
+								result.append(value == null ? "" : value);
+							}
+						}
+
+						var.setLength(0);
+						inVar = false;
+						syntaxError = false;
+						prev = '\0'; // prevent match on trailing "%"
+					}
+				}
+				else {
+					// Possible start of a new variable.
+					inVar = true;
+					prev = c;
+				}
+			}
+
+			else {
+				// Not a '%'
+				if (inVar) {
+					var.append(c);
+				}
+				else {
+					result.append(c);
+				}
+				prev = c;
+			}
+		}
+
+		if (inVar) {
+			// Never saw the trailing "%" for the last variable reference.
+			// Transfer the characters buffered in 'var' into the result,
+			// without modification.
+
+			result.append('%');
+			result.append(var.toString());
+			syntaxError = true;
+		}
+
+		return result.toString();
 	}
 }

@@ -73,12 +73,12 @@ public class AssetUtilsTest {
 	public void should_extract_the_asset_name(){
 		
 		String location = "/assets/js/jquery.js";
-		assertThat(AssetUtils.extractName(location)).isEqualTo("jquery");
+		assertThat(AssetUtils.extractLowerCasedName(location)).isEqualTo("jquery");
 		
 		location = "jquery.js";
-		assertThat(AssetUtils.extractName(location)).isEqualTo("jquery");
+		assertThat(AssetUtils.extractLowerCasedName(location)).isEqualTo("jquery");
 
 		location = "jquery.js";
-		assertThat(AssetUtils.extractName(location)).isEqualTo("jquery");
+		assertThat(AssetUtils.extractLowerCasedName(location)).isEqualTo("jquery");
 	}
 }

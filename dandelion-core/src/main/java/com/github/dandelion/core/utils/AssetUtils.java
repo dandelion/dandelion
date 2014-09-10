@@ -158,20 +158,20 @@ public class AssetUtils {
 
 	/**
 	 * <p>
-	 * Extract the an {@link Asset} name using its configured location.
+	 * Extract the a lower-cased {@link Asset} name using its configured location.
 	 * </p>
 	 * 
 	 * <pre>
 	 * AssetUtils.extractName("/assets/js/jquery.js")  = "jquery"
-	 * AssetUtils.extractName("jquery.js")             = "jquery"
-	 * AssetUtils.extractName("jquery")                = "jquery"
+	 * AssetUtils.extractName("JQUERY.js")             = "jquery"
+	 * AssetUtils.extractName("jQuery")                = "jquery"
 	 * </pre>
 	 * 
 	 * @param location
 	 *            The location of the asset.
 	 * @return the asset name to be used in the {@link BundleStorage}.
 	 */
-	public static String extractName(String location) {
+	public static String extractLowerCasedName(String location) {
 
 		String assetName = null;
 		String tmpAssetName;

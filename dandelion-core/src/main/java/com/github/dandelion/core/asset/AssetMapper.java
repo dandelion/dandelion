@@ -154,7 +154,7 @@ public class AssetMapper {
 			location = locators.get(locationKey).getLocation(asu, request);
 		}
 
-		asset.setName(AssetUtils.extractName(location));
+		asset.setName(AssetUtils.extractLowerCasedName(location));
 		asset.setType(AssetType.typeOf(location));
 		asset.setConfigLocationKey(locationKey);
 		asset.setConfigLocation(asu.getLocations().get(locationKey));

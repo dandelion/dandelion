@@ -33,11 +33,14 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.github.dandelion.core.Context;
 import com.github.dandelion.core.DandelionException;
 import com.github.dandelion.core.asset.AssetType;
 import com.github.dandelion.core.utils.AssetUtils;
@@ -46,27 +49,27 @@ import com.github.dandelion.core.utils.StringUtils;
 
 /**
  * <p>
- * Storage for all bundles, based on a directed acyclic graph (dag).
+ * Storage for all bundles, backed by a {@link BundleDag} instance, i.e. a Java
+ * implementation of a Directed Acyclic Graph (DAG).
+ * </p>
  * 
  * @author Thibault Duchateau
  * @since 0.10.0
  */
 public class BundleStorage {
 
-	private static final Logger LOG = LoggerFactory.getLogger(BundleStorage.class);
-	private BundleDag bundleDag;
+	private static final Logger logger = LoggerFactory.getLogger(BundleStorage.class);
+	
+	private final BundleDag bundleDag;
 
 	public BundleStorage() {
 		this.bundleDag = new BundleDag();
 	}
 
-	public BundleDag getBundleDag() {
-		return bundleDag;
-	}
-
 	/**
 	 * <p>
-	 * Load all given bundle storage units into the {@link BundleDag}.
+	 * Load all given {@link BundleStorageUnit}s into the {@link BundleDag}.
+	 * </p>
 	 * 
 	 * @param bundleStorageUnits
 	 *            All bundle storage units to load into the dag.
@@ -95,49 +98,47 @@ public class BundleStorage {
 
 			// Asset updating
 
-			// The bundle to add contains assets
-			if (bsu.getAssetStorageUnits() != null) {
+			// Let's see if each asset already exists in any bundle
+			for (AssetStorageUnit asu : bsu.getAssetStorageUnits()) {
 
-				// Let's see if each asset already exists in any bundle
-				for (AssetStorageUnit asu : bsu.getAssetStorageUnits()) {
+				boolean assetAlreadyExists = false;
+				for (BundleStorageUnit existingBundle : bundleDag.getVerticies()) {
+					for (AssetStorageUnit existingAsu : existingBundle.getAssetStorageUnits()) {
 
-					boolean exists = false;
-					for (BundleStorageUnit existingBundle : bundleDag.getVerticies()) {
-						for (AssetStorageUnit existingAsu : existingBundle.getAssetStorageUnits()) {
+						// If the asset has both the same name
+						// (case-insensitive) and type, the old one is simply
+						// overriden
+						if (existingAsu.getName().equalsIgnoreCase(asu.getName())
+								&& existingAsu.getType().equals(asu.getType())) {
 
-							// Si un asset de meme nom existe deja, on l'ecrase
-							if (existingAsu.getName().equalsIgnoreCase(asu.getName())
-									&& existingAsu.getType().equals(asu.getType())) {
+							logger.debug(
+									"Replacing asset '{}' ({}) from the bundle '{}' by the asset {} ({}) from the bundle {}.",
+									existingAsu.getName(), existingAsu.getVersion(), existingBundle.getName(),
+									asu.getName(), asu.getVersion(), bsuToAdd.getName());
 
-								LOG.debug(
-										"Replacing asset '{}' ({}) from the bundle '{}' by the asset {} ({}) from the bundle {}.",
-										existingAsu.getName(), existingAsu.getVersion(), existingBundle.getName(),
-										asu.getName(), asu.getVersion(), bsuToAdd.getName());
-
-								existingAsu.setVersion(asu.getVersion());
-								existingAsu.setLocations(asu.getLocations());
-								existingAsu.setDom(asu.getDom());
-								existingAsu.setType(asu.getType());
-								existingAsu.setAttributes(asu.getAttributes());
-								existingAsu.setAttributesOnlyName(asu.getAttributesOnlyName());
-								exists = true;
-								break;
-							}
-						}
-
-						if (exists) {
+							existingAsu.setVersion(asu.getVersion());
+							existingAsu.setLocations(asu.getLocations());
+							existingAsu.setDom(asu.getDom());
+							existingAsu.setType(asu.getType());
+							existingAsu.setAttributes(asu.getAttributes());
+							existingAsu.setAttributesOnlyName(asu.getAttributesOnlyName());
+							assetAlreadyExists = true;
 							break;
 						}
 					}
 
-					// If the asset doesn't already exist, we just add it to the
-					// current bundle
-					if (!exists) {
-
-						LOG.debug("Adding {} '{}' ({}) to the bundle '{}'", asu.getType(), asu.getName(),
-								asu.getVersion(), bsuToAdd.getName());
-						bsuToAdd.getAssetStorageUnits().add(asu);
+					if (assetAlreadyExists) {
+						break;
 					}
+				}
+
+				// If the asset doesn't already exist, we just add it to the
+				// current bundle
+				if (!assetAlreadyExists) {
+
+					logger.debug("Adding {} '{}' ({}) to the bundle '{}'", asu.getType(), asu.getName(),
+							asu.getVersion(), bsuToAdd.getName());
+					bsuToAdd.getAssetStorageUnits().add(asu);
 				}
 			}
 		}
@@ -158,7 +159,7 @@ public class BundleStorage {
 		}
 
 		// Check that every asset of every bundle contains at least one
-		// locationKey/location pair because both name and type will be deduced
+		// locationKey/location pair because both name and type will be deducted
 		// from it
 
 		for (BundleStorageUnit bsu : bundleStorageUnits) {
@@ -247,24 +248,32 @@ public class BundleStorage {
 		return retval;
 	}
 
-	public void finalizeBundleConfiguration(List<BundleStorageUnit> loadedBundles) {
+	public void finalizeBundleConfiguration(List<BundleStorageUnit> loadedBundles, Context context) {
 
-		LOG.debug("Finishing bundles configuration...");
+		logger.debug("Finishing bundles configuration...");
 
 		for (BundleStorageUnit bsu : loadedBundles) {
 			if (bsu.getAssetStorageUnits() != null) {
 				for (AssetStorageUnit asu : bsu.getAssetStorageUnits()) {
 					String firstFoundLocation = asu.getLocations().values().iterator().next();
 					if (StringUtils.isBlank(asu.getName())) {
-						asu.setName(AssetUtils.extractName(firstFoundLocation));
+						asu.setName(AssetUtils.extractLowerCasedName(firstFoundLocation));
 					}
 					if (asu.getType() == null) {
 						asu.setType(AssetType.typeOf(firstFoundLocation));
 					}
 				}
+				
+				// Perform variable substitutions
+				for (AssetStorageUnit asu : bsu.getAssetStorageUnits()) {
+					Map<String, String> locations = asu.getLocations();
+					for (Entry<String, String> locationEntry : asu.getLocations().entrySet()) {
+						locations.put(locationEntry.getKey(), StringUtils.substitute(locationEntry.getValue(), context
+								.getConfiguration().getProperties()));
+					}
+				}
 			}
 		}
-
 	}
 
 	/**
@@ -275,5 +284,12 @@ public class BundleStorage {
 	public void checkBundleConsistency(List<BundleStorageUnit> loadedBundles) {
 		// TODO Auto-generated method stub
 
+	}
+	
+	/**
+	 * @return the internal {@link BundleDag} used to store the bundle graph.
+	 */
+	public BundleDag getBundleDag() {
+		return bundleDag;
 	}
 }

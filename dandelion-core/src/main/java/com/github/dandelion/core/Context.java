@@ -57,6 +57,7 @@ import com.github.dandelion.core.bundle.loader.impl.VendorBundleLoader;
 import com.github.dandelion.core.bundle.loader.spi.BundleLoader;
 import com.github.dandelion.core.config.Configuration;
 import com.github.dandelion.core.config.ConfigurationLoader;
+import com.github.dandelion.core.config.Profile;
 import com.github.dandelion.core.config.StandardConfigurationLoader;
 import com.github.dandelion.core.jmx.DandelionRuntime;
 import com.github.dandelion.core.storage.BundleStorage;
@@ -246,6 +247,14 @@ public class Context {
 		ServiceLoader<AssetLocator> alServiceLoader = ServiceLoader.load(AssetLocator.class);
 
 		assetLocatorsMap = new HashMap<String, AssetLocator>();
+		
+		if (this.getConfiguration().isServlet3Enabled()) {
+			logger.debug("Servlet 3.x API detected. Filtering asset locators accordingly.");
+		}
+		else {
+			logger.debug("Servlet 2.x API detected. Filtering asset locators accordingly.");
+		}
+
 		for (AssetLocator al : alServiceLoader) {
 
 			// Only register Servlet3-compatible asset locators if Servlet 3.x
@@ -332,7 +341,7 @@ public class Context {
 			logger.debug("Found {} bundle{}: {}", loadedBundles.size(), loadedBundles.size() <= 1 ? "" : "s",
 					loadedBundles);
 
-			bundleStorage.finalizeBundleConfiguration(loadedBundles);
+			bundleStorage.finalizeBundleConfiguration(loadedBundles, this);
 			bundleStorage.storeBundles(loadedBundles);
 
 			// Second and last check: consistency
@@ -417,5 +426,21 @@ public class Context {
 	 */
 	public Configuration getConfiguration() {
 		return configuration;
+	}
+	
+	/**
+	 * TODO
+	 * @return
+	 */
+	public boolean isDevProfileEnabled() {
+		return Profile.DEFAULT_DEV_PROFILE.equals(this.configuration.getActiveProfile());
+	}
+	
+	/**
+	 * TODO
+	 * @return
+	 */
+	public boolean isProdProfileEnabled() {
+		return Profile.DEFAULT_PROD_PROFILE.equals(this.configuration.getActiveProfile());
 	}
 }
