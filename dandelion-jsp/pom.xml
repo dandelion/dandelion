@@ -36,12 +36,6 @@
       </dependency>
 
       <!-- Test dependencies -->
-      <!-- PhantomJS + GhostDriver -->
-      <dependency>
-         <groupId>com.github.detro.ghostdriver</groupId>
-         <artifactId>phantomjsdriver</artifactId>
-         <scope>test</scope>
-      </dependency>
 
       <!-- JUnit -->
       <dependency>
@@ -50,34 +44,6 @@
          <scope>test</scope>
       </dependency>
 
-      <!-- Jetty -->
-      <dependency>
-         <groupId>org.eclipse.jetty</groupId>
-         <artifactId>jetty-jsp</artifactId>
-         <scope>test</scope>
-      </dependency>
-      <dependency>
-         <groupId>org.eclipse.jetty</groupId>
-         <artifactId>jetty-server</artifactId>
-         <scope>test</scope>
-      </dependency>
-      <dependency>
-         <groupId>org.eclipse.jetty</groupId>
-         <artifactId>jetty-util</artifactId>
-         <scope>test</scope>
-      </dependency>
-      <dependency>
-         <groupId>org.eclipse.jetty</groupId>
-         <artifactId>jetty-webapp</artifactId>
-         <scope>test</scope>
-      </dependency>
-
-      <!-- FluentLenium -->
-      <dependency>
-         <groupId>org.fluentlenium</groupId>
-         <artifactId>fluentlenium-core</artifactId>
-         <scope>test</scope>
-      </dependency>
    </dependencies>
 
    <build>
