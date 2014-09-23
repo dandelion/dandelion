@@ -46,6 +46,7 @@ import com.github.dandelion.core.web.AssetRequestContext;
 /**
  * <p>
  * Allows to build and execute a query against the {@link BundleStorage}.
+ * </p>
  * 
  * @author Thibault Duchateau
  * @since 0.10.0
@@ -53,9 +54,9 @@ import com.github.dandelion.core.web.AssetRequestContext;
 public class AssetQuery {
 
 	private Set<Asset> requestedAssets;
-	private Context context;
-	private HttpServletRequest request;
-	
+	private final Context context;
+	private final HttpServletRequest request;
+
 	public AssetQuery(HttpServletRequest request, Context context) {
 
 		this.request = request;
@@ -89,7 +90,7 @@ public class AssetQuery {
 		if (excludedJsNames.length > 0) {
 			excludeJs(excludedJsNames);
 		}
-		
+
 		String[] excludedCssNames = collectCssToExclude();
 		if (excludedCssNames.length > 0) {
 			excludeCss(excludedCssNames);
@@ -110,45 +111,45 @@ public class AssetQuery {
 		this.requestedAssets = AssetUtils.filtersByNameAndType(this.requestedAssets, excludedCssNames, AssetType.css);
 		return this;
 	}
-	
+
 	public Set<Asset> perform() {
 		return this.requestedAssets;
 	}
-	
-	private String[] collectJsToExclude(){
-		
+
+	private String[] collectJsToExclude() {
+
 		Set<String> excludedJs = new HashSet<String>();
 
 		// First collect JS from the excluded bundles
-		for(String bundleToExclude : AssetRequestContext.get(request).getExcludedBundles()){
+		for (String bundleToExclude : AssetRequestContext.get(request).getExcludedBundles()) {
 			Set<BundleStorageUnit> bsus = context.getBundleStorage().bundlesFor(bundleToExclude);
-			for(BundleStorageUnit bsu : bsus){
+			for (BundleStorageUnit bsu : bsus) {
 				excludedJs.addAll(bsu.getJsAssetStorageUnitNames());
 			}
 		}
-		
+
 		// Then add JS "manually" excluded
-		for(String assetToExclude : AssetRequestContext.get(request).getExcludedJs()){
+		for (String assetToExclude : AssetRequestContext.get(request).getExcludedJs()) {
 			excludedJs.add(assetToExclude);
 		}
 
 		return excludedJs.toArray(new String[excludedJs.size()]);
 	}
-	
-	private String[] collectCssToExclude(){
-		
+
+	private String[] collectCssToExclude() {
+
 		Set<String> excludedCss = new HashSet<String>();
 
 		// First collect CSS from the excluded bundles
-		for(String bundleToExclude : AssetRequestContext.get(request).getExcludedBundles()){
+		for (String bundleToExclude : AssetRequestContext.get(request).getExcludedBundles()) {
 			Set<BundleStorageUnit> bsus = context.getBundleStorage().bundlesFor(bundleToExclude);
-			for(BundleStorageUnit bsu : bsus){
+			for (BundleStorageUnit bsu : bsus) {
 				excludedCss.addAll(bsu.getCssAssetStorageUnitNames());
 			}
 		}
-		
+
 		// Then add CSS "manually" excluded
-		for(String assetToExclude : AssetRequestContext.get(request).getExcludedCss()){
+		for (String assetToExclude : AssetRequestContext.get(request).getExcludedCss()) {
 			excludedCss.add(assetToExclude);
 		}
 

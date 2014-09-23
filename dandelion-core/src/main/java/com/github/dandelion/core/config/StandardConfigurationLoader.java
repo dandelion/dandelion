@@ -30,9 +30,6 @@
 package com.github.dandelion.core.config;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.util.Properties;
 
 import org.slf4j.Logger;
@@ -104,24 +101,19 @@ public class StandardConfigurationLoader implements ConfigurationLoader {
 			try {
 				userProperties = PropertiesUtils.loadFromFileSystem(dandelionFilePath, "UTF-8");
 			}
-			catch (FileNotFoundException e) {
-				StringBuilder error = new StringBuilder("The file \"");
-				error.append(dandelionFilePath);
-				error.append("\" doesn't exist.");
-				throw new DandelionException(error.toString(), e);
-			}
-			catch (UnsupportedEncodingException e) {
-				StringBuilder error = new StringBuilder("The file \"");
-				error.append(dandelionFilePath);
-				error.append("\" cannot be encoded into UTF-8.");
-				throw new DandelionException(error.toString(), e);
-			}
-			catch (IOException e) {
-				StringBuilder error = new StringBuilder("An error occurred when ");
-				error.append("reading from the file \"");
-				error.append(dandelionFilePath);
-				error.append("\"");
-				throw new DandelionException(error.toString(), e);
+			catch (Exception e) {
+				StringBuilder error = new StringBuilder("No file \"");
+				error.append(dandelionFileName);
+				error.append("\" was found in \"");
+				error.append(dandelionBasePath);
+				error.append("\".");
+				if (StringUtils.isNotBlank(activeRawProfile)) {
+					throw new DandelionException(error.toString());
+				}
+				else {
+					logger.warn("No file \"{}\" was found in \"{}\". The default configuration will be used.",
+							dandelionFileName, dandelionBasePath);
+				}
 			}
 		}
 
@@ -135,7 +127,8 @@ public class StandardConfigurationLoader implements ConfigurationLoader {
 				userProperties = PropertiesUtils.loadFromClasspath(dandelionFilePath, "UTF-8");
 			}
 			catch (Exception e) {
-				logger.warn("No file \"dandelion.properties\" was found. The default set of configurations will be used.");
+				logger.warn("No file \"dandelion.properties\" was found in \"" + dandelionFilePath
+						+ "\" (classpath). The default configuration will be used.");
 			}
 		}
 

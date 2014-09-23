@@ -247,7 +247,7 @@ public class Context {
 		ServiceLoader<AssetLocator> alServiceLoader = ServiceLoader.load(AssetLocator.class);
 
 		assetLocatorsMap = new HashMap<String, AssetLocator>();
-		
+
 		if (this.getConfiguration().isServlet3Enabled()) {
 			logger.debug("Servlet 3.x API detected. Filtering asset locators accordingly.");
 		}
@@ -427,18 +427,20 @@ public class Context {
 	public Configuration getConfiguration() {
 		return configuration;
 	}
-	
+
 	/**
-	 * TODO
-	 * @return
+	 * @return {@code true} if the current {@link Profile} is set to "dev" or
+	 *         any other aliases present in {@link Profile#DEV_ALIASES},
+	 *         {@code false} otherwise.
 	 */
 	public boolean isDevProfileEnabled() {
 		return Profile.DEFAULT_DEV_PROFILE.equals(this.configuration.getActiveProfile());
 	}
-	
+
 	/**
-	 * TODO
-	 * @return
+	 * @return {@code true} if the current {@link Profile} is set to "prod" or
+	 *         any other aliases present in {@link Profile#PROD_ALIASES},
+	 *         {@code false} otherwise.
 	 */
 	public boolean isProdProfileEnabled() {
 		return Profile.DEFAULT_PROD_PROFILE.equals(this.configuration.getActiveProfile());
