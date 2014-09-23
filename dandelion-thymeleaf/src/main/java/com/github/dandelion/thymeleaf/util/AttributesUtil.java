@@ -58,9 +58,10 @@ public class AttributesUtil {
 	 * @return the matched Attribute Name
 	 */
 	public static AttributeName find(String attributeName, AttributeName[] names) {
-		for (AttributeName _name : names) {
-			if (_name.getAttribute().equalsIgnoreCase(attributeName)) {
-				return _name;
+		for (AttributeName name : names) {
+			String processedName = attributeName.contains("data-") ? attributeName.substring(9) : attributeName;
+			if (name.getAttribute().equalsIgnoreCase(processedName)) {
+				return name;
 			}
 		}
 		return null;
