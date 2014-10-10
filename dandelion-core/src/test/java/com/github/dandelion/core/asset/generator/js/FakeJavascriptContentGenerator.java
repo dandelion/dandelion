@@ -27,51 +27,14 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.github.dandelion.core.asset.generator.raw;
+package com.github.dandelion.core.asset.generator.js;
 
 import javax.servlet.http.HttpServletRequest;
 
-import com.github.dandelion.core.asset.generator.AbstractJavascriptGenerator;
-import com.github.dandelion.core.asset.generator.AssetBuffer;
-import com.github.dandelion.core.asset.generator.JavascriptGenerator;
-import com.github.dandelion.core.asset.generator.StandardAssetBuffer;
-import com.github.dandelion.core.utils.StringBuilderUtils;
+public class FakeJavascriptContentGenerator extends AbstractJavascriptContentGenerator {
 
-/**
- * <p>
- * Standard implementation of {@link JavascriptGenerator}, meant to generate raw
- * Javascript code.
- * 
- * @author Thibault Duchateau
- * @since 0.11.0
- */
-public class StandardRawJavascriptGenerator extends AbstractJavascriptGenerator {
-
-	/**
-	 * The buffer in which components will apped Javascript code.
-	 */
-	private StandardAssetBuffer standardAssetBuffer;
-
-	public StandardRawJavascriptGenerator() {
-		this.standardAssetBuffer = new StandardAssetBuffer();
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
-	public void fillBuffer(AssetBuffer assetBuffer) {
-		StringBuilder code = ((StandardAssetBuffer) assetBuffer).getJavascript();
-		if (StringBuilderUtils.isNotBlank(code)) {
-			this.standardAssetBuffer.append(code);
-		}
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public String getGeneratedAsset(HttpServletRequest request) {
-		return standardAssetBuffer.getJavascript() != null ? standardAssetBuffer.getJavascript().toString() : null;
+	protected String getJavascriptContent(HttpServletRequest request) {
+		return "function(){var o = new Object();}";
 	}
 }

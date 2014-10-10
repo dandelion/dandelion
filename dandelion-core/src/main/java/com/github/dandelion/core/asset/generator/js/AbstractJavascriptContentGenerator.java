@@ -27,66 +27,43 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
-package com.github.dandelion.core.asset.locator.impl;
-
-import java.util.Map;
+package com.github.dandelion.core.asset.generator.js;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.github.dandelion.core.Context;
 import com.github.dandelion.core.asset.generator.AssetContentGenerator;
-import com.github.dandelion.core.asset.locator.Servlet2Compatible;
-import com.github.dandelion.core.asset.locator.Servlet3Compatible;
-import com.github.dandelion.core.asset.locator.spi.AbstractAssetLocator;
-import com.github.dandelion.core.storage.AssetStorageUnit;
-import com.github.dandelion.core.web.AssetRequestContext;
+import com.github.dandelion.core.scripting.ScriptingUtils;
+import com.github.dandelion.core.web.WebConstants;
 
 /**
- * <p>
- * Locator for assets that use {@code delegate} as a location key.
- * 
- * <p>
- * Basically, a "delegated asset" is an asset that is created programmatically
- * and provided by the {@link AssetRequestContext}.
- * 
- * @author Thibault Duchateau
  * @author Romain Lespinasse
- * @since 0.2.0
+ * @author Thibault Duchateau
+ * @since 0.11.0
  */
-public class DelegateLocator extends AbstractAssetLocator implements Servlet2Compatible, Servlet3Compatible {
+public abstract class AbstractJavascriptContentGenerator implements AssetContentGenerator {
 
-	public static final String DELEGATED_CONTENT_PARAM = "DELEGATED_CONTENT";
-
-	public DelegateLocator() {
-		active = true;
-	}
+	private static final Logger logger = LoggerFactory.getLogger(AbstractJavascriptContentGenerator.class);
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public String getLocationKey() {
-		return "delegate";
+	public String getAssetContent(HttpServletRequest request) {
+		Context context = (Context) request.getAttribute(WebConstants.DANDELION_CONTEXT_ATTRIBUTE);
+
+		logger.debug("Generating asset...");
+		String generatedContent = getJavascriptContent(request);
+		logger.debug("Asset generated successfully");
+
+		if (context.getConfiguration().isToolAssetPrettyPrintingEnabled()) {
+			return ScriptingUtils.prettyPrint(generatedContent);
+		}
+		return generatedContent;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public boolean isCachingForced() {
-		return true;
-	}
-
-	@Override
-	public String doGetLocation(AssetStorageUnit asu, HttpServletRequest request) {
-		return asu.getLocations().get(getLocationKey());
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected String doGetContent(String location, Map<String, Object> parameters, HttpServletRequest request) {
-		return ((AssetContentGenerator) parameters.get(DELEGATED_CONTENT_PARAM)).getAssetContent(request);
-	}
+	protected abstract String getJavascriptContent(HttpServletRequest request);
 }

@@ -27,45 +27,49 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.github.dandelion.core.asset.generator;
+package com.github.dandelion.core.asset.generator.js;
 
-import javax.servlet.http.HttpServletRequest;
+import static org.assertj.core.api.Assertions.assertThat;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.junit.Before;
+import org.junit.Test;
+import org.springframework.mock.web.MockFilterConfig;
+import org.springframework.mock.web.MockHttpServletRequest;
 
 import com.github.dandelion.core.Context;
-import com.github.dandelion.core.scripting.ScriptingUtils;
+import com.github.dandelion.core.asset.generator.AssetContentGenerator;
 import com.github.dandelion.core.web.WebConstants;
 
-/**
- * <p>
- * Abstract base implementation of all Javascript generators.
- * </p>
- * 
- * @author Thibault Duchateau
- * @since 0.11.0
- */
-public abstract class AbstractJavascriptGenerator implements JavascriptGenerator {
+public class AbstractJavascriptContentGeneratorTest {
 
-	private static final Logger logger = LoggerFactory.getLogger(AbstractJavascriptGenerator.class);
+	private AssetContentGenerator javascriptGenerator;
+	private MockHttpServletRequest request;
+	private Context context;
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public final String getAssetContent(HttpServletRequest request) {
-
-		Context context = (Context) request.getAttribute(WebConstants.DANDELION_CONTEXT_ATTRIBUTE);
-
-		logger.debug("Generating asset...");
-		String generatedAsset = getGeneratedAsset(request);
-		logger.debug("Asset generated successfully");
-
-		if (context.getConfiguration().isToolAssetPrettyPrintingEnabled()) {
-			return ScriptingUtils.prettyPrint(generatedAsset);
-		}
-		return generatedAsset;
+	@Before
+	public void setup() {
+		context = new Context(new MockFilterConfig());
+		request = new MockHttpServletRequest();
+		request.setContextPath("/context");
+		request.setAttribute(WebConstants.DANDELION_CONTEXT_ATTRIBUTE, context);
+		javascriptGenerator = new FakeJavascriptContentGenerator();
 	}
 
-	public abstract String getGeneratedAsset(HttpServletRequest request);
+	@Test
+	public void should_pretty_print_in_devMode() {
+		context.getConfiguration().setToolAssetPrettyPrintingEnabled(true);
+		request.setAttribute(WebConstants.DANDELION_CONTEXT_ATTRIBUTE, context);
+
+		String generatedAsset = javascriptGenerator.getAssetContent(request);
+		assertThat(generatedAsset).isEqualTo("function() {\n    var o = new Object();\n}");
+	}
+
+	@Test
+	public void should_not_pretty_print_in_prodMode() {
+		context.getConfiguration().setToolAssetPrettyPrintingEnabled(false);
+		request.setAttribute(WebConstants.DANDELION_CONTEXT_ATTRIBUTE, context);
+
+		String generatedAsset = javascriptGenerator.getAssetContent(request);
+		assertThat(generatedAsset).isEqualTo("function(){var o = new Object();}");
+	}
 }

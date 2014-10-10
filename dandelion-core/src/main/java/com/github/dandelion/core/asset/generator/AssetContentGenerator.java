@@ -29,46 +29,25 @@
  */
 package com.github.dandelion.core.asset.generator;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import javax.servlet.http.HttpServletRequest;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.springframework.mock.web.MockFilterConfig;
-import org.springframework.mock.web.MockHttpServletRequest;
+/**
+ * @author Romain Lespinasse
+ * @author Thibault Duchateau
+ * @since 0.11.0
+ */
+public interface AssetContentGenerator {
 
-import com.github.dandelion.core.Context;
-import com.github.dandelion.core.web.WebConstants;
-
-public class AbstractJavascriptGeneratorTest {
-
-	private AbstractJavascriptGenerator javascriptGenerator;
-	private MockHttpServletRequest request;
-	private Context context;
-
-	@Before
-	public void setup() {
-		context = new Context(new MockFilterConfig());
-		request = new MockHttpServletRequest();
-		request.setContextPath("/context");
-		request.setAttribute(WebConstants.DANDELION_CONTEXT_ATTRIBUTE, context);
-		javascriptGenerator = new FakeJavascriptGeneratorMock();
-	}
-
-	@Test
-	public void should_pretty_print_in_devMode() {
-		context.getConfiguration().setToolAssetPrettyPrintingEnabled(true);
-		request.setAttribute(WebConstants.DANDELION_CONTEXT_ATTRIBUTE, context);
-
-		String generatedAsset = javascriptGenerator.getAssetContent(request);
-		assertThat(generatedAsset).isEqualTo("function() {\n    var o = new Object();\n}");
-	}
-
-	@Test
-	public void should_not_pretty_print_in_prodMode() {
-		context.getConfiguration().setToolAssetPrettyPrintingEnabled(false);
-		request.setAttribute(WebConstants.DANDELION_CONTEXT_ATTRIBUTE, context);
-
-		String generatedAsset = javascriptGenerator.getAssetContent(request);
-		assertThat(generatedAsset).isEqualTo("function(){var o = new Object();}");
-	}
+	/**
+	 * <p>
+	 * Generates a string that will be used for the asset content.
+	 * 
+	 * @param request
+	 *            The {@link javax.servlet.http.HttpServletRequest} that may be
+	 *            used by generators.
+	 * @return The code to be injected into the asset when the
+	 *         {@link com.github.dandelion.core.asset.locator.impl.DelegateLocator}
+	 *         is used for assets.
+	 */
+	public String getAssetContent(HttpServletRequest request);
 }

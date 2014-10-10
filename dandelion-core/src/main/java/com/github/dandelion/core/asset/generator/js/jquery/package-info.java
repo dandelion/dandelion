@@ -27,35 +27,9 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.github.dandelion.core.asset.generator.jquery;
-
 /**
- * <p>
- * Standard implementation of {@link AbstractJQueryJavascriptGenerator} which
- * transfers data from a {@link JQueryAssetBuffer} to each {@link Placeholder}
- * if the generator correspondingly.
- * 
- * <p>
- * Users may override the {@link #fillBuffer(JQueryAssetBuffer)} method to
- * customize the way the Javascript code is appended to the different
- * {@link Placeholder}.
- * 
+ * @author Romain Lespinasse
  * @author Thibault Duchateau
  * @since 0.11.0
  */
-public class StandardJQueryJavascriptGenerator extends AbstractJQueryJavascriptGenerator {
-
-	/**
-	 * {@inheritDoc}
-	 */
-	public void fillBuffer(JQueryAssetBuffer jab) {
-
-		appendToPlaceholder(Placeholder.BEFORE_ALL, jab.getBeforeAll());
-		appendToPlaceholder(Placeholder.BEFORE_START_DOCUMENT_READY, jab.getBeforeStartDocumentReady());
-		appendToPlaceholder(Placeholder.AFTER_START_DOCUMENT_READY, jab.getAfterStartDocumentReady());
-		appendToPlaceholder(Placeholder.COMPONENT_CONFIGURATION, jab.getComponentConf());
-		appendToPlaceholder(Placeholder.BEFORE_END_DOCUMENT_READY, jab.getBeforeEndDocumentReady());
-		appendToPlaceholder(Placeholder.AFTER_END_DOCUMENT_READY, jab.getAfterEndDocumentReady());
-		appendToPlaceholder(Placeholder.AFTER_ALL, jab.getAfterAll());
-	}
-}
+package com.github.dandelion.core.asset.generator.js.jquery;

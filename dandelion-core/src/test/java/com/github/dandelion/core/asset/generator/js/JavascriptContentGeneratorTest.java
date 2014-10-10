@@ -27,20 +27,42 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.github.dandelion.core.asset.generator;
+package com.github.dandelion.core.asset.generator.js;
 
-public class StandardAssetBuffer implements AssetBuffer {
+import static org.assertj.core.api.Assertions.assertThat;
 
-	private StringBuilder javascript;
+import org.junit.Before;
+import org.junit.Test;
 
-	public StringBuilder getJavascript() {
-		return javascript;
+import com.github.dandelion.core.asset.generator.AssetContent;
+
+public class JavascriptContentGeneratorTest {
+
+	private JavascriptContentGenerator javascriptContentGenerator;
+	private AssetContent content;
+
+	@Before
+	public void setup() {
+		content = new AssetContent();
+		javascriptContentGenerator = new JavascriptContentGenerator(content);
 	}
 
-	public void append(StringBuilder javascript) {
-		if (this.javascript == null) {
-			this.javascript = new StringBuilder();
-		}
-		this.javascript.append(javascript != null ? javascript : "");
+	@Test
+	public void should_not_fill_anything_if_empty() {
+		content.appendTo("");
+		assertThat(javascriptContentGenerator.getJavascriptContent(null)).isNull();
 	}
+
+	@Test
+	public void should_not_fill_anything_if_null() {
+		content.appendTo(null);
+		assertThat(javascriptContentGenerator.getJavascriptContent(null)).isNull();
+	}
+
+	@Test
+	public void should_fill_the_buffer() {
+		content.appendTo("js code");
+		assertThat(javascriptContentGenerator.getJavascriptContent(null)).isEqualTo("js code");
+	}
+
 }

@@ -29,27 +29,16 @@
  */
 package com.github.dandelion.core.asset.generator;
 
-import javax.servlet.http.HttpServletRequest;
-
-import com.github.dandelion.core.asset.locator.impl.DelegateLocator;
-
 /**
  * <p>
- * Common interface for all asset generators.
- * 
+ * Placeholder for a
+ * {@link com.github.dandelion.core.asset.generator.AssetContent}.
+ *
+ * @author Romain Lespinasse
  * @author Thibault Duchateau
  * @since 0.11.0
+ * @see com.github.dandelion.core.asset.generator.AbstractAssetPlaceholderContent
+ * @see com.github.dandelion.core.asset.generator.AbstractAssetPlaceholderContentGenerator
  */
-public interface AssetGenerator {
-
-	/**
-	 * <p>
-	 * Generates a string that will be used for the asset content.
-	 * 
-	 * @param request
-	 *            The {@link HttpServletRequest} that may be used by generators.
-	 * @return The code to be injected into the asset when the
-	 *         {@link DelegateLocator} is used for assets.
-	 */
-	public String getAssetContent(HttpServletRequest request);
+public interface AssetPlaceholder {
 }

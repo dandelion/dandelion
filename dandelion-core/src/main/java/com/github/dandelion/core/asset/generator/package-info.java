@@ -27,20 +27,13 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+/**
+ * <p>
+ * Generator classes use for a asset 'delegate'
+ *
+ * @author Romain Lespinasse
+ * @author Thibault Duchateau
+ * @since 0.11.0
+ * @see com.github.dandelion.core.asset.locator.impl.DelegateLocator
+ */
 package com.github.dandelion.core.asset.generator;
-
-import javax.servlet.http.HttpServletRequest;
-
-public class FakeJavascriptGeneratorMock extends AbstractJavascriptGenerator {
-
-	@Override
-	public void fillBuffer(AssetBuffer assetBuffer) {
-		// Not used
-	}
-
-	@Override
-	public String getGeneratedAsset(HttpServletRequest request) {
-		return "function(){var o = new Object();}";
-	}
-
-}

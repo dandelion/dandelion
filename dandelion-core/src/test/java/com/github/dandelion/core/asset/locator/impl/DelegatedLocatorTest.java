@@ -35,6 +35,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.github.dandelion.core.asset.generator.AssetContentGenerator;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -43,7 +44,6 @@ import org.springframework.mock.web.MockFilterConfig;
 import org.springframework.mock.web.MockHttpServletRequest;
 
 import com.github.dandelion.core.Context;
-import com.github.dandelion.core.asset.generator.AssetGenerator;
 import com.github.dandelion.core.storage.AssetStorageUnit;
 import com.github.dandelion.core.web.AssetRequestContext;
 import com.github.dandelion.core.web.WebConstants;
@@ -75,7 +75,7 @@ public class DelegatedLocatorTest {
 	public void should_return_the_content() {
 
 		AssetRequestContext.get(request).addParameter("my-js", DelegateLocator.DELEGATED_CONTENT_PARAM,
-				new AssetGenerator() {
+				new AssetContentGenerator() {
 
 					@Override
 					public String getAssetContent(HttpServletRequest request) {

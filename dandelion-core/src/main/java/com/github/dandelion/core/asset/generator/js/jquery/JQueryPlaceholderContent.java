@@ -27,13 +27,38 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.github.dandelion.core.asset.generator;
+package com.github.dandelion.core.asset.generator.js.jquery;
+
+import com.github.dandelion.core.asset.generator.AssetPlaceholder;
 
 /**
- * Marker interface for all asset buffers.
+ * <p>
+ * All JQuery placeholders can be visualized as follows: <blockquote>
+ *
+ * <pre>
+ * <b>[BEFORE_ALL]</b>
  * 
+ * <b>[BEFORE_START_DOCUMENT_READY]</b>
+ * $(document).ready(function() {
+ *    <b>[AFTER_START_DOCUMENT_READY]</b>
+ * 
+ *    <b>[COMPONENT_CONFIGURATION]</b>
+ * 
+ *    <b>[AFTER_END_DOCUMENT_READY]</b>
+ * });
+ * <b>[AFTER_END_DOCUMENT_READY]</b>
+ * 
+ * <b>[AFTER_ALL]</b>
+ * </pre>
+ *
+ * </blockquote>
+ *
+ * @author Romain Lespinasse
  * @author Thibault Duchateau
  * @since 0.11.0
+ * @see com.github.dandelion.core.asset.generator.js.jquery.JQueryContent
+ * @see com.github.dandelion.core.asset.generator.js.jquery.JQueryContentGenerator
  */
-public interface AssetBuffer {
+public enum JQueryPlaceholderContent implements AssetPlaceholder {
+	BEFORE_ALL, BEFORE_START_DOCUMENT_READY, AFTER_START_DOCUMENT_READY, COMPONENT_CONFIGURATION, BEFORE_END_DOCUMENT_READY, AFTER_END_DOCUMENT_READY, AFTER_ALL
 }

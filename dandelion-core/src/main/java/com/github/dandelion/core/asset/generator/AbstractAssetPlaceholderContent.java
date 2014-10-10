@@ -27,7 +27,31 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+package com.github.dandelion.core.asset.generator;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import com.github.dandelion.core.utils.StringUtils;
+
 /**
+ * @author Romain Lespinasse
  * @author Thibault Duchateau
+ * @since 0.11.0
  */
-package com.github.dandelion.core.asset.generator.raw;
+public abstract class AbstractAssetPlaceholderContent<P extends AssetPlaceholder> {
+	private Map<P, StringBuilder> contents = new HashMap<P, StringBuilder>();
+
+	protected void appendToPlaceholder(P placeholder, String javascript) {
+		if (StringUtils.isNotBlank(javascript)) {
+			if (!contents.containsKey(placeholder)) {
+				contents.put(placeholder, new StringBuilder());
+			}
+			contents.get(placeholder).append(javascript);
+		}
+	}
+
+	protected Map<P, StringBuilder> getPlaceholderContent() {
+		return contents;
+	}
+}

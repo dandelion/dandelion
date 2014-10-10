@@ -27,66 +27,35 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
-package com.github.dandelion.core.asset.locator.impl;
-
-import java.util.Map;
+package com.github.dandelion.core.asset.generator.js;
 
 import javax.servlet.http.HttpServletRequest;
 
-import com.github.dandelion.core.asset.generator.AssetContentGenerator;
-import com.github.dandelion.core.asset.locator.Servlet2Compatible;
-import com.github.dandelion.core.asset.locator.Servlet3Compatible;
-import com.github.dandelion.core.asset.locator.spi.AbstractAssetLocator;
-import com.github.dandelion.core.storage.AssetStorageUnit;
-import com.github.dandelion.core.web.AssetRequestContext;
+import com.github.dandelion.core.asset.generator.AssetContent;
+import com.github.dandelion.core.utils.StringBuilderUtils;
 
 /**
- * <p>
- * Locator for assets that use {@code delegate} as a location key.
- * 
- * <p>
- * Basically, a "delegated asset" is an asset that is created programmatically
- * and provided by the {@link AssetRequestContext}.
- * 
- * @author Thibault Duchateau
  * @author Romain Lespinasse
- * @since 0.2.0
+ * @author Thibault Duchateau
+ * @since 0.11.0
  */
-public class DelegateLocator extends AbstractAssetLocator implements Servlet2Compatible, Servlet3Compatible {
+public class JavascriptContentGenerator extends AbstractJavascriptContentGenerator {
 
-	public static final String DELEGATED_CONTENT_PARAM = "DELEGATED_CONTENT";
-
-	public DelegateLocator() {
-		active = true;
-	}
+	private AssetContent content;
 
 	/**
-	 * {@inheritDoc}
+	 * @param content
+	 *            content for the asset
 	 */
-	@Override
-	public String getLocationKey() {
-		return "delegate";
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public boolean isCachingForced() {
-		return true;
+	public JavascriptContentGenerator(AssetContent content) {
+		this.content = content;
 	}
 
 	@Override
-	public String doGetLocation(AssetStorageUnit asu, HttpServletRequest request) {
-		return asu.getLocations().get(getLocationKey());
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected String doGetContent(String location, Map<String, Object> parameters, HttpServletRequest request) {
-		return ((AssetContentGenerator) parameters.get(DELEGATED_CONTENT_PARAM)).getAssetContent(request);
+	protected String getJavascriptContent(HttpServletRequest request) {
+		if (StringBuilderUtils.isNotBlank(content.getContent())) {
+			return content.getContent().toString();
+		}
+		return null;
 	}
 }

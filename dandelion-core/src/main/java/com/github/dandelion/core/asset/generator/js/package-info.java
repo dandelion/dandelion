@@ -27,48 +27,9 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.github.dandelion.core.asset.generator.raw;
-
-import static org.assertj.core.api.Assertions.assertThat;
-
-import org.junit.Before;
-import org.junit.Test;
-
-import com.github.dandelion.core.asset.generator.StandardAssetBuffer;
-
-public class StandardRawJavascriptGeneratorTest {
-
-	private StandardRawJavascriptGenerator javascriptGenerator;
-	private StandardAssetBuffer sab;
-
-	@Before
-	public void setup() {
-		javascriptGenerator = new StandardRawJavascriptGenerator();
-		sab = new StandardAssetBuffer();
-	}
-
-	@Test
-	public void should_not_fill_anything_if_empty() {
-		sab.append(new StringBuilder(""));
-
-		javascriptGenerator.fillBuffer(sab);
-		assertThat(javascriptGenerator.getGeneratedAsset(null)).isNull();
-	}
-
-	@Test
-	public void should_not_fill_anything_if_null() {
-		sab.append(null);
-
-		javascriptGenerator.fillBuffer(sab);
-		assertThat(javascriptGenerator.getGeneratedAsset(null)).isNull();
-	}
-
-	@Test
-	public void should_fill_the_buffer() {
-		sab.append(new StringBuilder("js code"));
-
-		javascriptGenerator.fillBuffer(sab);
-		assertThat(javascriptGenerator.getGeneratedAsset(null).toString()).isEqualTo("js code");
-	}
-
-}
+/**
+ * @author Romain Lespinasse
+ * @author Thibault Duchateau
+ * @since 0.11.0
+ */
+package com.github.dandelion.core.asset.generator.js;
