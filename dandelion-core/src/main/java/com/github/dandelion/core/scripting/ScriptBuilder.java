@@ -43,7 +43,7 @@ public class ScriptBuilder {
 	
 	public ScriptBuilder(){
 		this.scriptEngineManager = new ScriptEngineManager();
-		this.scriptEngine = scriptEngineManager.getEngineByName("rhino");
+		this.scriptEngine = scriptEngineManager.getEngineByExtension("js");
 		this.bindings = scriptEngine.getBindings(ScriptContext.ENGINE_SCOPE);
 		bindings.clear();
 	}
