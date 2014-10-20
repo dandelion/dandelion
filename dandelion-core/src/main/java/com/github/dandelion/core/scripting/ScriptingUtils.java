@@ -33,7 +33,7 @@ import com.github.dandelion.core.utils.ResourceUtils;
 
 public class ScriptingUtils {
 
-	public static String prettyPrint(String javascript) {
+	public static String prettyPrintJs(String javascript) {
 		
 		String beautifySources = ResourceUtils.getFileContentFromClasspath("dandelion/internal/scripting/beautify.js");
 		

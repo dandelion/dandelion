@@ -40,6 +40,7 @@ import com.github.dandelion.core.Context;
 import com.github.dandelion.core.asset.generator.AbstractAssetPlaceholderContent;
 import com.github.dandelion.core.asset.generator.AbstractAssetPlaceholderContentGenerator;
 import com.github.dandelion.core.asset.generator.AssetPlaceholder;
+import com.github.dandelion.core.asset.generator.js.jquery.JQueryContent;
 import com.github.dandelion.core.scripting.ScriptingUtils;
 import com.github.dandelion.core.web.WebConstants;
 
@@ -48,18 +49,15 @@ import com.github.dandelion.core.web.WebConstants;
  * @author Thibault Duchateau
  * @since 0.11.0
  */
-public abstract class AbstractJavascriptPlaceholderContentGenerator<P extends AssetPlaceholder, C extends AbstractAssetPlaceholderContent<P>>
+public abstract class AbstractJsPlaceholderContentGenerator<P extends AssetPlaceholder, C extends AbstractAssetPlaceholderContent<P>>
         extends AbstractAssetPlaceholderContentGenerator<P, C> {
 
-    private static final Logger logger = LoggerFactory.getLogger(AbstractJavascriptPlaceholderContentGenerator.class);
+    private static final Logger logger = LoggerFactory.getLogger(AbstractJsPlaceholderContentGenerator.class);
 
-    protected AbstractJavascriptPlaceholderContentGenerator(C content) {
+    protected AbstractJsPlaceholderContentGenerator(C content) {
         super(content);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String getPlaceholderContent(HttpServletRequest request, Map<P, StringBuilder> contents) {
         Context context = (Context) request.getAttribute(WebConstants.DANDELION_CONTEXT_ATTRIBUTE);
@@ -69,7 +67,7 @@ public abstract class AbstractJavascriptPlaceholderContentGenerator<P extends As
         logger.debug("Asset generated successfully");
 
         if (context.getConfiguration().isToolAssetPrettyPrintingEnabled()) {
-            return ScriptingUtils.prettyPrint(generatedContent);
+            return ScriptingUtils.prettyPrintJs(generatedContent);
         }
         return generatedContent;
     }

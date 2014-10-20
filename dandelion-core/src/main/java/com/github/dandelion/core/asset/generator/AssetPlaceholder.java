@@ -31,9 +31,10 @@ package com.github.dandelion.core.asset.generator;
 
 /**
  * <p>
- * Placeholder for a
+ * Placeholder for an
  * {@link com.github.dandelion.core.asset.generator.AssetContent}.
- *
+ * </p>
+ * 
  * @author Romain Lespinasse
  * @author Thibault Duchateau
  * @since 0.11.0

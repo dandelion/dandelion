@@ -41,6 +41,7 @@ import com.github.dandelion.core.asset.cache.spi.AssetCache;
  * <p>
  * Service provider for {@link AssetCache} that uses {@link SimpleLruCache}s as
  * stores.
+ * </p>
  * 
  * @author Thibault Duchateau
  * @author Romain Lespinasse
@@ -51,9 +52,6 @@ public class MemoryAssetCache extends AbstractAssetCache {
 	private Map<String, String> mapAssetContent;
 	private Map<String, Set<Asset>> mapRequestAssets;
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void initCache(Context context) {
 		super.initCache(context);

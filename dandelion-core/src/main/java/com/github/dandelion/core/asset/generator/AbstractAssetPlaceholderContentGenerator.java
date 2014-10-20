@@ -37,9 +37,22 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * <p>
+ * Abstract asset generator that 
+ * </p>
+ * 
  * @author Romain Lespinasse
  * @author Thibault Duchateau
  * @since 0.11.0
+ */
+/**
+ * 
+ * @author Thibault Duchateau
+ * 
+ * @param <P>
+ *            the type of the placeholder.
+ * @param <C>
+ *            the type of content associated with a placeholder.
  */
 public abstract class AbstractAssetPlaceholderContentGenerator<P extends AssetPlaceholder, C extends AbstractAssetPlaceholderContent<P>>
 		implements AssetContentGenerator {
@@ -52,9 +65,6 @@ public abstract class AbstractAssetPlaceholderContentGenerator<P extends AssetPl
 		this.content = content;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public String getAssetContent(HttpServletRequest request) {
 		logger.debug("Generating asset...");
@@ -63,5 +73,9 @@ public abstract class AbstractAssetPlaceholderContentGenerator<P extends AssetPl
 		return generatedContent;
 	}
 
+	protected C getAssetContent(){
+		return content;
+	}
+	
 	protected abstract String getPlaceholderContent(HttpServletRequest request, Map<P, StringBuilder> contents);
 }

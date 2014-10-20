@@ -27,13 +27,21 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+package com.github.dandelion.core.asset.generator.js.jquery;
+
+import com.github.dandelion.core.asset.generator.AssetPlaceholder;
+
 /**
  * <p>
- * Provides the API necessary to write asset generator.
+ * All available JQuery-flavoured placeholders.
  * </p>
- *
+ * 
  * @author Romain Lespinasse
  * @author Thibault Duchateau
  * @since 0.11.0
+ * @see com.github.dandelion.core.asset.generator.js.jquery.JQueryContent
+ * @see com.github.dandelion.core.asset.generator.js.jquery.JQueryContentGenerator
  */
-package com.github.dandelion.core.asset.generator;
+public enum JQueryContentPlaceholder implements AssetPlaceholder {
+	BEFORE_ALL, BEFORE_START_DOCUMENT_READY, AFTER_START_DOCUMENT_READY, COMPONENT_CONFIGURATION, BEFORE_END_DOCUMENT_READY, AFTER_END_DOCUMENT_READY, AFTER_ALL
+}

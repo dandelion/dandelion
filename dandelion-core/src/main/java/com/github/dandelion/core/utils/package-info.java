@@ -27,35 +27,11 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.github.dandelion.core.asset.generator.js;
-
-import javax.servlet.http.HttpServletRequest;
-
-import com.github.dandelion.core.asset.generator.AssetContent;
-import com.github.dandelion.core.utils.StringBuilderUtils;
-
 /**
- * @author Romain Lespinasse
+ * <p>
+ * Plenty of utilities.
+ * </p>
+ * 
  * @author Thibault Duchateau
- * @since 0.11.0
  */
-public class JavascriptContentGenerator extends AbstractJavascriptContentGenerator {
-
-	private AssetContent content;
-
-	/**
-	 * @param content
-	 *            content for the asset
-	 */
-	public JavascriptContentGenerator(AssetContent content) {
-		this.content = content;
-	}
-
-	@Override
-	protected String getJavascriptContent(HttpServletRequest request) {
-		if (StringBuilderUtils.isNotBlank(content.getContent())) {
-			return content.getContent().toString();
-		}
-		return null;
-	}
-}
+package com.github.dandelion.core.utils;

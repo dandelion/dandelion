@@ -29,31 +29,43 @@
  */
 package com.github.dandelion.core.asset.generator;
 
+import com.github.dandelion.core.asset.Asset;
+import com.github.dandelion.core.asset.AssetType;
 import com.github.dandelion.core.utils.StringUtils;
 
 /**
+ * <p>
+ * Holds the content of an {@link Asset}, whether it is JavaScript, CSS or any
+ * other supported {@link AssetType}.
+ * </p>
+ * 
  * @author Romain Lespinasse
  * @author Thibault Duchateau
  * @since 0.11.0
  */
 public class AssetContent {
-	private StringBuilder content = new StringBuilder();
+
+	/**
+	 * The actual content of the asset.
+	 */
+	private final StringBuilder content = new StringBuilder();
 
 	/**
 	 * <p>
-	 * To append some content to the asset content for generation
+	 * Appends some code to the {@link #content}.
+	 * </p>
 	 * 
-	 * @param contentToAppend
-	 *            some content to append
+	 * @param code
+	 *            Some code to append to the content of the asset.
 	 */
-	public void appendTo(String contentToAppend) {
-		if (StringUtils.isNotBlank(contentToAppend)) {
-			content.append(contentToAppend);
+	public void appendTo(String code) {
+		if (StringUtils.isNotBlank(code)) {
+			content.append(code);
 		}
 	}
 
 	/**
-	 * @return the asset content for generation
+	 * @return the content of the asset.
 	 */
 	public StringBuilder getContent() {
 		return content;

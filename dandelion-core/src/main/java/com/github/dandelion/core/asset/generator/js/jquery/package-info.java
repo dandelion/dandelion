@@ -28,8 +28,13 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 /**
+ * <p>
+ * Another implementation of asset generators that uses jQuery.
+ * </p>
+ * 
  * @author Romain Lespinasse
  * @author Thibault Duchateau
  * @since 0.11.0
  */
 package com.github.dandelion.core.asset.generator.js.jquery;
+

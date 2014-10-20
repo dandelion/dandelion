@@ -31,7 +31,14 @@ package com.github.dandelion.core.asset.generator;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.github.dandelion.core.asset.Asset;
+import com.github.dandelion.core.config.Configuration;
+
 /**
+ * <p>
+ * Super interface of all content generators.
+ * </p>
+ * 
  * @author Romain Lespinasse
  * @author Thibault Duchateau
  * @since 0.11.0
@@ -40,14 +47,19 @@ public interface AssetContentGenerator {
 
 	/**
 	 * <p>
-	 * Generates a string that will be used for the asset content.
+	 * Generates a string that will be used as a content for an {@link Asset}
+	 * configured with the {@code delegate} location key.
+	 * </p>
+	 * 
+	 * <p>
+	 * Depending on the Dandelion {@link Configuration}, the content will be
+	 * formatted or not.
+	 * </p>
 	 * 
 	 * @param request
 	 *            The {@link javax.servlet.http.HttpServletRequest} that may be
 	 *            used by generators.
-	 * @return The code to be injected into the asset when the
-	 *         {@link com.github.dandelion.core.asset.locator.impl.DelegateLocator}
-	 *         is used for assets.
+	 * @return The code to be used as a content for the {@link Asset}.
 	 */
 	public String getAssetContent(HttpServletRequest request);
 }

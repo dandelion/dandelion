@@ -31,7 +31,7 @@ package com.github.dandelion.core.asset.generator.js;
 
 import javax.servlet.http.HttpServletRequest;
 
-public class FakeJavascriptContentGenerator extends AbstractJavascriptContentGenerator {
+public class FakeJavascriptContentGenerator extends AbstractJsContentGenerator {
 
 	@Override
 	protected String getJavascriptContent(HttpServletRequest request) {

@@ -38,13 +38,13 @@ import com.github.dandelion.core.asset.generator.AssetContent;
 
 public class JavascriptContentGeneratorTest {
 
-	private JavascriptContentGenerator javascriptContentGenerator;
+	private JsContentGenerator javascriptContentGenerator;
 	private AssetContent content;
 
 	@Before
 	public void setup() {
 		content = new AssetContent();
-		javascriptContentGenerator = new JavascriptContentGenerator(content);
+		javascriptContentGenerator = new JsContentGenerator(content);
 	}
 
 	@Test

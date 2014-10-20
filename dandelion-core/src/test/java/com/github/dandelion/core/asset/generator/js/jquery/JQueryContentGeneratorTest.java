@@ -29,7 +29,7 @@
  */
 package com.github.dandelion.core.asset.generator.js.jquery;
 
-import static com.github.dandelion.core.asset.generator.js.jquery.JQueryPlaceholderContent.*;
+import static com.github.dandelion.core.asset.generator.js.jquery.JQueryContentPlaceholder.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.Before;

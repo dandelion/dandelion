@@ -29,13 +29,19 @@
  */
 package com.github.dandelion.core.asset.generator.js.jquery;
 
-import static com.github.dandelion.core.asset.generator.js.jquery.JQueryPlaceholderContent.*;
-
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import com.github.dandelion.core.asset.generator.js.AbstractJavascriptPlaceholderContentGenerator;
+import com.github.dandelion.core.asset.generator.js.AbstractJsPlaceholderContentGenerator;
+
+import static com.github.dandelion.core.asset.generator.js.jquery.JQueryContentPlaceholder.AFTER_ALL;
+import static com.github.dandelion.core.asset.generator.js.jquery.JQueryContentPlaceholder.AFTER_END_DOCUMENT_READY;
+import static com.github.dandelion.core.asset.generator.js.jquery.JQueryContentPlaceholder.AFTER_START_DOCUMENT_READY;
+import static com.github.dandelion.core.asset.generator.js.jquery.JQueryContentPlaceholder.BEFORE_ALL;
+import static com.github.dandelion.core.asset.generator.js.jquery.JQueryContentPlaceholder.BEFORE_END_DOCUMENT_READY;
+import static com.github.dandelion.core.asset.generator.js.jquery.JQueryContentPlaceholder.BEFORE_START_DOCUMENT_READY;
+import static com.github.dandelion.core.asset.generator.js.jquery.JQueryContentPlaceholder.COMPONENT_CONFIGURATION;
 
 /**
  * <p>
@@ -43,10 +49,15 @@ import com.github.dandelion.core.asset.generator.js.AbstractJavascriptPlaceholde
  * {@link com.github.dandelion.core.asset.generator.AbstractAssetPlaceholderContentGenerator}
  * , meant to generate Javascript code using the jQuery's {@code ready()}
  * method.
- *
+ * </p>
+ * 
  * <p>
- * All JQuery placeholders can be visualized as follows: <blockquote>
- *
+ * Every snippet of generated JavaScript code will be appended to one of the
+ * available {@link JQueryContentPlaceholder}, which can be visualized as
+ * follows:
+ * </p>
+ * <blockquote>
+ * 
  * <pre>
  * // Beginning of the generated Javascript code
  * <b>[BEFORE_ALL]</b>
@@ -64,31 +75,31 @@ import com.github.dandelion.core.asset.generator.js.AbstractJavascriptPlaceholde
  * <b>[AFTER_ALL]</b>
  * // End of the generated Javascript code
  * </pre>
- *
+ * 
  * </blockquote>
- *
+ * 
  * <p>
- * Note that the generated code is not formatted here but by a dedicated
- * {@link com.github.dandelion.core.asset.processor.spi.AssetProcessor}.
- *
+ * Note that the generated code is not formatted here but in the super class.
+ * See
+ * {@link AbstractJsPlaceholderContentGenerator#getAssetContent(HttpServletRequest)}
+ * .
+ * </p>
+ * 
  * @author Romain Lespinasse
  * @author Thibault Duchateau
  * @since 0.11.0
  */
 public class JQueryContentGenerator extends
-		AbstractJavascriptPlaceholderContentGenerator<JQueryPlaceholderContent, JQueryContent> {
+		AbstractJsPlaceholderContentGenerator<JQueryContentPlaceholder, JQueryContent> {
 
 	public JQueryContentGenerator(JQueryContent content) {
 		super(content);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	// TODO http://api.jquery.com/jquery.noconflict/
 	@Override
 	protected String getPlaceholderJavascriptContent(HttpServletRequest request,
-			Map<JQueryPlaceholderContent, StringBuilder> contents) {
+			Map<JQueryContentPlaceholder, StringBuilder> contents) {
 		StringBuilder javascriptContent = new StringBuilder();
 
 		if (contents.containsKey(BEFORE_ALL)) {
@@ -100,24 +111,36 @@ public class JQueryContentGenerator extends
 		}
 
 		javascriptContent.append("$(document).ready(function(){");
+
 		if (contents.containsKey(AFTER_START_DOCUMENT_READY)) {
 			javascriptContent.append(contents.get(AFTER_START_DOCUMENT_READY));
 		}
+
 		if (contents.containsKey(COMPONENT_CONFIGURATION)) {
 			javascriptContent.append(contents.get(COMPONENT_CONFIGURATION));
 		}
+
 		if (contents.containsKey(BEFORE_END_DOCUMENT_READY)) {
 			javascriptContent.append(contents.get(BEFORE_END_DOCUMENT_READY));
 		}
+
 		javascriptContent.append("});");
 
 		if (contents.containsKey(AFTER_END_DOCUMENT_READY)) {
 			javascriptContent.append(contents.get(AFTER_END_DOCUMENT_READY));
 		}
+
 		if (contents.containsKey(AFTER_ALL)) {
 			javascriptContent.append(contents.get(AFTER_ALL));
 		}
 
 		return javascriptContent.toString();
+	}
+
+	public void appendContent(JQueryContent contentToMerge) {
+
+		for (JQueryContentPlaceholder placeholder : contentToMerge.getPlaceholderContent().keySet()) {
+			getAssetContent().appendToPlaceholder(placeholder, contentToMerge.getPlaceholderContent().get(placeholder));
+		}
 	}
 }

@@ -27,38 +27,40 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.github.dandelion.core.asset.generator.js.jquery;
+package com.github.dandelion.core.asset.generator.js;
 
-import com.github.dandelion.core.asset.generator.AssetPlaceholder;
+import javax.servlet.http.HttpServletRequest;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.github.dandelion.core.Context;
+import com.github.dandelion.core.asset.generator.AssetContentGenerator;
+import com.github.dandelion.core.scripting.ScriptingUtils;
+import com.github.dandelion.core.web.WebConstants;
 
 /**
- * <p>
- * All JQuery placeholders can be visualized as follows: <blockquote>
- *
- * <pre>
- * <b>[BEFORE_ALL]</b>
- * 
- * <b>[BEFORE_START_DOCUMENT_READY]</b>
- * $(document).ready(function() {
- *    <b>[AFTER_START_DOCUMENT_READY]</b>
- * 
- *    <b>[COMPONENT_CONFIGURATION]</b>
- * 
- *    <b>[AFTER_END_DOCUMENT_READY]</b>
- * });
- * <b>[AFTER_END_DOCUMENT_READY]</b>
- * 
- * <b>[AFTER_ALL]</b>
- * </pre>
- *
- * </blockquote>
- *
  * @author Romain Lespinasse
  * @author Thibault Duchateau
  * @since 0.11.0
- * @see com.github.dandelion.core.asset.generator.js.jquery.JQueryContent
- * @see com.github.dandelion.core.asset.generator.js.jquery.JQueryContentGenerator
  */
-public enum JQueryPlaceholderContent implements AssetPlaceholder {
-	BEFORE_ALL, BEFORE_START_DOCUMENT_READY, AFTER_START_DOCUMENT_READY, COMPONENT_CONFIGURATION, BEFORE_END_DOCUMENT_READY, AFTER_END_DOCUMENT_READY, AFTER_ALL
+public abstract class AbstractJsContentGenerator implements AssetContentGenerator {
+
+	private static Logger logger = LoggerFactory.getLogger(AbstractJsContentGenerator.class);
+
+	@Override
+	public String getAssetContent(HttpServletRequest request) {
+		Context context = (Context) request.getAttribute(WebConstants.DANDELION_CONTEXT_ATTRIBUTE);
+
+		logger.debug("Generating asset...");
+		String generatedContent = getJavascriptContent(request);
+		logger.debug("Asset generated successfully");
+
+		if (context.getConfiguration().isToolAssetPrettyPrintingEnabled()) {
+			return ScriptingUtils.prettyPrintJs(generatedContent);
+		}
+		return generatedContent;
+	}
+
+	protected abstract String getJavascriptContent(HttpServletRequest request);
 }

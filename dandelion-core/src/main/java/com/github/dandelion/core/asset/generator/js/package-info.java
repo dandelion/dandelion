@@ -28,8 +28,13 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 /**
+ * <p>
+ * Standard implementation of asset generators for raw JavaScript.
+ * </p>
+ * 
  * @author Romain Lespinasse
  * @author Thibault Duchateau
  * @since 0.11.0
  */
 package com.github.dandelion.core.asset.generator.js;
+
