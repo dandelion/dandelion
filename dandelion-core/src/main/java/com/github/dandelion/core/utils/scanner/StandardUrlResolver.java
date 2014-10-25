@@ -27,31 +27,23 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+package com.github.dandelion.core.utils.scanner;
 
-package com.github.dandelion.core.bundle.loader;
+import java.io.IOException;
+import java.net.URL;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+/**
+ * <p>
+ * Standard implementation of {@link UrlResolver} that just returns the passed
+ * {@code url} left untouched.
+ * </p>
+ * 
+ * @author Thibault Duchateau
+ * @since 0.11.0
+ */
+public class StandardUrlResolver implements UrlResolver {
 
-import com.github.dandelion.core.bundle.loader.spi.AbstractBundleLoader;
-
-public class ModuleAssetJsonLoader extends AbstractBundleLoader {
-	
-	// Logger
-	private static final Logger LOG = LoggerFactory.getLogger(ModuleAssetJsonLoader.class);
-
-	@Override
-	protected Logger getLogger() {
-		return LOG;
-	}
-
-	@Override
-	public String getPath() {
-		return "module";
-	}
-
-	@Override
-	public String getName() {
-		return "module";
+	public URL toStandardUrl(URL url) throws IOException {
+		return url;
 	}
 }

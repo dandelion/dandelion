@@ -44,8 +44,8 @@ import com.github.dandelion.core.Context;
 import com.github.dandelion.core.DandelionException;
 import com.github.dandelion.core.storage.BundleStorageUnit;
 import com.github.dandelion.core.utils.BundleStorageLogBuilder;
-import com.github.dandelion.core.utils.ResourceScanner;
 import com.github.dandelion.core.utils.StringBuilderUtils;
+import com.github.dandelion.core.utils.scanner.ResourceScanner;
 
 /**
  * <p>
@@ -88,8 +88,7 @@ public abstract class AbstractBundleLoader implements BundleLoader {
 				
 		Set<String> resourcePaths = null;
 		try {
-			resourcePaths = ResourceScanner.findResourcePaths(getBundleLocation(), getExcludedPaths(), null, ".json",
-					isRecursive());
+			resourcePaths = ResourceScanner.findResourcePaths(getBundleLocation(), getExcludedPaths(), null, ".json");
 		}
 		catch (IOException e) {
 			throw new DandelionException("Something went wrong when scanning files in " + getPath(), e);

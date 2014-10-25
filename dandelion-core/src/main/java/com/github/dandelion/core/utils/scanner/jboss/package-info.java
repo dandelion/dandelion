@@ -27,31 +27,11 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
-package com.github.dandelion.core.bundle.loader;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.github.dandelion.core.bundle.loader.spi.AbstractBundleLoader;
-
-public class ModuleAssetJsonLoader extends AbstractBundleLoader {
-	
-	// Logger
-	private static final Logger LOG = LoggerFactory.getLogger(ModuleAssetJsonLoader.class);
-
-	@Override
-	protected Logger getLogger() {
-		return LOG;
-	}
-
-	@Override
-	public String getPath() {
-		return "module";
-	}
-
-	@Override
-	public String getName() {
-		return "module";
-	}
-}
+/**
+ * <p>
+ * JBoss implementations of URL resolver and resource scanners, ensuring compatibility with JBoss 5+ and WildFly.
+ * </p>
+ * 
+ * @author Thibault Duchateau
+ */
+package com.github.dandelion.core.utils.scanner.jboss;

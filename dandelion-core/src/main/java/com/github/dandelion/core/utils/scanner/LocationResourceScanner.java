@@ -27,31 +27,32 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+package com.github.dandelion.core.utils.scanner;
 
-package com.github.dandelion.core.bundle.loader;
+import java.io.IOException;
+import java.net.URL;
+import java.util.Set;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+/**
+ * <p>
+ * Interface for all scanners that scan for resources in the classpath.
+ * </p>
+ */
+public interface LocationResourceScanner {
 
-import com.github.dandelion.core.bundle.loader.spi.AbstractBundleLoader;
-
-public class ModuleAssetJsonLoader extends AbstractBundleLoader {
-	
-	// Logger
-	private static final Logger LOG = LoggerFactory.getLogger(ModuleAssetJsonLoader.class);
-
-	@Override
-	protected Logger getLogger() {
-		return LOG;
-	}
-
-	@Override
-	public String getPath() {
-		return "module";
-	}
-
-	@Override
-	public String getName() {
-		return "module";
-	}
+	/**
+	 * <p>
+	 * Finds all resource paths below the given location by reading the
+	 * classpath under the given {@link URL}.
+	 * </p>
+	 * 
+	 * @param location
+	 *            The system-independent location on the classpath.
+	 * @param resourceUrl
+	 *            The system-specific physical location URL of the resource.
+	 * @return The system-independent resource paths on the classpath.
+	 * @throws IOException
+	 *             is something goes wrong during resource scanning.
+	 */
+	public Set<String> findResourcePaths(String location, URL resourceUrl) throws IOException;
 }

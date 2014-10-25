@@ -54,9 +54,4 @@ public class SubmoduleAssetJsonLoader extends AbstractBundleLoader {
 	public String getName() {
 		return "submodule2";
 	}
-
-	@Override
-	public boolean isRecursive() {
-		return true;
-	}
 }

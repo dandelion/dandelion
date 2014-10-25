@@ -63,13 +63,4 @@ public interface BundleLoader {
 	 * @return the name of the loader, mainly used for logging.
 	 */
 	String getName();
-
-	/**
-	 * Indicates whether the asset loader must scan for its resources
-	 * recursively inside the configured folder or not.
-	 * 
-	 * @return {@code true} if the scanning is recursive, otherwise
-	 *         {@code false}
-	 */
-	boolean isRecursive();
 }

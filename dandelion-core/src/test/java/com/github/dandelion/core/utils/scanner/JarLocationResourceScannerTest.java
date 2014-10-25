@@ -27,31 +27,47 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+package com.github.dandelion.core.utils.scanner;
 
-package com.github.dandelion.core.bundle.loader;
+import java.io.IOException;
+import java.net.URL;
+import java.util.Enumeration;
+import java.util.HashSet;
+import java.util.Set;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.junit.Test;
 
-import com.github.dandelion.core.bundle.loader.spi.AbstractBundleLoader;
+import static org.assertj.core.api.Assertions.assertThat;
 
-public class ModuleAssetJsonLoader extends AbstractBundleLoader {
-	
-	// Logger
-	private static final Logger LOG = LoggerFactory.getLogger(ModuleAssetJsonLoader.class);
+public class JarLocationResourceScannerTest {
 
-	@Override
-	protected Logger getLogger() {
-		return LOG;
+	private JarLocationResourceScanner scanner = new JarLocationResourceScanner();
+
+	@Test
+	public void should_return_scanned_resources_from_jar() throws IOException {
+
+		Enumeration<URL> urls = Thread.currentThread().getContextClassLoader().getResources("scanning-jar/test-1.0.0.jar");
+		Set<String> resourcePaths = new HashSet<String>();
+
+		while (urls.hasMoreElements()) {
+			URL url = urls.nextElement();
+			resourcePaths.addAll(scanner.findResourcePaths("dandelion", url));
+		}
+
+		assertThat(resourcePaths).contains("dandelion/bundle1.json", "dandelion/bundle2.json", "dandelion/");
 	}
 
-	@Override
-	public String getPath() {
-		return "module";
-	}
+	@Test
+	public void should_return_nothing_when_scanning_in_an_unexisting_folder_in_jar() throws IOException {
 
-	@Override
-	public String getName() {
-		return "module";
+		Enumeration<URL> urls = Thread.currentThread().getContextClassLoader().getResources("scanning-jar/test-1.0.0.jar");
+		Set<String> resourcePaths = new HashSet<String>();
+
+		while (urls.hasMoreElements()) {
+			URL url = urls.nextElement();
+			resourcePaths.addAll(scanner.findResourcePaths("unexisting-folder", url));
+		}
+
+		assertThat(resourcePaths).isEmpty();
 	}
 }

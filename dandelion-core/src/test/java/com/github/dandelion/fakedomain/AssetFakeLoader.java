@@ -46,11 +46,6 @@ public class AssetFakeLoader extends AbstractBundleLoader {
 	}
 
 	@Override
-	public boolean isRecursive() {
-		return true;
-	}
-
-	@Override
 	protected Logger getLogger() {
 		// TODO Auto-generated method stub
 		return null;

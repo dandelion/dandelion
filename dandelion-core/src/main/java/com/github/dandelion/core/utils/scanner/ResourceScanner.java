@@ -27,35 +27,35 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.github.dandelion.core.utils;
+package com.github.dandelion.core.utils.scanner;
 
-import java.io.File;
 import java.io.IOException;
-import java.net.JarURLConnection;
 import java.net.URL;
-import java.net.URLConnection;
-import java.net.URLDecoder;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.github.dandelion.core.DandelionException;
+import com.github.dandelion.core.utils.LibraryDetector;
+import com.github.dandelion.core.utils.StringUtils;
+import com.github.dandelion.core.utils.scanner.jboss.JBossVFS2UrlResolver;
+import com.github.dandelion.core.utils.scanner.jboss.JBossVFS3LocationResourceScanner;
+import com.github.dandelion.core.utils.scanner.jboss.JBossVFS3UrlResolver;
+import com.github.dandelion.core.utils.scanner.websphere.WebSphereUrlResolver;
 
 /**
  * <p>
  * Utility class used for searching for resources in the classpath.
+ * </p>
  * 
  * @author Thibault Duchateau
  * @since 0.10.0
  */
 public final class ResourceScanner {
 
-	// Logger
 	private static final Logger LOG = LoggerFactory.getLogger(ResourceScanner.class);
 
 	/**
@@ -63,10 +63,12 @@ public final class ResourceScanner {
 	 * Finds the logical path of the first resource that matches the given
 	 * {@code resourceName} by scanning the classpath under the given
 	 * {@code location}.
+	 * </p>
 	 * 
 	 * <p>
 	 * By default, no other condition but the name will be applied to the
-	 * resource name and the classpath scanning won't be recursive.
+	 * resource name.
+	 * </p>
 	 * 
 	 * @param location
 	 *            The classpath location where to scan.
@@ -78,7 +80,7 @@ public final class ResourceScanner {
 	 *             if something goes wrong during the scanning.
 	 */
 	public static String findResourcePath(String location, String nameFilter) throws IOException {
-		Set<String> resourcePaths = scanForResourcePaths(location, null, nameFilter, null, null, false);
+		Set<String> resourcePaths = scanForResourcePaths(location, null, nameFilter, null, null);
 		if (resourcePaths.isEmpty()) {
 			return null;
 		}
@@ -91,6 +93,7 @@ public final class ResourceScanner {
 	 * <p>
 	 * Finds the virtual path of all resources that match the given conditions
 	 * by scanning the classpath under the given {@code location}.
+	 * </p>
 	 * 
 	 * @param location
 	 *            The classpath location where to scan.
@@ -99,21 +102,20 @@ public final class ResourceScanner {
 	 *            scanning.
 	 * @param nameFilter
 	 *            The name of the resource to look for.
-	 * @param recursive
-	 *            Whether the scanning should be recursive or not.
 	 * @return A set of resource paths that match the given conditions.
 	 * @throws IOException
 	 *             if something goes wrong during the scanning.
 	 */
-	public static Set<String> findResourcePaths(String location, Set<String> excludedPaths, String nameFilter,
-			boolean recursive) throws IOException {
-		return scanForResourcePaths(location, excludedPaths, nameFilter, null, null, recursive);
+	public static Set<String> findResourcePaths(String location, Set<String> excludedPaths, String nameFilter)
+			throws IOException {
+		return scanForResourcePaths(location, excludedPaths, nameFilter, null, null);
 	}
 
 	/**
 	 * <p>
 	 * Finds the virtual path of all resources that match the given conditions
 	 * by scanning the classpath under the given {@code location}.
+	 * </p>
 	 * 
 	 * @param location
 	 *            The classpath location where to scan.
@@ -124,21 +126,21 @@ public final class ResourceScanner {
 	 *            The prefix condition to be applied on the resource name.
 	 * @param suffixFilter
 	 *            The suffix condition to be applied on the resource name.
-	 * @param recursive
-	 *            Whether the scanning should be recursive or not.
 	 * @return A set of resource paths that match the given conditions.
 	 * @throws IOException
 	 *             if something goes wrong during the scanning.
 	 */
 	public static Set<String> findResourcePaths(String location, Set<String> excludedPaths, String prefixFilter,
-			String suffixFilter, boolean recursive) throws IOException {
-		return scanForResourcePaths(location, excludedPaths, null, prefixFilter, suffixFilter, recursive);
+			String suffixFilter) throws IOException {
+		return scanForResourcePaths(location, excludedPaths, null, prefixFilter, suffixFilter);
 	}
 
 	/**
 	 * <p>
 	 * Scans for all resources that match the given confitions by scanning the
-	 * classpath.
+	 * classpath using the context {@link ClassLoader} of the current
+	 * {@link Thread}.
+	 * </p>
 	 * 
 	 * @param location
 	 *            The classpath location where to scan.
@@ -151,20 +153,17 @@ public final class ResourceScanner {
 	 *            The prefix condition to be applied on the resource name.
 	 * @param suffixFilter
 	 *            The suffix condition to be applied on the resource name.
-	 * @param recursive
-	 *            Whether the scanning should be recursive or not.
 	 * @return A set of resource paths that match the given conditions.
 	 * @throws IOException
 	 *             if something goes wrong during the scanning.
 	 * @throws DandelionException
 	 *             if the URL protocol used to access the resource is not
-	 *             supported. This may happen with the JBoss VFS which is still
-	 *             not supported.
+	 *             supported.
 	 */
 	private static Set<String> scanForResourcePaths(String location, Set<String> excludedPaths, String nameFilter,
-			String prefixFilter, String suffixFilter, boolean recursive) throws IOException {
+			String prefixFilter, String suffixFilter) throws IOException {
 
-		LOG.trace("Scanning for resources at '{}'...", location);
+		LOG.debug("Scanning for resources at '{}'...", location);
 
 		Set<String> resourcePaths = new HashSet<String>();
 
@@ -173,117 +172,30 @@ public final class ResourceScanner {
 		while (urls.hasMoreElements()) {
 
 			URL url = urls.nextElement();
-			if ("file".equals(url.getProtocol())) {
+			LOG.debug("Found URL: {} (protocol:{})", url.getPath(), url.getProtocol());
 
-				// Computes the physical root of the classpath to later
-				// determine the resource path more easily
-				String resourcePath = PathUtils.toFilePath(url);
-				String classpathPhysicalRoot = resourcePath.substring(0, resourcePath.length() - location.length());
+			UrlResolver urlResolver = createUrlResolver(url.getProtocol());
+			LOG.debug("Resolving URL \"{}\" with the resolver {}", url.getPath(), urlResolver.getClass()
+					.getSimpleName());
 
-				// Gets the folder in which files will be scanned
-				File folder = new File(resourcePath);
+			URL resolvedUrl = urlResolver.toStandardUrl(url);
+			LOG.trace("Resolved URL: \"{}\"", resolvedUrl.getPath());
 
-				resourcePaths.addAll(scanForResourcePathsInFileSystem(folder, classpathPhysicalRoot, recursive));
-			}
-			else if ("jar".equals(url.getProtocol()) || "zip".equals(url.getProtocol()) // Weblogic
-					|| "wsjar".equals(url.getProtocol())) // Websphere
-			{
+			String protocol = resolvedUrl.getProtocol();
+			LocationResourceScanner classPathLocationScanner = createLocationScanner(protocol);
 
-				resourcePaths.addAll(scanForResourcePathsInJarFile(url));
-			}
-			else {
-				StringBuilder sb = new StringBuilder("The protocol ");
-				sb.append(url.getProtocol());
-				sb.append(" is not supported.");
-				throw new DandelionException(sb.toString());
-			}
+			resourcePaths.addAll(classPathLocationScanner.findResourcePaths(location, resolvedUrl));
 		}
 
-		LOG.trace("{} resources found before filtering", resourcePaths.size());
+		LOG.debug("{} resources found before filtering", resourcePaths.size());
 		return filterResourcePaths(location, resourcePaths, excludedPaths, nameFilter, prefixFilter, suffixFilter);
 	}
 
 	/**
 	 * <p>
-	 * Scans for all resources in the given file system {@code folder}.
-	 * 
-	 * @param folder
-	 *            Folder in which the files will be scanned/listed.
-	 * @param classpathPhysicalRoot
-	 *            Physical root of the classpath, used to compute the resource
-	 *            path.
-	 * @param recursive
-	 *            Whether the scanning should be recursive or not.
-	 * @return A set of non-filtered resource paths.
-	 * @throws IOException
-	 *             if something goes wrong during the scanning.
-	 */
-	private static Set<String> scanForResourcePathsInFileSystem(File folder, String classpathPhysicalRoot,
-			boolean recursive) throws IOException {
-
-		Set<String> extractedResourcePaths = new HashSet<String>();
-
-		for (File file : folder.listFiles()) {
-			if (file.canRead()) {
-
-				if (file.isDirectory() && recursive) {
-					extractedResourcePaths.addAll(scanForResourcePathsInFileSystem(file, classpathPhysicalRoot,
-							recursive));
-				}
-				else {
-					String filePath = URLDecoder.decode(file.toURI().toURL().getFile(), "UTF-8");
-					String resourcePath = filePath.substring(classpathPhysicalRoot.length());
-					extractedResourcePaths.add(resourcePath);
-				}
-			}
-		}
-
-		return extractedResourcePaths;
-	}
-
-	/**
-	 * <p>
-	 * Scans for all resources in the given {@code url} that reffers to a JAR
-	 * file.
-	 * 
-	 * @param url
-	 *            The URL that reffers to the JAR file in which resources will
-	 *            be scanned.
-	 * @return A set of non-filtered resource paths.
-	 * @throws IOException
-	 *             if something goes wrong during the scanning.
-	 */
-	private static Set<String> scanForResourcePathsInJarFile(URL url) throws IOException {
-
-		Set<String> extractedResourcePaths = new HashSet<String>();
-
-		URLConnection connection = url.openConnection();
-
-		if (connection instanceof JarURLConnection) {
-
-			JarURLConnection jarConnection = (JarURLConnection) connection;
-			jarConnection.setUseCaches(false);
-			JarFile jarFile = jarConnection.getJarFile();
-
-			try {
-				Enumeration<JarEntry> entries = jarFile.entries();
-				while (entries.hasMoreElements()) {
-					String resourcePath = entries.nextElement().getName();
-					extractedResourcePaths.add(resourcePath);
-				}
-			}
-			finally {
-				jarFile.close();
-			}
-		}
-
-		return extractedResourcePaths;
-	}
-	
-	/**
-	 * <p>
 	 * Tests whether the given {@code path} is authorized according to the
 	 * passed list of paths to exclude.
+	 * </p>
 	 * 
 	 * @param path
 	 *            The path name that must not be present in the list of excluded
@@ -316,6 +228,7 @@ public final class ResourceScanner {
 	/**
 	 * <p>
 	 * Filters the given set of resource paths in multiple ways:
+	 * </p>
 	 * <ul>
 	 * <li>If the resource path contains any of the given {@code excludedPaths},
 	 * the resource path will be filtered out.</li>
@@ -382,8 +295,85 @@ public final class ResourceScanner {
 	}
 
 	/**
-	 * Prevents instantiation.
+	 * <p>
+	 * Creates and returns the appropriate URL resolver for the given
+	 * {@link URL} protocol.
+	 * </p>
+	 * 
+	 * @param protocol
+	 *            The protocol of the location url to scan.
+	 * @return The url resolver for this protocol.
+	 */
+	private static UrlResolver createUrlResolver(String protocol) {
+
+		// Websphere
+		if (protocol.startsWith("wsjar")) {
+			LOG.debug("Selected URL resolver: {}", WebSphereUrlResolver.class.getSimpleName());
+			return new WebSphereUrlResolver();
+		}
+
+		// JBoss 5+ / WildFly
+		if (protocol.startsWith("vfs") || protocol.startsWith("vfszip")) {
+
+			if (LibraryDetector.isJBossVFS2Available()) {
+				LOG.debug("Selected URL resolver: {}", JBossVFS2UrlResolver.class.getSimpleName());
+				return new JBossVFS2UrlResolver();
+			}
+
+			if (LibraryDetector.isJBossVFS3Available()) {
+				LOG.debug("Selected URL resolver: {}", JBossVFS3UrlResolver.class.getSimpleName());
+				return new JBossVFS3UrlResolver();
+			}
+		}
+
+		LOG.debug("Selected URL resolver: {}", StandardUrlResolver.class.getSimpleName());
+		return new StandardUrlResolver();
+	}
+
+	/**
+	 * <p>
+	 * Creates and returns the appropriate resource scanner for the given
+	 * {@link URL} protocol.
+	 * </p>
+	 * 
+	 * @param protocol
+	 *            The protocol of the location url to scan.
+	 * @return The resource scanner for this protocol.
+	 * @throws DandelionException
+	 *             if the protocol is not supported.
+	 */
+	private static LocationResourceScanner createLocationScanner(String protocol) {
+
+		if ("file".equals(protocol)) {
+			LOG.debug("Selected resource scanner: {}", FileSystemLocationResourceScanner.class.getSimpleName());
+			return new FileSystemLocationResourceScanner();
+		}
+
+		if ("jar".equals(protocol) || "zip".equals(protocol) // WebLogic
+				|| "wsjar".equals(protocol) // WebSphere
+		) {
+			LOG.debug("Selected resource scanner: {}", JarLocationResourceScanner.class.getSimpleName());
+			return new JarLocationResourceScanner();
+		}
+
+		// JBoss / WildFly
+		if ("vfs".equals(protocol) && LibraryDetector.isJBossVFS3Available()) {
+			LOG.debug("Selected resource scanner: {}", JBossVFS3LocationResourceScanner.class.getSimpleName());
+			return new JBossVFS3LocationResourceScanner();
+		}
+
+		StringBuilder sb = new StringBuilder("The protocol ");
+		sb.append(protocol);
+		sb.append(" is not supported.");
+		throw new DandelionException(sb.toString());
+	}
+
+	/**
+	 * <p>
+	 * Suppress default constructor for noninstantiability.
+	 * </p>
 	 */
 	private ResourceScanner() {
+		throw new AssertionError();
 	}
 }

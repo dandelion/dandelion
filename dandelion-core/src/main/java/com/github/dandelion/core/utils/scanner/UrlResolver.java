@@ -27,31 +27,32 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+package com.github.dandelion.core.utils.scanner;
 
-package com.github.dandelion.core.bundle.loader;
+import java.io.IOException;
+import java.net.URL;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+/**
+ * <p>
+ * Resolves container-specific URLs into standard Java {@link URL}s.
+ * </p>
+ * 
+ * @author Thibault Duchateau
+ * @since 0.11.0
+ */
+public interface UrlResolver {
 
-import com.github.dandelion.core.bundle.loader.spi.AbstractBundleLoader;
-
-public class ModuleAssetJsonLoader extends AbstractBundleLoader {
-	
-	// Logger
-	private static final Logger LOG = LoggerFactory.getLogger(ModuleAssetJsonLoader.class);
-
-	@Override
-	protected Logger getLogger() {
-		return LOG;
-	}
-
-	@Override
-	public String getPath() {
-		return "module";
-	}
-
-	@Override
-	public String getName() {
-		return "module";
-	}
+	/**
+	 * <p>
+	 * Resolves the passed URL, which may be container-specific, into a standard
+	 * Java {@link URL}.
+	 * </p>
+	 * 
+	 * @param url
+	 *            The URL to resolve.
+	 * @return The matching standard Java URL.
+	 * @throws java.io.IOException
+	 *             if something goes wrong during the scanning.
+	 */
+	public URL toStandardUrl(URL url) throws IOException;
 }

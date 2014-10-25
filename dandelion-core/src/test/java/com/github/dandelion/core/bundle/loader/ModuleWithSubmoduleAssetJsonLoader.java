@@ -58,11 +58,6 @@ public class ModuleWithSubmoduleAssetJsonLoader extends AbstractBundleLoader {
 	}
 
 	@Override
-	public boolean isRecursive() {
-		return true;
-	}
-
-	@Override
 	public Set<String> getExcludedPaths() {
 		Set<String> excludedPaths = new HashSet<String>();
 		excludedPaths.add("module_with_submodule/submodule");

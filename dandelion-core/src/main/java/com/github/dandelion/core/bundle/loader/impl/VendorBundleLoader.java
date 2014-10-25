@@ -70,14 +70,6 @@ public class VendorBundleLoader extends AbstractBundleLoader {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public boolean isRecursive() {
-		return true;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
 	protected Logger getLogger() {
 		return LOG;
 	}

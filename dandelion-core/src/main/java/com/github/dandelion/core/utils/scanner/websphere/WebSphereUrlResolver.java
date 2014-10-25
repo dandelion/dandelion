@@ -27,31 +27,27 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+package com.github.dandelion.core.utils.scanner.websphere;
 
-package com.github.dandelion.core.bundle.loader;
+import java.io.IOException;
+import java.net.URL;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.github.dandelion.core.utils.scanner.UrlResolver;
 
-import com.github.dandelion.core.bundle.loader.spi.AbstractBundleLoader;
-
-public class ModuleAssetJsonLoader extends AbstractBundleLoader {
+/**
+ * <p>
+ * Resolves WebSphere URLs into standard {@link URL}s.
+ * </p>
+ * <p>
+ * Ensures compatibility with <b>WebSphere Application Server</b>.
+ * </p>
+ * 
+ * @author Thibault Duchateau
+ * @since 0.11.0
+ */
+public class WebSphereUrlResolver implements UrlResolver {
 	
-	// Logger
-	private static final Logger LOG = LoggerFactory.getLogger(ModuleAssetJsonLoader.class);
-
-	@Override
-	protected Logger getLogger() {
-		return LOG;
-	}
-
-	@Override
-	public String getPath() {
-		return "module";
-	}
-
-	@Override
-	public String getName() {
-		return "module";
+	public URL toStandardUrl(URL url) throws IOException {
+		return new URL("jar", url.getHost(), url.getPort(), url.getPath());
 	}
 }
