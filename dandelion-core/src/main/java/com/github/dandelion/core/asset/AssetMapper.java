@@ -42,14 +42,14 @@ import com.github.dandelion.core.Context;
 import com.github.dandelion.core.DandelionException;
 import com.github.dandelion.core.asset.cache.spi.AssetCache;
 import com.github.dandelion.core.asset.locator.spi.AssetLocator;
+import com.github.dandelion.core.asset.versioning.AssetVersioningStrategy;
 import com.github.dandelion.core.storage.AssetStorageUnit;
 import com.github.dandelion.core.utils.AssetUtils;
-import com.github.dandelion.core.utils.UrlUtils;
-import com.github.dandelion.core.web.DandelionServlet;
 
 /**
  * <p>
  * Used to map an {@link AssetStorageUnit} to an {@link Asset}.
+ * </p>
  * 
  * @author Thibault Duchateau
  * @since 0.10.0
@@ -58,8 +58,15 @@ public class AssetMapper {
 
 	private static final Logger LOG = LoggerFactory.getLogger(AssetMapper.class);
 
-	private HttpServletRequest request;
-	private Context context;
+	/**
+	 * The current HTTP request.
+	 */
+	private final HttpServletRequest request;
+	
+	/**
+	 * The Dandelion context.
+	 */
+	private final Context context;
 
 	public AssetMapper(HttpServletRequest request, Context context) {
 		this.request = request;
@@ -67,8 +74,10 @@ public class AssetMapper {
 	}
 
 	/**
+	 * <p>
 	 * The same as {@link #mapToAssets(Set)} but for a set of
 	 * {@link AssetStorageUnit}s.
+	 * </p>
 	 * 
 	 * @param asus
 	 *            The set of {@link AssetStorageUnit}s to map to a set of
@@ -88,11 +97,12 @@ public class AssetMapper {
 	/**
 	 * <p>
 	 * Maps an {@link AssetStorageUnit} to an {@link Asset}.
-	 * 
+	 * </p>
 	 * <p>
 	 * Depending on how the {@link AssetStorageUnit} is configured, the
 	 * {@link Asset} will contains resolved locations and its content will be
 	 * cached in the configured {@link AssetCache}.
+	 * </p>
 	 * 
 	 * @param asu
 	 *            The {@link AssetStorageUnit} to map to an {@link Asset}.
@@ -124,7 +134,7 @@ public class AssetMapper {
 		else {
 			// otherwise search for the first matching location key among the
 			// configured ones
-			for (String searchedLocationKey : context.getConfiguration().getAssetLocationsResolutionStrategy()) {
+			for (String searchedLocationKey : this.context.getConfiguration().getAssetLocationsResolutionStrategy()) {
 				if (asu.getLocations().containsKey(searchedLocationKey)) {
 					String location = asu.getLocations().get(searchedLocationKey);
 					if (location != null && !location.isEmpty()) {
@@ -135,8 +145,8 @@ public class AssetMapper {
 			}
 		}
 		LOG.trace("Location key '{}' selected for the asset {}", locationKey, asu.toString());
-		
-		Map<String, AssetLocator> locators = context.getAssetLocatorsMap();
+
+		Map<String, AssetLocator> locators = this.context.getAssetLocatorsMap();
 		if (!locators.containsKey(locationKey)) {
 			StringBuilder msg = new StringBuilder("The location key '");
 			msg.append(locationKey);
@@ -154,44 +164,90 @@ public class AssetMapper {
 			location = locators.get(locationKey).getLocation(asu, request);
 		}
 
-		asset.setName(AssetUtils.extractLowerCasedName(location));
-		asset.setType(AssetType.typeOf(location));
-		asset.setConfigLocationKey(locationKey);
-		asset.setConfigLocation(asu.getLocations().get(locationKey));
+		String cacheKey = this.context.getCacheManager().generateCacheKey(this.request, asset);
+		asset.setCacheKey(cacheKey);
+		
+		if (asu.isNotVendor()
+				&& (this.context.getConfiguration().isAssetVersioningEnabled()
+						|| this.context.getConfiguration().isAssetCachingEnabled() || locator.isCachingForced() || this.context
+						.getConfiguration().isAssetMinificationEnabled())) {
 
-		if (locator.isCachingForced() || this.context.getConfiguration().isAssetMinificationEnabled()) {
-			String context = UrlUtils.getCurrentUrl(request, true).toString();
-			context = context.replaceAll("\\?", "_").replaceAll("&", "_");
-			String cacheKey = this.context.getCacheManager().generateCacheKey(context, asset);
-			asu.setCacheKey(cacheKey);
-			asset.setCacheKey(cacheKey);
-			asset.setFinalLocation(UrlUtils.getProcessedUrl(DandelionServlet.DANDELION_ASSETS_URL + cacheKey, request,
-					null));
-			
-			// First try to access the asset content in order to see if it must be
-			// cached
 			String content = this.context.getCacheManager().getContent(asset.getCacheKey());
 
 			if (content == null || this.context.getConfiguration().isAssetCachingEnabled()) {
-				Map<String, AssetLocator> assetLocatorsMap = this.context.getAssetLocatorsMap();
-				if (assetLocatorsMap.containsKey(asset.getConfigLocationKey())
-						&& assetLocatorsMap.get(asset.getConfigLocationKey()).isActive()) {
-					// LOG.debug("use location wrapper for {} on {}.", locationKey,
-					// asu);
-					// location = wrappers.get(locationKey).getWrappedLocation(asu,
-					// request);
+				
+				if (locator.isActive()) {
 
-					content = assetLocatorsMap.get(asset.getConfigLocationKey()).getContent(asu, request);
+					content = locator.getContent(asu, request);
 
 					// Finally store the final content in cache
 					this.context.getCacheManager().storeContent(asset.getCacheKey(), content);
 				}
 			}
 		}
-		else {
-			asset.setFinalLocation(location);
-		}
 
+		asset.setName(AssetUtils.extractLowerCasedName(location));
+		asset.setType(AssetType.typeOf(location));
+		asset.setConfigLocationKey(locationKey);
+		asset.setConfigLocation(asu.getLocations().get(locationKey));
+		if (!asset.isVendor()) {
+			asset.setVersion(getVersion(asset));
+		}
+		asset.setFinalLocation(getFinalLocation(asset, location, locator));
+		
 		return asset;
+	}
+	
+	/**
+	 * <p>
+	 * Computes the final location of the provided {@link Asset}. This location
+	 * is the one used in the HTML source code.
+	 * </p>
+	 * 
+	 * @param asset
+	 *            The asset for which the final locatin is to be computed.
+	 * @param location
+	 * @param assetLocator
+	 * @return
+	 */
+	private String getFinalLocation(Asset asset, String location, AssetLocator assetLocator) {
+
+		if (asset.isNotVendor()
+				&& (this.context.getConfiguration().isAssetVersioningEnabled()
+						|| this.context.getConfiguration().isAssetCachingEnabled() || assetLocator.isCachingForced() || this.context
+						.getConfiguration().isAssetMinificationEnabled())) {
+			return AssetUtils.getAssetFinalLocation(request, asset, null);
+		}
+		else {
+			return location;
+		}
+	}
+	
+	/**
+	 * <p>
+	 * Returns the version of the provided asset:
+	 * </p>
+	 * <ul>
+	 * <li>using the active {@link AssetVersioningStrategy} if automatic
+	 * versioning is enabled</li>
+	 * <li>directly using the version configured in the corresponding bundle
+	 * otherwise</li>
+	 * </ul>
+	 * 
+	 * @param asset
+	 *            The asset to extract the version from.
+	 * @return the version of the asset.
+	 */
+	private String getVersion(Asset asset){
+		
+		// Auto versioning
+		if(this.context.getConfiguration().isAssetVersioningEnabled()){
+			AssetVersioningStrategy avs = this.context.getActiveVersioningStrategy();
+			return avs.getAssetVersion(asset);
+		}
+		// Manual versioning
+		else {
+			return asset.getVersion();
+		}
 	}
 }

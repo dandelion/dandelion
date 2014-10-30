@@ -51,7 +51,7 @@ public class CustomProfileTest {
 	@Test
 	public void should_set_qa_profile() {
 		System.setProperty(Profile.DANDELION_PROFILE_ACTIVE, "qa");
-		Configuration config = new Configuration(new MockFilterConfig(), new Properties());
+		Configuration config = new Configuration(new MockFilterConfig(), new Properties(), null);
 		assertThat(Profile.getActiveProfile()).isEqualTo("qa");
 		assertThat(config.getActiveRawProfile()).isEqualTo("qa");
 	}
@@ -59,7 +59,7 @@ public class CustomProfileTest {
 	@Test
 	public void should_set_qa_profile_even_with_white_spaces() {
 		System.setProperty(Profile.DANDELION_PROFILE_ACTIVE, " qa");
-		Configuration config = new Configuration(new MockFilterConfig(), new Properties());
+		Configuration config = new Configuration(new MockFilterConfig(), new Properties(), null);
 		assertThat(Profile.getActiveProfile()).isEqualTo("qa");
 		assertThat(config.getActiveRawProfile()).isEqualTo("qa");
 	}
@@ -67,7 +67,7 @@ public class CustomProfileTest {
 	@Test
 	public void should_load_configuration_from_default_dev_profile_when_the_custom_profile_is_empty() {
 		System.setProperty(Profile.DANDELION_PROFILE_ACTIVE, "qa");
-		Configuration config = new Configuration(new MockFilterConfig(), new Properties());
+		Configuration config = new Configuration(new MockFilterConfig(), new Properties(), null);
 
 		// Bundle-related configurations
 		assertThat(config.getBundleLocation()).isEmpty();
@@ -124,7 +124,7 @@ public class CustomProfileTest {
 		userProperties.put(DandelionConfig.ASSET_LOCATIONS_RESOLUTION_STRATEGY.getName(), "foo,bar");
 		userProperties.put(DandelionConfig.CACHE_ASSET_MAX_SIZE.getName(), "40");
 
-		Configuration config = new Configuration(new MockFilterConfig(), userProperties);
+		Configuration config = new Configuration(new MockFilterConfig(), userProperties, null);
 
 		// Bundle-related configurations
 		assertThat(config.getBundleLocation()).isEmpty();
@@ -179,7 +179,7 @@ public class CustomProfileTest {
 		filterConfig.addInitParameter(DandelionConfig.ASSET_LOCATIONS_RESOLUTION_STRATEGY.getName(), "  foo,bar , baz");
 		filterConfig.addInitParameter(DandelionConfig.CACHE_ASSET_MAX_SIZE.getName(), "30");
 
-		Configuration config = new Configuration(filterConfig, null);
+		Configuration config = new Configuration(filterConfig, null, null);
 
 		// Bundle-related configurations
 		assertThat(config.getBundleLocation()).isEmpty();
@@ -233,7 +233,7 @@ public class CustomProfileTest {
 		System.setProperty(DandelionConfig.ASSET_LOCATIONS_RESOLUTION_STRATEGY.getName(), "bar ,foo  ,baz,qux  ");
 		System.setProperty(DandelionConfig.CACHE_ASSET_MAX_SIZE.getName(), "20");
 
-		Configuration config = new Configuration(new MockFilterConfig(), null);
+		Configuration config = new Configuration(new MockFilterConfig(), null, null);
 
 		// Bundle-related configurations
 		assertThat(config.getBundleLocation()).isEmpty();

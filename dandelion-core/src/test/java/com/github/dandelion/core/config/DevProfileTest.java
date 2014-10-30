@@ -50,14 +50,14 @@ public class DevProfileTest {
 
 	@Test
 	public void should_set_dev_profile_by_default() {
-		Configuration config = new Configuration(new MockFilterConfig(), new Properties());
+		Configuration config = new Configuration(new MockFilterConfig(), new Properties(), null);
 		assertThat(Profile.getActiveProfile()).isEqualTo(Profile.DEFAULT_DEV_PROFILE);
 		assertThat(config.getActiveRawProfile()).isEqualTo(Profile.getActiveRawProfile());
 	}
 
 	@Test
 	public void should_load_configuration_from_default_dev_profile() {
-		Configuration config = new Configuration(new MockFilterConfig(), new Properties());
+		Configuration config = new Configuration(new MockFilterConfig(), new Properties(), null);
 
 		// Bundle-related configurations
 		assertThat(config.getBundleLocation()).isEmpty();
@@ -112,7 +112,7 @@ public class DevProfileTest {
 		userProperties.put(DandelionConfig.ASSET_LOCATIONS_RESOLUTION_STRATEGY.getName(), "foo,bar");
 		userProperties.put(DandelionConfig.CACHE_ASSET_MAX_SIZE.getName(), "40");
 
-		Configuration config = new Configuration(new MockFilterConfig(), userProperties);
+		Configuration config = new Configuration(new MockFilterConfig(), userProperties, null);
 
 		// Bundle-related configurations
 		assertThat(config.getBundleLocation()).isEmpty();
@@ -166,7 +166,7 @@ public class DevProfileTest {
 		filterConfig.addInitParameter(DandelionConfig.ASSET_LOCATIONS_RESOLUTION_STRATEGY.getName(), "  foo,bar , baz");
 		filterConfig.addInitParameter(DandelionConfig.CACHE_ASSET_MAX_SIZE.getName(), "30");
 
-		Configuration config = new Configuration(filterConfig, null);
+		Configuration config = new Configuration(filterConfig, null, null);
 
 		// Bundle-related configurations
 		assertThat(config.getBundleLocation()).isEmpty();
@@ -219,7 +219,7 @@ public class DevProfileTest {
 		System.setProperty(DandelionConfig.ASSET_LOCATIONS_RESOLUTION_STRATEGY.getName(), "bar ,foo  ,baz,qux  ");
 		System.setProperty(DandelionConfig.CACHE_ASSET_MAX_SIZE.getName(), "20");
 
-		Configuration config = new Configuration(new MockFilterConfig(), null);
+		Configuration config = new Configuration(new MockFilterConfig(), null, null);
 
 		// Bundle-related configurations
 		assertThat(config.getBundleLocation()).isEmpty();
@@ -274,7 +274,7 @@ public class DevProfileTest {
 	public void should_set_default_cacheAssetMaxSize_if_wrong_value() {
 		Properties userProperties = new Properties();
 		userProperties.put(DandelionConfig.CACHE_ASSET_MAX_SIZE.getName(), "text");
-		Configuration config = new Configuration(new MockFilterConfig(), userProperties);
+		Configuration config = new Configuration(new MockFilterConfig(), userProperties, null);
 
 		assertThat(config.getCacheAssetMaxSize()).isEqualTo(50);
 	}
@@ -283,7 +283,7 @@ public class DevProfileTest {
 	public void should_set_default_cacheRequestMaxSize_if_wrong_value() {
 		Properties userProperties = new Properties();
 		userProperties.put(DandelionConfig.CACHE_REQUEST_MAX_SIZE.getName(), "text");
-		Configuration config = new Configuration(new MockFilterConfig(), userProperties);
+		Configuration config = new Configuration(new MockFilterConfig(), userProperties, null);
 
 		assertThat(config.getCacheRequestMaxSize()).isEqualTo(50);
 	}

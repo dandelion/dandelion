@@ -48,6 +48,7 @@ import com.github.dandelion.core.asset.cache.spi.AssetCache;
  * <p>
  * Dandelion servlet in charge of serving the assets stored in the configured
  * {@link AssetCache}.
+ * </p>
  * 
  * @author Thibault Duchateau
  * @author Romain Lespinasse
@@ -57,7 +58,7 @@ public class DandelionServlet extends HttpServlet {
 
 	private static final long serialVersionUID = -6874842638265359418L;
 
-	private static Logger LOG = LoggerFactory.getLogger(DandelionServlet.class);
+	private static final Logger LOG = LoggerFactory.getLogger(DandelionServlet.class);
 
 	public static final String DANDELION_ASSETS = "dandelionAssets";
 	public static final String DANDELION_ASSETS_URL = "/dandelion-assets/";
@@ -73,6 +74,7 @@ public class DandelionServlet extends HttpServlet {
 		// Get the asset content thanks to the cache key
 		String assetKey = context.getCacheManager().getCacheKeyFromRequest(request);
 		AssetType assetType = AssetType.typeOfAsset(assetKey);
+		LOG.debug("Retrieved asset type: {}, cache key: {}", assetType, assetKey);
 		
 		// Configure response headers
 		httpHeadersConfigurer.configureResponseHeaders(response, assetType.getContentType());

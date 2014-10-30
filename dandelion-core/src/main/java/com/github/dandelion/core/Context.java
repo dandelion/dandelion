@@ -52,6 +52,7 @@ import com.github.dandelion.core.asset.locator.Servlet3Compatible;
 import com.github.dandelion.core.asset.locator.spi.AssetLocator;
 import com.github.dandelion.core.asset.processor.AssetProcessorManager;
 import com.github.dandelion.core.asset.processor.spi.AssetProcessor;
+import com.github.dandelion.core.asset.versioning.AssetVersioningStrategy;
 import com.github.dandelion.core.bundle.loader.impl.DandelionBundleLoader;
 import com.github.dandelion.core.bundle.loader.impl.VendorBundleLoader;
 import com.github.dandelion.core.bundle.loader.spi.BundleLoader;
@@ -64,9 +65,14 @@ import com.github.dandelion.core.storage.BundleStorage;
 import com.github.dandelion.core.storage.BundleStorageUnit;
 import com.github.dandelion.core.utils.BundleStorageLogBuilder;
 import com.github.dandelion.core.utils.ClassUtils;
+import com.github.dandelion.core.utils.ServiceLoaderUtils;
 import com.github.dandelion.core.utils.StringUtils;
 
 /**
+ * <p>
+ * Holds the whole Dandelion context.
+ * </p>
+ * 
  * <p>
  * This class is in charge of discovering and storing several configuration
  * points, such as the configured {@link AssetCache} implementation or the
@@ -82,10 +88,12 @@ import com.github.dandelion.core.utils.StringUtils;
  */
 public class Context {
 
-	private static Logger logger = LoggerFactory.getLogger(Context.class);
+	private static final Logger LOG = LoggerFactory.getLogger(Context.class);
 
 	private AssetCache assetCache;
 	private Map<String, AssetProcessor> processorsMap;
+	private Map<String, AssetVersioningStrategy> versioningStrategyMap;
+	private AssetVersioningStrategy activeVersioningStrategy;
 	private List<AssetProcessor> activeProcessors;
 	private List<BundleLoader> bundleLoaders;
 	private AssetProcessorManager assetProcessorManager;
@@ -94,7 +102,7 @@ public class Context {
 	private Map<String, AssetLocator> assetLocatorsMap;
 	private BundleStorage bundleStorage;
 	private Configuration configuration;
-
+	
 	/**
 	 * Public constructor.
 	 * 
@@ -120,6 +128,7 @@ public class Context {
 		initAssetLocators();
 		initAssetCache();
 		initAssetProcessors();
+		initAssetVersioning();
 
 		assetProcessorManager = new AssetProcessorManager(this);
 		assetCacheManager = new AssetCacheManager(this);
@@ -132,6 +141,7 @@ public class Context {
 	 * <p>
 	 * Returns an implementation of {@link ConfigurationLoader} using the
 	 * following strategy:
+	 * </p>
 	 * <ol>
 	 * <li>Check first if the <code>dandelion.confloader.class</code> system
 	 * property is set and tries to instantiate it</li>
@@ -145,7 +155,7 @@ public class Context {
 
 		ConfigurationLoader configurationLoader = null;
 
-		logger.debug("Initializing the configuration loader...");
+		LOG.debug("Initializing the configuration loader...");
 
 		if (StringUtils.isNotBlank(System.getProperty(ConfigurationLoader.DANDELION_CONFLOADER_CLASS))) {
 			Class<?> clazz;
@@ -154,7 +164,7 @@ public class Context {
 				configurationLoader = (ConfigurationLoader) ClassUtils.getNewInstance(clazz);
 			}
 			catch (Exception e) {
-				logger.warn(
+				LOG.warn(
 						"Unable to instantiate the configured {} due to a {} exception. Falling back to the default one.",
 						ConfigurationLoader.DANDELION_CONFLOADER_CLASS, e.getClass().getName(), e);
 			}
@@ -164,12 +174,47 @@ public class Context {
 			configurationLoader = new StandardConfigurationLoader();
 		}
 
-		configuration = new Configuration(filterConfig, configurationLoader.loadUserConfiguration());
+		configuration = new Configuration(filterConfig, configurationLoader.loadUserConfiguration(), this);
 	}
 
 	/**
 	 * <p>
+	 * Initializes the asset versioning for the whole application.
+	 * </p>
+	 */
+	public void initAssetVersioning(){
+		
+		List<AssetVersioningStrategy> availableStrategies = ServiceLoaderUtils
+				.getProvidersAsList(AssetVersioningStrategy.class);
+
+		versioningStrategyMap = new HashMap<String, AssetVersioningStrategy>();
+
+		for (AssetVersioningStrategy strategy : availableStrategies) {
+			LOG.info("Asset versioning strategy found: {}", strategy.getClass().getSimpleName());
+			versioningStrategyMap.put(strategy.getName(), strategy);
+		}
+		
+		String desiredVersioningStrategy = configuration.getAssetVersioningStrategy().toLowerCase().trim();
+		if (StringUtils.isNotBlank(desiredVersioningStrategy)) {
+			if (versioningStrategyMap.containsKey(desiredVersioningStrategy)) {
+				activeVersioningStrategy = versioningStrategyMap.get(desiredVersioningStrategy);
+				LOG.info("Selected asset versioning strategy: {}", activeVersioningStrategy.getName());
+				activeVersioningStrategy.init(this);
+			}
+			else {
+				throw new DandelionException(
+						"The desired asset versioning strategy ("
+								+ desiredVersioningStrategy
+								+ ") hasn't been found among the available ones: " + versioningStrategyMap.keySet());
+			}
+		}
+	}
+	
+	/**
+	 * <p>
 	 * Initializes the {@link BundleLoader}s in a particular order:
+	 * </p>
+	 * 
 	 * <ol>
 	 * <li>First, the {@link VendorBundleLoader} which loads all
 	 * "vendor bundles"</li>
@@ -196,7 +241,7 @@ public class Context {
 		for (BundleLoader bl : blServiceLoader) {
 			bl.initLoader(this);
 			bundleLoaders.add(bl);
-			logger.info("Active bundle loader found: {}", bl.getClass().getSimpleName());
+			LOG.info("Active bundle loader found: {}", bl.getClass().getSimpleName());
 		}
 
 		// Finally all bundles created by users
@@ -204,8 +249,10 @@ public class Context {
 	}
 
 	/**
+	 * <p>
 	 * Initializes the service provider of {@link AssetCache} to use for
 	 * caching.
+	 * </p>
 	 */
 	public void initAssetCache() {
 		ServiceLoader<AssetCache> assetCacheServiceLoader = ServiceLoader.load(AssetCache.class);
@@ -213,7 +260,7 @@ public class Context {
 		Map<String, AssetCache> caches = new HashMap<String, AssetCache>();
 		for (AssetCache ac : assetCacheServiceLoader) {
 			caches.put(ac.getCacheName().toLowerCase().trim(), ac);
-			logger.info("Asset caching system found: {}", ac.getClass().getSimpleName());
+			LOG.info("Asset caching system found: {}", ac.getClass().getSimpleName());
 		}
 
 		String desiredCacheName = configuration.getCacheName();
@@ -222,7 +269,7 @@ public class Context {
 				assetCache = caches.get(desiredCacheName);
 			}
 			else {
-				logger.warn(
+				LOG.warn(
 						"The desired caching system ({}) hasn't been found in the classpath. Did you forget to add a dependency? The default one will be used.",
 						desiredCacheName);
 			}
@@ -235,13 +282,15 @@ public class Context {
 
 		assetCache.initCache(this);
 
-		logger.info("Selected asset cache system: {} (based on {})", assetCache.getCacheName(), assetCache.getClass()
+		LOG.info("Selected asset cache system: {} (based on {})", assetCache.getCacheName(), assetCache.getClass()
 				.getSimpleName());
 	}
 
 	/**
+	 * <p>
 	 * Initializes all service providers of the {@link AssetLocator} SPI. The
 	 * order doesn't matter.
+	 * </p>
 	 */
 	public void initAssetLocators() {
 		ServiceLoader<AssetLocator> alServiceLoader = ServiceLoader.load(AssetLocator.class);
@@ -249,10 +298,10 @@ public class Context {
 		assetLocatorsMap = new HashMap<String, AssetLocator>();
 
 		if (this.getConfiguration().isServlet3Enabled()) {
-			logger.debug("Servlet 3.x API detected. Filtering asset locators accordingly.");
+			LOG.debug("Servlet 3.x API detected. Filtering asset locators accordingly.");
 		}
 		else {
-			logger.debug("Servlet 2.x API detected. Filtering asset locators accordingly.");
+			LOG.debug("Servlet 2.x API detected. Filtering asset locators accordingly.");
 		}
 
 		for (AssetLocator al : alServiceLoader) {
@@ -263,7 +312,7 @@ public class Context {
 				if (Servlet3Compatible.class.isAssignableFrom(al.getClass())) {
 					al.initLocator(this);
 					assetLocatorsMap.put(al.getLocationKey(), al);
-					logger.info("Asset locator found: {} ({})", al.getLocationKey(), al.getClass().getSimpleName());
+					LOG.info("Asset locator found: {} ({})", al.getLocationKey(), al.getClass().getSimpleName());
 				}
 			}
 			// Otherwise register all Servlet2-compatible asset locators
@@ -271,7 +320,7 @@ public class Context {
 				if (Servlet2Compatible.class.isAssignableFrom(al.getClass())) {
 					al.initLocator(this);
 					assetLocatorsMap.put(al.getLocationKey(), al);
-					logger.info("Asset locator found: {} ({})", al.getLocationKey(), al.getClass().getSimpleName());
+					LOG.info("Asset locator found: {} ({})", al.getLocationKey(), al.getClass().getSimpleName());
 				}
 			}
 		}
@@ -281,10 +330,12 @@ public class Context {
 	 * <p>
 	 * Initializes all service providers of the {@link AssetProcessor} SPI and
 	 * stores them all in the {@link #processorsMap}.
+	 * </p>
 	 * 
 	 * <p>
 	 * If minification is enabled, the {@link #activeProcessors} is filled with
 	 * default service providers.
+	 * </p>
 	 */
 	public void initAssetProcessors() {
 
@@ -295,21 +346,21 @@ public class Context {
 
 		for (AssetProcessor ape : apServiceLoader) {
 			processorsMap.put(ape.getProcessorKey().toLowerCase(), ape);
-			logger.info("Asset processor found: {}", ape.getClass().getSimpleName());
+			LOG.info("Asset processor found: {}", ape.getClass().getSimpleName());
 		}
 
 		if (configuration.isAssetMinificationEnabled()) {
-			logger.info("Asset processors enabled.");
+			LOG.info("Asset processors enabled.");
 
 			for (String assetProcessorKey : configuration.getAssetProcessors()) {
 				if (processorsMap.containsKey(assetProcessorKey)) {
 					activeProcessors.add(processorsMap.get(assetProcessorKey));
-					logger.info("Processor enabled: {}", processorsMap.get(assetProcessorKey).getProcessorKey());
+					LOG.info("Processor enabled: {}", processorsMap.get(assetProcessorKey).getProcessorKey());
 				}
 			}
 		}
 		else {
-			logger.info("Asset processors disabled. All assets will be left untouched.");
+			LOG.info("Asset processors disabled. All assets will be left untouched.");
 		}
 	}
 
@@ -317,17 +368,19 @@ public class Context {
 	 * <p>
 	 * Initializes the {@link BundleStorage} by using all configured
 	 * {@link BundleLoader}s.
+	 * </p>
 	 * 
 	 * <p>
 	 * Once loader, some checks are performed on the {@link BundleStorage}.
+	 * </p>
 	 */
 	public void initBundleStorage() {
-		logger.debug("Bundle storage initializating...");
+		LOG.debug("Bundle storage initializating...");
 
 		bundleStorage = new BundleStorage();
 
 		for (BundleLoader bundleLoader : getBundleLoaders()) {
-			logger.debug("Loading bundles using the {}", bundleLoader.getClass().getSimpleName());
+			LOG.debug("Loading bundles using the {}", bundleLoader.getClass().getSimpleName());
 
 			// Load all bundles using the current BundleLoader
 			List<BundleStorageUnit> loadedBundles = bundleLoader.loadBundles();
@@ -338,7 +391,7 @@ public class Context {
 				throw new DandelionException(bslb.toString());
 			}
 
-			logger.debug("Found {} bundle{}: {}", loadedBundles.size(), loadedBundles.size() <= 1 ? "" : "s",
+			LOG.debug("Found {} bundle{}: {}", loadedBundles.size(), loadedBundles.size() <= 1 ? "" : "s",
 					loadedBundles);
 
 			bundleStorage.finalizeBundleConfiguration(loadedBundles, this);
@@ -348,12 +401,14 @@ public class Context {
 			bundleStorage.checkBundleConsistency(loadedBundles);
 		}
 
-		logger.debug("Bundle storage initialized.");
+		LOG.debug("Bundle storage initialized.");
 	}
 
 	/**
+	 * <p>
 	 * If JMX is enabled, initializes a MBean allowing to reload bundles and
 	 * access cache.
+	 * </p>
 	 * 
 	 * @param filterConfig
 	 *            The servlet filter configuration.
@@ -368,7 +423,7 @@ public class Context {
 				}
 			}
 			catch (final JMException e) {
-				logger.error("An exception occured while registering the DandelionRuntimeMBean", e);
+				LOG.error("An exception occured while registering the DandelionRuntimeMBean", e);
 			}
 		}
 	}
@@ -383,7 +438,7 @@ public class Context {
 				}
 			}
 			catch (final JMException e) {
-				logger.error("An exception occured while unregistering the DandelionRuntimeMBean", e);
+				LOG.error("An exception occured while unregistering the DandelionRuntimeMBean", e);
 			}
 		}
 	}
@@ -444,5 +499,17 @@ public class Context {
 	 */
 	public boolean isProdProfileEnabled() {
 		return Profile.DEFAULT_PROD_PROFILE.equals(this.configuration.getActiveProfile());
+	}
+	
+	/**
+	 * TODO
+	 * @return
+	 */
+	public AssetVersioningStrategy getActiveVersioningStrategy(){
+		return this.activeVersioningStrategy;
+	}
+
+	public Map<String, AssetVersioningStrategy> getVersioningStrategyMap() {
+		return versioningStrategyMap;
 	}
 }

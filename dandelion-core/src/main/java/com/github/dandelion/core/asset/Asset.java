@@ -34,18 +34,21 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.github.dandelion.core.asset.locator.spi.AssetLocator;
+import com.github.dandelion.core.bundle.loader.impl.VendorBundleLoader;
 import com.github.dandelion.core.storage.AssetStorageUnit;
 
 /**
  * <p>
  * Representation of an asset.
- * 
+ * </p>
  * <p>
  * Contrary to a {@link AssetStorageUnit}, an {@link Asset} contains more fields
  * because it has been resolved by the {@link AssetMapper}.
+ * </p>
  * 
  * @author Romain Lespinasse
  * @author Thibault Duchateau
+ * @since 0.0.1
  */
 public class Asset {
 
@@ -90,13 +93,22 @@ public class Asset {
 	private Map<String, String> attributes;
 
 	/**
-	 * Various HTML attributes which only needs names.
+	 * Various HTML attributes which only need a name.
 	 */
 	private String[] attributesOnlyName;
 
 	// Internal attribute
+	
+	/**
+	 * The computed cache key of the asset.
+	 */
 	private String cacheKey;
-
+	
+	/**
+	 * Whether the asset has been loaded by the {@link VendorBundleLoader}.
+	 */
+	private boolean vendor;
+	
 	public Asset() {
 	}
 
@@ -146,6 +158,7 @@ public class Asset {
 		this.dom = asu.getDom();
 		this.attributes = asu.getAttributes();
 		this.attributesOnlyName = asu.getAttributesOnlyName();
+		this.vendor = asu.isVendor();
 	}
 
 	public Asset(String name, String version, AssetType type, AssetDomPosition position) {
@@ -240,35 +253,6 @@ public class Asset {
 		return name != null && version != null && type != null && finalLocation != null;
 	}
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((name == null) ? 0 : name.hashCode());
-		result = prime * result + ((type == null) ? 0 : type.hashCode());
-		return result;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Asset other = (Asset) obj;
-		if (name == null) {
-			if (other.name != null)
-				return false;
-		}
-		else if (!name.equals(other.name))
-			return false;
-		if (type != other.type)
-			return false;
-		return true;
-	}
-
 	public String getAssetKey() {
 		return name + "." + type;
 	}
@@ -303,6 +287,14 @@ public class Asset {
 		this.cacheKey = cacheKey;
 	}
 
+	public boolean isVendor() {
+		return vendor;
+	}
+	
+	public boolean isNotVendor() {
+		return !isVendor();
+	}
+	
 	@Override
 	public String toString() {
 		return "Asset [name=" + name + ", version=" + version + ", type=" + type + ", dom=" + dom + ", configLocation="
@@ -312,5 +304,34 @@ public class Asset {
 
 	public String toLog() {
 		return name + " (" + type + ", v" + version + ")";
+	}
+	
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((name == null) ? 0 : name.hashCode());
+		result = prime * result + ((type == null) ? 0 : type.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Asset other = (Asset) obj;
+		if (name == null) {
+			if (other.name != null)
+				return false;
+		}
+		else if (!name.equals(other.name))
+			return false;
+		if (type != other.type)
+			return false;
+		return true;
 	}
 }

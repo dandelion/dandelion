@@ -30,6 +30,8 @@
 package com.github.dandelion.core.asset.cache;
 
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -40,12 +42,13 @@ import com.github.dandelion.core.Context;
 import com.github.dandelion.core.asset.Asset;
 import com.github.dandelion.core.asset.cache.spi.AssetCache;
 import com.github.dandelion.core.utils.Sha1Utils;
-import com.github.dandelion.core.web.DandelionServlet;
+import com.github.dandelion.core.utils.UrlUtils;
 
 /**
  * <p>
  * System in charge of manipulating the selected implementation of
  * {@link AssetCache}.
+ * </p>
  * 
  * @author Romain Lespinasse
  * @author Thibault Duchateau
@@ -54,38 +57,59 @@ import com.github.dandelion.core.web.DandelionServlet;
 public class AssetCacheManager {
 
 	private static final Logger LOG = LoggerFactory.getLogger(AssetCacheManager.class);
-	private Context context;
+	
+	private final Context context;
 
 	public AssetCacheManager(Context context) {
 		this.context = context;
 	}
 
-	public String generateCacheKey(String context, Asset asset) {
+	public String generateCacheKey(HttpServletRequest request, Asset asset) {
+		String context = UrlUtils.getCurrentUrl(request, true).toString();
+		context = context.replaceAll("\\?", "_").replaceAll("&", "_");
+		
 		StringBuilder key = new StringBuilder(Sha1Utils.generateSha1(context, true));
 		key.append("/");
 		key.append(asset.getName());
-		key.append("-");
-		key.append(asset.getVersion());
-		key.append(".");
+		key.append('/');
 		key.append(asset.getType().name());
+//		key.append("-");
+//		key.append(asset.getVersion());
+//		key.append(".");
+//		key.append(asset.getType().name());
 		return key.toString();
 	}
 
+	public String generateMinCacheKey(HttpServletRequest request, Asset asset) {
+		String context = UrlUtils.getCurrentUrl(request, true).toString();
+		context = context.replaceAll("\\?", "_").replaceAll("&", "_");
+		
+		StringBuilder key = new StringBuilder(Sha1Utils.generateSha1(context, true));
+		key.append("/");
+		key.append(asset.getName());
+		key.append("/min/");
+		key.append(asset.getType().name());
+		return key.toString();
+	}
+	
 	public String generateCacheKeyMin(String context, Asset asset) {
 		StringBuilder key = new StringBuilder(Sha1Utils.generateSha1(context, true));
 		key.append("/");
 		key.append(asset.getName());
-		key.append("-");
-		key.append(asset.getVersion());
-		key.append(".min.");
+		key.append("/");
 		key.append(asset.getType().name());
 		return key.toString();
 	}
 
 	public String getCacheKeyFromRequest(HttpServletRequest request) {
-		String cacheKey = request.getRequestURL().substring(
-				request.getRequestURL().indexOf(DandelionServlet.DANDELION_ASSETS_URL)
-						+ DandelionServlet.DANDELION_ASSETS_URL.length());
+		Pattern p = Pattern.compile("dandelion-assets/(.*)/");
+		Matcher m = p.matcher(request.getRequestURL());
+
+		String cacheKey = null;
+		if (m.find()) {
+			cacheKey = m.group(1);
+		}
+		 
 		return cacheKey;
 	}
 

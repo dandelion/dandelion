@@ -1,0 +1,2 @@
+com.github.dandelion.core.asset.versioning.impl.ContentAssetVersioningStrategy
+com.github.dandelion.core.asset.versioning.impl.FixedAssetVersioningStrategy

@@ -51,7 +51,7 @@ public class ProdProfileTest {
 	@Test
 	public void should_set_prod_profile() {
 		System.setProperty(Profile.DANDELION_PROFILE_ACTIVE, "prod");
-		Configuration config = new Configuration(new MockFilterConfig(), new Properties());
+		Configuration config = new Configuration(new MockFilterConfig(), new Properties(), null);
 		assertThat(Profile.getActiveProfile()).isEqualTo(Profile.DEFAULT_PROD_PROFILE);
 		assertThat(config.getActiveRawProfile()).isEqualTo(Profile.getActiveRawProfile());
 	}
@@ -59,7 +59,7 @@ public class ProdProfileTest {
 	@Test
 	public void should_load_configuration_from_default_prod_profile() {
 		System.setProperty(Profile.DANDELION_PROFILE_ACTIVE, "prod");
-		Configuration config = new Configuration(new MockFilterConfig(), new Properties());
+		Configuration config = new Configuration(new MockFilterConfig(), new Properties(), null);
 
 		// Bundle-related configurations
 		assertThat(config.getBundleLocation()).isEmpty();
@@ -116,7 +116,7 @@ public class ProdProfileTest {
 		userProperties.put(DandelionConfig.ASSET_LOCATIONS_RESOLUTION_STRATEGY.getName(), "foo,bar");
 		userProperties.put(DandelionConfig.CACHE_ASSET_MAX_SIZE.getName(), "40");
 
-		Configuration config = new Configuration(new MockFilterConfig(), userProperties);
+		Configuration config = new Configuration(new MockFilterConfig(), userProperties, null);
 
 		// Bundle-related configurations
 		assertThat(config.getBundleLocation()).isEmpty();
@@ -171,7 +171,7 @@ public class ProdProfileTest {
 		filterConfig.addInitParameter(DandelionConfig.ASSET_LOCATIONS_RESOLUTION_STRATEGY.getName(), "  foo,bar , baz");
 		filterConfig.addInitParameter(DandelionConfig.CACHE_ASSET_MAX_SIZE.getName(), "30");
 
-		Configuration config = new Configuration(filterConfig, null);
+		Configuration config = new Configuration(filterConfig, null, null);
 
 		// Bundle-related configurations
 		assertThat(config.getBundleLocation()).isEmpty();
@@ -225,7 +225,7 @@ public class ProdProfileTest {
 		System.setProperty(DandelionConfig.ASSET_LOCATIONS_RESOLUTION_STRATEGY.getName(), "bar ,foo  ,baz,qux  ");
 		System.setProperty(DandelionConfig.CACHE_ASSET_MAX_SIZE.getName(), "20");
 
-		Configuration config = new Configuration(new MockFilterConfig(), null);
+		Configuration config = new Configuration(new MockFilterConfig(), null, null);
 
 		// Bundle-related configurations
 		assertThat(config.getBundleLocation()).isEmpty();
@@ -281,7 +281,7 @@ public class ProdProfileTest {
 		Properties userProperties = new Properties();
 		userProperties.put(DandelionConfig.ASSET_MINIFICATION.getName(), "false");
 
-		Configuration config = new Configuration(new MockFilterConfig(), userProperties);
+		Configuration config = new Configuration(new MockFilterConfig(), userProperties, null);
 
 		assertThat(config.isAssetMinificationEnabled()).isFalse();
 	}

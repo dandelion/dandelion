@@ -64,7 +64,6 @@ public final class ResourceScanner {
 	 * {@code resourceName} by scanning the classpath under the given
 	 * {@code location}.
 	 * </p>
-	 * 
 	 * <p>
 	 * By default, no other condition but the name will be applied to the
 	 * resource name.
@@ -172,10 +171,10 @@ public final class ResourceScanner {
 		while (urls.hasMoreElements()) {
 
 			URL url = urls.nextElement();
-			LOG.debug("Found URL: {} (protocol:{})", url.getPath(), url.getProtocol());
+			LOG.trace("Found URL: {} (protocol:{})", url.getPath(), url.getProtocol());
 
 			UrlResolver urlResolver = createUrlResolver(url.getProtocol());
-			LOG.debug("Resolving URL \"{}\" with the resolver {}", url.getPath(), urlResolver.getClass()
+			LOG.trace("Resolving URL \"{}\" with the resolver {}", url.getPath(), urlResolver.getClass()
 					.getSimpleName());
 
 			URL resolvedUrl = urlResolver.toStandardUrl(url);

@@ -43,15 +43,13 @@ import com.github.dandelion.core.utils.StringUtils;
 
 /**
  * <p>
- * This class holds the Dandelion configuration initialized at server startup
- * and must be accessed through the Dandelion {@link Context}.
+ * Holds the Dandelion raw configuration initialized at server startup and must
+ * be accessed through the Dandelion {@link Context}.
  * </p>
- * 
  * <p>
  * All configuration present in the {@link DandelionConfig} enum are read using
  * a particular strategy. See {@link #readConfig(DandelionConfig)}.
  * </p>
- * 
  * <p>
  * There should be only one instance of this class in the application.
  * </p>
@@ -61,10 +59,12 @@ import com.github.dandelion.core.utils.StringUtils;
  */
 public class Configuration {
 
-	private static Logger logger = LoggerFactory.getLogger(Configuration.class);
+	private static final Logger LOG = LoggerFactory.getLogger(Configuration.class);
 
 	private FilterConfig filterConfig;
 	private Properties userProperties;
+	
+	// Profile configurations
 	private String activeProfile;
 	private String activeRawProfile;
 
@@ -75,6 +75,13 @@ public class Configuration {
 	private String assetProcessorEncoding;
 	private List<String> assetJsExcludes;
 	private List<String> assetCssExcludes;
+	
+	// Asset versioning configurations
+	private boolean assetVersioning;
+	private String assetVersioningStrategy;
+	private String assetFixedVersionType;
+	private String assetFixedVersionValue;
+	private String assetFixedVersionDateFormat;
 
 	// Caching-related configurations
 	private boolean assetCachingEnabled;
@@ -96,11 +103,11 @@ public class Configuration {
 
 	// Monitoring configuration
 	private boolean monitoringJmxEnabled;
-	
+
 	// Misc configurations
 	private boolean servlet3Enabled;
 
-	public Configuration(FilterConfig filterConfig, Properties userProperties) {
+	public Configuration(FilterConfig filterConfig, Properties userProperties, Context context) {
 		this.filterConfig = filterConfig;
 		this.userProperties = userProperties;
 
@@ -109,11 +116,11 @@ public class Configuration {
 		this.activeRawProfile = Profile.getActiveRawProfile();
 
 		if (Profile.DEFAULT_DEV_PROFILE.equals(this.activeProfile)) {
-			logger.info("===========================================");
-			logger.info("");
-			logger.info("Dandelion \"dev\" profile activated.");
-			logger.info("");
-			logger.info("===========================================");
+			LOG.info("===========================================");
+			LOG.info("");
+			LOG.info("Dandelion \"dev\" profile activated.");
+			LOG.info("");
+			LOG.info("===========================================");
 		}
 
 		// Bundles-related configurations
@@ -129,6 +136,13 @@ public class Configuration {
 		this.assetProcessorEncoding = readConfig(DandelionConfig.ASSET_PROCESSORS_ENCODING);
 		this.assetJsExcludes = PropertiesUtils.propertyAsList(readConfig(DandelionConfig.ASSET_JS_EXCLUDES));
 		this.assetCssExcludes = PropertiesUtils.propertyAsList(readConfig(DandelionConfig.ASSET_CSS_EXCLUDES));
+		
+		// Asset versioning
+		this.assetVersioning = Boolean.parseBoolean(readConfig(DandelionConfig.ASSET_VERSIONING));
+		this.assetVersioningStrategy = readConfig(DandelionConfig.ASSET_VERSIONING_STRATEGY);
+		this.assetFixedVersionType = readConfig(DandelionConfig.ASSET_FIXED_VERSION_TYPE);
+		this.assetFixedVersionValue = readConfig(DandelionConfig.ASSET_FIXED_VERSION_VALUE);
+		this.assetFixedVersionDateFormat = readConfig(DandelionConfig.ASSET_FIXED_VERSION_DATEFORMAT);
 
 		// Caching-related configurations
 		this.assetCachingEnabled = Boolean.parseBoolean(readConfig(DandelionConfig.ASSET_CACHING));
@@ -138,7 +152,7 @@ public class Configuration {
 			this.cacheAssetMaxSize = Integer.parseInt(readConfig(DandelionConfig.CACHE_ASSET_MAX_SIZE));
 		}
 		catch (NumberFormatException e) {
-			logger.warn("The '{}' property is incorrectly configured. Falling back to the default value ({})",
+			LOG.warn("The '{}' property is incorrectly configured. Falling back to the default value ({})",
 					DandelionConfig.CACHE_ASSET_MAX_SIZE.getName(),
 					DandelionConfig.CACHE_ASSET_MAX_SIZE.defaultDevValue());
 			this.cacheAssetMaxSize = Integer.parseInt(DandelionConfig.CACHE_ASSET_MAX_SIZE.defaultDevValue());
@@ -147,7 +161,7 @@ public class Configuration {
 			this.cacheRequestMaxSize = Integer.parseInt(readConfig(DandelionConfig.CACHE_REQUEST_MAX_SIZE));
 		}
 		catch (NumberFormatException e) {
-			logger.warn("The '{}' property is incorrectly configured. Falling back to the default value ({})",
+			LOG.warn("The '{}' property is incorrectly configured. Falling back to the default value ({})",
 					DandelionConfig.CACHE_REQUEST_MAX_SIZE.getName(),
 					DandelionConfig.CACHE_REQUEST_MAX_SIZE.defaultDevValue());
 			this.cacheRequestMaxSize = Integer.parseInt(DandelionConfig.CACHE_REQUEST_MAX_SIZE.defaultDevValue());
@@ -163,7 +177,7 @@ public class Configuration {
 
 		// Monitoring configurations
 		this.monitoringJmxEnabled = Boolean.parseBoolean(readConfig(DandelionConfig.MONITORING_JMX));
-		
+
 		// Misc configuration
 		String overrideServlet3 = readConfig(DandelionConfig.OVERRIDE_SERVLET3);
 		if (StringUtils.isBlank(overrideServlet3) && filterConfig != null) {
@@ -229,7 +243,7 @@ public class Configuration {
 	public String getActiveProfile() {
 		return this.activeProfile;
 	}
-	
+
 	public String getActiveRawProfile() {
 		return this.activeRawProfile;
 	}
@@ -374,6 +388,14 @@ public class Configuration {
 		this.assetCssExcludes = assetCssExcludes;
 	}
 
+	public String getAssetVersioningStrategy() {
+		return assetVersioningStrategy;
+	}
+
+	public void setAssetVersioningStrategy(String assetVersioningStrategy) {
+		this.assetVersioningStrategy = assetVersioningStrategy;
+	}
+
 	public String getCacheName() {
 		return this.cacheName;
 	}
@@ -405,4 +427,38 @@ public class Configuration {
 	public void setBundleExcludes(List<String> bundleExcludes) {
 		this.bundleExcludes = bundleExcludes;
 	}
+
+	public String getAssetFixedVersionType() {
+		return assetFixedVersionType;
+	}
+
+	public void setAssetFixedVersionType(String assetFixedVersionType) {
+		this.assetFixedVersionType = assetFixedVersionType;
+	}
+
+	public String getAssetFixedVersionValue() {
+		return assetFixedVersionValue;
+	}
+
+	public void setAssetFixedVersionValue(String assetFixedVersionValue) {
+		this.assetFixedVersionValue = assetFixedVersionValue;
+	}
+
+	public String getAssetFixedVersionDateFormat() {
+		return assetFixedVersionDateFormat;
+	}
+
+	public void setAssetFixedVersionDateFormat(String assetFixedVersionDateFormat) {
+		this.assetFixedVersionDateFormat = assetFixedVersionDateFormat;
+	}
+
+	public boolean isAssetVersioningEnabled() {
+		return assetVersioning;
+	}
+
+	public void setAssetVersioning(boolean assetVersioning) {
+		this.assetVersioning = assetVersioning;
+	}
+	
+	
 }

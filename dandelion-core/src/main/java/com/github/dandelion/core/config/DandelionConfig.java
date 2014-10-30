@@ -34,8 +34,8 @@ import com.github.dandelion.core.Beta;
 /**
  * <p>
  * Enum containing all configuration properties and their associated value both
- * in {@link Profile#DEVELOPMENT} and {@link Profile#PRODUCTION}
- * mode.
+ * in {@link Profile#DEFAULT_DEV_PROFILE} and
+ * {@link Profile#DEFAULT_PROD_PROFILE} mode.
  * </p>
  * 
  * @author Thibault Duchateau
@@ -50,6 +50,13 @@ public enum DandelionConfig {
 	ASSET_PROCESSORS_ENCODING("asset.processors.encoding", "UTF-8", "UTF-8"), 
 	ASSET_JS_EXCLUDES("asset.js.excludes", "", ""), 
 	ASSET_CSS_EXCLUDES("asset.css.excludes", "", ""),
+	
+	// Asset versioning
+	ASSET_VERSIONING("asset.versioning", "false", "true"),
+	ASSET_VERSIONING_STRATEGY("asset.versioning.strategy", "content", "content"),
+	ASSET_FIXED_VERSION_TYPE("asset.fixed.version.type", "", ""),
+	ASSET_FIXED_VERSION_VALUE("asset.fixed.version.value", "", ""),
+	ASSET_FIXED_VERSION_DATEFORMAT("asset.fixed.version.dateformat", "yyyyMMdd", "yyyyMMdd"),
 
 	// Caching-related configurations
 	ASSET_CACHING("asset.caching", "false", "true"),

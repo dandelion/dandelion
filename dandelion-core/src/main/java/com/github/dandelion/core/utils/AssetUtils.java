@@ -35,24 +35,29 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.servlet.http.HttpServletRequest;
+
 import com.github.dandelion.core.asset.Asset;
 import com.github.dandelion.core.asset.AssetDomPosition;
 import com.github.dandelion.core.asset.AssetType;
 import com.github.dandelion.core.storage.BundleStorage;
+import com.github.dandelion.core.web.DandelionServlet;
 
 /**
  * <p>
  * Some utilities to deal with {@link Asset}s.
+ * </p>
  * 
  * @author Thibault Duchateau
  * @since 0.10.0
  */
-public class AssetUtils {
+public final class AssetUtils {
 
 	/**
 	 * <p>
 	 * Filters the given set of {@link Asset}s using the given array of
 	 * {@link AssetType}.
+	 * </p>
 	 * 
 	 * @param assets
 	 *            The set of {@link Asset}s to filter.
@@ -75,6 +80,7 @@ public class AssetUtils {
 	 * <p>
 	 * Filters the given set of {@link Asset}s by removing all elements whose
 	 * name is present in the given array of excluded asset names.
+	 * </p>
 	 * 
 	 * @param assets
 	 *            The collection of {@link Asset}s to filter.
@@ -102,6 +108,7 @@ public class AssetUtils {
 	 * Filters the given set of {@link Asset}s by removing all elements whose
 	 * name is present in the given array of excluded asset names and whose type
 	 * if given as parameter.
+	 * </p>
 	 * 
 	 * @param assets
 	 *            The collection of {@link Asset}s to filter.
@@ -130,6 +137,7 @@ public class AssetUtils {
 	 * <p>
 	 * Filters the given set of {@link Asset}s using the given
 	 * {@link AssetDomPosition}.
+	 * </p>
 	 * 
 	 * @param assets
 	 *            The set of {@link Asset}s to filter.
@@ -158,7 +166,8 @@ public class AssetUtils {
 
 	/**
 	 * <p>
-	 * Extract the a lower-cased {@link Asset} name using its configured location.
+	 * Extract the a lower-cased {@link Asset} name using its configured
+	 * location.
 	 * </p>
 	 * 
 	 * <pre>
@@ -192,9 +201,31 @@ public class AssetUtils {
 		return assetName;
 	}
 
+	public static String getAssetFinalLocation(HttpServletRequest request, Asset asset, String suffix) {
+
+		StringBuilder finalLocation = new StringBuilder();
+		finalLocation.append(UrlUtils.getProcessedUrl(DandelionServlet.DANDELION_ASSETS_URL, request, null));
+		finalLocation.append(asset.getCacheKey());
+		finalLocation.append("/");
+		finalLocation.append(asset.getName());
+		finalLocation.append("-");
+		finalLocation.append(asset.getVersion());
+		if (StringUtils.isNotBlank(suffix)) {
+			finalLocation.append(".");
+			finalLocation.append(suffix);
+		}
+		finalLocation.append(".");
+		finalLocation.append(asset.getType().name());
+
+		return finalLocation.toString();
+	}
+
 	/**
-	 * Prevents instantiation;
+	 * <p>
+	 * Suppress default constructor for noninstantiability.
+	 * </p>
 	 */
 	private AssetUtils() {
+		throw new AssertionError();
 	}
 }

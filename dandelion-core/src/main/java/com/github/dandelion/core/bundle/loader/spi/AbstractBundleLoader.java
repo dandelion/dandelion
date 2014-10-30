@@ -42,6 +42,7 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.dandelion.core.Context;
 import com.github.dandelion.core.DandelionException;
+import com.github.dandelion.core.storage.AssetStorageUnit;
 import com.github.dandelion.core.storage.BundleStorageUnit;
 import com.github.dandelion.core.utils.BundleStorageLogBuilder;
 import com.github.dandelion.core.utils.StringBuilderUtils;
@@ -65,19 +66,14 @@ import com.github.dandelion.core.utils.scanner.ResourceScanner;
 public abstract class AbstractBundleLoader implements BundleLoader {
 
 	private ObjectMapper mapper = new ObjectMapper();
+	
 	protected Context context;
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void initLoader(Context context) {
 		this.context = context;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	public List<BundleStorageUnit> loadBundles() {
 
 		mapper.configure(JsonParser.Feature.ALLOW_COMMENTS, true);
@@ -85,26 +81,31 @@ public abstract class AbstractBundleLoader implements BundleLoader {
 		mapper.configure(JsonParser.Feature.ALLOW_BACKSLASH_ESCAPING_ANY_CHARACTER, true);
 
 		List<BundleStorageUnit> bundles = new ArrayList<BundleStorageUnit>();
-				
+
 		Set<String> resourcePaths = null;
 		try {
 			resourcePaths = ResourceScanner.findResourcePaths(getBundleLocation(), getExcludedPaths(), null, ".json");
 		}
 		catch (IOException e) {
-			throw new DandelionException("Something went wrong when scanning files in " + getPath(), e);
+			throw new DandelionException("Something went wrong when scanning files in " + getBundleLocation(), e);
 		}
 
 		getLogger().debug("{} resources scanned inside the folder '{}'. Parsing to bundle...", resourcePaths.size(),
-				getPath());
+				getBundleLocation());
 
 		ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
 
 		BundleStorageLogBuilder bslb = new BundleStorageLogBuilder();
-		
+
 		for (String resourcePath : resourcePaths) {
 			try {
 				InputStream configFileStream = classLoader.getResourceAsStream(resourcePath);
 				BundleStorageUnit bsu = mapper.readValue(configFileStream, BundleStorageUnit.class);
+				for(AssetStorageUnit asu : bsu.getAssetStorageUnits()){
+					if(this.getClass().getSimpleName().equals("VendorBundleLoader")){
+						asu.setVendor(true);
+					}
+				}
 				getLogger().debug("Parsed {}", bsu);
 				bundles.add(bsu);
 			}
@@ -115,8 +116,8 @@ public abstract class AbstractBundleLoader implements BundleLoader {
 				bslb.error("Wrong bundle format:", error.toString());
 			}
 		}
-		
-		if(bslb.hasError()) {
+
+		if (bslb.hasError()) {
 			throw new DandelionException(bslb.toString());
 		}
 
@@ -136,7 +137,7 @@ public abstract class AbstractBundleLoader implements BundleLoader {
 	public Set<String> getExcludedPaths() {
 		return Collections.emptySet();
 	}
-	
+
 	private String getBundleLocation() {
 
 		StringBuilder bundleBaseLocation = new StringBuilder(context.getConfiguration().getBundleLocation());
@@ -145,7 +146,7 @@ public abstract class AbstractBundleLoader implements BundleLoader {
 		}
 
 		bundleBaseLocation.append(getPath());
-		
+
 		return bundleBaseLocation.toString();
 	}
 }

@@ -35,6 +35,7 @@ import java.util.Map;
 
 import com.github.dandelion.core.asset.AssetDomPosition;
 import com.github.dandelion.core.asset.AssetType;
+import com.github.dandelion.core.bundle.loader.impl.VendorBundleLoader;
 
 /**
  * <p>
@@ -53,22 +54,44 @@ public class AssetStorageUnit {
 
 	/**
 	 * <p>
-	 * Name of the asset storage unit.
+	 * Name of the asset.
+	 * </p>
 	 * <p>
-	 * Optional.
+	 * <b>Optional.</b>
+	 * </p>
 	 */
 	private String name;
-	private String version;
-	
+
 	/**
 	 * <p>
-	 * Version of the asset storage unit.
+	 * Version of the asset, if forced.
+	 * </p>
 	 * <p>
-	 * Optional.
+	 * <b>Optional.</b>
+	 * </p>
+	 */
+	private String version;
+
+	/**
+	 * <p>
+	 * Type of the asset.
+	 * </p>
+	 * <p>
+	 * <b>Optional.</b>
+	 * </p>
 	 */
 	private AssetType type;
+
+	/**
+	 * <p>
+	 * The position of the asset in the DOM.
+	 * </p>
+	 * <p>
+	 * <b>Optional.</b>
+	 * </p>
+	 */
 	private AssetDomPosition dom;
-	
+
 	/**
 	 * <p>
 	 * Location key/location pairs.
@@ -76,7 +99,7 @@ public class AssetStorageUnit {
 	 * Required.
 	 */
 	private Map<String, String> locations;
-	
+
 	/**
 	 * <p>
 	 * Attribute name/value pairs.
@@ -84,9 +107,16 @@ public class AssetStorageUnit {
 	 * Optional.
 	 */
 	private Map<String, String> attributes;
-	
+
 	private String[] attributesOnlyName;
 	private String cacheKey;
+
+	/**
+	 * <p>
+	 * Whether the asset is loaded by the {@link VendorBundleLoader}.
+	 * </p>
+	 */
+	private boolean vendor;
 
 	/**
 	 * <p>
@@ -122,23 +152,24 @@ public class AssetStorageUnit {
 		this.type = AssetType.typeOf(locations.values().iterator().next());
 	}
 
-//	/**
-//	 * <p>
-//	 * TESTING ONLY.
-//	 * 
-//	 * @param name
-//	 * @param version
-//	 * @param locations
-//	 */
-//	public AssetStorageUnit(String name, String version, Map<String, String> locations) {
-//		
-//		String firstLocation = locations.values().iterator().next();
-////		this.name = name;
-//		this.name = AssetUtils.extractName(firstLocation);
-//		this.version = version;
-//		this.locations = locations;
-//		this.type = AssetType.typeOf(firstLocation);
-//	}
+	// /**
+	// * <p>
+	// * TESTING ONLY.
+	// *
+	// * @param name
+	// * @param version
+	// * @param locations
+	// */
+	// public AssetStorageUnit(String name, String version, Map<String, String>
+	// locations) {
+	//
+	// String firstLocation = locations.values().iterator().next();
+	// // this.name = name;
+	// this.name = AssetUtils.extractName(firstLocation);
+	// this.version = version;
+	// this.locations = locations;
+	// this.type = AssetType.typeOf(firstLocation);
+	// }
 
 	public String getName() {
 		return name;
@@ -204,6 +235,18 @@ public class AssetStorageUnit {
 
 	public void setCacheKey(String cacheKey) {
 		this.cacheKey = cacheKey;
+	}
+
+	public boolean isVendor() {
+		return vendor;
+	}
+
+	public boolean isNotVendor() {
+		return !isVendor();
+	}
+	
+	public void setVendor(boolean vendor) {
+		this.vendor = vendor;
 	}
 
 	/**

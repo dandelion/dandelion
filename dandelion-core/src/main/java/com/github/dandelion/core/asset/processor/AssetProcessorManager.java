@@ -48,13 +48,13 @@ import com.github.dandelion.core.Context;
 import com.github.dandelion.core.asset.Asset;
 import com.github.dandelion.core.asset.AssetType;
 import com.github.dandelion.core.asset.processor.spi.AssetProcessor;
-import com.github.dandelion.core.utils.UrlUtils;
-import com.github.dandelion.core.web.DandelionServlet;
+import com.github.dandelion.core.utils.AssetUtils;
 
 /**
  * <p>
  * System in charge of discovering and manipulating all implementations of
  * {@link AssetProcessor} available in the classpath.
+ * </p>
  * 
  * @author Thibault Duchateau
  * @author Romain Lespinasse
@@ -63,9 +63,9 @@ import com.github.dandelion.core.web.DandelionServlet;
 public final class AssetProcessorManager {
 
 	private static final Logger LOG = LoggerFactory.getLogger(AssetProcessorManager.class);
-	private Context context;
-	
-	public AssetProcessorManager(Context context){
+	private final Context context;
+
+	public AssetProcessorManager(Context context) {
 		this.context = context;
 	}
 
@@ -73,8 +73,7 @@ public final class AssetProcessorManager {
 
 		if (!context.getActiveProcessors().isEmpty()) {
 			LOG.debug("Processing assets with the following processors: {}", context.getActiveProcessors());
-			
-			
+
 			for (Asset asset : assets) {
 
 				ProcessingContext processingContext = new ProcessingContext(context, asset, request);
@@ -93,19 +92,18 @@ public final class AssetProcessorManager {
 						assetReader = new StringReader(assetWriter.toString());
 					}
 
-					// The old asset is removed from cache
+					// The old asset is removed from the cache
 					context.getCacheManager().remove(asset.getCacheKey());
 
-					// The new cache key is built, with ".min" applied before
-					// the extension
-					String contextTmp = UrlUtils.getCurrentUrl(request, true).toString();
-					contextTmp = contextTmp.replaceAll("\\?", "_").replaceAll("&", "_");
-					String newCacheKey = this.context.getCacheManager().generateCacheKeyMin(contextTmp, asset);
+					String newCacheKey = this.context.getCacheManager().generateMinCacheKey(request, asset);
 					asset.setCacheKey(newCacheKey);
-					
-					// The final asset location is overriden
-					asset.setFinalLocation(UrlUtils.getProcessedUrl(DandelionServlet.DANDELION_ASSETS_URL + newCacheKey,
-							request, null));
+
+					if (!asset.isVendor()
+							&& (this.context.getConfiguration().isAssetCachingEnabled() || this.context
+									.getConfiguration().isAssetMinificationEnabled())) {
+						asset.setFinalLocation(AssetUtils.getAssetFinalLocation(request, asset, "min"));
+					}
+
 					// The cache system is updated with the new key/content pair
 					context.getCacheManager().storeContent(newCacheKey, assetWriter.toString());
 				}
@@ -132,10 +130,15 @@ public final class AssetProcessorManager {
 
 	public boolean anyProcessorCanBeAppliedFor(Asset asset) {
 
+		if (asset.isVendor()) {
+			return false;
+		}
+
 		for (AssetProcessor assetProcessor : context.getActiveProcessors()) {
 			Annotation annotation = assetProcessor.getClass().getAnnotation(CompatibleAssetType.class);
 			CompatibleAssetType compatibleAssetType = (CompatibleAssetType) annotation;
 			List<AssetType> compatibleAssetTypes = Arrays.asList(compatibleAssetType.types());
+
 			if (compatibleAssetTypes.contains(asset.getType())) {
 				return true;
 			}
@@ -143,7 +146,6 @@ public final class AssetProcessorManager {
 
 		return false;
 	}
-
 
 	/**
 	 * <p>
@@ -153,7 +155,7 @@ public final class AssetProcessorManager {
 	 * FOR INTERNAL USE ONLY
 	 */
 	public static void clear() {
-//		processorsMap.clear();
-//		activeProcessors.clear();
+		// processorsMap.clear();
+		// activeProcessors.clear();
 	}
 }

@@ -15,9 +15,10 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import com.github.dandelion.core.Context;
 import com.github.dandelion.core.asset.Asset;
 import com.github.dandelion.core.asset.AssetType;
+import com.github.dandelion.core.utils.AssetUtils;
 
 public class AssetServletTest {
-	
+
 	private DandelionServlet servlet = new DandelionServlet();
 
 	private MockHttpServletRequest request;
@@ -32,25 +33,25 @@ public class AssetServletTest {
 		request.setAttribute(WebConstants.DANDELION_CONTEXT_ATTRIBUTE, context);
 		response = new MockHttpServletResponse();
 	}
-	
+
 	@Test
-	public void should_retrieve_content_from_cache() throws ServletException, IOException {
+	public void should_retrieve_the_asset_content_from_cache() throws ServletException, IOException {
 
 		Asset asset = new Asset();
 		asset.setName("my-asset");
 		asset.setVersion("1.0.0");
 		asset.setType(AssetType.css);
+		asset.setCacheKey(context.getCacheManager().generateCacheKey(request, asset));
 		String content = "CONTENT" + Math.random();
-		
-		String cacheKey = context.getCacheManager().generateCacheKey("should_retrieve_content_from_cache", asset);
-		
-		context.getCacheManager().storeContent(cacheKey, content);
-		request.setRequestURI(DandelionServlet.DANDELION_ASSETS_URL + context.getCacheManager().generateCacheKey("should_retrieve_content_from_cache", asset));
+
+		context.getCacheManager().storeContent(asset.getCacheKey(), content);
+
+		String finalLocation = AssetUtils.getAssetFinalLocation(request, asset, "");
+		request.setRequestURI(finalLocation);
 
 		servlet.doGet(request, response);
 
 		assertThat(response.getContentType()).isEqualTo(AssetType.css.getContentType());
 		assertThat(response.getContentAsString()).isEqualTo(content);
-
 	}
 }
