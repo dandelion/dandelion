@@ -29,13 +29,13 @@
  */
 package com.github.dandelion.core.utils;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 import java.util.Properties;
 
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class VariableSubstitutionTest {
 

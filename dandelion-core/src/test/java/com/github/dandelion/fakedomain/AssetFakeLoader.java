@@ -1,8 +1,5 @@
 package com.github.dandelion.fakedomain;
 
-import static org.assertj.core.util.Lists.newArrayList;
-import static org.assertj.core.util.Sets.newLinkedHashSet;
-
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -10,9 +7,12 @@ import java.util.Map;
 
 import org.slf4j.Logger;
 
-import com.github.dandelion.core.bundle.loader.spi.AbstractBundleLoader;
+import com.github.dandelion.core.bundle.loader.AbstractBundleLoader;
 import com.github.dandelion.core.storage.AssetStorageUnit;
 import com.github.dandelion.core.storage.BundleStorageUnit;
+
+import static org.assertj.core.util.Lists.newArrayList;
+import static org.assertj.core.util.Sets.newLinkedHashSet;
 
 public class AssetFakeLoader extends AbstractBundleLoader {
 	

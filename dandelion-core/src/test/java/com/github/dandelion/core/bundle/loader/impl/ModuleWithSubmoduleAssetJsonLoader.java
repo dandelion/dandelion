@@ -27,40 +27,40 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.github.dandelion.core.bundle.loader.spi;
 
-import java.util.List;
+package com.github.dandelion.core.bundle.loader.impl;
 
-import com.github.dandelion.core.Context;
-import com.github.dandelion.core.storage.BundleStorageUnit;
+import java.util.HashSet;
+import java.util.Set;
 
-/**
- * <p>
- * SPI for all bundle loaders.
- * 
- * @author Romain Lespinasse
- * @author Thibault Duchateau
- * @since 0.10.0
- */
-public interface BundleLoader {
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-	/**
-	 * TODO
-	 * @param context
-	 */
-	void initLoader(Context context);
-	
-	/**
-	 * Load bundles by scanning the classpath starting from the configured
-	 * folder.
-	 * 
-	 * @return a list of {@link BundleStorageUnit} deserialized from the JSON
-	 *         files.
-	 */
-	List<BundleStorageUnit> loadBundles();
+import com.github.dandelion.core.bundle.loader.AbstractBundleLoader;
 
-	/**
-	 * @return the name of the loader, mainly used for logging.
-	 */
-	String getName();
+public class ModuleWithSubmoduleAssetJsonLoader extends AbstractBundleLoader {
+
+	private static final Logger LOG = LoggerFactory.getLogger(ModuleWithSubmoduleAssetJsonLoader.class);
+
+	@Override
+	protected Logger getLogger() {
+		return LOG;
+	}
+
+	@Override
+	public String getPath() {
+		return "module_with_submodule";
+	}
+
+	@Override
+	public String getName() {
+		return "module_with_submodule";
+	}
+
+	@Override
+	public Set<String> getExcludedPaths() {
+		Set<String> excludedPaths = new HashSet<String>();
+		excludedPaths.add("module_with_submodule/submodule");
+		return excludedPaths;
+	}
 }

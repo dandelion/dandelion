@@ -29,10 +29,10 @@
  */
 package com.github.dandelion.core;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 import org.junit.Test;
 import org.springframework.mock.web.MockFilterConfig;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class ContextTest {
 

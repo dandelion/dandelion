@@ -1,12 +1,12 @@
 package com.github.dandelion.core.utils;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 import java.util.ArrayList;
 
 import org.junit.Test;
 
-import com.github.dandelion.core.bundle.loader.spi.BundleLoader;
+import com.github.dandelion.core.bundle.loader.BundleLoader;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class ServiceLoaderUtilsTest {
 

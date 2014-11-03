@@ -35,6 +35,7 @@ import static com.github.dandelion.core.asset.AssetDomPosition.head;
 /**
  * <p>
  * Types of an asset. Currently, only stylesheets and scripts are supported.
+ * </p>
  * 
  * @author Romain Lespinasse
  * @since 0.2.0
@@ -67,7 +68,7 @@ public enum AssetType {
 		}
 		return null;
 	}
-	
+
 	public static AssetType typeOf(String assetLocation) {
 		for (AssetType type : values()) {
 			if (assetLocation.toLowerCase().endsWith(type.name())) {

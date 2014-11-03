@@ -29,15 +29,13 @@
  */
 package com.github.dandelion.core.utils.scanner;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
-import static org.assertj.core.util.Sets.newLinkedHashSet;
-
 import java.io.IOException;
 
 import org.junit.Test;
 
-import com.github.dandelion.core.utils.scanner.ResourceScanner;
+import static org.assertj.core.api.Assertions.assertThat;
+
+import static org.assertj.core.util.Sets.newLinkedHashSet;
 
 public class ResourceScannerTest {
 

@@ -43,15 +43,24 @@ import org.slf4j.LoggerFactory;
 import com.github.dandelion.core.Context;
 import com.github.dandelion.core.DandelionException;
 import com.github.dandelion.core.asset.AssetType;
-import com.github.dandelion.core.utils.AssetUtils;
+import com.github.dandelion.core.storage.support.BundleDag;
+import com.github.dandelion.core.storage.support.TopologicalSorter;
 import com.github.dandelion.core.utils.BundleStorageLogBuilder;
+import com.github.dandelion.core.utils.PathUtils;
 import com.github.dandelion.core.utils.StringUtils;
 
 /**
  * <p>
- * Storage for all bundles, backed by a {@link BundleDag} instance, i.e. a Java
- * implementation of a Directed Acyclic Graph (DAG).
+ * Storage for all bundles, backed by a {@link BundleDag} instance.
  * </p>
+ * <p>
+ * This facade provides several utilities intented to
+ * </p>
+ * <ul>
+ * <li>check the consistency of {@link BundleStorageUnit}</li>
+ * <li>build and fill the {@link BundleDag}</li>
+ * <li>query the {@link BundleDag}</li>
+ * </ul>
  * 
  * @author Thibault Duchateau
  * @since 0.10.0
@@ -248,16 +257,33 @@ public class BundleStorage {
 		return retval;
 	}
 
+	/**
+	 * <p>
+	 * Performs several initializations on {@link BundleStorageUnit} in order
+	 * for them to be consistent before building the {@link BundleDag}.
+	 * </p>
+	 * 
+	 * @param loadedBundles
+	 * @param context
+	 */
 	public void finalizeBundleConfiguration(List<BundleStorageUnit> loadedBundles, Context context) {
 
 		logger.debug("Finishing bundles configuration...");
 
 		for (BundleStorageUnit bsu : loadedBundles) {
+
+			// The name of the bundle is extracted from its path if not
+			// specified
+			if (StringUtils.isBlank(bsu.getName())) {
+				bsu.setName(PathUtils.extractLowerCasedName(bsu.getRelativePath()));
+			}
+
 			if (bsu.getAssetStorageUnits() != null) {
+
 				for (AssetStorageUnit asu : bsu.getAssetStorageUnits()) {
 					String firstFoundLocation = asu.getLocations().values().iterator().next();
 					if (StringUtils.isBlank(asu.getName())) {
-						asu.setName(AssetUtils.extractLowerCasedName(firstFoundLocation));
+						asu.setName(PathUtils.extractLowerCasedName(firstFoundLocation));
 					}
 					if (asu.getType() == null) {
 						asu.setType(AssetType.typeOf(firstFoundLocation));

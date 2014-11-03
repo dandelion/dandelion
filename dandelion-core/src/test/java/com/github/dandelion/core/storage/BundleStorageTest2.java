@@ -1,7 +1,5 @@
 package com.github.dandelion.core.storage;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -11,6 +9,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.github.dandelion.core.asset.AssetType;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class BundleStorageTest2 {
 

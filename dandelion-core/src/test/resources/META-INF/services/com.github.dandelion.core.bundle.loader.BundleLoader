@@ -1,0 +1,3 @@
+com.github.dandelion.core.bundle.loader.impl.ModuleAssetJsonLoader
+com.github.dandelion.core.bundle.loader.impl.ModuleWithSubmoduleAssetJsonLoader
+com.github.dandelion.core.bundle.loader.impl.SubmoduleAssetJsonLoader

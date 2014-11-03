@@ -29,18 +29,20 @@
  */
 package com.github.dandelion.core.bundle.loader.impl;
 
-import java.util.Collections;
-import java.util.Set;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.github.dandelion.core.bundle.loader.spi.AbstractBundleLoader;
+import com.github.dandelion.core.bundle.loader.AbstractBundleLoader;
+import com.github.dandelion.core.storage.AssetStorageUnit;
+import com.github.dandelion.core.storage.BundleStorageUnit;
 
 /**
  * <p>
  * Bundle loader used to load bundles defined by users inside the
  * {@code dandelion/vendor} folder (and all subfolders) of the classpath.
+ * </p>
  * 
  * @author Thibault Duchateau
  * @since 0.10.0
@@ -48,37 +50,30 @@ import com.github.dandelion.core.bundle.loader.spi.AbstractBundleLoader;
 public class VendorBundleLoader extends AbstractBundleLoader {
 
 	private static final Logger LOG = LoggerFactory.getLogger(VendorBundleLoader.class);
+
 	public static final String SCANNING_PATH = "dandelion/vendor";
-	
-	/**
-	 * {@inheritDoc}
-	 */
+
 	@Override
 	public String getName() {
 		return "vendor";
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public String getPath() {
 		return SCANNING_PATH;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected Logger getLogger() {
 		return LOG;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
-	public Set<String> getExcludedPaths() {
-		return Collections.emptySet();
+	public void postProcessBundles(List<BundleStorageUnit> bundles) {
+		for (BundleStorageUnit bsu : bundles) {
+			for (AssetStorageUnit asu : bsu.getAssetStorageUnits()) {
+				asu.setVendor(true);
+			}
+		}
 	}
 }

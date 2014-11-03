@@ -53,9 +53,9 @@ import com.github.dandelion.core.asset.locator.spi.AssetLocator;
 import com.github.dandelion.core.asset.processor.AssetProcessorManager;
 import com.github.dandelion.core.asset.processor.spi.AssetProcessor;
 import com.github.dandelion.core.asset.versioning.AssetVersioningStrategy;
+import com.github.dandelion.core.bundle.loader.BundleLoader;
 import com.github.dandelion.core.bundle.loader.impl.DandelionBundleLoader;
 import com.github.dandelion.core.bundle.loader.impl.VendorBundleLoader;
-import com.github.dandelion.core.bundle.loader.spi.BundleLoader;
 import com.github.dandelion.core.config.Configuration;
 import com.github.dandelion.core.config.ConfigurationLoader;
 import com.github.dandelion.core.config.Profile;
@@ -395,6 +395,7 @@ public class Context {
 					loadedBundles);
 
 			bundleStorage.finalizeBundleConfiguration(loadedBundles, this);
+			
 			bundleStorage.storeBundles(loadedBundles);
 
 			// Second and last check: consistency

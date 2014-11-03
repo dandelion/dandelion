@@ -29,9 +29,6 @@
  */
 package com.github.dandelion.core.asset.generator.js.jquery;
 
-import static com.github.dandelion.core.asset.generator.js.jquery.JQueryContentPlaceholder.*;
-import static org.assertj.core.api.Assertions.assertThat;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.mock.web.MockFilterConfig;
@@ -39,6 +36,16 @@ import org.springframework.mock.web.MockHttpServletRequest;
 
 import com.github.dandelion.core.Context;
 import com.github.dandelion.core.web.WebConstants;
+
+import static com.github.dandelion.core.asset.generator.js.jquery.JQueryContentPlaceholder.AFTER_ALL;
+import static com.github.dandelion.core.asset.generator.js.jquery.JQueryContentPlaceholder.AFTER_END_DOCUMENT_READY;
+import static com.github.dandelion.core.asset.generator.js.jquery.JQueryContentPlaceholder.AFTER_START_DOCUMENT_READY;
+import static com.github.dandelion.core.asset.generator.js.jquery.JQueryContentPlaceholder.BEFORE_ALL;
+import static com.github.dandelion.core.asset.generator.js.jquery.JQueryContentPlaceholder.BEFORE_END_DOCUMENT_READY;
+import static com.github.dandelion.core.asset.generator.js.jquery.JQueryContentPlaceholder.BEFORE_START_DOCUMENT_READY;
+import static com.github.dandelion.core.asset.generator.js.jquery.JQueryContentPlaceholder.COMPONENT_CONFIGURATION;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class JQueryContentGeneratorTest {
 

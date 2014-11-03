@@ -35,19 +35,20 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.github.dandelion.core.bundle.loader.spi.AbstractBundleLoader;
-import com.github.dandelion.core.bundle.loader.spi.BundleLoader;
+import com.github.dandelion.core.bundle.loader.AbstractBundleLoader;
+import com.github.dandelion.core.bundle.loader.BundleLoader;
 import com.github.dandelion.core.storage.BundleStorageUnit;
 
 /**
  * <p>
  * Bundle loader used to load {@link BundleStorageUnit}s defined by users inside
  * the {@code dandelion} folder (and all subfolders) of the classpath.
- * 
+ * </p>
  * <p>
  * This loader is intended to load only "user bundles" and therefore all
  * scanning paths (handled by other loaders) are excluded from the resource
  * scanning.
+ * </p>
  * 
  * @author Romain Lespinasse
  * @author Thibault Duchateau
@@ -56,35 +57,24 @@ import com.github.dandelion.core.storage.BundleStorageUnit;
 public class DandelionBundleLoader extends AbstractBundleLoader {
 
 	private static final Logger LOG = LoggerFactory.getLogger(DandelionBundleLoader.class);
+
 	public static final String SCANNING_PATH = "dandelion";
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public String getName() {
 		return "dandelion";
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public String getPath() {
 		return SCANNING_PATH;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected Logger getLogger() {
 		return LOG;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public Set<String> getExcludedPaths() {
 		Set<String> excludedPaths = new HashSet<String>();

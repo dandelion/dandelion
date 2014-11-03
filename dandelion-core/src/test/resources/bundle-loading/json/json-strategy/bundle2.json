@@ -1,0 +1,10 @@
+{
+    "bundle": "bundle2",
+    "assets": [
+		{
+			"locations" : {
+				"cdn" : "//domain.com/js/asset2.js"
+			}
+		}    
+    ]
+}

@@ -1,7 +1,5 @@
 package com.github.dandelion.core.web;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 import java.util.Arrays;
 
 import org.junit.Before;
@@ -10,6 +8,8 @@ import org.springframework.mock.web.MockFilterConfig;
 import org.springframework.mock.web.MockHttpServletRequest;
 
 import com.github.dandelion.core.Context;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class AssetRequestContextTest {
 

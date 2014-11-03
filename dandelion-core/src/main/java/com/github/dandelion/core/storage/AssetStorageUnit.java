@@ -109,6 +109,7 @@ public class AssetStorageUnit {
 	private Map<String, String> attributes;
 
 	private String[] attributesOnlyName;
+	
 	private String cacheKey;
 
 	/**
@@ -244,7 +245,7 @@ public class AssetStorageUnit {
 	public boolean isNotVendor() {
 		return !isVendor();
 	}
-	
+
 	public void setVendor(boolean vendor) {
 		this.vendor = vendor;
 	}

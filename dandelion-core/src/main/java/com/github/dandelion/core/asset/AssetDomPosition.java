@@ -30,23 +30,24 @@
 
 package com.github.dandelion.core.asset;
 
+
 /**
  * <p>
  * Possible DOM positions of an asset.
+ * </p>
  * 
  * @author Romain Lespinasse
  * @since 0.2.0
  */
 public enum AssetDomPosition {
 
-	
 	/**
-	 * Typically used for stylesheets.
+	 * Default location for stylesheets.
 	 */
 	head,
 
 	/**
-	 * Typically used for scripts.
+	 * Default location for scripts.
 	 */
 	body;
 }

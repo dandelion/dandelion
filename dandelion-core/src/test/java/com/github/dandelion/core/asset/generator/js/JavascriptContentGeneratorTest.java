@@ -29,12 +29,12 @@
  */
 package com.github.dandelion.core.asset.generator.js;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 import org.junit.Before;
 import org.junit.Test;
 
 import com.github.dandelion.core.asset.generator.AssetContent;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class JavascriptContentGeneratorTest {
 

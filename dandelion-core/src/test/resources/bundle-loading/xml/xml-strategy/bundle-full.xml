@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<bundle xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://dandelion.github.io/schema/bundle"
+  xsi:schemaLocation="http://dandelion.github.io/schema/bundle dandelion-bundle.xsd">
+  <name>bundle-full</name>
+  <dependencies>
+    <dependency>other-bundle</dependency>
+  </dependencies>
+  <asset name="asset1" version="1.0.0" type="js">
+    <locations>
+      <location key="cdn">//domain.com/js/asset1.js</location>
+      <location key="webapp">/asset/js/asset1.js</location>
+    </locations>
+  </asset>
+  <bla></bla>
+  <asset name="asset2" version="2.0.0" type="js">
+    <locations>
+      <location key="cdn">//domain.com/js/asset2.js</location>
+      <location key="webapp">/asset/js/asset2.js</location>
+    </locations>
+  </asset>
+</bundle>

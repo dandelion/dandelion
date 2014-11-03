@@ -27,7 +27,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.github.dandelion.core.storage;
+package com.github.dandelion.core.storage.support;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -36,18 +36,20 @@ import java.util.Map;
 import java.util.Set;
 
 import com.github.dandelion.core.DandelionException;
+import com.github.dandelion.core.storage.BundleStorageUnit;
 
 /**
  * <p>
  * Implementation of a directed acyclic graph adapted to Dandelion.
- * 
+ * </p>
  * <p>
- * In this graph, all verticies are {@link Bundle}.
- * 
+ * In this graph, all verticies are {@link BundleStorageUnit}.
+ * </p>
  * <p>
  * Part of this code has been kindly borrowed and adapted from Michal Maczka,
  * who contributed a DAG implementation to <a
  * href="http://plexus.codehaus.org/plexus-utils">Plexus Utils</a>.
+ * </p>
  * 
  * @author Thibault Duchateau
  * @since 0.10.0

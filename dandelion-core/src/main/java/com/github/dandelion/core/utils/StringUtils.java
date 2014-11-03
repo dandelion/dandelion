@@ -37,11 +37,12 @@ import java.util.Properties;
 /**
  * <p>
  * Collection of utilities to ease working with {@link String}.
+ * </p>
  * 
  * @author Thibault Duchateau
  * @author Romain Lespinasse
  */
-public class StringUtils {
+public final class StringUtils {
 
 	private static final String[] ESCAPES;
 

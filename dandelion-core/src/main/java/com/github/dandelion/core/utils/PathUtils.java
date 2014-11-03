@@ -36,6 +36,9 @@ import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.github.dandelion.core.asset.Asset;
+import com.github.dandelion.core.storage.BundleStorage;
+
 /**
  * <p>
  * Collection of utilities to ease working with relative paths.
@@ -312,6 +315,43 @@ public final class PathUtils {
 
         return filePath;
     }
+	
+    /**
+	 * <p>
+	 * Extract the a lower-cased {@link Asset} name using its configured
+	 * location.
+	 * </p>
+	 * 
+	 * <pre>
+	 * AssetUtils.extractName("/assets/js/jquery.js")  = "jquery"
+	 * AssetUtils.extractName("JQUERY.js")             = "jquery"
+	 * AssetUtils.extractName("jQuery")                = "jquery"
+	 * </pre>
+	 * 
+	 * @param location
+	 *            The location of the asset.
+	 * @return the asset name to be used in the {@link BundleStorage}.
+	 */
+	public static String extractLowerCasedName(String location) {
+
+		String assetName = null;
+		String tmpAssetName;
+
+		if (location != null && location.contains("/")) {
+			// Get last token, this after the last "/"
+			tmpAssetName = location.substring(location.lastIndexOf('/') + 1, location.length());
+		}
+		else {
+			tmpAssetName = location;
+		}
+
+		// Remove the extension
+		if (tmpAssetName.contains(".")) {
+			assetName = tmpAssetName.substring(0, tmpAssetName.lastIndexOf('.'));
+		}
+
+		return assetName;
+	}
 	
 	/**
 	 * Internal method to perform the normalization.

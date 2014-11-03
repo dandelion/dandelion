@@ -28,17 +28,16 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package com.github.dandelion.core.bundle.loader;
+package com.github.dandelion.core.bundle.loader.impl;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.github.dandelion.core.bundle.loader.spi.AbstractBundleLoader;
+import com.github.dandelion.core.bundle.loader.AbstractBundleLoader;
 
-public class ModuleAssetJsonLoader extends AbstractBundleLoader {
-	
-	// Logger
-	private static final Logger LOG = LoggerFactory.getLogger(ModuleAssetJsonLoader.class);
+public class SubmoduleAssetJsonLoader extends AbstractBundleLoader {
+
+	private static final Logger LOG = LoggerFactory.getLogger(SubmoduleAssetJsonLoader.class);
 
 	@Override
 	protected Logger getLogger() {
@@ -47,11 +46,11 @@ public class ModuleAssetJsonLoader extends AbstractBundleLoader {
 
 	@Override
 	public String getPath() {
-		return "module";
+		return "module_with_submodule/submodule";
 	}
 
 	@Override
 	public String getName() {
-		return "module";
+		return "submodule2";
 	}
 }

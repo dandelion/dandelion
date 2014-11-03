@@ -1,4 +1,4 @@
-package com.github.dandelion.core.storage;
+package com.github.dandelion.core.storage.support;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -9,6 +9,8 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
 import com.github.dandelion.core.DandelionException;
+import com.github.dandelion.core.storage.BundleStorage;
+import com.github.dandelion.core.storage.BundleStorageUnit;
 
 public class CycleDetectorTest {
 

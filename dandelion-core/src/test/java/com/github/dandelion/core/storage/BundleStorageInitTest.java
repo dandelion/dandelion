@@ -29,8 +29,6 @@
  */
 package com.github.dandelion.core.storage;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -48,6 +46,8 @@ import org.springframework.mock.web.MockFilterConfig;
 
 import com.github.dandelion.core.Context;
 import com.github.dandelion.core.config.StandardConfigurationLoader;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class BundleStorageInitTest {
 	

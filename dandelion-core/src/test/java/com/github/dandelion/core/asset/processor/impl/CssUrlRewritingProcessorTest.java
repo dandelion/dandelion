@@ -29,8 +29,6 @@
  */
 package com.github.dandelion.core.asset.processor.impl;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.Writer;
@@ -39,6 +37,8 @@ import org.junit.Test;
 
 import com.github.dandelion.core.asset.processor.spi.AssetProcessor;
 import com.github.dandelion.core.utils.ResourceUtils;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class CssUrlRewritingProcessorTest extends AbstractProcessorTest {
 

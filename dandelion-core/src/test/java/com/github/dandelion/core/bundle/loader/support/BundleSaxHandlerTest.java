@@ -27,31 +27,45 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+package com.github.dandelion.core.bundle.loader.support;
 
-package com.github.dandelion.core.bundle.loader;
+import java.io.InputStream;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
 
-import com.github.dandelion.core.bundle.loader.spi.AbstractBundleLoader;
+import org.junit.Test;
 
-public class SubmoduleAssetJsonLoader extends AbstractBundleLoader {
-	
-	// Logger
-	private static final Logger LOG = LoggerFactory.getLogger(SubmoduleAssetJsonLoader.class);
+import com.github.dandelion.core.asset.AssetType;
+import com.github.dandelion.core.storage.BundleStorageUnit;
 
-	@Override
-	protected Logger getLogger() {
-		return LOG;
-	}
+import static org.assertj.core.api.Assertions.assertThat;
 
-	@Override
-	public String getPath() {
-		return "module_with_submodule/submodule";
-	}
+public class BundleSaxHandlerTest {
 
-	@Override
-	public String getName() {
-		return "submodule2";
+	private BundleSaxHandler bsp;
+
+	@Test
+	public void should_parse_all_possible_elements_and_attributes() throws Exception {
+
+		SAXParserFactory saxParserFactory = SAXParserFactory.newInstance();
+
+		SAXParser saxParser = saxParserFactory.newSAXParser();
+		bsp = new BundleSaxHandler();
+		InputStream is = Thread.currentThread().getContextClassLoader()
+				.getResourceAsStream("bundle-loading/xml/xml-strategy/bundle-full.xml");
+		saxParser.parse(is, bsp);
+
+		BundleStorageUnit bsu = bsp.getBsu();
+
+		assertThat(bsu.getName()).isEqualTo("bundle-full");
+		assertThat(bsu.getDependencies()).hasSize(1);
+		assertThat(bsu.getDependencies()).contains("other-bundle");
+		assertThat(bsu.getAssetStorageUnits()).hasSize(2);
+
+		assertThat(bsu.getAssetStorageUnits()).extracting("name").contains("asset1", "asset2");
+		assertThat(bsu.getAssetStorageUnits()).extracting("version").contains("1.0.0", "2.0.0");
+		 assertThat(bsu.getAssetStorageUnits()).extracting("type").contains(AssetType.js);
+		assertThat(bsu.getAssetStorageUnits()).extracting("locations").hasSize(2);
 	}
 }

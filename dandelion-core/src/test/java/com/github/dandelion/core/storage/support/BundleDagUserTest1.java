@@ -1,6 +1,4 @@
-package com.github.dandelion.core.storage;
-
-import static org.assertj.core.api.Assertions.assertThat;
+package com.github.dandelion.core.storage.support;
 
 import java.util.Arrays;
 import java.util.LinkedHashSet;
@@ -12,6 +10,11 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.github.dandelion.core.asset.AssetType;
+import com.github.dandelion.core.storage.AssetStorageUnit;
+import com.github.dandelion.core.storage.BundleStorage;
+import com.github.dandelion.core.storage.BundleStorageUnit;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class BundleDagUserTest1 {
 

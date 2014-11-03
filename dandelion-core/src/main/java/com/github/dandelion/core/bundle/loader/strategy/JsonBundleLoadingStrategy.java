@@ -27,86 +27,75 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.github.dandelion.core.bundle.loader.spi;
+package com.github.dandelion.core.bundle.loader.strategy;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.dandelion.core.Context;
 import com.github.dandelion.core.DandelionException;
-import com.github.dandelion.core.storage.AssetStorageUnit;
 import com.github.dandelion.core.storage.BundleStorageUnit;
 import com.github.dandelion.core.utils.BundleStorageLogBuilder;
-import com.github.dandelion.core.utils.StringBuilderUtils;
 import com.github.dandelion.core.utils.scanner.ResourceScanner;
 
 /**
  * <p>
- * Abstract bundle loader in charge of loading JSON definitions of bundle.
  * 
- * <p>
- * The JSON definitions are scanned in the folder specified by the
- * {@link #getPath()} method.
+ * </p>
  * 
- * <p>
- * The lookup is recursive depending on the {@link #isRecursive()} return value.
- * 
- * @author Romain Lespinasse
  * @author Thibault Duchateau
- * @since 0.10.0
+ * @since 0.11.0
  */
-public abstract class AbstractBundleLoader implements BundleLoader {
+public class JsonBundleLoadingStrategy implements LoadingStrategy {
 
-	private ObjectMapper mapper = new ObjectMapper();
-	
-	protected Context context;
+	private static final Logger LOG = LoggerFactory.getLogger(JsonBundleLoadingStrategy.class);
 
-	@Override
-	public void initLoader(Context context) {
-		this.context = context;
-	}
+	private static ObjectMapper mapper;
 
-	public List<BundleStorageUnit> loadBundles() {
-
+	static {
+		mapper = new ObjectMapper();
 		mapper.configure(JsonParser.Feature.ALLOW_COMMENTS, true);
 		mapper.configure(JsonParser.Feature.ALLOW_SINGLE_QUOTES, true);
 		mapper.configure(JsonParser.Feature.ALLOW_BACKSLASH_ESCAPING_ANY_CHARACTER, true);
+	}
 
-		List<BundleStorageUnit> bundles = new ArrayList<BundleStorageUnit>();
+	@Override
+	public Set<String> getResourcePaths(String bundleLocation, Set<String> excludedPaths) {
 
 		Set<String> resourcePaths = null;
+
 		try {
-			resourcePaths = ResourceScanner.findResourcePaths(getBundleLocation(), getExcludedPaths(), null, ".json");
+			resourcePaths = ResourceScanner.findResourcePaths(bundleLocation, excludedPaths, null, ".json");
 		}
 		catch (IOException e) {
-			throw new DandelionException("Something went wrong when scanning files in " + getBundleLocation(), e);
+			throw new DandelionException("Something went wrong when scanning files in " + bundleLocation, e);
 		}
 
-		getLogger().debug("{} resources scanned inside the folder '{}'. Parsing to bundle...", resourcePaths.size(),
-				getBundleLocation());
+		return resourcePaths;
+	}
+
+	@Override
+	public List<BundleStorageUnit> mapToBundles(Set<String> resourcePaths) {
+
+		List<BundleStorageUnit> bundles = new ArrayList<BundleStorageUnit>();
 
 		ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
 
 		BundleStorageLogBuilder bslb = new BundleStorageLogBuilder();
 
 		for (String resourcePath : resourcePaths) {
+
 			try {
 				InputStream configFileStream = classLoader.getResourceAsStream(resourcePath);
 				BundleStorageUnit bsu = mapper.readValue(configFileStream, BundleStorageUnit.class);
-				for(AssetStorageUnit asu : bsu.getAssetStorageUnits()){
-					if(this.getClass().getSimpleName().equals("VendorBundleLoader")){
-						asu.setVendor(true);
-					}
-				}
-				getLogger().debug("Parsed {}", bsu);
+				LOG.debug("Parsed {}", bsu);
 				bundles.add(bsu);
 			}
 			catch (IOException e) {
@@ -122,31 +111,5 @@ public abstract class AbstractBundleLoader implements BundleLoader {
 		}
 
 		return bundles;
-	}
-
-	protected abstract Logger getLogger();
-
-	/**
-	 * @return the path in which the loader will scan for JSON files.
-	 */
-	public abstract String getPath();
-
-	/**
-	 * @return a set of paths to exclude during the resource scanning.
-	 */
-	public Set<String> getExcludedPaths() {
-		return Collections.emptySet();
-	}
-
-	private String getBundleLocation() {
-
-		StringBuilder bundleBaseLocation = new StringBuilder(context.getConfiguration().getBundleLocation());
-		if (StringBuilderUtils.isNotBlank(bundleBaseLocation)) {
-			bundleBaseLocation.append("/");
-		}
-
-		bundleBaseLocation.append(getPath());
-
-		return bundleBaseLocation.toString();
 	}
 }

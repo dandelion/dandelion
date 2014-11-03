@@ -40,7 +40,6 @@ import com.github.dandelion.core.Context;
 import com.github.dandelion.core.asset.generator.AbstractAssetPlaceholderContent;
 import com.github.dandelion.core.asset.generator.AbstractAssetPlaceholderContentGenerator;
 import com.github.dandelion.core.asset.generator.AssetPlaceholder;
-import com.github.dandelion.core.asset.generator.js.jquery.JQueryContent;
 import com.github.dandelion.core.scripting.ScriptingUtils;
 import com.github.dandelion.core.web.WebConstants;
 

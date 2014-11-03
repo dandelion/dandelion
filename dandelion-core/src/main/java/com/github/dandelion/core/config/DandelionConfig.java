@@ -52,7 +52,7 @@ public enum DandelionConfig {
 	ASSET_CSS_EXCLUDES("asset.css.excludes", "", ""),
 	
 	// Asset versioning
-	ASSET_VERSIONING("asset.versioning", "false", "true"),
+	ASSET_VERSIONING("asset.versioning", "true", "true"),
 	ASSET_VERSIONING_STRATEGY("asset.versioning.strategy", "content", "content"),
 	ASSET_FIXED_VERSION_TYPE("asset.fixed.version.type", "", ""),
 	ASSET_FIXED_VERSION_VALUE("asset.fixed.version.value", "", ""),

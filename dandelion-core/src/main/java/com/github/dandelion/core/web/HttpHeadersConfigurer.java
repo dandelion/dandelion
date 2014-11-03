@@ -51,7 +51,8 @@ public class HttpHeadersConfigurer {
 	public static final long ONE_YEAR_IN_MILLISECONDS = 365 * 24 * 60 * 60 * 1000L;
 	public static final String DEFAULT_CACHE_CONTROL = "public, max-age=315360000";
 	private static final SimpleDateFormat DATE_FORMAT;
-	private Context context;
+	
+	private final Context context;
 
 	static {
 		DATE_FORMAT = new SimpleDateFormat("E, dd MMM yyyy HH:mm:ss z", Locale.US);

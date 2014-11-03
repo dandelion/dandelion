@@ -48,7 +48,7 @@ import com.github.dandelion.core.utils.scanner.websphere.WebSphereUrlResolver;
 
 /**
  * <p>
- * Utility class used for searching for resources in the classpath.
+ * Utility class used as a facade for searching for resources in the classpath.
  * </p>
  * 
  * @author Thibault Duchateau

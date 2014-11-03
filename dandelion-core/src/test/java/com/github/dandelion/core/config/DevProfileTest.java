@@ -29,8 +29,6 @@
  */
 package com.github.dandelion.core.config;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 import java.util.Properties;
 
 import org.junit.After;
@@ -38,6 +36,8 @@ import org.junit.Test;
 import org.springframework.mock.web.MockFilterConfig;
 
 import com.github.dandelion.core.utils.PropertiesUtils;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class DevProfileTest {
 

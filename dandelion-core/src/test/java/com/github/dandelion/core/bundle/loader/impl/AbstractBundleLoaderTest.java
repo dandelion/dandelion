@@ -1,4 +1,4 @@
-package com.github.dandelion.core.bundle.loader;
+package com.github.dandelion.core.bundle.loader.impl;
 
 import java.io.File;
 

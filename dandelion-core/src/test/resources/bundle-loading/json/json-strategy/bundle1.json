@@ -1,0 +1,9 @@
+{
+    "assets": [
+		{
+			"locations" : {
+				"cdn" : "//domain.com/js/asset1.js"
+			}
+		}    
+    ]
+}

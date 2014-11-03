@@ -45,6 +45,7 @@ import com.github.dandelion.core.asset.locator.spi.AssetLocator;
 import com.github.dandelion.core.asset.versioning.AssetVersioningStrategy;
 import com.github.dandelion.core.storage.AssetStorageUnit;
 import com.github.dandelion.core.utils.AssetUtils;
+import com.github.dandelion.core.utils.PathUtils;
 
 /**
  * <p>
@@ -186,7 +187,7 @@ public class AssetMapper {
 			}
 		}
 
-		asset.setName(AssetUtils.extractLowerCasedName(location));
+		asset.setName(PathUtils.extractLowerCasedName(location));
 		asset.setType(AssetType.typeOf(location));
 		asset.setConfigLocationKey(locationKey);
 		asset.setConfigLocation(asu.getLocations().get(locationKey));

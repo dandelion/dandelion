@@ -40,7 +40,6 @@ import javax.servlet.http.HttpServletRequest;
 import com.github.dandelion.core.asset.Asset;
 import com.github.dandelion.core.asset.AssetDomPosition;
 import com.github.dandelion.core.asset.AssetType;
-import com.github.dandelion.core.storage.BundleStorage;
 import com.github.dandelion.core.web.DandelionServlet;
 
 /**
@@ -162,43 +161,6 @@ public final class AssetUtils {
 		filteredAsus.addAll(filteredJsAsus);
 
 		return filteredAsus;
-	}
-
-	/**
-	 * <p>
-	 * Extract the a lower-cased {@link Asset} name using its configured
-	 * location.
-	 * </p>
-	 * 
-	 * <pre>
-	 * AssetUtils.extractName("/assets/js/jquery.js")  = "jquery"
-	 * AssetUtils.extractName("JQUERY.js")             = "jquery"
-	 * AssetUtils.extractName("jQuery")                = "jquery"
-	 * </pre>
-	 * 
-	 * @param location
-	 *            The location of the asset.
-	 * @return the asset name to be used in the {@link BundleStorage}.
-	 */
-	public static String extractLowerCasedName(String location) {
-
-		String assetName = null;
-		String tmpAssetName;
-
-		if (location != null && location.contains("/")) {
-			// Get last token, this after the last "/"
-			tmpAssetName = location.substring(location.lastIndexOf('/') + 1, location.length());
-		}
-		else {
-			tmpAssetName = location;
-		}
-
-		// Remove the extension
-		if (tmpAssetName.contains(".")) {
-			assetName = tmpAssetName.substring(0, tmpAssetName.lastIndexOf('.'));
-		}
-
-		return assetName;
 	}
 
 	public static String getAssetFinalLocation(HttpServletRequest request, Asset asset, String suffix) {

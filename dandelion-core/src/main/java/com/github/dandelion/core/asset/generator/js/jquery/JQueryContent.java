@@ -29,11 +29,17 @@
  */
 package com.github.dandelion.core.asset.generator.js.jquery;
 
-import static com.github.dandelion.core.asset.generator.js.jquery.JQueryContentPlaceholder.*;
-
 import java.util.Map;
 
 import com.github.dandelion.core.asset.generator.AbstractAssetPlaceholderContent;
+
+import static com.github.dandelion.core.asset.generator.js.jquery.JQueryContentPlaceholder.AFTER_ALL;
+import static com.github.dandelion.core.asset.generator.js.jquery.JQueryContentPlaceholder.AFTER_END_DOCUMENT_READY;
+import static com.github.dandelion.core.asset.generator.js.jquery.JQueryContentPlaceholder.AFTER_START_DOCUMENT_READY;
+import static com.github.dandelion.core.asset.generator.js.jquery.JQueryContentPlaceholder.BEFORE_ALL;
+import static com.github.dandelion.core.asset.generator.js.jquery.JQueryContentPlaceholder.BEFORE_END_DOCUMENT_READY;
+import static com.github.dandelion.core.asset.generator.js.jquery.JQueryContentPlaceholder.BEFORE_START_DOCUMENT_READY;
+import static com.github.dandelion.core.asset.generator.js.jquery.JQueryContentPlaceholder.COMPONENT_CONFIGURATION;
 
 /**
  * <p>

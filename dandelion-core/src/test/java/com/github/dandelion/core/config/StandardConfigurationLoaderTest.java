@@ -29,8 +29,6 @@
  */
 package com.github.dandelion.core.config;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 import java.io.File;
 import java.util.Properties;
 
@@ -42,6 +40,8 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
 import com.github.dandelion.core.DandelionException;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class StandardConfigurationLoaderTest {
 

@@ -40,6 +40,8 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.github.dandelion.core.asset.AssetType;
+import com.github.dandelion.core.storage.support.BundleDag;
+import com.github.dandelion.core.utils.StringUtils;
 
 /**
  * <p>
@@ -53,15 +55,20 @@ import com.github.dandelion.core.asset.AssetType;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class BundleStorageUnit {
 
-	// JSON attributes
+	// Exposed attributes
 	private String name;
+
 	private List<String> dependencies;
+
 	private Set<AssetStorageUnit> assetStorageUnits = new LinkedHashSet<AssetStorageUnit>();
 
 	// Internal attributes
 	private List<BundleStorageUnit> children = new LinkedList<BundleStorageUnit>();
+	
 	private List<BundleStorageUnit> parents = new LinkedList<BundleStorageUnit>();
 
+	private String relativePath;
+	
 	public BundleStorageUnit() {
 	}
 
@@ -108,7 +115,9 @@ public class BundleStorageUnit {
 		Set<String> asus = new HashSet<String>();
 		if (assetStorageUnits != null) {
 			for (AssetStorageUnit asu : assetStorageUnits) {
-				asus.add(asu.getName().toLowerCase());
+				if (StringUtils.isNotBlank(asu.getName())) {
+					asus.add(asu.getName().toLowerCase());
+				}
 			}
 		}
 		return asus;
@@ -182,6 +191,15 @@ public class BundleStorageUnit {
 			retValue.add(vertex.getName());
 		}
 		return retValue;
+	}
+
+	
+	public String getRelativePath() {
+		return relativePath;
+	}
+
+	public void setRelativePath(String bundleRelativePath) {
+		this.relativePath = bundleRelativePath;
 	}
 
 	public boolean isLeaf() {

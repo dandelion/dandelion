@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<bundle xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://dandelion.github.io/schema/bundle"
+  xsi:schemaLocation="http://dandelion.github.io/schema/bundle dandelion-bundle.xsd">
+  <name>bundle2</name>
+  <asset name="asset2_1">
+    <locations>
+      <location key="cdn">//domain.com/js/asset2_1.js</location>
+    </locations>
+  </asset>
+</bundle>

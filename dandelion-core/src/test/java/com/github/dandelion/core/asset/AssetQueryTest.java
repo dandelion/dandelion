@@ -29,8 +29,6 @@
  */
 package com.github.dandelion.core.asset;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 import java.io.File;
 import java.util.Set;
 
@@ -44,6 +42,8 @@ import com.github.dandelion.core.Context;
 import com.github.dandelion.core.config.StandardConfigurationLoader;
 import com.github.dandelion.core.web.AssetRequestContext;
 import com.github.dandelion.core.web.WebConstants;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class AssetQueryTest {
 

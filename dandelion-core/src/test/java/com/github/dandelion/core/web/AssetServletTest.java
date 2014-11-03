@@ -1,7 +1,5 @@
 package com.github.dandelion.core.web;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 import java.io.IOException;
 
 import javax.servlet.ServletException;
@@ -16,6 +14,8 @@ import com.github.dandelion.core.Context;
 import com.github.dandelion.core.asset.Asset;
 import com.github.dandelion.core.asset.AssetType;
 import com.github.dandelion.core.utils.AssetUtils;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class AssetServletTest {
 

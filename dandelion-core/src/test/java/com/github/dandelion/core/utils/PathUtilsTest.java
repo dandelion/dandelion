@@ -1,8 +1,8 @@
 package com.github.dandelion.core.utils;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 import org.junit.Test;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class PathUtilsTest {
 
@@ -71,5 +71,18 @@ public class PathUtilsTest {
 		assertThat(PathUtils.concatWebPath("/css/folder/", "../../images/img.png")).isEqualTo("/images/img.png");
 		assertThat(PathUtils.concatWebPath("/css/folder/style.css", "../images/img.png")).isEqualTo(
 				"/css/images/img.png");
+	}
+	
+	@Test
+	public void should_extract_the_asset_name(){
+		
+		String location = "/assets/js/jquery.js";
+		assertThat(PathUtils.extractLowerCasedName(location)).isEqualTo("jquery");
+		
+		location = "jquery.js";
+		assertThat(PathUtils.extractLowerCasedName(location)).isEqualTo("jquery");
+
+		location = "jquery.js";
+		assertThat(PathUtils.extractLowerCasedName(location)).isEqualTo("jquery");
 	}
 }
