@@ -136,7 +136,7 @@ public class FixedAssetVersioningStrategyTest {
 	public void should_throw_an_exception_if_a_wrong_date_format_is_used() {
 
 		String desiredDate = "2015";
-		String desiredDateFormat = "Y";
+		String desiredDateFormat = "wrong-format";
 
 		expectedEx.expect(DandelionException.class);
 		expectedEx.expectMessage("Wrong date pattern configured : " + desiredDateFormat);

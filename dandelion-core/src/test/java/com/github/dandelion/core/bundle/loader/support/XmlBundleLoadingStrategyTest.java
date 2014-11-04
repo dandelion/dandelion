@@ -87,8 +87,9 @@ public class XmlBundleLoadingStrategyTest {
 	public void should_throw_an_exception_when_the_bundle_is_badly_formatted() {
 
 		expectedEx.expect(DandelionException.class);
-		expectedEx.expectMessage(CoreMatchers
-				.containsString("Invalid content was found starting with element 'unknown'."));
+		expectedEx.expectMessage(CoreMatchers.containsString("cvc-complex-type.2.4.a"));
+		expectedEx.expectMessage(CoreMatchers.containsString("unknown"));
+
 		loadingStrategy.mapToBundles(new HashSet<String>(Arrays
 				.asList("bundle-loading/xml/xml-strategy/wrong-bundle.xml")));
 	}
