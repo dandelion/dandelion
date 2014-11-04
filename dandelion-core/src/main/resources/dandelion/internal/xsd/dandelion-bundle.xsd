@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-
 <xs:schema xmlns="http://dandelion.github.io/schema/bundle" xmlns:xs="http://www.w3.org/2001/XMLSchema"
   xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="http://dandelion.github.io/schema/bundle"
   elementFormDefault="qualified" attributeFormDefault="unqualified">
@@ -15,9 +14,6 @@
       </xsd:documentation>
     </xsd:annotation>
   </xs:element>
-
-  <!-- <xs:element name="locations" type="locationsType" /> -->
-
 
   <xs:complexType name="bundleStorageUnitType">
     <xs:sequence>

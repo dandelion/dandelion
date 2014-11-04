@@ -48,24 +48,24 @@ public class WebjarServlet2LocatorTest {
 	private WebjarServlet2Locator locator = new WebjarServlet2Locator();
 	private Context context;
 	private MockHttpServletRequest request;
-	
+
 	@Before
-	public void setup(){
+	public void setup() {
 		context = new Context(new MockFilterConfig());
 		locator.initLocator(context);
 		request = new MockHttpServletRequest();
 		request.setAttribute(WebConstants.DANDELION_CONTEXT_ATTRIBUTE, context);
 	}
-	
+
 	@Test
-	public void should_return_the_internal_url(){
+	public void should_return_the_internal_url() {
 		AssetStorageUnit asu = new AssetStorageUnit("jquery-js", singletonMap("webjar", "jquery.js"));
 		String location = locator.getLocation(asu, request);
 		assertThat(location).isEqualTo("META-INF/resources/webjars/jquery/1.11.0/jquery.js");
 	}
-	
+
 	@Test
-	public void should_return_the_content() throws MalformedURLException{
+	public void should_return_the_content() throws MalformedURLException {
 		AssetStorageUnit asu = new AssetStorageUnit("jquery-js", singletonMap("webjar", "jquery.js"));
 		String content = locator.getContent(asu, request);
 		assertThat(content).contains("jQuery JavaScript Library v1.11.0");

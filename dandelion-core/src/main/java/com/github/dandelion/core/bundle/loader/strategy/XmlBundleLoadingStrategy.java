@@ -61,7 +61,7 @@ public class XmlBundleLoadingStrategy implements LoadingStrategy {
 
 	private static final Logger LOG = LoggerFactory.getLogger(XmlBundleLoadingStrategy.class);
 
-	private static final String XSD_LOCATION = "META-INF/com/github/dandelion/dandelion-bundle.xsd";
+	private static final String XSD_LOCATION = "dandelion/internal/xsd/dandelion-bundle.xsd";
 	private static SAXParserFactory saxParserFactory;
 	private static SAXParser saxParser;
 
