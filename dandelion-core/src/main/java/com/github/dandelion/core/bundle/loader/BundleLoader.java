@@ -37,6 +37,7 @@ import com.github.dandelion.core.storage.BundleStorageUnit;
 /**
  * <p>
  * SPI for all bundle loaders.
+ * </p>
  * 
  * @author Romain Lespinasse
  * @author Thibault Duchateau
@@ -45,25 +46,38 @@ import com.github.dandelion.core.storage.BundleStorageUnit;
 public interface BundleLoader {
 
 	/**
-	 * TODO
+	 * <p>
+	 * Initializes the loader by injecting the Dandelion {@link Context}.
+	 * </p>
+	 * 
 	 * @param context
+	 *            The Dandelion context.
 	 */
 	void initLoader(Context context);
-	
+
 	/**
 	 * @return the name of the loader, mainly used for logging.
 	 */
 	String getName();
 
 	/**
+	 * <p>
 	 * Load bundles by scanning the classpath starting from the configured
 	 * folder.
+	 * </p>
 	 * 
 	 * @return a list of {@link BundleStorageUnit} deserialized from the JSON
 	 *         files.
 	 */
 	List<BundleStorageUnit> loadBundles();
 
-	
+	/**
+	 * <p>
+	 * Allows to post-process the bundles once they have been loaded and parsed.
+	 * </p>
+	 * 
+	 * @param bundles
+	 *            The loaded and parsed bundles.
+	 */
 	void postProcessBundles(List<BundleStorageUnit> bundles);
 }

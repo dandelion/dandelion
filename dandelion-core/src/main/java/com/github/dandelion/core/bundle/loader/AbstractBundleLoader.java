@@ -70,24 +70,30 @@ public abstract class AbstractBundleLoader implements BundleLoader {
 
 		List<BundleStorageUnit> bundles = new ArrayList<BundleStorageUnit>();
 		LoadingStrategy jsonLoadingStrategy = new JsonBundleLoadingStrategy();
-		LoadingStrategy xmlLoadingStrategy = new XmlBundleLoadingStrategy();
 
-		getLogger().debug("Scanning \"{}\" for bundles formatted in json...", getBundleLocation());
+		getLogger().debug("Scanning \"{}\" for JSON-formatted bundles...", getBundleLocation());
 		Set<String> resourcePaths = jsonLoadingStrategy.getResourcePaths(getBundleLocation(), getExcludedPaths());
+
 		if (!resourcePaths.isEmpty()) {
 			bundles.addAll(jsonLoadingStrategy.mapToBundles(resourcePaths));
 		}
-
-		getLogger().debug("Scanning \"{}\" for bundles formatted in xml...", getBundleLocation());
-		resourcePaths = xmlLoadingStrategy.getResourcePaths(getBundleLocation(), getExcludedPaths());
-		if (!resourcePaths.isEmpty()) {
-			bundles.addAll(xmlLoadingStrategy.mapToBundles(resourcePaths));
+		else {
+			getLogger().debug("No JSON-formatted bundle found in \"{}\". Trying with XML-formatted ones...",
+					getBundleLocation());
+			LoadingStrategy xmlLoadingStrategy = new XmlBundleLoadingStrategy();
+			resourcePaths = xmlLoadingStrategy.getResourcePaths(getBundleLocation(), getExcludedPaths());
+			if (!resourcePaths.isEmpty()) {
+				bundles.addAll(xmlLoadingStrategy.mapToBundles(resourcePaths));
+			}
+			else {
+				getLogger().debug("No XML-formatted bundle found in \"{}\"");
+			}
 		}
 
 		if (resourcePaths.isEmpty()) {
 			getLogger().debug("No bundle found in {}", getBundleLocation());
 		}
-		
+
 		getLogger().debug("Post processing bundles...");
 		postProcessBundles(bundles);
 
@@ -127,5 +133,6 @@ public abstract class AbstractBundleLoader implements BundleLoader {
 	@Override
 	public void postProcessBundles(List<BundleStorageUnit> bundles) {
 		// Does nothing by default
+		getLogger().debug("No post processing configured");
 	}
 }

@@ -70,10 +70,12 @@ public class VendorBundleLoader extends AbstractBundleLoader {
 
 	@Override
 	public void postProcessBundles(List<BundleStorageUnit> bundles) {
+		LOG.debug("Marking all asset as vendor");
 		for (BundleStorageUnit bsu : bundles) {
 			for (AssetStorageUnit asu : bsu.getAssetStorageUnits()) {
 				asu.setVendor(true);
 			}
 		}
+		LOG.debug("Post processing finished");
 	}
 }

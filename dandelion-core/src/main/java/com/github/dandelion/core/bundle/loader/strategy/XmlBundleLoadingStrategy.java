@@ -29,11 +29,8 @@
  */
 package com.github.dandelion.core.bundle.loader.strategy;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URISyntaxException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -80,19 +77,14 @@ public class XmlBundleLoadingStrategy implements LoadingStrategy {
 			saxParserFactory.setNamespaceAware(true);
 
 			saxParser = saxParserFactory.newSAXParser();
-
-			URL url = classLoader.getResource(XSD_LOCATION);
 			saxParser.setProperty(BundleSaxHandler.JAXP_SCHEMA_LANGUAGE, BundleSaxHandler.W3C_XML_SCHEMA);
-			saxParser.setProperty(BundleSaxHandler.JAXP_SCHEMA_SOURCE, new File(url.toURI()));
+			saxParser.setProperty(BundleSaxHandler.JAXP_SCHEMA_SOURCE, classLoader.getResourceAsStream(XSD_LOCATION));
 		}
 		catch (ParserConfigurationException e) {
 			throw new DandelionException("Unable to configure the SAX parser", e);
 		}
 		catch (SAXException e) {
 			throw new DandelionException("Unable to configure the SAX parser", e);
-		}
-		catch (URISyntaxException e) {
-			throw new DandelionException("Unable to locate the XSD located in " + XSD_LOCATION, e);
 		}
 	}
 
