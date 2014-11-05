@@ -60,9 +60,7 @@ public class DandelionServlet extends HttpServlet {
 
 	private static final Logger LOG = LoggerFactory.getLogger(DandelionServlet.class);
 
-	public static final String DANDELION_ASSETS = "dandelionAssets";
 	public static final String DANDELION_ASSETS_URL = "/dandelion-assets/";
-	public static final String DANDELION_ASSETS_URL_PATTERN = "/dandelion-assets/*";
 
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -72,7 +70,7 @@ public class DandelionServlet extends HttpServlet {
 		HttpHeadersConfigurer httpHeadersConfigurer = new HttpHeadersConfigurer(context);
 		
 		// Get the asset content thanks to the cache key
-		String assetKey = context.getCacheManager().getCacheKeyFromRequest(request);
+		String assetKey = context.getCacheManager().extractCacheKeyFromRequest(request);
 		AssetType assetType = AssetType.typeOfAsset(assetKey);
 		LOG.debug("Retrieved asset type: {}, cache key: {}", assetType, assetKey);
 		

@@ -30,6 +30,7 @@
 package com.github.dandelion.core.config;
 
 import com.github.dandelion.core.Beta;
+import com.github.dandelion.core.web.DandelionServlet;
 
 /**
  * <p>
@@ -50,6 +51,7 @@ public enum DandelionConfig {
 	ASSET_PROCESSORS_ENCODING("asset.processors.encoding", "UTF-8", "UTF-8"), 
 	ASSET_JS_EXCLUDES("asset.js.excludes", "", ""), 
 	ASSET_CSS_EXCLUDES("asset.css.excludes", "", ""),
+	ASSET_URL_PATTERN("asset.url.pattern", DandelionServlet.DANDELION_ASSETS_URL, DandelionServlet.DANDELION_ASSETS_URL),
 	
 	// Asset versioning
 	ASSET_VERSIONING("asset.versioning", "true", "true"),

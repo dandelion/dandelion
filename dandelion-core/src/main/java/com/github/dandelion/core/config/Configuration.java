@@ -75,6 +75,7 @@ public class Configuration {
 	private String assetProcessorEncoding;
 	private List<String> assetJsExcludes;
 	private List<String> assetCssExcludes;
+	private String assetUrlPattern;
 	
 	// Asset versioning configurations
 	private boolean assetVersioning;
@@ -136,6 +137,7 @@ public class Configuration {
 		this.assetProcessorEncoding = readConfig(DandelionConfig.ASSET_PROCESSORS_ENCODING);
 		this.assetJsExcludes = PropertiesUtils.propertyAsList(readConfig(DandelionConfig.ASSET_JS_EXCLUDES));
 		this.assetCssExcludes = PropertiesUtils.propertyAsList(readConfig(DandelionConfig.ASSET_CSS_EXCLUDES));
+		this.assetUrlPattern = getProcessedAssetUrlPattern(readConfig(DandelionConfig.ASSET_URL_PATTERN));
 		
 		// Asset versioning
 		this.assetVersioning = Boolean.parseBoolean(readConfig(DandelionConfig.ASSET_VERSIONING));
@@ -459,6 +461,21 @@ public class Configuration {
 	public void setAssetVersioning(boolean assetVersioning) {
 		this.assetVersioning = assetVersioning;
 	}
+
+	public String getAssetUrlPattern() {
+		return assetUrlPattern;
+	}
 	
-	
+	private String getProcessedAssetUrlPattern(String rawAssetUrlPattern){
+
+		StringBuilder processedAssetUrlPattern = new StringBuilder(rawAssetUrlPattern);
+		if(!processedAssetUrlPattern.toString().startsWith("/")) {
+			processedAssetUrlPattern.insert(0, '/');
+		}
+		if (!processedAssetUrlPattern.toString().endsWith("/")) {
+			processedAssetUrlPattern.append('/');
+		}
+		
+		return processedAssetUrlPattern.toString();
+	}
 }

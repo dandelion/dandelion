@@ -37,10 +37,11 @@ import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.github.dandelion.core.Context;
 import com.github.dandelion.core.asset.Asset;
 import com.github.dandelion.core.asset.AssetDomPosition;
 import com.github.dandelion.core.asset.AssetType;
-import com.github.dandelion.core.web.DandelionServlet;
+import com.github.dandelion.core.web.WebConstants;
 
 /**
  * <p>
@@ -165,8 +166,10 @@ public final class AssetUtils {
 
 	public static String getAssetFinalLocation(HttpServletRequest request, Asset asset, String suffix) {
 
+		Context context = (Context) request.getAttribute(WebConstants.DANDELION_CONTEXT_ATTRIBUTE);
+
 		StringBuilder finalLocation = new StringBuilder();
-		finalLocation.append(UrlUtils.getProcessedUrl(DandelionServlet.DANDELION_ASSETS_URL, request, null));
+		finalLocation.append(UrlUtils.getProcessedUrl(context.getConfiguration().getAssetUrlPattern(), request, null));
 		finalLocation.append(asset.getCacheKey());
 		finalLocation.append("/");
 		finalLocation.append(asset.getName());

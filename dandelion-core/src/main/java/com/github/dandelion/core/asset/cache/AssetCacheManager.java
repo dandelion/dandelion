@@ -41,8 +41,10 @@ import org.slf4j.LoggerFactory;
 import com.github.dandelion.core.Context;
 import com.github.dandelion.core.asset.Asset;
 import com.github.dandelion.core.asset.cache.spi.AssetCache;
+import com.github.dandelion.core.config.DandelionConfig;
 import com.github.dandelion.core.utils.Sha1Utils;
 import com.github.dandelion.core.utils.UrlUtils;
+import com.github.dandelion.core.web.WebConstants;
 
 /**
  * <p>
@@ -57,7 +59,10 @@ import com.github.dandelion.core.utils.UrlUtils;
 public class AssetCacheManager {
 
 	private static final Logger LOG = LoggerFactory.getLogger(AssetCacheManager.class);
-	
+
+	/**
+	 * The Dandelion context.
+	 */
 	private final Context context;
 
 	public AssetCacheManager(Context context) {
@@ -67,23 +72,19 @@ public class AssetCacheManager {
 	public String generateCacheKey(HttpServletRequest request, Asset asset) {
 		String context = UrlUtils.getCurrentUrl(request, true).toString();
 		context = context.replaceAll("\\?", "_").replaceAll("&", "_");
-		
+
 		StringBuilder key = new StringBuilder(Sha1Utils.generateSha1(context, true));
 		key.append("/");
 		key.append(asset.getName());
 		key.append('/');
 		key.append(asset.getType().name());
-//		key.append("-");
-//		key.append(asset.getVersion());
-//		key.append(".");
-//		key.append(asset.getType().name());
 		return key.toString();
 	}
 
 	public String generateMinCacheKey(HttpServletRequest request, Asset asset) {
 		String context = UrlUtils.getCurrentUrl(request, true).toString();
 		context = context.replaceAll("\\?", "_").replaceAll("&", "_");
-		
+
 		StringBuilder key = new StringBuilder(Sha1Utils.generateSha1(context, true));
 		key.append("/");
 		key.append(asset.getName());
@@ -91,7 +92,7 @@ public class AssetCacheManager {
 		key.append(asset.getType().name());
 		return key.toString();
 	}
-	
+
 	public String generateCacheKeyMin(String context, Asset asset) {
 		StringBuilder key = new StringBuilder(Sha1Utils.generateSha1(context, true));
 		key.append("/");
@@ -101,15 +102,41 @@ public class AssetCacheManager {
 		return key.toString();
 	}
 
-	public String getCacheKeyFromRequest(HttpServletRequest request) {
-		Pattern p = Pattern.compile("dandelion-assets/(.*)/");
+	/**
+	 * <p>
+	 * Extracts the asset cache key from the provided request using the
+	 * configured {@link DandelionConfig#ASSET_URL_PATTERN}.
+	 * </p>
+	 * <p>
+	 * <p>
+	 * For example, using {@code my-pattern} as a custom URL pattern and the
+	 * following request URL:
+	 * </p>
+	 * <p>
+	 * {@code /context/my-pattern/fd3ac0de9cbe0f7/application/css/application-7c267aa805f44ef61a273afbe4d26f2a.css}
+	 * </p>
+	 * <p>
+	 * This method will extract {@code fd3ac0de9cbe0f7}.
+	 * </p>
+	 * 
+	 * @param request
+	 *            The {@link HttpServletRequest} made against the server to load
+	 *            the asset.
+	 * @return the cache key present in the request URL.
+	 */
+	public String extractCacheKeyFromRequest(HttpServletRequest request) {
+
+		Context context = (Context) request.getAttribute(WebConstants.DANDELION_CONTEXT_ATTRIBUTE);
+		String processedUrlPattern = context.getConfiguration().getAssetUrlPattern().startsWith("/") ? context
+				.getConfiguration().getAssetUrlPattern().substring(1) : context.getConfiguration().getAssetUrlPattern();
+		Pattern p = Pattern.compile(processedUrlPattern + "(.*)/");
 		Matcher m = p.matcher(request.getRequestURL());
 
 		String cacheKey = null;
 		if (m.find()) {
 			cacheKey = m.group(1);
 		}
-		 
+
 		return cacheKey;
 	}
 
@@ -141,8 +168,8 @@ public class AssetCacheManager {
 	public String getCacheName() {
 		return context.getAssetCache().getCacheName();
 	}
-	
-	public void clearCache(){
+
+	public void clearCache() {
 		context.getAssetCache();
 	}
 }

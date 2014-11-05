@@ -74,9 +74,10 @@ public class AssetMapperTest {
 	@Test
 	public void should_map_an_AssetStorageUnit_to_an_Asset() {
 
+		String assetUrlPattern = context.getConfiguration().getAssetUrlPattern();
 		Pattern versionPattern = Pattern.compile("^[a-f0-9]{32}$");
 		Pattern finalLocationPattern = Pattern
-				.compile("/context/dandelion-assets/[a-f0-9]{40}/asset-name/js/asset-name-[a-f0-9]{32}.js");
+				.compile("/context" + assetUrlPattern + "[a-f0-9]{40}/asset-name/js/asset-name-[a-f0-9]{32}.js");
 
 		AssetStorageUnit asu = new AssetStorageUnit();
 		asu.setName("asset-name");
@@ -136,8 +137,10 @@ public class AssetMapperTest {
 	@Test
 	public void should_select_webapp_as_a_first_authorized_location() {
 
+		String assetUrlPattern = context.getConfiguration().getAssetUrlPattern();
+
 		Pattern finalLocationPattern = Pattern
-				.compile("/context/dandelion-assets/[a-f0-9]{40}/asset-name/js/asset-name-[a-f0-9]{32}.js");
+				.compile("/context" + assetUrlPattern + "[a-f0-9]{40}/asset-name/js/asset-name-[a-f0-9]{32}.js");
 
 		AssetStorageUnit asu = new AssetStorageUnit();
 		asu.setName("asset-name");
