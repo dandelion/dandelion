@@ -41,11 +41,12 @@ import javax.servlet.http.HttpServletResponseWrapper;
  * <p>
  * Used to wrap the real {@link HttpServletResponse} so that it can be modified
  * after the target of the request has delivered its response.
- * 
+ * </p>
  * <p>
  * All streams sit on top of an underlying byte-output stream that will be used
  * in the {@link DandelionFilter} to adapt the response with the requested
  * assets.
+ * </p>
  * 
  * @author Thibault Duchateau
  * @since 0.10.1
@@ -71,17 +72,11 @@ public class ByteArrayResponseWrapper extends HttpServletResponseWrapper {
 		super(response);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public ServletOutputStream getOutputStream() throws IOException {
 		return sos;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public PrintWriter getWriter() throws IOException {
 		return pw;
@@ -90,6 +85,7 @@ public class ByteArrayResponseWrapper extends HttpServletResponseWrapper {
 	/**
 	 * <p>
 	 * Gets the content of the underlying byte-output stream.
+	 * </p>
 	 * 
 	 * @return the byte array containing the response.
 	 */
@@ -103,6 +99,7 @@ public class ByteArrayResponseWrapper extends HttpServletResponseWrapper {
 	 * <p>
 	 * New specific byte-output stream intended to store the passed stream in a
 	 * byte array.
+	 * </p>
 	 * 
 	 * @author Thibault Duchateau
 	 * @since 0.10.1

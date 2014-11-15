@@ -14,11 +14,18 @@
    <description>Dandelion Core module providing all APIs and standard implementations.</description>
 
    <dependencies>
+
       <!-- Servlet API -->
       <dependency>
          <groupId>javax.servlet</groupId>
-         <artifactId>servlet-api</artifactId>
+         <artifactId>javax.servlet-api</artifactId>
          <scope>provided</scope>
+      </dependency>
+
+      <!-- Commons-IO -->
+      <dependency>
+         <groupId>commons-io</groupId>
+         <artifactId>commons-io</artifactId>
       </dependency>
 
       <!-- Jackson -->
@@ -42,11 +49,21 @@
          <scope>test</scope>
       </dependency>
 
-      <!-- AssertJ -->
       <dependency>
-         <groupId>org.assertj</groupId>
-         <artifactId>assertj-core</artifactId>
+         <groupId>org.powermock</groupId>
+         <artifactId>powermock-module-junit4</artifactId>
          <scope>test</scope>
+      </dependency>
+      <dependency>
+         <groupId>org.powermock</groupId>
+         <artifactId>powermock-api-mockito</artifactId>
+         <scope>test</scope>
+         <exclusions>
+            <exclusion>
+               <groupId>org.mockito</groupId>
+               <artifactId>mockito-all</artifactId>
+            </exclusion>
+         </exclusions>
       </dependency>
 
       <!-- Logging -->
@@ -56,5 +73,7 @@
          <version>1.1.2</version>
          <scope>test</scope>
       </dependency>
+
    </dependencies>
+
 </project>

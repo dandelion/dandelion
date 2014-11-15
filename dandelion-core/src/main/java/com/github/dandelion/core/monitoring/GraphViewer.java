@@ -38,7 +38,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -88,7 +87,7 @@ public class GraphViewer {
 		mapper.configure(JsonParser.Feature.ALLOW_BACKSLASH_ESCAPING_ANY_CHARACTER, true);
 	}
 
-	public String getView(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+	public String getView(HttpServletRequest request, HttpServletResponse response)
 			throws IOException, ServletException {
 
 		assetMapper = new AssetMapper(request, context);
@@ -100,7 +99,7 @@ public class GraphViewer {
 		String graphView = ResourceUtils.getContentFromInputStream(Thread.currentThread().getContextClassLoader()
 				.getResourceAsStream("dandelion/internal/graphViewer/graphViewer.html"));
 
-		Set<Asset> assetsHead = new AssetQuery(request, context).withPosition(AssetDomPosition.head).perform();
+		Set<Asset> assetsHead = new AssetQuery(request, context).atPosition(AssetDomPosition.head).perform();
 		Iterator<Asset> iteratorAssetHead = assetsHead.iterator();
 		while (iteratorAssetHead.hasNext()) {
 			sbHead.append("    &lt;link href=\"" + iteratorAssetHead.next().getFinalLocation() + "\" />");
@@ -109,7 +108,7 @@ public class GraphViewer {
 			}
 		}
 
-		Set<Asset> assetsBody = new AssetQuery(request, context).withPosition(AssetDomPosition.body).perform();
+		Set<Asset> assetsBody = new AssetQuery(request, context).atPosition(AssetDomPosition.body).perform();
 		Iterator<Asset> iteratorAssetBody = assetsBody.iterator();
 		while (iteratorAssetBody.hasNext()) {
 			sbBody.append("    &lt;script src=\"" + iteratorAssetBody.next().getFinalLocation() + "\"></script>");
@@ -170,7 +169,7 @@ public class GraphViewer {
 		graphView = graphView.replace("[NODES_REQUEST]", sbNodesRequest.toString());
 		graphView = graphView.replace("[NODES_APPLICATION]", sbNodesApplication.toString());
 		graphView = graphView.replace("[CURRENT_URL]",
-				currentUri.substring(0, currentUri.indexOf(WebConstants.DANDELION_SHOW_GRAPH) - 1));
+				currentUri.substring(0, currentUri.indexOf(WebConstants.DANDELION_DEBUGGER) - 1));
 		graphView = graphView.replace("[HEAD]", sbHead.toString());
 		graphView = graphView.replace("[BODY]", sbBody.toString());
 

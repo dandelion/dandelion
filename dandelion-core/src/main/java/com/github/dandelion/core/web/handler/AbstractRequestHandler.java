@@ -2,20 +2,20 @@
  * [The "BSD licence"]
  * Copyright (c) 2013-2014 Dandelion
  * All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
  * are met:
- * 
+ *
  * 1. Redistributions of source code must retain the above copyright
  * notice, this list of conditions and the following disclaimer.
  * 2. Redistributions in binary form must reproduce the above copyright
  * notice, this list of conditions and the following disclaimer in the
  * documentation and/or other materials provided with the distribution.
- * 3. Neither the name of Dandelion nor the names of its contributors 
- * may be used to endorse or promote products derived from this software 
+ * 3. Neither the name of Dandelion nor the names of its contributors
+ * may be used to endorse or promote products derived from this software
  * without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
  * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
  * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
@@ -27,30 +27,59 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.github.dandelion.core.web;
+package com.github.dandelion.core.web.handler;
+
+import org.slf4j.Logger;
 
 /**
  * <p>
- * All web-related constants used in Dandelion.
+ * Abstract base class for all request handlers.
+ * </p>
  * 
  * @author Thibault Duchateau
- * @since 0.10.0
+ * @since 0.11.0
  */
-public class WebConstants {
+public abstract class AbstractRequestHandler implements RequestHandler {
 
 	/**
-	 * Request attributes
+	 * <p>
+	 * Compare (and therefore order) handlers according to their rank.
+	 * </p>
+	 * <p>
+	 * Warning: this implementation of compareTo breaks
+	 * <tt>(o1.compareTo(o2) == 0) == (o1.equals(o2))</tt>, as two different
+	 * handlers can have the same precedence.
+	 * </p>
+	 * 
+	 * @param o
+	 *            the object to compare to.
+	 * @return the comparison result.
 	 */
-	public static final String DANDELION_CONTEXT_ATTRIBUTE = "dandelionContext";
+	@Override
+	public int compareTo(RequestHandler o) {
+		if (o == null) {
+			return 1;
+		}
+		if (!(o instanceof AbstractRequestHandler)) {
+			// The other object does not rely on rank, so we should delegate to
+			// the other object (and its comparison policy) and invert the
+			// result
+			final int result = o.compareTo(this);
+			return (-1) * result;
+		}
+		int thisRank = getRank();
+		int otherRank = ((AbstractRequestHandler) o).getRank();
+		if (thisRank > otherRank) {
+			return 1;
+		}
+		if (thisRank < otherRank) {
+			return -1;
+		}
+		return 0;
+	}
 
 	/**
-	 * Request parameters
+	 * @return the logger associated with this handler.
 	 */
-	public static final String DANDELION_DEBUGGER = "ddl-debug";
-	public static final String DANDELION_RELOAD_BUNDLES = "ddl-reload";
-	
-	/**
-	 * Request attributes/parameters
-	 */
-	public static final String DANDELION_ASSET_FILTER_STATE = "dandelionAssetFilterState";
+	protected abstract Logger getLogger();
 }

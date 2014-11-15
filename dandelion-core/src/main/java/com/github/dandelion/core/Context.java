@@ -31,6 +31,7 @@ package com.github.dandelion.core;
 
 import java.lang.management.ManagementFactory;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -67,6 +68,7 @@ import com.github.dandelion.core.utils.BundleStorageLogBuilder;
 import com.github.dandelion.core.utils.ClassUtils;
 import com.github.dandelion.core.utils.ServiceLoaderUtils;
 import com.github.dandelion.core.utils.StringUtils;
+import com.github.dandelion.core.web.handler.RequestHandler;
 
 /**
  * <p>
@@ -102,7 +104,9 @@ public class Context {
 	private Map<String, AssetLocator> assetLocatorsMap;
 	private BundleStorage bundleStorage;
 	private Configuration configuration;
-	
+	private List<RequestHandler> preHandlers;
+	private List<RequestHandler> postHandlers;
+
 	/**
 	 * Public constructor.
 	 * 
@@ -135,6 +139,7 @@ public class Context {
 
 		initBundleStorage();
 		initMBean(filterConfig);
+		initHandlers(this);
 	}
 
 	/**
@@ -182,8 +187,8 @@ public class Context {
 	 * Initializes the asset versioning for the whole application.
 	 * </p>
 	 */
-	public void initAssetVersioning(){
-		
+	public void initAssetVersioning() {
+
 		List<AssetVersioningStrategy> availableStrategies = ServiceLoaderUtils
 				.getProvidersAsList(AssetVersioningStrategy.class);
 
@@ -193,7 +198,7 @@ public class Context {
 			LOG.info("Asset versioning strategy found: {}", strategy.getClass().getSimpleName());
 			versioningStrategyMap.put(strategy.getName(), strategy);
 		}
-		
+
 		String desiredVersioningStrategy = configuration.getAssetVersioningStrategy().toLowerCase().trim();
 		if (StringUtils.isNotBlank(desiredVersioningStrategy)) {
 			if (versioningStrategyMap.containsKey(desiredVersioningStrategy)) {
@@ -202,14 +207,12 @@ public class Context {
 				activeVersioningStrategy.init(this);
 			}
 			else {
-				throw new DandelionException(
-						"The desired asset versioning strategy ("
-								+ desiredVersioningStrategy
-								+ ") hasn't been found among the available ones: " + versioningStrategyMap.keySet());
+				throw new DandelionException("The desired asset versioning strategy (" + desiredVersioningStrategy
+						+ ") hasn't been found among the available ones: " + versioningStrategyMap.keySet());
 			}
 		}
 	}
-	
+
 	/**
 	 * <p>
 	 * Initializes the {@link BundleLoader}s in a particular order:
@@ -385,21 +388,19 @@ public class Context {
 			// Load all bundles using the current BundleLoader
 			List<BundleStorageUnit> loadedBundles = bundleLoader.loadBundles();
 
-			// First check: required configuration
-			BundleStorageLogBuilder bslb = bundleStorage.checkRequiredConfiguration(loadedBundles);
-			if (bslb.hasError()) {
-				throw new DandelionException(bslb.toString());
-			}
+//			// First check: required configuration
+//			BundleStorageLogBuilder bslb = bundleStorage.checkRequiredConfiguration(loadedBundles);
+//			if (bslb.hasError()) {
+//				throw new DandelionException(bslb.toString());
+//			}
 
 			LOG.debug("Found {} bundle{}: {}", loadedBundles.size(), loadedBundles.size() <= 1 ? "" : "s",
 					loadedBundles);
 
-			bundleStorage.finalizeBundleConfiguration(loadedBundles, this);
-			
 			bundleStorage.storeBundles(loadedBundles);
 
 			// Second and last check: consistency
-			bundleStorage.checkBundleConsistency(loadedBundles);
+//			bundleStorage.checkBundleConsistency(loadedBundles);
 		}
 
 		LOG.debug("Bundle storage initialized.");
@@ -429,6 +430,47 @@ public class Context {
 		}
 	}
 
+	public void initHandlers(Context context) {
+
+		List<RequestHandler> preHandlers = new ArrayList<RequestHandler>();
+		List<RequestHandler> postHandlers = new ArrayList<RequestHandler>();
+
+		List<RequestHandler> allHandlers = ServiceLoaderUtils.getProvidersAsList(RequestHandler.class);
+		for (RequestHandler handler : allHandlers) {
+			if (handler.isAfterChaining()) {
+				postHandlers.add(handler);
+			}
+			else {
+				preHandlers.add(handler);
+			}
+		}
+
+		this.preHandlers = preHandlers;
+		this.postHandlers = postHandlers;
+		
+		if(this.preHandlers.isEmpty()) {
+			LOG.debug("No pre-filtering request handlers enabled");
+		}
+		else {
+			LOG.debug("Enabled pre-filtering request handlers:");
+			Collections.sort(this.preHandlers);
+			for(RequestHandler preHandler : this.preHandlers){
+				LOG.debug("[Rank {}] {}", preHandler.getRank(), preHandler.getClass().getSimpleName());
+			}
+		}
+		
+		if(this.postHandlers.isEmpty()) {
+			LOG.debug("No post-filtering request handlers enabled");
+		}
+		else {
+			Collections.sort(this.postHandlers);
+			LOG.debug("Enabled post-filtering request handlers:");
+			for(RequestHandler postHandler : this.postHandlers){
+				LOG.debug("[Rank {}] {}", postHandler.getRank(), postHandler.getClass().getSimpleName());
+			}
+		}
+	}
+	
 	public void destroy() {
 		if (configuration.isMonitoringJmxEnabled()) {
 			try {
@@ -501,16 +543,27 @@ public class Context {
 	public boolean isProdProfileEnabled() {
 		return Profile.DEFAULT_PROD_PROFILE.equals(this.configuration.getActiveProfile());
 	}
-	
+
 	/**
 	 * TODO
+	 * 
 	 * @return
 	 */
-	public AssetVersioningStrategy getActiveVersioningStrategy(){
+	public AssetVersioningStrategy getActiveVersioningStrategy() {
 		return this.activeVersioningStrategy;
 	}
 
 	public Map<String, AssetVersioningStrategy> getVersioningStrategyMap() {
 		return versioningStrategyMap;
 	}
+
+	public List<RequestHandler> getPreHandlers() {
+		return preHandlers;
+	}
+
+	public List<RequestHandler> getPostHandlers() {
+		return postHandlers;
+	}
+	
+	
 }

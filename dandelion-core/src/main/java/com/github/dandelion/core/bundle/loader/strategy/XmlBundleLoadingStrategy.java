@@ -43,9 +43,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
 
+import com.github.dandelion.core.Context;
 import com.github.dandelion.core.DandelionException;
 import com.github.dandelion.core.bundle.loader.support.BundleSaxHandler;
 import com.github.dandelion.core.storage.BundleStorageUnit;
+import com.github.dandelion.core.storage.support.BundleUtils;
 import com.github.dandelion.core.utils.BundleStorageLogBuilder;
 import com.github.dandelion.core.utils.scanner.ResourceScanner;
 
@@ -61,11 +63,13 @@ public class XmlBundleLoadingStrategy implements LoadingStrategy {
 	private static final String XSD_LOCATION = "dandelion/internal/xsd/dandelion-bundle.xsd";
 	private static SAXParserFactory saxParserFactory;
 	private static SAXParser saxParser;
+	private final Context context;
 
 	/**
 	 * @return the uniq static instance of {@link XmlBundleLoadingStrategy}.
 	 */
-	public XmlBundleLoadingStrategy() {
+	public XmlBundleLoadingStrategy(Context context) {
+		this.context = context;
 	}
 
 	static {
@@ -117,8 +121,12 @@ public class XmlBundleLoadingStrategy implements LoadingStrategy {
 				ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
 				InputStream configFileStream = classLoader.getResourceAsStream(resourcePath);
 				saxParser.parse(configFileStream, bundleSaxHandler);
-				LOG.debug("Parsed {}", bundleSaxHandler.getBsu());
-				bundles.add(bundleSaxHandler.getBsu());
+				BundleStorageUnit bsu = bundleSaxHandler.getBsu();
+				bsu.setRelativePath(resourcePath);
+				BundleUtils.checkRequiredConfiguration(bslb, bsu);
+				BundleUtils.finalizeBundleConfiguration(bsu, context);
+				LOG.debug("Parsed bundle \"{}\" ({})", bsu.getName(), bsu);
+				bundles.add(bsu);
 			}
 			catch (SAXException e) {
 				e.printStackTrace();

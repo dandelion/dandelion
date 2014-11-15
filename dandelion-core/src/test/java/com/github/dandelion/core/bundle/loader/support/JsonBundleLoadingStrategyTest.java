@@ -35,10 +35,16 @@ import java.util.List;
 import java.util.Set;
 
 import org.hamcrest.CoreMatchers;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.junit.runner.RunWith;
+import org.mockito.Answers;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 
+import com.github.dandelion.core.Context;
 import com.github.dandelion.core.DandelionException;
 import com.github.dandelion.core.bundle.loader.strategy.JsonBundleLoadingStrategy;
 import com.github.dandelion.core.bundle.loader.strategy.LoadingStrategy;
@@ -46,12 +52,21 @@ import com.github.dandelion.core.storage.BundleStorageUnit;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@RunWith(MockitoJUnitRunner.class)
 public class JsonBundleLoadingStrategyTest {
 
-	private LoadingStrategy loadingStrategy = new JsonBundleLoadingStrategy();
+	private LoadingStrategy loadingStrategy;
 
 	@Rule
-	public ExpectedException expectedEx = ExpectedException.none();
+	public ExpectedException exception = ExpectedException.none();
+
+	@Mock(answer = Answers.RETURNS_DEEP_STUBS)
+	private Context context;
+
+	@Before
+	public void setup() {
+		loadingStrategy = new JsonBundleLoadingStrategy(context);
+	}
 
 	@Test
 	public void should_return_empty_set() {
@@ -71,16 +86,16 @@ public class JsonBundleLoadingStrategyTest {
 		List<BundleStorageUnit> bundles = loadingStrategy.mapToBundles(resourcePaths);
 
 		assertThat(bundles).hasSize(2);
-		assertThat(bundles).extracting("name").contains(null, "bundle2");
 		assertThat(bundles).extracting("dependencies").containsExactly(null, null);
+		assertThat(bundles).extracting("name").contains("bundle2");
 		assertThat(bundles).extracting("assetStorageUnits").hasSize(2);
 	}
 
 	@Test
 	public void should_throw_an_exception_when_the_bundle_is_badly_formatted() {
 
-		expectedEx.expect(DandelionException.class);
-		expectedEx.expectMessage(CoreMatchers.containsString("line: 5, column: 30"));
+		exception.expect(DandelionException.class);
+		exception.expectMessage(CoreMatchers.containsString("line: 5, column: 30"));
 		loadingStrategy.mapToBundles(new HashSet<String>(Arrays
 				.asList("bundle-loading/json/wrong-format/dandelion/bundle-wrong-format1.json")));
 	}

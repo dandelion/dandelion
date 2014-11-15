@@ -69,21 +69,23 @@ public abstract class AbstractBundleLoader implements BundleLoader {
 	public List<BundleStorageUnit> loadBundles() {
 
 		List<BundleStorageUnit> bundles = new ArrayList<BundleStorageUnit>();
-		LoadingStrategy jsonLoadingStrategy = new JsonBundleLoadingStrategy();
+		LoadingStrategy jsonLoadingStrategy = new JsonBundleLoadingStrategy(context);
 
 		getLogger().debug("Scanning \"{}\" for JSON-formatted bundles...", getBundleLocation());
 		Set<String> resourcePaths = jsonLoadingStrategy.getResourcePaths(getBundleLocation(), getExcludedPaths());
 
 		if (!resourcePaths.isEmpty()) {
-			bundles.addAll(jsonLoadingStrategy.mapToBundles(resourcePaths));
+			List<BundleStorageUnit> bsus = jsonLoadingStrategy.mapToBundles(resourcePaths);
+			bundles.addAll(bsus);
 		}
 		else {
 			getLogger().debug("No JSON-formatted bundle found in \"{}\". Trying with XML-formatted ones...",
 					getBundleLocation());
-			LoadingStrategy xmlLoadingStrategy = new XmlBundleLoadingStrategy();
+			LoadingStrategy xmlLoadingStrategy = new XmlBundleLoadingStrategy(context);
 			resourcePaths = xmlLoadingStrategy.getResourcePaths(getBundleLocation(), getExcludedPaths());
 			if (!resourcePaths.isEmpty()) {
-				bundles.addAll(xmlLoadingStrategy.mapToBundles(resourcePaths));
+				List<BundleStorageUnit> bsus = xmlLoadingStrategy.mapToBundles(resourcePaths);
+				bundles.addAll(bsus);
 			}
 			else {
 				getLogger().debug("No XML-formatted bundle found in \"{}\"");

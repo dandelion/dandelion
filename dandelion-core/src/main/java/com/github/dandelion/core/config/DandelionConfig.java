@@ -74,6 +74,8 @@ public enum DandelionConfig {
 	BUNDLE_EXCLUDES("bundle.excludes", "", ""),
 
 	// Tooling-related configurations
+	TOOL_GZIP("tool.gzip", "true", "true"),
+	TOOL_GZIP_MIME_TYPES("tool.gzip.mime.types", "text/html,text/css,application/x-javascript,application/javascript,text/javascript,text/plain,text/xml,application/xhtml+xml,image/svg+xml", "text/html,text/css,application/x-javascript,application/javascript,text/javascript,text/plain,text/xml,application/xhtml+xml,image/svg+xml"),
 	TOOL_ASSET_PRETTY_PRINTING("tool.asset.pretty.printing", "true", "false"), 
 	TOOL_BUNDLE_GRAPH("tool.bundle.graph", "true", "false"), 
 	TOOL_BUNDLE_RELOADING("tool.bundle.reloading", "true", "false"),
@@ -82,7 +84,8 @@ public enum DandelionConfig {
 	@Beta MONITORING_JMX("monitoring.jmx", "false", "false"),
 	
 	// Misc configurations
-	OVERRIDE_SERVLET3("override.servlet3", "", "");
+	OVERRIDE_SERVLET3("override.servlet3", "", ""),
+	ENCODING("encoding", "UTF-8", "UTF-8");
 	
 	/**
 	 * The configuration name.

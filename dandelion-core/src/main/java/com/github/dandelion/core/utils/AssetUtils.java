@@ -118,9 +118,9 @@ public final class AssetUtils {
 	 *            The type of asset to exclude.
 	 * @return a filtered collection of {@link Asset}s.
 	 */
-	public static Set<Asset> filtersByNameAndType(Set<Asset> assets, String[] excludedAssetNames, AssetType type) {
+	public static Set<Asset> filtersByNameAndType(Set<Asset> assets, Set<String> excludedAssetNames, AssetType type) {
 
-		List<String> excludedAssetNameList = Arrays.asList(excludedAssetNames);
+		List<String> excludedAssetNameList = new ArrayList<String>(excludedAssetNames);
 
 		Set<Asset> filteredAsus = new LinkedHashSet<Asset>();
 		for (Asset asset : assets) {

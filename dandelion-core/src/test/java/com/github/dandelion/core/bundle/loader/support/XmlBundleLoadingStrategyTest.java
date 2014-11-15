@@ -35,10 +35,16 @@ import java.util.List;
 import java.util.Set;
 
 import org.hamcrest.CoreMatchers;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.junit.runner.RunWith;
+import org.mockito.Answers;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 
+import com.github.dandelion.core.Context;
 import com.github.dandelion.core.DandelionException;
 import com.github.dandelion.core.bundle.loader.strategy.LoadingStrategy;
 import com.github.dandelion.core.bundle.loader.strategy.XmlBundleLoadingStrategy;
@@ -47,12 +53,21 @@ import com.github.dandelion.core.storage.BundleStorageUnit;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@RunWith(MockitoJUnitRunner.class)
 public class XmlBundleLoadingStrategyTest {
 
-	private LoadingStrategy loadingStrategy = new XmlBundleLoadingStrategy();
+	private LoadingStrategy loadingStrategy;
 
 	@Rule
 	public ExpectedException expectedEx = ExpectedException.none();
+
+	@Mock(answer = Answers.RETURNS_DEEP_STUBS)
+	private Context context;
+
+	@Before
+	public void setup() {
+		loadingStrategy = new XmlBundleLoadingStrategy(context);
+	}
 
 	@Test
 	public void should_return_empty_set() {

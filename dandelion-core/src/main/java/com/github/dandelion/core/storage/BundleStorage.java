@@ -33,21 +33,14 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.github.dandelion.core.Context;
 import com.github.dandelion.core.DandelionException;
-import com.github.dandelion.core.asset.AssetType;
 import com.github.dandelion.core.storage.support.BundleDag;
 import com.github.dandelion.core.storage.support.TopologicalSorter;
-import com.github.dandelion.core.utils.BundleStorageLogBuilder;
-import com.github.dandelion.core.utils.PathUtils;
-import com.github.dandelion.core.utils.StringUtils;
 
 /**
  * <p>
@@ -155,69 +148,6 @@ public class BundleStorage {
 		return bundleDag;
 	}
 
-	public BundleStorageLogBuilder checkRequiredConfiguration(List<BundleStorageUnit> bundleStorageUnits) {
-
-		BundleStorageLogBuilder bslb = new BundleStorageLogBuilder();
-
-		// Check that the DAG contains no empty bundles
-		for (BundleStorageUnit bsu : bundleStorageUnits) {
-			if (bsu.getAssetStorageUnits() == null || bsu.getAssetStorageUnits().isEmpty()) {
-				bslb.error("- Empty bundle", "   [" + bsu.getName() + "] The bundle \"" + bsu.getName()
-						+ "\" is empty. You would better remove it.");
-			}
-		}
-
-		// Check that every asset of every bundle contains at least one
-		// locationKey/location pair because both name and type will be deducted
-		// from it
-
-		for (BundleStorageUnit bsu : bundleStorageUnits) {
-			for (AssetStorageUnit asu : bsu.getAssetStorageUnits()) {
-
-				// Check locations
-				if (asu.getLocations().isEmpty()) {
-					bslb.error("- Missing asset location(s)", "[" + bsu.getName()
-							+ "] The bundle contain asset with no location whereas it is required.");
-				}
-				else {
-					for (String locationKey : asu.getLocations().keySet()) {
-						if (StringUtils.isBlank(locationKey)) {
-							bslb.error(
-									"- Missing location key",
-									"["
-											+ bsu.getName()
-											+ "] One of the assets contained in this bundle has a location with no location key. Please correct it before continuing.");
-
-						}
-					}
-
-					for (String location : asu.getLocations().values()) {
-						if (StringUtils.isBlank(location)) {
-							bslb.error("- Missing asset location", "[" + bsu.getName()
-									+ "] One of the assets contained in the bundle \"" + bsu.getName()
-									+ "\" has an empty location. Please correct it before continuing.");
-						}
-						else {
-							boolean extensionNotFound = true;
-							for (AssetType assetType : AssetType.values()) {
-								if (location.toLowerCase().endsWith("." + assetType.toString())) {
-									extensionNotFound = false;
-									break;
-								}
-							}
-							if (extensionNotFound) {
-								bslb.error("- Missing extension", "[" + bsu.getName()
-										+ "] The extension is required in all locations.");
-							}
-						}
-					}
-				}
-			}
-		}
-
-		return bslb;
-	}
-
 	/**
 	 * Return the list of labels of bundles according to the topological sort.
 	 * 
@@ -255,64 +185,6 @@ public class BundleStorage {
 		}
 
 		return retval;
-	}
-
-	/**
-	 * <p>
-	 * Performs several initializations on {@link BundleStorageUnit} in order
-	 * for them to be consistent before building the {@link BundleDag}.
-	 * </p>
-	 * 
-	 * @param loadedBundles
-	 * @param context
-	 */
-	public void finalizeBundleConfiguration(List<BundleStorageUnit> loadedBundles, Context context) {
-
-		logger.debug("Finishing bundles configuration...");
-
-		for (BundleStorageUnit bsu : loadedBundles) {
-
-			// The name of the bundle is extracted from its path if not
-			// specified
-			if (StringUtils.isBlank(bsu.getName())) {
-				bsu.setName(PathUtils.extractLowerCasedName(bsu.getRelativePath()));
-			}
-
-			if (bsu.getAssetStorageUnits() != null) {
-
-				for (AssetStorageUnit asu : bsu.getAssetStorageUnits()) {
-					String firstFoundLocation = asu.getLocations().values().iterator().next();
-					if (StringUtils.isBlank(asu.getName())) {
-						asu.setName(PathUtils.extractLowerCasedName(firstFoundLocation));
-					}
-					if (asu.getType() == null) {
-						asu.setType(AssetType.typeOf(firstFoundLocation));
-					}
-				}
-
-				// Perform variable substitutions only if the user uses a
-				// configuration file
-				if (context.getConfiguration().getProperties() != null) {
-					for (AssetStorageUnit asu : bsu.getAssetStorageUnits()) {
-						Map<String, String> locations = asu.getLocations();
-						for (Entry<String, String> locationEntry : asu.getLocations().entrySet()) {
-							locations.put(locationEntry.getKey(), StringUtils.substitute(locationEntry.getValue(),
-									context.getConfiguration().getProperties()));
-						}
-					}
-				}
-			}
-		}
-	}
-
-	/**
-	 * Double-check the loaded bunbles.
-	 * 
-	 * @param loadedBundles
-	 */
-	public void checkBundleConsistency(List<BundleStorageUnit> loadedBundles) {
-		// TODO Auto-generated method stub
-
 	}
 
 	/**

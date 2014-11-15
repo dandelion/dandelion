@@ -38,9 +38,11 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Properties;
 import java.util.ResourceBundle;
+import java.util.Set;
 
 /**
  * <p>
@@ -214,6 +216,21 @@ public class PropertiesUtils {
 			}
 		}
 		return properties;
+	}
+
+	/**
+	 * <p>
+	 * Returns a set from the specified {@code values}, using "," as a default
+	 * delimiter to perform the splip operation.
+	 * </p>
+	 * 
+	 * @param values
+	 *            a {@link String} containing the element to return as a
+	 *            {@link List} and containing "," as a default delimiter.
+	 * @return a set of {@link String}s.
+	 */
+	public static Set<String> propertyAsSet(String values) {
+		return new HashSet<String>(propertyAsList(values, ","));
 	}
 
 	/**

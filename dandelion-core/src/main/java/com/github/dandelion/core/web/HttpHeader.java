@@ -32,6 +32,7 @@ package com.github.dandelion.core.web;
 /**
  * <p>
  * All HTTP headers supported by Dandelion.
+ * </p>
  * 
  * @author Thibault Duchateau
  * @since 0.10.0
@@ -41,9 +42,11 @@ public enum HttpHeader {
 	CACHE_CONTROL("Cache-Control"), // HTTP 1.1
 	EXPIRES("Expires"), // Proxies
 	PRAGMA("Pragma"), // HTTP 1.0
-	LAST_MODIFIED("Last-Modified"),
-	CONTENT_TYPE("Content-Type"),
-	ACCEPT("Accept");
+	LAST_MODIFIED("Last-Modified"), 
+	CONTENT_TYPE("Content-Type"), 
+	ACCEPT("Accept"), 
+	ACCEPT_ENCODING("Accept-Encoding"),
+	CONTENT_ENCODING("Content-Encoding");
 
 	private String name;
 

@@ -2,20 +2,20 @@
  * [The "BSD licence"]
  * Copyright (c) 2013-2014 Dandelion
  * All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
  * are met:
- * 
+ *
  * 1. Redistributions of source code must retain the above copyright
  * notice, this list of conditions and the following disclaimer.
  * 2. Redistributions in binary form must reproduce the above copyright
  * notice, this list of conditions and the following disclaimer in the
  * documentation and/or other materials provided with the distribution.
- * 3. Neither the name of Dandelion nor the names of its contributors 
- * may be used to endorse or promote products derived from this software 
+ * 3. Neither the name of Dandelion nor the names of its contributors
+ * may be used to endorse or promote products derived from this software
  * without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
  * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
  * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
@@ -27,30 +27,53 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.github.dandelion.core.web;
+package com.github.dandelion.core.web.handler;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import com.github.dandelion.core.Context;
 
 /**
  * <p>
- * All web-related constants used in Dandelion.
+ * Wrapper object holding the context in which a {@link RequestHandler} is
+ * applied.
+ * </p>
  * 
  * @author Thibault Duchateau
- * @since 0.10.0
+ * @since 0.11.0
  */
-public class WebConstants {
+public final class RequestHandlerContext {
 
-	/**
-	 * Request attributes
-	 */
-	public static final String DANDELION_CONTEXT_ATTRIBUTE = "dandelionContext";
+	private final Context context;
+	private final HttpServletRequest request;
+	private final HttpServletResponse response;
+	private RequestHandlerResult result;
 
-	/**
-	 * Request parameters
-	 */
-	public static final String DANDELION_DEBUGGER = "ddl-debug";
-	public static final String DANDELION_RELOAD_BUNDLES = "ddl-reload";
-	
-	/**
-	 * Request attributes/parameters
-	 */
-	public static final String DANDELION_ASSET_FILTER_STATE = "dandelionAssetFilterState";
+	public RequestHandlerContext(Context context, HttpServletRequest request, HttpServletResponse response) {
+		super();
+		this.context = context;
+		this.request = request;
+		this.response = response;
+	}
+
+	public Context getContext() {
+		return context;
+	}
+
+	public HttpServletRequest getRequest() {
+		return request;
+	}
+
+	public HttpServletResponse getResponse() {
+		return response;
+	}
+
+	public RequestHandlerResult getResult() {
+		return result;
+	}
+
+	public void setResult(RequestHandlerResult result) {
+		this.result = result;
+	}
 }

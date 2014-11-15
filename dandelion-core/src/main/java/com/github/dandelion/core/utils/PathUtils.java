@@ -350,7 +350,7 @@ public final class PathUtils {
 			assetName = tmpAssetName.substring(0, tmpAssetName.lastIndexOf('.'));
 		}
 
-		return assetName;
+		return assetName.toLowerCase();
 	}
 	
 	/**

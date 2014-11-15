@@ -31,6 +31,7 @@ package com.github.dandelion.core.config;
 
 import java.util.List;
 import java.util.Properties;
+import java.util.Set;
 
 import javax.servlet.FilterConfig;
 
@@ -63,7 +64,7 @@ public class Configuration {
 
 	private FilterConfig filterConfig;
 	private Properties userProperties;
-	
+
 	// Profile configurations
 	private String activeProfile;
 	private String activeRawProfile;
@@ -76,7 +77,7 @@ public class Configuration {
 	private List<String> assetJsExcludes;
 	private List<String> assetCssExcludes;
 	private String assetUrlPattern;
-	
+
 	// Asset versioning configurations
 	private boolean assetVersioning;
 	private String assetVersioningStrategy;
@@ -101,12 +102,15 @@ public class Configuration {
 	private boolean toolAssetPrettyPrintingEnabled;
 	private boolean toolBundleGraphEnabled;
 	private boolean toolBundleReloadingEnabled;
+	private boolean toolGzipEnabled;
+	private Set<String> toolGzipMimeTypes;
 
 	// Monitoring configuration
 	private boolean monitoringJmxEnabled;
 
 	// Misc configurations
 	private boolean servlet3Enabled;
+	private String encoding;
 
 	public Configuration(FilterConfig filterConfig, Properties userProperties, Context context) {
 		this.filterConfig = filterConfig;
@@ -138,7 +142,7 @@ public class Configuration {
 		this.assetJsExcludes = PropertiesUtils.propertyAsList(readConfig(DandelionConfig.ASSET_JS_EXCLUDES));
 		this.assetCssExcludes = PropertiesUtils.propertyAsList(readConfig(DandelionConfig.ASSET_CSS_EXCLUDES));
 		this.assetUrlPattern = getProcessedAssetUrlPattern(readConfig(DandelionConfig.ASSET_URL_PATTERN));
-		
+
 		// Asset versioning
 		this.assetVersioning = Boolean.parseBoolean(readConfig(DandelionConfig.ASSET_VERSIONING));
 		this.assetVersioningStrategy = readConfig(DandelionConfig.ASSET_VERSIONING_STRATEGY);
@@ -176,7 +180,9 @@ public class Configuration {
 				.parseBoolean(readConfig(DandelionConfig.TOOL_ASSET_PRETTY_PRINTING));
 		this.toolBundleGraphEnabled = Boolean.parseBoolean(readConfig(DandelionConfig.TOOL_BUNDLE_GRAPH));
 		this.toolBundleReloadingEnabled = Boolean.parseBoolean(readConfig(DandelionConfig.TOOL_BUNDLE_RELOADING));
-
+		this.toolGzipEnabled = Boolean.parseBoolean(readConfig(DandelionConfig.TOOL_GZIP));
+		this.toolGzipMimeTypes= PropertiesUtils.propertyAsSet(readConfig(DandelionConfig.TOOL_GZIP_MIME_TYPES));
+		
 		// Monitoring configurations
 		this.monitoringJmxEnabled = Boolean.parseBoolean(readConfig(DandelionConfig.MONITORING_JMX));
 
@@ -188,6 +194,7 @@ public class Configuration {
 		else {
 			this.servlet3Enabled = Boolean.parseBoolean(overrideServlet3);
 		}
+		this.encoding = readConfig(DandelionConfig.ENCODING);
 	}
 
 	/**
@@ -465,17 +472,37 @@ public class Configuration {
 	public String getAssetUrlPattern() {
 		return assetUrlPattern;
 	}
-	
-	private String getProcessedAssetUrlPattern(String rawAssetUrlPattern){
+
+	public boolean isToolGzipEnabled() {
+		return toolGzipEnabled;
+	}
+
+	public void setToolGzipEnabled(boolean toolGzip) {
+		this.toolGzipEnabled = toolGzip;
+	}
+
+	private String getProcessedAssetUrlPattern(String rawAssetUrlPattern) {
 
 		StringBuilder processedAssetUrlPattern = new StringBuilder(rawAssetUrlPattern);
-		if(!processedAssetUrlPattern.toString().startsWith("/")) {
+		if (!processedAssetUrlPattern.toString().startsWith("/")) {
 			processedAssetUrlPattern.insert(0, '/');
 		}
 		if (!processedAssetUrlPattern.toString().endsWith("/")) {
 			processedAssetUrlPattern.append('/');
 		}
-		
+
 		return processedAssetUrlPattern.toString();
+	}
+
+	public String getEncoding() {
+		return encoding;
+	}
+
+	public void setEncoding(String encoding) {
+		this.encoding = encoding;
+	}
+
+	public Set<String> getToolGzipMimeTypes() {
+		return toolGzipMimeTypes;
 	}
 }

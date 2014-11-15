@@ -45,11 +45,26 @@ import com.github.dandelion.core.storage.BundleStorageUnit;
 import com.github.dandelion.core.utils.StringUtils;
 
 /**
+ * <p>
+ * Custom SAX2 event handler in charge of parsing an XML-formatted bundle
+ * definition.
+ * </p>
  * 
  * @author Thibault Duchateau
  * @since 0.11.0
  */
 public class BundleSaxHandler extends DefaultHandler {
+
+	public static final String EL_BUNDLE = "bundle";
+	public static final String EL_NAME = "name";
+	public static final String EL_ASSET = "asset";
+	public static final String EL_DEPENDENCY = "dependency";
+	public static final String EL_LOCATIONS = "locations";
+	public static final String EL_LOCATION = "location";
+	public static final String ATTR_NAME = "name";
+	public static final String ATTR_VERSION = "version";
+	public static final String ATTR_TYPE = "type";
+	public static final String ATTR_KEY = "key";
 
 	public static final String JAXP_SCHEMA_LANGUAGE = "http://java.sun.com/xml/jaxp/properties/schemaLanguage";
 	public static final String W3C_XML_SCHEMA = "http://www.w3.org/2001/XMLSchema";
@@ -70,41 +85,41 @@ public class BundleSaxHandler extends DefaultHandler {
 	@Override
 	public void startElement(String uri, String s1, String qName, Attributes attributes) throws SAXException {
 
-		if (qName.equalsIgnoreCase("bundle")) {
+		if (qName.equalsIgnoreCase(EL_BUNDLE)) {
 			bsu = new BundleStorageUnit();
 		}
-		else if (qName.equalsIgnoreCase("asset")) {
+		else if (qName.equalsIgnoreCase(EL_ASSET)) {
 			asu = new AssetStorageUnit();
-			asu.setName(attributes.getValue("name"));
-			asu.setVersion(attributes.getValue("version"));
-			if (StringUtils.isNotBlank(attributes.getValue("type"))) {
-				asu.setType(AssetType.valueOf(attributes.getValue("type")));
+			asu.setName(attributes.getValue(ATTR_NAME));
+			asu.setVersion(attributes.getValue(ATTR_VERSION));
+			if (StringUtils.isNotBlank(attributes.getValue(ATTR_TYPE))) {
+				asu.setType(AssetType.valueOf(attributes.getValue(ATTR_TYPE)));
 			}
 		}
-		else if (qName.equalsIgnoreCase("location")) {
-			locationKey = attributes.getValue("key");
+		else if (qName.equalsIgnoreCase(EL_LOCATION)) {
+			locationKey = attributes.getValue(ATTR_KEY);
 		}
 	}
 
 	@Override
 	public void endElement(String uri, String localName, String qName) throws SAXException {
 
-		if (qName.equalsIgnoreCase("name")) {
+		if (qName.equalsIgnoreCase(EL_NAME)) {
 			bsu.setName(content);
 		}
-		else if (qName.equalsIgnoreCase("dependency")) {
+		else if (qName.equalsIgnoreCase(EL_DEPENDENCY)) {
 			bsu.addDependency(content);
 		}
-		else if (qName.equalsIgnoreCase("asset")) {
+		else if (qName.equalsIgnoreCase(EL_ASSET)) {
 			asus.add(asu);
 		}
-		else if (qName.equalsIgnoreCase("bundle")) {
+		else if (qName.equalsIgnoreCase(EL_BUNDLE)) {
 			bsu.setAssetStorageUnits(asus);
 		}
-		else if (qName.equalsIgnoreCase("location")) {
+		else if (qName.equalsIgnoreCase(EL_LOCATION)) {
 			locationMap.put(locationKey, content);
 		}
-		else if (qName.equalsIgnoreCase("locations")) {
+		else if (qName.equalsIgnoreCase(EL_LOCATIONS)) {
 			asu.setLocations(locationMap);
 		}
 	}

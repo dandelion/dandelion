@@ -40,8 +40,10 @@ import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.dandelion.core.Context;
 import com.github.dandelion.core.DandelionException;
 import com.github.dandelion.core.storage.BundleStorageUnit;
+import com.github.dandelion.core.storage.support.BundleUtils;
 import com.github.dandelion.core.utils.BundleStorageLogBuilder;
 import com.github.dandelion.core.utils.scanner.ResourceScanner;
 
@@ -56,7 +58,7 @@ import com.github.dandelion.core.utils.scanner.ResourceScanner;
 public class JsonBundleLoadingStrategy implements LoadingStrategy {
 
 	private static final Logger LOG = LoggerFactory.getLogger(JsonBundleLoadingStrategy.class);
-
+	private final Context context;
 	private static ObjectMapper mapper;
 
 	static {
@@ -66,6 +68,10 @@ public class JsonBundleLoadingStrategy implements LoadingStrategy {
 		mapper.configure(JsonParser.Feature.ALLOW_BACKSLASH_ESCAPING_ANY_CHARACTER, true);
 	}
 
+	public JsonBundleLoadingStrategy(Context context){
+		this.context = context;
+	}
+	
 	@Override
 	public Set<String> getResourcePaths(String bundleLocation, Set<String> excludedPaths) {
 
@@ -95,7 +101,10 @@ public class JsonBundleLoadingStrategy implements LoadingStrategy {
 			try {
 				InputStream configFileStream = classLoader.getResourceAsStream(resourcePath);
 				BundleStorageUnit bsu = mapper.readValue(configFileStream, BundleStorageUnit.class);
-				LOG.debug("Parsed {}", bsu);
+				bsu.setRelativePath(resourcePath);
+				BundleUtils.checkRequiredConfiguration(bslb, bsu);
+				BundleUtils.finalizeBundleConfiguration(bsu, context);
+				LOG.debug("Parsed bundle \"{}\" ({})", bsu.getName(), bsu);
 				bundles.add(bsu);
 			}
 			catch (IOException e) {
