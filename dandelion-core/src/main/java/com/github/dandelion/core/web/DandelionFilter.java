@@ -138,14 +138,17 @@ public class DandelionFilter implements Filter {
 
 		// Post-filtering handlers processing
 		RequestHandlerContext postHandlerContext = new RequestHandlerContext(context, request, wrappedResponse);
+		int index = 1;
 		for (RequestHandler postHandler : context.getPostHandlers()) {
 			boolean isHandlerApplicable = postHandler.isApplicable(postHandlerContext);
-			LOG.debug("({}/{}) {} (applicable: {})", postHandler.getRank(), context.getPostHandlers().size(),
-					postHandler.getClass().getSimpleName(), isHandlerApplicable);
-			
-			if (postHandler.isApplicable(postHandlerContext) && finalResponse != null) {
+			LOG.debug("({}/{}) {} (rank: {}, applicable: {})", index, context.getPostHandlers().size(), postHandler
+					.getClass().getSimpleName(), postHandler.getRank(), isHandlerApplicable);
+
+			if (isHandlerApplicable && finalResponse != null) {
 				finalResponse = postHandler.handle(postHandlerContext, finalResponse);
 			}
+
+			index++;
 		}
 
 		// The response may have been set to null by one of the handlers

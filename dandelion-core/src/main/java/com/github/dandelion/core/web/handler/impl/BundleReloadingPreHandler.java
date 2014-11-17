@@ -52,14 +52,13 @@ public class BundleReloadingPreHandler extends AbstractRequestHandler {
 	
 	@Override
 	public int getRank() {
-		// TODO Auto-generated method stub
 		return 0;
 	}
 
 	@Override
-	public boolean isApplicable(RequestHandlerContext requestHandlingContext) {
-		return requestHandlingContext.getContext().getConfiguration().isToolBundleReloadingEnabled()
-				&& requestHandlingContext.getRequest().getParameter(WebConstants.DANDELION_RELOAD_BUNDLES) != null;
+	public boolean isApplicable(RequestHandlerContext context) {
+		return context.getContext().getConfiguration().isToolBundleReloadingEnabled()
+				&& context.getRequest().getParameter(WebConstants.DANDELION_RELOAD_BUNDLES) != null;
 	}
 
 	@Override

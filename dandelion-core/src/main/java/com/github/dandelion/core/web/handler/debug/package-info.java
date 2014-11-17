@@ -27,53 +27,11 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.github.dandelion.core.bundle.loader.impl;
-
-import java.util.List;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.github.dandelion.core.bundle.loader.AbstractBundleLoader;
-import com.github.dandelion.core.storage.AssetStorageUnit;
-import com.github.dandelion.core.storage.BundleStorageUnit;
-
 /**
  * <p>
- * Bundle loader used to load bundles defined by users inside the
- * {@code dandelion/vendor} folder (and all subfolders) of the classpath.
+ * Debug utilities classes and utilities used when the Dandelion debugger is requested.
  * </p>
  * 
  * @author Thibault Duchateau
- * @since 0.10.0
  */
-public class VendorBundleLoader extends AbstractBundleLoader {
-
-	private static final Logger LOG = LoggerFactory.getLogger(VendorBundleLoader.class);
-
-	public static final String SCANNING_PATH = "dandelion/vendor";
-
-	@Override
-	public String getName() {
-		return "vendor";
-	}
-
-	@Override
-	public String getPath() {
-		return SCANNING_PATH;
-	}
-
-	@Override
-	protected Logger getLogger() {
-		return LOG;
-	}
-
-	@Override
-	protected void doCustomBundlePostProcessing(List<BundleStorageUnit> bundles) {
-		for (BundleStorageUnit bsu : bundles) {
-			for (AssetStorageUnit asu : bsu.getAssetStorageUnits()) {
-				asu.setVendor(true);
-			}
-		}
-	}
-}
+package com.github.dandelion.core.web.handler.debug;

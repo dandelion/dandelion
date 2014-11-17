@@ -40,6 +40,7 @@ import com.github.dandelion.core.Context;
 import com.github.dandelion.core.bundle.loader.strategy.JsonBundleLoadingStrategy;
 import com.github.dandelion.core.bundle.loader.strategy.LoadingStrategy;
 import com.github.dandelion.core.bundle.loader.strategy.XmlBundleLoadingStrategy;
+import com.github.dandelion.core.storage.AssetStorageUnit;
 import com.github.dandelion.core.storage.BundleStorageUnit;
 import com.github.dandelion.core.utils.StringBuilderUtils;
 
@@ -134,7 +135,13 @@ public abstract class AbstractBundleLoader implements BundleLoader {
 
 	@Override
 	public void postProcessBundles(List<BundleStorageUnit> bundles) {
-		// Does nothing by default
-		getLogger().debug("No post processing configured");
+		for (BundleStorageUnit bsu : bundles) {
+			for (AssetStorageUnit asu : bsu.getAssetStorageUnits()) {
+				asu.setBundle(bsu.getName());
+			}
+		}
+		doCustomBundlePostProcessing(bundles);
 	}
+	
+	protected abstract void doCustomBundlePostProcessing(List<BundleStorageUnit> bundles);
 }

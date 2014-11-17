@@ -188,6 +188,7 @@ public class AssetMapper {
 		}
 
 		asset.setName(PathUtils.extractLowerCasedName(location));
+		asset.setBundle(asu.getBundle());
 		asset.setType(AssetType.typeOf(location));
 		asset.setConfigLocationKey(locationKey);
 		asset.setConfigLocation(asu.getLocations().get(locationKey));

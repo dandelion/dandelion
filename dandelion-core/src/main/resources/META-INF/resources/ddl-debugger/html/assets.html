@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Dandelion debugger">
+<meta name="author" content="Dandelion team">
+<title>Dandelion debugger</title>
+<link rel="stylesheet" href="%CONTEXT%/ddl-debugger/css/bootstrap.min.css"></link>
+<link href="%CONTEXT%/ddl-debugger/css/dashboard.css" rel="stylesheet">
+<link href="%CONTEXT%/ddl-debugger/css/graph.css" rel="stylesheet">
+</head>
+<body>
+
+  <nav class="navbar navbar-inverse navbar-fixed-top">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+          data-target="#navbar">
+          <span class="sr-only">Toggle navigation</span> <span class="icon-bar"></span> <span
+            class="icon-bar"></span> <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="%CONTEXT%/%DEBUGGER_PARAM%">Dandelion Debugger</a>
+      </div>
+      <div id="navbar" class="navbar-collapse collapse">
+        <ul class="nav navbar-nav navbar-right">
+          <li><a href="http://dandelion-forum.48353.x6.nabble.com/">Support</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-sm-3 col-md-2 sidebar">
+        <ul class="nav nav-sidebar">
+          <li class="active"><a href="%CONTEXT%/%DEBUGGER_PARAM%&ddl-debug-page=assets">Current
+              assets <span class="sr-only">(current)</span>
+          </a></li>
+          <li><a href="%CONTEXT%/%DEBUGGER_PARAM%&ddl-debug-page=options">Current options</a></li>
+          <li><a href="%CONTEXT%/%DEBUGGER_PARAM%&ddl-debug-page=cache">Cache</a></li>
+          <li><a href="%CURRENT_URI%"><span class="glyphicon glyphicon-backward"></span>
+              Back to application</a></li>
+        </ul>
+      </div>
+      <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+        <h1 class="page-header">Current assets</h1>
+        <p>This page provides debugging information about assets injected into the HTML page for
+          the current request.</p>
+        <p>
+          Current request:
+          <code>%CURRENT_URI%</code>
+        </p>
+        <ul id="asset-tab" class="nav nav-tabs" style="margin-top: 25px;">
+          <li class="active"><a href="#debug-graph" id="profile-tab" data-toggle="tab">Graph</a></li>
+          <li><a href="#debug-table" id="home-tab" data-toggle="tab">Table</a></li>
+          <li><a href="#debug-html" id="profile-tab" data-toggle="tab">HTML</a></li>
+        </ul>
+        <div id="asset-tab-content" class="tab-content">
+          <div class="tab-pane fade active in" id="debug-graph">
+            <svg id="svg-app" style="width: 100%; height: 500px; padding: 10px;">
+              <g />
+            </svg>
+          </div>
+          <div class="tab-pane fade" id="debug-table">
+            <div class="table-responsive">%ASSETS%</div>
+          </div>
+          <div class="tab-pane fade" id="debug-html">
+            <p>
+            <pre id="htmlSource">
+&lt;html&gt;
+  &lt;head&gt;
+    ...
+%ASSETS_HEAD%
+  &lt;/head&gt;
+  &lt;body&gt;
+    ...
+%ASSETS_BODY% 
+  &lt;/body&gt;
+&lt;/html&gt;
+</pre>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="%CONTEXT%/ddl-debugger/js/d3.min.js"></script>
+  <script src="%CONTEXT%/ddl-debugger/js/dagre-d3.min.js"></script>
+  <script src="%CONTEXT%/ddl-debugger/js/d3-tip.js"></script>
+  <script src="%CONTEXT%/ddl-debugger/js/jquery-1.11.1.min.js"></script>
+  <script src="%CONTEXT%/ddl-debugger/js/bootstrap.min.js"></script>
+  <script>
+    $(document).ready(function(){
+       $('#asset-tab a').click(function (e) {
+    	  e.preventDefault()	
+    	  $(this).tab('show')
+    	})
+    	
+    	// Initialization code
+        var requestGraph = new dagreD3.graphlib.Graph({})
+          .setGraph({ "rankdir" : "lr"});
+
+        %NODES_REQUEST%
+        
+        requestGraph.nodes().forEach(function(v) {
+        	  var node = requestGraph.node(v);
+        	  // Round the corners of the nodes
+        	  node.rx = node.ry = 5;
+        	});
+        
+        // Create the renderer
+        var render = new dagreD3.render();
+
+        // Set up an SVG group so that we can translate the final graph
+        var svg = d3.select("svg");
+        var svgGroup = svg.append("g");
+
+        // Set up zoom support
+        var zoom = d3.behavior.zoom().on("zoom", function() {
+        	svgGroup.attr("transform", "translate(" + d3.event.translate + ")" +
+                                        "scale(" + d3.event.scale + ")");
+          });
+        svg.call(zoom);
+        
+        // Run the renderer. This is what draws the final graph.
+        render(svgGroup, requestGraph);
+    });
+    </script>
+</body>
+</html>

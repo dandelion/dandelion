@@ -56,4 +56,8 @@ public class AssetFakeLoader extends AbstractBundleLoader {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	@Override
+	protected void doCustomBundlePostProcessing(List<BundleStorageUnit> bundles) {
+	}
 }

@@ -98,17 +98,22 @@ public class Asset {
 	private String[] attributesOnlyName;
 
 	// Internal attribute
-	
+
 	/**
 	 * The computed cache key of the asset.
 	 */
 	private String cacheKey;
+
+	/**
+	 * The parent bundle.
+	 */
+	private String bundle;
 	
 	/**
 	 * Whether the asset has been loaded by the {@link VendorBundleLoader}.
 	 */
 	private boolean vendor;
-	
+
 	public Asset() {
 	}
 
@@ -290,11 +295,19 @@ public class Asset {
 	public boolean isVendor() {
 		return vendor;
 	}
-	
+
 	public boolean isNotVendor() {
 		return !isVendor();
 	}
-	
+
+	public String getBundle() {
+		return bundle;
+	}
+
+	public void setBundle(String bundle) {
+		this.bundle = bundle;
+	}
+
 	@Override
 	public String toString() {
 		return "Asset [name=" + name + ", version=" + version + ", type=" + type + ", dom=" + dom + ", configLocation="
@@ -305,7 +318,7 @@ public class Asset {
 	public String toLog() {
 		return name + " (" + type + ", v" + version + ")";
 	}
-	
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;

@@ -31,12 +31,14 @@
 package com.github.dandelion.core.bundle.loader.impl;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.github.dandelion.core.bundle.loader.AbstractBundleLoader;
+import com.github.dandelion.core.storage.BundleStorageUnit;
 
 public class ModuleWithSubmoduleAssetJsonLoader extends AbstractBundleLoader {
 
@@ -62,5 +64,9 @@ public class ModuleWithSubmoduleAssetJsonLoader extends AbstractBundleLoader {
 		Set<String> excludedPaths = new HashSet<String>();
 		excludedPaths.add("module_with_submodule/submodule");
 		return excludedPaths;
+	}
+
+	@Override
+	protected void doCustomBundlePostProcessing(List<BundleStorageUnit> bundles) {
 	}
 }

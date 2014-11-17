@@ -121,6 +121,7 @@ public class BundleStorage {
 							existingAsu.setVersion(asu.getVersion());
 							existingAsu.setLocations(asu.getLocations());
 							existingAsu.setDom(asu.getDom());
+							existingAsu.setBundle(existingBundle.getName());
 							existingAsu.setType(asu.getType());
 							existingAsu.setAttributes(asu.getAttributes());
 							existingAsu.setAttributesOnlyName(asu.getAttributesOnlyName());

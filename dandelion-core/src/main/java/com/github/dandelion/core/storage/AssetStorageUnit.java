@@ -109,8 +109,13 @@ public class AssetStorageUnit {
 	private Map<String, String> attributes;
 
 	private String[] attributesOnlyName;
-	
+
 	private String cacheKey;
+
+	/**
+	 * The parent bundle.
+	 */
+	private String bundle;
 
 	/**
 	 * <p>
@@ -279,6 +284,14 @@ public class AssetStorageUnit {
 			Arrays.copyOf(attributesOnlyName, attributesOnlyName.length + 1);
 			attributesOnlyName[attributesOnlyName.length] = attributeName;
 		}
+	}
+
+	public String getBundle() {
+		return bundle;
+	}
+
+	public void setBundle(String bundle) {
+		this.bundle = bundle;
 	}
 
 	@Override

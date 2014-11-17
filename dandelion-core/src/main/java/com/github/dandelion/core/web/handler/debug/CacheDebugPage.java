@@ -27,53 +27,32 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.github.dandelion.core.bundle.loader.impl;
+package com.github.dandelion.core.web.handler.debug;
 
-import java.util.List;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.github.dandelion.core.utils.ResourceUtils;
+import com.github.dandelion.core.web.handler.RequestHandlerContext;
 
-import com.github.dandelion.core.bundle.loader.AbstractBundleLoader;
-import com.github.dandelion.core.storage.AssetStorageUnit;
-import com.github.dandelion.core.storage.BundleStorageUnit;
+public class CacheDebugPage extends AbstractDebugPage {
 
-/**
- * <p>
- * Bundle loader used to load bundles defined by users inside the
- * {@code dandelion/vendor} folder (and all subfolders) of the classpath.
- * </p>
- * 
- * @author Thibault Duchateau
- * @since 0.10.0
- */
-public class VendorBundleLoader extends AbstractBundleLoader {
-
-	private static final Logger LOG = LoggerFactory.getLogger(VendorBundleLoader.class);
-
-	public static final String SCANNING_PATH = "dandelion/vendor";
-
-	@Override
-	public String getName() {
-		return "vendor";
+	public CacheDebugPage(RequestHandlerContext context) {
+		super(context);
 	}
 
 	@Override
-	public String getPath() {
-		return SCANNING_PATH;
+	public String getTemplate(RequestHandlerContext context) throws IOException {
+		return ResourceUtils.getContentFromInputStream(Thread.currentThread().getContextClassLoader()
+				.getResourceAsStream("META-INF/resources/ddl-debugger/html/cache.html"));
 	}
 
 	@Override
-	protected Logger getLogger() {
-		return LOG;
+	protected Map<String, String> getCustomParameters(RequestHandlerContext context) {
+
+		Map<String, String> params = new HashMap<String, String>();
+		return params;
 	}
 
-	@Override
-	protected void doCustomBundlePostProcessing(List<BundleStorageUnit> bundles) {
-		for (BundleStorageUnit bsu : bundles) {
-			for (AssetStorageUnit asu : bsu.getAssetStorageUnits()) {
-				asu.setVendor(true);
-			}
-		}
-	}
 }

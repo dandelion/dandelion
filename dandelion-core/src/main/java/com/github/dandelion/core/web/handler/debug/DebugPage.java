@@ -27,53 +27,46 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.github.dandelion.core.bundle.loader.impl;
+package com.github.dandelion.core.web.handler.debug;
 
-import java.util.List;
+import java.io.IOException;
+import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.github.dandelion.core.bundle.loader.AbstractBundleLoader;
-import com.github.dandelion.core.storage.AssetStorageUnit;
-import com.github.dandelion.core.storage.BundleStorageUnit;
+import com.github.dandelion.core.web.handler.RequestHandlerContext;
 
 /**
  * <p>
- * Bundle loader used to load bundles defined by users inside the
- * {@code dandelion/vendor} folder (and all subfolders) of the classpath.
+ * Contract for all debug pages.
  * </p>
  * 
  * @author Thibault Duchateau
- * @since 0.10.0
+ * @since 0.11.0
  */
-public class VendorBundleLoader extends AbstractBundleLoader {
+public interface DebugPage {
 
-	private static final Logger LOG = LoggerFactory.getLogger(VendorBundleLoader.class);
+	/**
+	 * <p>
+	 * Loads the template of the debug page and returns it as a String in order
+	 * to be processed.
+	 * </p>
+	 * 
+	 * @param context
+	 *            The wrapper object holding the context.
+	 * @return the template as a String
+	 * @throws IOException
+	 *             if something goes wrong while loading the template.
+	 */
+	String getTemplate(RequestHandlerContext context) throws IOException;
 
-	public static final String SCANNING_PATH = "dandelion/vendor";
-
-	@Override
-	public String getName() {
-		return "vendor";
-	}
-
-	@Override
-	public String getPath() {
-		return SCANNING_PATH;
-	}
-
-	@Override
-	protected Logger getLogger() {
-		return LOG;
-	}
-
-	@Override
-	protected void doCustomBundlePostProcessing(List<BundleStorageUnit> bundles) {
-		for (BundleStorageUnit bsu : bundles) {
-			for (AssetStorageUnit asu : bsu.getAssetStorageUnits()) {
-				asu.setVendor(true);
-			}
-		}
-	}
+	/**
+	 * <p>
+	 * Populates a {@link Map} of parameters that will be injected into the
+	 * template.
+	 * </p>
+	 * 
+	 * @param context
+	 *            The wrapper object holding the context.
+	 * @return a {@link Map} of parameters.
+	 */
+	Map<String, String> getParameters(RequestHandlerContext context);
 }

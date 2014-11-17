@@ -2,20 +2,20 @@
  * [The "BSD licence"]
  * Copyright (c) 2013-2014 Dandelion
  * All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
  * are met:
- * 
+ *
  * 1. Redistributions of source code must retain the above copyright
  * notice, this list of conditions and the following disclaimer.
  * 2. Redistributions in binary form must reproduce the above copyright
  * notice, this list of conditions and the following disclaimer in the
  * documentation and/or other materials provided with the distribution.
- * 3. Neither the name of Dandelion nor the names of its contributors 
- * may be used to endorse or promote products derived from this software 
+ * 3. Neither the name of Dandelion nor the names of its contributors
+ * may be used to endorse or promote products derived from this software
  * without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
  * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
  * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
@@ -27,7 +27,7 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.github.dandelion.core.monitoring;
+package com.github.dandelion.core.web.handler.debug;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -38,48 +38,41 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.dandelion.core.Context;
+import com.github.dandelion.core.DandelionException;
 import com.github.dandelion.core.asset.Asset;
 import com.github.dandelion.core.asset.AssetDomPosition;
 import com.github.dandelion.core.asset.AssetMapper;
 import com.github.dandelion.core.asset.AssetQuery;
-import com.github.dandelion.core.config.Profile;
 import com.github.dandelion.core.storage.AssetStorageUnit;
 import com.github.dandelion.core.storage.BundleStorageUnit;
 import com.github.dandelion.core.utils.ResourceUtils;
-import com.github.dandelion.core.utils.UrlUtils;
 import com.github.dandelion.core.web.AssetRequestContext;
-import com.github.dandelion.core.web.WebConstants;
+import com.github.dandelion.core.web.handler.RequestHandlerContext;
 
 /**
  * <p>
- * Build the page allowing to visualize the asset graphs, both for the current
- * request and the whole application.
- * 
+ * Debug page focused on assets.
+ * </p>
  * <p>
- * Once built, the page is directly written in the {@link HttpServletResponse}.
- * 
- * <p>
- * This development tool is only accessible when the {@link Profile#DEVELOPMENT} is enabled.
+ * This page displays all assets injected in the page corresponding to a
+ * request. Assets are displayed in different ways: as a graph, as a table and
+ * also how they are injected into the HTML page.
+ * </p>
  * 
  * @author Thibault Duchateau
- * @since 0.10.0
+ * @since 0.11.0
  */
-public class GraphViewer {
+public class AssetsDebugPage extends AbstractDebugPage {
 
 	private static ObjectMapper mapper;
 	private AssetMapper assetMapper;
-	private Context context;
 
-	public GraphViewer(Context context) {
-		this.context = context;
-		
+	static {
 		mapper = new ObjectMapper();
 		mapper.configure(JsonParser.Feature.ALLOW_COMMENTS, true);
 		mapper.configure(JsonParser.Feature.ALLOW_SINGLE_QUOTES, true);
@@ -87,19 +80,74 @@ public class GraphViewer {
 		mapper.configure(JsonParser.Feature.ALLOW_BACKSLASH_ESCAPING_ANY_CHARACTER, true);
 	}
 
-	public String getView(HttpServletRequest request, HttpServletResponse response)
-			throws IOException, ServletException {
+	public AssetsDebugPage(RequestHandlerContext context) {
+		super(context);
+		this.assetMapper = new AssetMapper(context.getRequest(), context.getContext());
+	}
 
-		assetMapper = new AssetMapper(request, context);
+	@Override
+	public String getTemplate(RequestHandlerContext context) throws IOException {
+		return ResourceUtils.getContentFromInputStream(Thread.currentThread().getContextClassLoader()
+				.getResourceAsStream("META-INF/resources/ddl-debugger/html/assets.html"));
+	}
+
+	@Override
+	protected Map<String, String> getCustomParameters(RequestHandlerContext context) {
 		StringBuilder sbNodesRequest = new StringBuilder();
-		StringBuilder sbNodesApplication = new StringBuilder();
+
+		HttpServletRequest request = context.getRequest();
+
+		Map<String, String> params = new HashMap<String, String>();
+
+		try {
+			Set<BundleStorageUnit> bsuRequest = context.getContext().getBundleStorage()
+					.bundlesFor(AssetRequestContext.get(request).getBundles(true));
+
+			for (BundleStorageUnit bsu : bsuRequest) {
+				Map<String, Object> map = new HashMap<String, Object>();
+				map.put("label", bsu.getName());
+				map.put("assets", convertToD3Assets(bsu.getAssetStorageUnits()));
+				map.put("shape", "ellipse");
+				String bundle;
+				bundle = mapper.writeValueAsString(map);
+
+				sbNodesRequest.append("requestGraph.setNode('" + bsu.getName() + "'," + bundle + ");").append('\n');
+			}
+
+			Set<String> edgesRequest = new HashSet<String>();
+			for (BundleStorageUnit bsu : bsuRequest) {
+				if (bsu.getChildren() != null && !bsu.getChildren().isEmpty()) {
+					for (BundleStorageUnit childBsu : bsu.getChildren()) {
+						edgesRequest.add("requestGraph.setEdge('" + bsu.getName() + "', '" + childBsu.getName()
+								+ "', { label: \"depends on\" });");
+					}
+				}
+			}
+			for (String edge : edgesRequest) {
+				sbNodesRequest.append(edge).append('\n');
+			}
+
+			params.put("%NODES_REQUEST%", sbNodesRequest.toString());
+		}
+		catch (JsonProcessingException e) {
+			throw new DandelionException("An error occurred when converting bundles to JSON", e);
+		}
+
+		Set<Asset> assets = new AssetQuery(context.getRequest(), context.getContext()).perform();
+
+		StringBuilder table = new StringBuilder("<table class='table table-striped table-hover'><thead>");
+		table.append("<tr><th>Bundle</th><th>Asset</th><th>Version</th><th>Location</th></tr></thead><tbody>");
+		for (Asset asset : assets) {
+			table.append(tr(asset.getBundle(), asset.getName(), asset.getVersion(), asset.getFinalLocation()));
+		}
+		table.append("</tbody></table>");
+
+		params.put("%ASSETS%", table.toString());
+
 		StringBuilder sbHead = new StringBuilder();
 		StringBuilder sbBody = new StringBuilder();
-
-		String graphView = ResourceUtils.getContentFromInputStream(Thread.currentThread().getContextClassLoader()
-				.getResourceAsStream("dandelion/internal/graphViewer/graphViewer.html"));
-
-		Set<Asset> assetsHead = new AssetQuery(request, context).atPosition(AssetDomPosition.head).perform();
+		Set<Asset> assetsHead = new AssetQuery(context.getRequest(), context.getContext()).atPosition(
+				AssetDomPosition.head).perform();
 		Iterator<Asset> iteratorAssetHead = assetsHead.iterator();
 		while (iteratorAssetHead.hasNext()) {
 			sbHead.append("    &lt;link href=\"" + iteratorAssetHead.next().getFinalLocation() + "\" />");
@@ -108,7 +156,8 @@ public class GraphViewer {
 			}
 		}
 
-		Set<Asset> assetsBody = new AssetQuery(request, context).atPosition(AssetDomPosition.body).perform();
+		Set<Asset> assetsBody = new AssetQuery(context.getRequest(), context.getContext()).atPosition(
+				AssetDomPosition.body).perform();
 		Iterator<Asset> iteratorAssetBody = assetsBody.iterator();
 		while (iteratorAssetBody.hasNext()) {
 			sbBody.append("    &lt;script src=\"" + iteratorAssetBody.next().getFinalLocation() + "\"></script>");
@@ -117,67 +166,13 @@ public class GraphViewer {
 			}
 		}
 
-		// Request nodes
-		Set<BundleStorageUnit> bsuRequest = context.getBundleStorage().bundlesFor(AssetRequestContext.get(request).getBundles(true));
-
-		for (BundleStorageUnit bsu : bsuRequest) {
-			Map<String, Object> map = new HashMap<String, Object>();
-			map.put("label", bsu.getName());
-			map.put("assets", convertToD3Assets(bsu.getAssetStorageUnits()));
-			String bundle = mapper.writeValueAsString(map);
-			sbNodesRequest.append("requestGraph.addNode('" + bsu.getName() + "'," + bundle + ");").append('\n');
-		}
-
-		Set<String> edgesRequest = new HashSet<String>();
-		for (BundleStorageUnit bsu : bsuRequest) {
-			if (bsu.getChildren() != null && !bsu.getChildren().isEmpty()) {
-				for (BundleStorageUnit childBsu : bsu.getChildren()) {
-					edgesRequest.add("requestGraph.addEdge(null, '" + bsu.getName() + "', '" + childBsu.getName()
-							+ "', { label: \"depends on\" });");
-				}
-			}
-		}
-		for (String edge : edgesRequest) {
-			sbNodesRequest.append(edge).append('\n');
-		}
-
-		// Application nodes
-		List<BundleStorageUnit> allBundles = context.getBundleStorage().getBundleDag().getVerticies();
-		for (BundleStorageUnit bsu : allBundles) {
-			Map<String, Object> map = new HashMap<String, Object>();
-			map.put("label", bsu.getName());
-			String bundle = mapper.writeValueAsString(map);
-			sbNodesApplication.append("applicationGraph.addNode('" + bsu.getName() + "'," + bundle + ");").append('\n');
-		}
-
-		Set<String> edgesApplication = new HashSet<String>();
-		for (BundleStorageUnit bsu : allBundles) {
-			if (bsu.getChildren() != null && !bsu.getChildren().isEmpty()) {
-				for (BundleStorageUnit childBsu : bsu.getChildren()) {
-					edgesApplication.add("applicationGraph.addEdge(null, '" + bsu.getName() + "', '"
-							+ childBsu.getName() + "', { label: \"depends on\" });");
-				}
-			}
-		}
-		for (String edge : edgesApplication) {
-			sbNodesApplication.append(edge).append('\n');
-		}
-
-		// Apply replacements
-		String currentUri = UrlUtils.getCurrentUri(request).toString();
-
-		graphView = graphView.replace("[NODES_REQUEST]", sbNodesRequest.toString());
-		graphView = graphView.replace("[NODES_APPLICATION]", sbNodesApplication.toString());
-		graphView = graphView.replace("[CURRENT_URL]",
-				currentUri.substring(0, currentUri.indexOf(WebConstants.DANDELION_DEBUGGER) - 1));
-		graphView = graphView.replace("[HEAD]", sbHead.toString());
-		graphView = graphView.replace("[BODY]", sbBody.toString());
-
-		return graphView;
+		params.put("%ASSETS_HEAD%", sbHead.toString());
+		params.put("%ASSETS_BODY%", sbBody.toString());
+		return params;
 	}
 
 	public List<D3Asset> convertToD3Assets(Set<AssetStorageUnit> asus) {
-		List<D3Asset> d3Assets = new ArrayList<GraphViewer.D3Asset>();
+		List<D3Asset> d3Assets = new ArrayList<AssetsDebugPage.D3Asset>();
 		Set<Asset> assets = assetMapper.mapToAssets(asus);
 		for (Asset a : assets) {
 			d3Assets.add(new D3Asset(a));
@@ -185,7 +180,7 @@ public class GraphViewer {
 		return d3Assets;
 	}
 
-	public class D3Asset {
+	private class D3Asset {
 		private String url;
 		private String name;
 		private String version;
