@@ -139,6 +139,7 @@ public class DandelionFilter implements Filter {
 		// Post-filtering handlers processing
 		RequestHandlerContext postHandlerContext = new RequestHandlerContext(context, request, wrappedResponse);
 		int index = 1;
+		LOG.debug("Request \"{}\" is about to be processed", request.getRequestURL());
 		for (RequestHandler postHandler : context.getPostHandlers()) {
 			boolean isHandlerApplicable = postHandler.isApplicable(postHandlerContext);
 			LOG.debug("({}/{}) {} (rank: {}, applicable: {})", index, context.getPostHandlers().size(), postHandler
@@ -156,6 +157,7 @@ public class DandelionFilter implements Filter {
 			return;
 		}
 
+		response.setContentLength(finalResponse.length);
 		response.getOutputStream().write(finalResponse);
 	}
 

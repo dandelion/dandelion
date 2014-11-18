@@ -68,18 +68,18 @@ import com.github.dandelion.core.utils.ClassUtils;
 import com.github.dandelion.core.utils.ServiceLoaderUtils;
 import com.github.dandelion.core.utils.StringUtils;
 import com.github.dandelion.core.web.handler.RequestHandler;
+import com.github.dandelion.core.web.handler.debug.DebugMenu;
+import com.github.dandelion.core.web.handler.debug.DebugPage;
 
 /**
  * <p>
  * Holds the whole Dandelion context.
  * </p>
- * 
  * <p>
  * This class is in charge of discovering and storing several configuration
  * points, such as the configured {@link AssetCache} implementation or the
  * active {@link AssetProcessor}s.
  * </p>
- * 
  * <p>
  * There should be only one instance of this class per JVM.
  * </p>
@@ -105,6 +105,8 @@ public class Context {
 	private Configuration configuration;
 	private List<RequestHandler> preHandlers;
 	private List<RequestHandler> postHandlers;
+	private Map<String, DebugMenu> debugMenuMap;
+	private Map<String, DebugPage> debugPageMap;
 
 	/**
 	 * Public constructor.
@@ -139,6 +141,7 @@ public class Context {
 		initBundleStorage();
 		initMBean(filterConfig);
 		initHandlers(this);
+		initDebugMenus();
 	}
 
 	/**
@@ -387,11 +390,12 @@ public class Context {
 			// Load all bundles using the current BundleLoader
 			List<BundleStorageUnit> loadedBundles = bundleLoader.loadBundles();
 
-//			// First check: required configuration
-//			BundleStorageLogBuilder bslb = bundleStorage.checkRequiredConfiguration(loadedBundles);
-//			if (bslb.hasError()) {
-//				throw new DandelionException(bslb.toString());
-//			}
+			// // First check: required configuration
+			// BundleStorageLogBuilder bslb =
+			// bundleStorage.checkRequiredConfiguration(loadedBundles);
+			// if (bslb.hasError()) {
+			// throw new DandelionException(bslb.toString());
+			// }
 
 			LOG.debug("Found {} bundle{}: {}", loadedBundles.size(), loadedBundles.size() <= 1 ? "" : "s",
 					loadedBundles);
@@ -399,7 +403,7 @@ public class Context {
 			bundleStorage.storeBundles(loadedBundles);
 
 			// Second and last check: consistency
-//			bundleStorage.checkBundleConsistency(loadedBundles);
+			// bundleStorage.checkBundleConsistency(loadedBundles);
 		}
 
 		LOG.debug("Bundle storage initialized.");
@@ -446,30 +450,43 @@ public class Context {
 
 		this.preHandlers = preHandlers;
 		this.postHandlers = postHandlers;
-		
-		if(this.preHandlers.isEmpty()) {
+
+		if (this.preHandlers.isEmpty()) {
 			LOG.debug("No pre-filtering request handlers enabled");
 		}
 		else {
 			LOG.debug("Enabled pre-filtering request handlers:");
 			Collections.sort(this.preHandlers);
-			for(RequestHandler preHandler : this.preHandlers){
+			for (RequestHandler preHandler : this.preHandlers) {
 				LOG.debug("[Rank {}] {}", preHandler.getRank(), preHandler.getClass().getSimpleName());
 			}
 		}
-		
-		if(this.postHandlers.isEmpty()) {
+
+		if (this.postHandlers.isEmpty()) {
 			LOG.debug("No post-filtering request handlers enabled");
 		}
 		else {
 			Collections.sort(this.postHandlers);
 			LOG.debug("Enabled post-filtering request handlers:");
-			for(RequestHandler postHandler : this.postHandlers){
+			for (RequestHandler postHandler : this.postHandlers) {
 				LOG.debug("[Rank {}] {}", postHandler.getRank(), postHandler.getClass().getSimpleName());
 			}
 		}
 	}
-	
+
+	public void initDebugMenus() {
+		List<DebugMenu> debugMenus = ServiceLoaderUtils.getProvidersAsList(DebugMenu.class);
+
+		debugMenuMap = new HashMap<String, DebugMenu>();
+		debugPageMap = new HashMap<String, DebugPage>();
+		for (DebugMenu debugMenu : debugMenus) {
+			debugMenuMap.put(debugMenu.getDisplayName().trim().toLowerCase(), debugMenu);
+			for (DebugPage debugPage : debugMenu.getPages()) {
+				debugPageMap.put(debugPage.getId(), debugPage);
+			}
+		}
+	}
+
 	public void destroy() {
 		if (configuration.isMonitoringJmxEnabled()) {
 			try {
@@ -563,6 +580,13 @@ public class Context {
 	public List<RequestHandler> getPostHandlers() {
 		return postHandlers;
 	}
-	
-	
+
+	public Map<String, DebugMenu> getDebugMenuMap() {
+		return debugMenuMap;
+	}
+
+	public Map<String, DebugPage> getDebugPageMap() {
+		return debugPageMap;
+	}
+
 }

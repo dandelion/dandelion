@@ -46,6 +46,34 @@ public interface DebugPage {
 
 	/**
 	 * <p>
+	 * Initializes the debug page with the current context.
+	 * </p>
+	 * 
+	 * @param context
+	 *            The wrapper object holding the context.
+	 */
+	void initWith(RequestHandlerContext context);
+
+	/**
+	 * <p>
+	 * Returns the identifier of the debug page, used in its URI.
+	 * </p>
+	 * <p>
+	 * For example "assets" in
+	 * <code>http://domain/context/?ddl-debug&ddl-debug-page=assets</code>.
+	 * </p>
+	 * 
+	 * @return the idenfier of the debug page, used its URI.
+	 */
+	String getId();
+
+	/**
+	 * @return the name of the debug page, used in the sidebar menu.
+	 */
+	String getName();
+
+	/**
+	 * <p>
 	 * Loads the template of the debug page and returns it as a String in order
 	 * to be processed.
 	 * </p>

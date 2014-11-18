@@ -51,14 +51,24 @@ import com.github.dandelion.core.web.handler.RequestHandlerContext;
  */
 public class OptionsDebugPage extends AbstractDebugPage {
 
-	public OptionsDebugPage(RequestHandlerContext context) {
-		super(context);
+	public static final String PAGE_ID = "options";
+	public static final String PAGE_NAME = "Options";
+	private static final String PAGE_LOCATION = "META-INF/resources/ddl-debugger/html/core-options.html";
+
+	@Override
+	public String getId() {
+		return PAGE_ID;
+	}
+
+	@Override
+	public String getName() {
+		return PAGE_NAME;
 	}
 
 	@Override
 	public String getTemplate(RequestHandlerContext context) throws IOException {
 		return ResourceUtils.getContentFromInputStream(Thread.currentThread().getContextClassLoader()
-				.getResourceAsStream("META-INF/resources/ddl-debugger/html/options.html"));
+				.getResourceAsStream(PAGE_LOCATION));
 	}
 
 	@Override

@@ -39,15 +39,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.github.dandelion.core.DandelionException;
-import com.github.dandelion.core.utils.EnumUtils;
 import com.github.dandelion.core.utils.StringUtils;
 import com.github.dandelion.core.web.WebConstants;
 import com.github.dandelion.core.web.handler.AbstractRequestHandler;
 import com.github.dandelion.core.web.handler.RequestHandlerContext;
 import com.github.dandelion.core.web.handler.debug.AssetsDebugPage;
-import com.github.dandelion.core.web.handler.debug.CacheDebugPage;
 import com.github.dandelion.core.web.handler.debug.DebugPage;
-import com.github.dandelion.core.web.handler.debug.OptionsDebugPage;
 
 /**
  * <p>
@@ -67,18 +64,6 @@ public class DebuggerPostHandler extends AbstractRequestHandler {
 
 	private static final Logger LOG = LoggerFactory.getLogger(DebuggerPostHandler.class);
 
-	/**
-	 * <p>
-	 * Available debug pages.
-	 * </p>
-	 * 
-	 * @author Thibault Duchateau
-	 * @since 0.11.0
-	 */
-	enum Page {
-		OPTIONS, ASSETS, CACHE;
-	}
-
 	@Override
 	protected Logger getLogger() {
 		return LOG;
@@ -91,12 +76,13 @@ public class DebuggerPostHandler extends AbstractRequestHandler {
 
 	@Override
 	public int getRank() {
-		return 1;
+		return 12;
 	}
 
 	@Override
 	public boolean isApplicable(RequestHandlerContext context) {
 		return context.getContext().getConfiguration().isToolBundleGraphEnabled()
+				&& context.getResponse().getContentType().contains("text/html")
 				&& context.getRequest().getParameter(WebConstants.DANDELION_DEBUGGER) != null;
 	}
 
@@ -106,11 +92,6 @@ public class DebuggerPostHandler extends AbstractRequestHandler {
 		byte[] newResponse;
 
 		String debugPage = context.getRequest().getParameter(WebConstants.DANDELION_DEBUGGER_PAGE);
-
-		// If no page is specified, redirect to the "assets" page by default
-		if (StringUtils.isBlank(debugPage)) {
-			debugPage = Page.ASSETS.toString();
-		}
 
 		try {
 			String responseAsString = getView(debugPage, context);
@@ -126,41 +107,25 @@ public class DebuggerPostHandler extends AbstractRequestHandler {
 
 	private String getView(String pageName, RequestHandlerContext context) throws IOException {
 
-		DebugPage page = null;
+		DebugPage page;
 
-		Page selectedDebugPage = null;
-		try {
-			selectedDebugPage = Page.valueOf(pageName.trim().toUpperCase());
+		// If no page is specified or if the page does not exist, let's redirect
+		// to the "assets" page by default
+		if (StringUtils.isBlank(pageName)
+				|| !context.getContext().getDebugPageMap().containsKey(pageName.trim().toLowerCase())) {
+			page = context.getContext().getDebugPageMap().get(AssetsDebugPage.PAGE_ID);
 		}
-		catch (IllegalArgumentException e) {
-			StringBuilder error = new StringBuilder();
-			error.append("Debug page \"");
-			error.append(pageName);
-			error.append("\" does not exist. Possible values are: ");
-			error.append(EnumUtils.printPossibleValuesOf(Page.class));
-			throw new DandelionException(error.toString(), e);
+		else {
+			page = context.getContext().getDebugPageMap().get(pageName.trim().toLowerCase());
 		}
 
-		switch (selectedDebugPage) {
-		case ASSETS:
-			page = new AssetsDebugPage(context);
-			break;
-		case OPTIONS:
-			page = new OptionsDebugPage(context);
-			break;
-		case CACHE:
-			page = new CacheDebugPage(context);
-			break;
-		default:
-			page = new AssetsDebugPage(context);
-			break;
-
-		}
 		return getPage(page, context);
 	}
 
 	private String getPage(DebugPage page, RequestHandlerContext context) throws IOException {
 
+		page.initWith(context);
+		
 		// Get the template
 		String template = page.getTemplate(context);
 

@@ -29,40 +29,22 @@
  */
 package com.github.dandelion.core.web.handler.debug;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
-import com.github.dandelion.core.utils.ResourceUtils;
-import com.github.dandelion.core.web.handler.RequestHandlerContext;
-
-public class CacheDebugPage extends AbstractDebugPage {
-
-	private static final String PAGE_ID = "cache";
-	private static final String PAGE_NAME = "Cache store";
-	private static final String PAGE_LOCATION = "META-INF/resources/ddl-debugger/html/core-cache.html";
+public class StandardDebugMenu implements DebugMenu {
 
 	@Override
-	public String getId() {
-		return PAGE_ID;
+	public String getDisplayName() {
+		return "Dandelion Core";
 	}
 
 	@Override
-	public String getName() {
-		return PAGE_NAME;
+	public List<DebugPage> getPages() {
+		List<DebugPage> debugPages = new ArrayList<DebugPage>();
+		debugPages.add(new AssetsDebugPage());
+		debugPages.add(new OptionsDebugPage());
+		debugPages.add(new CacheDebugPage());
+		return debugPages;
 	}
-
-	@Override
-	public String getTemplate(RequestHandlerContext context) throws IOException {
-		return ResourceUtils.getContentFromInputStream(Thread.currentThread().getContextClassLoader()
-				.getResourceAsStream(PAGE_LOCATION));
-	}
-
-	@Override
-	protected Map<String, String> getCustomParameters(RequestHandlerContext context) {
-
-		Map<String, String> params = new HashMap<String, String>();
-		return params;
-	}
-
 }

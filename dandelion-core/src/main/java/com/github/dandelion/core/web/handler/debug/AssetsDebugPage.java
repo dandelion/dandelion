@@ -70,7 +70,9 @@ import com.github.dandelion.core.web.handler.RequestHandlerContext;
 public class AssetsDebugPage extends AbstractDebugPage {
 
 	private static ObjectMapper mapper;
-	private AssetMapper assetMapper;
+	public static final String PAGE_ID = "assets";
+	public static final String PAGE_NAME = "Bundles/assets";
+	private static final String PAGE_LOCATION = "META-INF/resources/ddl-debugger/html/core-assets.html";
 
 	static {
 		mapper = new ObjectMapper();
@@ -80,21 +82,26 @@ public class AssetsDebugPage extends AbstractDebugPage {
 		mapper.configure(JsonParser.Feature.ALLOW_BACKSLASH_ESCAPING_ANY_CHARACTER, true);
 	}
 
-	public AssetsDebugPage(RequestHandlerContext context) {
-		super(context);
-		this.assetMapper = new AssetMapper(context.getRequest(), context.getContext());
+	@Override
+	public String getId() {
+		return PAGE_ID;
+	}
+
+	@Override
+	public String getName() {
+		return PAGE_NAME;
 	}
 
 	@Override
 	public String getTemplate(RequestHandlerContext context) throws IOException {
 		return ResourceUtils.getContentFromInputStream(Thread.currentThread().getContextClassLoader()
-				.getResourceAsStream("META-INF/resources/ddl-debugger/html/assets.html"));
+				.getResourceAsStream(PAGE_LOCATION));
 	}
 
 	@Override
 	protected Map<String, String> getCustomParameters(RequestHandlerContext context) {
 		StringBuilder sbNodesRequest = new StringBuilder();
-
+		AssetMapper assetMapper = new AssetMapper(context.getRequest(), context.getContext());
 		HttpServletRequest request = context.getRequest();
 
 		Map<String, String> params = new HashMap<String, String>();
@@ -106,7 +113,7 @@ public class AssetsDebugPage extends AbstractDebugPage {
 			for (BundleStorageUnit bsu : bsuRequest) {
 				Map<String, Object> map = new HashMap<String, Object>();
 				map.put("label", bsu.getName());
-				map.put("assets", convertToD3Assets(bsu.getAssetStorageUnits()));
+				map.put("assets", convertToD3Assets(bsu.getAssetStorageUnits(), assetMapper));
 				map.put("shape", "ellipse");
 				String bundle;
 				bundle = mapper.writeValueAsString(map);
@@ -171,7 +178,7 @@ public class AssetsDebugPage extends AbstractDebugPage {
 		return params;
 	}
 
-	public List<D3Asset> convertToD3Assets(Set<AssetStorageUnit> asus) {
+	public List<D3Asset> convertToD3Assets(Set<AssetStorageUnit> asus, AssetMapper assetMapper) {
 		List<D3Asset> d3Assets = new ArrayList<AssetsDebugPage.D3Asset>();
 		Set<Asset> assets = assetMapper.mapToAssets(asus);
 		for (Asset a : assets) {

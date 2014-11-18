@@ -50,9 +50,9 @@ import com.github.dandelion.core.web.handler.RequestHandlerContext;
  */
 public abstract class AbstractDebugPage implements DebugPage {
 
-	protected final RequestHandlerContext context;
+	protected RequestHandlerContext context;
 
-	protected AbstractDebugPage(RequestHandlerContext context) {
+	public void initWith(RequestHandlerContext context) {
 		this.context = context;
 	}
 
@@ -65,12 +65,44 @@ public abstract class AbstractDebugPage implements DebugPage {
 		params.put("%CONTEXT%", UrlUtils.getContext(context.getRequest()).toString());
 
 		String currentUri = UrlUtils.getCurrentUri(context.getRequest()).toString();
-		params
-				.put("%CURRENT_URI%", currentUri.substring(0, currentUri.indexOf(WebConstants.DANDELION_DEBUGGER) - 1));
+		params.put("%CURRENT_URI%", currentUri.substring(0, currentUri.indexOf(WebConstants.DANDELION_DEBUGGER) - 1));
 
-		// Custom variables
+		StringBuilder componentMenus = new StringBuilder();
+		for(DebugMenu debugMenu : context.getContext().getDebugMenuMap().values()){
+			componentMenus.append(getComponentMenu(debugMenu));
+		}
+		params.put("%COMPONENTS%", componentMenus.toString());
+
+		// Add custom parameters
 		params.putAll(getCustomParameters(context));
+		
 		return params;
+	}
+
+	private StringBuilder getComponentMenu(DebugMenu debugMenu) {
+		StringBuilder menu = new StringBuilder("<ul class=\"nav nav-sidebar\">");
+		menu.append("<li class=\"nav-header disabled\"><a>").append(debugMenu.getDisplayName()).append("</a></li>");
+		for(DebugPage page : debugMenu.getPages()){
+			String href = getComponentDebugPageUrl(page);
+			menu.append("<li");
+			if(this.getClass().getSimpleName().equals(page.getClass().getSimpleName())){
+				menu.append(" class=\"active\"");
+			}
+			menu.append(">");
+			menu.append("<a href=\"");
+			menu.append(href);
+			menu.append("\">");
+			menu.append(page.getName());
+			menu.append("</a></li>");
+		}
+		menu.append("</ul>");
+		return menu;
+	}
+
+	private String getComponentDebugPageUrl(DebugPage debugPage) {
+		String href = UrlUtils.getContext(context.getRequest()).toString() + "/" + "?"
+				+ WebConstants.DANDELION_DEBUGGER + "&ddl-debug-page=" + debugPage.getId();
+		return href;
 	}
 
 	/**
@@ -114,5 +146,13 @@ public abstract class AbstractDebugPage implements DebugPage {
 		line.append("<td>").append(description).append("</td>");
 		line.append("</tr>");
 		return line;
+	}
+
+	protected StringBuilder li(String href, String text) {
+		StringBuilder li = new StringBuilder("<li>");
+		li.append("<a href=\"").append(href).append("\">");
+		li.append(text);
+		li.append("</a></li>");
+		return li;
 	}
 }

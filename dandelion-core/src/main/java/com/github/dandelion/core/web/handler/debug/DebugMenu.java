@@ -29,40 +29,28 @@
  */
 package com.github.dandelion.core.web.handler.debug;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 
-import com.github.dandelion.core.utils.ResourceUtils;
-import com.github.dandelion.core.web.handler.RequestHandlerContext;
+/**
+ * <p>
+ * Interface for all debugging menu.
+ * </p>
+ * <p>
+ * A menu will appear in the left sidebar of the debugger.
+ * </p>
+ * 
+ * @author Thibault Duchateau
+ * @since 0.11.0
+ */
+public interface DebugMenu {
 
-public class CacheDebugPage extends AbstractDebugPage {
+	/**
+	 * @return the name of the menu to display in the sidebar.
+	 */
+	String getDisplayName();
 
-	private static final String PAGE_ID = "cache";
-	private static final String PAGE_NAME = "Cache store";
-	private static final String PAGE_LOCATION = "META-INF/resources/ddl-debugger/html/core-cache.html";
-
-	@Override
-	public String getId() {
-		return PAGE_ID;
-	}
-
-	@Override
-	public String getName() {
-		return PAGE_NAME;
-	}
-
-	@Override
-	public String getTemplate(RequestHandlerContext context) throws IOException {
-		return ResourceUtils.getContentFromInputStream(Thread.currentThread().getContextClassLoader()
-				.getResourceAsStream(PAGE_LOCATION));
-	}
-
-	@Override
-	protected Map<String, String> getCustomParameters(RequestHandlerContext context) {
-
-		Map<String, String> params = new HashMap<String, String>();
-		return params;
-	}
-
+	/**
+	 * @return all debug pages to display under this menu.
+	 */
+	List<DebugPage> getPages();
 }
