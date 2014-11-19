@@ -115,6 +115,7 @@ public class DandelionFilter implements Filter {
 
 		HttpServletRequest request = (HttpServletRequest) servletRequest;
 		HttpServletResponse response = (HttpServletResponse) servletResponse;
+		LOG.debug("Request \"{}\" is about to be processed", request.getRequestURL());
 
 		// Make the Dandelion context available through a request attribute for
 		// potential use by end-users or components
@@ -122,11 +123,18 @@ public class DandelionFilter implements Filter {
 
 		// Pre-filtering handlers processing
 		RequestHandlerContext preHandlerContext = new RequestHandlerContext(context, request, response);
+		int index = 1;
 		for (RequestHandler preHandler : context.getPreHandlers()) {
-			LOG.debug("Rank {}, {}", preHandler.getRank(), preHandler.getClass().getSimpleName());
-			if (preHandler.isApplicable(preHandlerContext)) {
+			boolean isHandlerApplicable = preHandler.isApplicable(preHandlerContext);
+
+			LOG.debug("Pre-handler  ({}/{}) {} (rank: {}, applicable: {})", index, context.getPreHandlers().size(), preHandler
+					.getClass().getSimpleName(), preHandler.getRank(), isHandlerApplicable);
+
+			if (isHandlerApplicable) {
 				preHandler.handle(preHandlerContext, null);
 			}
+
+			index++;
 		}
 
 		// Wraps the response before applying the filter chain
@@ -138,11 +146,10 @@ public class DandelionFilter implements Filter {
 
 		// Post-filtering handlers processing
 		RequestHandlerContext postHandlerContext = new RequestHandlerContext(context, request, wrappedResponse);
-		int index = 1;
-		LOG.debug("Request \"{}\" is about to be processed", request.getRequestURL());
+		index = 1;
 		for (RequestHandler postHandler : context.getPostHandlers()) {
 			boolean isHandlerApplicable = postHandler.isApplicable(postHandlerContext);
-			LOG.debug("({}/{}) {} (rank: {}, applicable: {})", index, context.getPostHandlers().size(), postHandler
+			LOG.debug("Post-handler ({}/{}) {} (rank: {}, applicable: {})", index, context.getPostHandlers().size(), postHandler
 					.getClass().getSimpleName(), postHandler.getRank(), isHandlerApplicable);
 
 			if (isHandlerApplicable && finalResponse != null) {
