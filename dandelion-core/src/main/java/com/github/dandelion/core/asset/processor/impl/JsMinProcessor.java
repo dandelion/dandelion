@@ -65,10 +65,9 @@ public class JsMinProcessor extends AbstractAssetProcessor {
 	 */
 	@Override
 	public void doProcess(Reader reader, Writer writer, ProcessingContext processingContext) throws Exception {
-		InputStream is = new ReaderInputStream(reader, processingContext.getContext().getConfiguration()
-				.getAssetProcessorEncoding());
+		InputStream is = new ReaderInputStream(reader, processingContext.getContext().getConfiguration().getEncoding());
 		OutputStream os = new WriterOutputStream(writer, processingContext.getContext().getConfiguration()
-				.getAssetProcessorEncoding());
+				.getEncoding());
 		try {
 			new JSMin(is, os).jsmin();
 		}

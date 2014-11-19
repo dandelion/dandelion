@@ -72,8 +72,6 @@ public class DevProfileTest {
 				PropertiesUtils.propertyAsList(DandelionConfig.ASSET_LOCATIONS_RESOLUTION_STRATEGY.defaultDevValue()));
 		assertThat(config.getAssetProcessors()).isEqualTo(
 				PropertiesUtils.propertyAsList(DandelionConfig.ASSET_PROCESSORS.defaultDevValue()));
-		assertThat(config.getAssetProcessorEncoding()).isEqualTo(
-				DandelionConfig.ASSET_PROCESSORS_ENCODING.defaultDevValue());
 		assertThat(config.getAssetCssExcludes()).isEqualTo(
 				PropertiesUtils.propertyAsList(DandelionConfig.ASSET_CSS_EXCLUDES.defaultDevValue()));
 		assertThat(config.getAssetJsExcludes()).isEqualTo(
@@ -126,8 +124,6 @@ public class DevProfileTest {
 		assertThat(config.getAssetLocationsResolutionStrategy()).isEqualTo(PropertiesUtils.propertyAsList("foo,bar")); // OVERRIDEN
 		assertThat(config.getAssetProcessors()).isEqualTo(
 				PropertiesUtils.propertyAsList(DandelionConfig.ASSET_PROCESSORS.defaultDevValue()));
-		assertThat(config.getAssetProcessorEncoding()).isEqualTo(
-				DandelionConfig.ASSET_PROCESSORS_ENCODING.defaultDevValue());
 		assertThat(config.getAssetCssExcludes()).isEqualTo(
 				PropertiesUtils.propertyAsList(DandelionConfig.ASSET_CSS_EXCLUDES.defaultDevValue()));
 		assertThat(config.getAssetJsExcludes()).isEqualTo(
@@ -181,8 +177,6 @@ public class DevProfileTest {
 				PropertiesUtils.propertyAsList("foo,bar,baz")); // OVERRIDEN
 		assertThat(config.getAssetProcessors()).isEqualTo(
 				PropertiesUtils.propertyAsList(DandelionConfig.ASSET_PROCESSORS.defaultDevValue()));
-		assertThat(config.getAssetProcessorEncoding()).isEqualTo(
-				DandelionConfig.ASSET_PROCESSORS_ENCODING.defaultDevValue());
 		assertThat(config.getAssetCssExcludes()).isEqualTo(
 				PropertiesUtils.propertyAsList(DandelionConfig.ASSET_CSS_EXCLUDES.defaultDevValue()));
 		assertThat(config.getAssetJsExcludes()).isEqualTo(
@@ -234,8 +228,6 @@ public class DevProfileTest {
 				PropertiesUtils.propertyAsList("bar,foo,baz,qux")); // OVERRIDEN
 		assertThat(config.getAssetProcessors()).isEqualTo(
 				PropertiesUtils.propertyAsList(DandelionConfig.ASSET_PROCESSORS.defaultDevValue()));
-		assertThat(config.getAssetProcessorEncoding()).isEqualTo(
-				DandelionConfig.ASSET_PROCESSORS_ENCODING.defaultDevValue());
 		assertThat(config.getAssetCssExcludes()).isEqualTo(
 				PropertiesUtils.propertyAsList(DandelionConfig.ASSET_CSS_EXCLUDES.defaultDevValue()));
 		assertThat(config.getAssetJsExcludes()).isEqualTo(

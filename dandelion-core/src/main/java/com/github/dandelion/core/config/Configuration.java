@@ -73,7 +73,6 @@ public class Configuration {
 	private boolean assetMinificationEnabled;
 	private List<String> assetLocationsResolutionStrategy;
 	private List<String> assetProcessors;
-	private String assetProcessorEncoding;
 	private List<String> assetJsExcludes;
 	private List<String> assetCssExcludes;
 	private String assetUrlPattern;
@@ -138,7 +137,6 @@ public class Configuration {
 		this.assetLocationsResolutionStrategy = PropertiesUtils
 				.propertyAsList(readConfig(DandelionConfig.ASSET_LOCATIONS_RESOLUTION_STRATEGY));
 		this.assetProcessors = PropertiesUtils.propertyAsList(readConfig(DandelionConfig.ASSET_PROCESSORS));
-		this.assetProcessorEncoding = readConfig(DandelionConfig.ASSET_PROCESSORS_ENCODING);
 		this.assetJsExcludes = PropertiesUtils.propertyAsList(readConfig(DandelionConfig.ASSET_JS_EXCLUDES));
 		this.assetCssExcludes = PropertiesUtils.propertyAsList(readConfig(DandelionConfig.ASSET_CSS_EXCLUDES));
 		this.assetUrlPattern = getProcessedAssetUrlPattern(readConfig(DandelionConfig.ASSET_URL_PATTERN));
@@ -301,10 +299,6 @@ public class Configuration {
 		return this.assetProcessors;
 	}
 
-	public String getAssetProcessorEncoding() {
-		return this.assetProcessorEncoding;
-	}
-
 	public List<String> getAssetJsExcludes() {
 		return this.assetJsExcludes;
 	}
@@ -383,10 +377,6 @@ public class Configuration {
 
 	public void setAssetProcessors(List<String> assetProcessors) {
 		this.assetProcessors = assetProcessors;
-	}
-
-	public void setAssetProcessorEncoding(String assetProcessorEncoding) {
-		this.assetProcessorEncoding = assetProcessorEncoding;
 	}
 
 	public void setAssetJsExcludes(List<String> assetJsExcludes) {
