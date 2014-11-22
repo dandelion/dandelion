@@ -29,7 +29,9 @@
  */
 package com.github.dandelion.core.web.handler.debug;
 
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import com.github.dandelion.core.config.DandelionConfig;
@@ -65,27 +67,32 @@ public abstract class AbstractDebugPage implements DebugPage {
 		params.put("%CONTEXT%", UrlUtils.getContext(context.getRequest()).toString());
 
 		String currentUri = UrlUtils.getCurrentUri(context.getRequest()).toString();
-		params.put("%CURRENT_URI%", currentUri.substring(0, currentUri.indexOf(WebConstants.DANDELION_DEBUGGER) - 1));
+		String appUri = currentUri.substring(0, currentUri.indexOf(WebConstants.DANDELION_DEBUGGER) - 1);
+		params.put("%CURRENT_URI%", appUri);
 
 		StringBuilder componentMenus = new StringBuilder();
-		for(DebugMenu debugMenu : context.getContext().getDebugMenuMap().values()){
+		for (DebugMenu debugMenu : context.getContext().getDebugMenuMap().values()) {
 			componentMenus.append(getComponentMenu(debugMenu));
 		}
 		params.put("%COMPONENTS%", componentMenus.toString());
 
+		StringBuilder actionLinks = new StringBuilder();
+		actionLinks.append(li(appUri, "<span class='glyphicon glyphicon-backward'></span> Back to application"));
+		params.put("%ACTION_LINKS%", actionLinks.toString());
+
 		// Add custom parameters
 		params.putAll(getCustomParameters(context));
-		
+
 		return params;
 	}
 
 	private StringBuilder getComponentMenu(DebugMenu debugMenu) {
 		StringBuilder menu = new StringBuilder("<ul class=\"nav nav-sidebar\">");
 		menu.append("<li class=\"nav-header disabled\"><a>").append(debugMenu.getDisplayName()).append("</a></li>");
-		for(DebugPage page : debugMenu.getPages()){
+		for (DebugPage page : debugMenu.getPages()) {
 			String href = getComponentDebugPageUrl(page);
 			menu.append("<li");
-			if(this.getClass().getSimpleName().equals(page.getClass().getSimpleName())){
+			if (this.getClass().getSimpleName().equals(page.getClass().getSimpleName())) {
 				menu.append(" class=\"active\"");
 			}
 			menu.append(">");
@@ -130,10 +137,11 @@ public abstract class AbstractDebugPage implements DebugPage {
 	}
 
 	protected StringBuilder tr(DandelionConfig option, Object value) {
+
 		StringBuilder line = new StringBuilder();
 		line.append("<tr>");
 		line.append("<td>").append(option.getName()).append("</td>");
-		line.append("<td>").append(value).append("</td>");
+		line.append("<td>").append(format(value)).append("</td>");
 		line.append("</tr>");
 		return line;
 	}
@@ -154,5 +162,24 @@ public abstract class AbstractDebugPage implements DebugPage {
 		li.append(text);
 		li.append("</a></li>");
 		return li;
+	}
+
+	@SuppressWarnings("unchecked")
+	private StringBuilder format(Object value) {
+		StringBuilder retval = new StringBuilder();
+
+		if (value instanceof Collection) {
+			Collection<String> collectionValue = (Collection<String>) value;
+			for (Iterator<String> iterator = collectionValue.iterator(); iterator.hasNext();) {
+				retval.append(iterator.next());
+				if (iterator.hasNext()) {
+					retval.append(", ");
+				}
+			}
+		}
+		else {
+			retval.append(value);
+		}
+		return retval;
 	}
 }

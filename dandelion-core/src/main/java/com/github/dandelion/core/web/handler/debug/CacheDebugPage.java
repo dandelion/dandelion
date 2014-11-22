@@ -30,7 +30,7 @@
 package com.github.dandelion.core.web.handler.debug;
 
 import java.io.IOException;
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.Map;
 
 import com.github.dandelion.core.utils.ResourceUtils;
@@ -60,9 +60,6 @@ public class CacheDebugPage extends AbstractDebugPage {
 
 	@Override
 	protected Map<String, String> getCustomParameters(RequestHandlerContext context) {
-
-		Map<String, String> params = new HashMap<String, String>();
-		return params;
+		return Collections.emptyMap();
 	}
-
 }

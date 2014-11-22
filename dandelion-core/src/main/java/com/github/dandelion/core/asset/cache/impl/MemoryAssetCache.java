@@ -56,12 +56,11 @@ public class MemoryAssetCache extends AbstractAssetCache {
 	public void initCache(Context context) {
 		super.initCache(context);
 		mapAssetContent = new ConcurrentLruCache<String, String>(context.getConfiguration().getCacheAssetMaxSize());
-		mapRequestAssets = new ConcurrentLruCache<String, Set<Asset>>(context.getConfiguration().getCacheRequestMaxSize());
+		mapRequestAssets = new ConcurrentLruCache<String, Set<Asset>>(context.getConfiguration()
+				.getCacheRequestMaxSize());
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public String getCacheName() {
 		return "default";
 	}
@@ -94,23 +93,26 @@ public class MemoryAssetCache extends AbstractAssetCache {
 		mapRequestAssets.put(cacheKey, a);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public void remove(String cacheKey) {
 		mapAssetContent.remove(cacheKey);
 	}
-	
-	public Map<String, String> getCache(){
+
+	public Map<String, String> getCache() {
 		return mapAssetContent;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void clearAll() {
 		mapAssetContent.clear();
 		mapRequestAssets.clear();
+	}
+
+	public Map<String, String> getMapAssetContent() {
+		return this.mapAssetContent;
+	}
+
+	public Map<String, Set<Asset>> getMapRequestAssets() {
+		return this.mapRequestAssets;
 	}
 }

@@ -34,6 +34,7 @@ import com.github.dandelion.core.Context;
 /**
  * <p>
  * Abstract base class for all implemenations of {@link AssetCache}.
+ * </p>
  * 
  * @author Thibault Duchateau
  * @since 0.10.0
@@ -42,9 +43,6 @@ public abstract class AbstractAssetCache implements AssetCache {
 
 	protected Context context;
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void initCache(Context context) {
 		this.context = context;

@@ -108,7 +108,7 @@ public class Asset {
 	 * The parent bundle.
 	 */
 	private String bundle;
-	
+
 	/**
 	 * Whether the asset has been loaded by the {@link VendorBundleLoader}.
 	 */

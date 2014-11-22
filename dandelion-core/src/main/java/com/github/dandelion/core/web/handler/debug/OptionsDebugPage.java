@@ -76,27 +76,22 @@ public class OptionsDebugPage extends AbstractDebugPage {
 
 		Configuration conf = context.getContext().getConfiguration();
 		Map<String, String> params = new HashMap<String, String>();
-		StringBuilder table = new StringBuilder("<table class='table table-striped table-hover'><thead>");
-		table.append("<tr><th>Option</th><th>Active value</th><th>Description</th></tr></thead><tbody>");
+		StringBuilder table = new StringBuilder("<table class='table table-striped table-hover table-bordered' style='margin-top:15px;'><thead>");
+		table.append("<tr><th>Option</th><th>Active value</th></tr></thead><tbody>");
 
 		// Asset-related options
 		table.append("<tr class='header-tr'><td colspan='3'>Asset-related options</td></tr>");
-		table.append(tr(DandelionConfig.ASSET_MINIFICATION, conf.isAssetMinificationEnabled(),
-				"Whether the asset minification is enabled or not"));
-		table.append(tr(DandelionConfig.ASSET_LOCATIONS_RESOLUTION_STRATEGY,
-				conf.getAssetLocationsResolutionStrategy(), "Selected location resolution strategy"));
-		table.append(tr(DandelionConfig.ASSET_PROCESSORS, conf.getAssetProcessors(), "All enabled asset processors"));
-		table.append(tr(DandelionConfig.ASSET_PROCESSORS_ENCODING, conf.getAssetProcessorEncoding()));
+		table.append(tr(DandelionConfig.ASSET_MINIFICATION, conf.isAssetMinificationEnabled()));
+		table.append(tr(DandelionConfig.ASSET_LOCATIONS_RESOLUTION_STRATEGY, conf.getAssetLocationsResolutionStrategy()));
+		table.append(tr(DandelionConfig.ASSET_PROCESSORS, conf.getAssetProcessors()));
 		table.append(tr(DandelionConfig.ASSET_JS_EXCLUDES, conf.getAssetJsExcludes()));
 		table.append(tr(DandelionConfig.ASSET_CSS_EXCLUDES, conf.getAssetCssExcludes()));
 		table.append(tr(DandelionConfig.ASSET_URL_PATTERN, conf.getAssetUrlPattern()));
 
 		// Versioning-related options
 		table.append("<tr class='header-tr'><td colspan='3'>Versioning-related options</td></tr>");
-		table.append(tr(DandelionConfig.ASSET_VERSIONING, conf.isAssetCachingEnabled(),
-				"Whether automatic versioning is enabled"));
-		table.append(tr(DandelionConfig.ASSET_VERSIONING_STRATEGY, conf.getAssetVersioningStrategy(),
-				"Current automatic versioning strategy"));
+		table.append(tr(DandelionConfig.ASSET_VERSIONING, conf.isAssetCachingEnabled()));
+		table.append(tr(DandelionConfig.ASSET_VERSIONING_STRATEGY, conf.getAssetVersioningStrategy()));
 		table.append(tr(DandelionConfig.ASSET_FIXED_VERSION_TYPE, conf.getAssetFixedVersionType()));
 		table.append(tr(DandelionConfig.ASSET_FIXED_VERSION_VALUE, conf.getAssetFixedVersionValue()));
 		table.append(tr(DandelionConfig.ASSET_FIXED_VERSION_DATEFORMAT, conf.getAssetFixedVersionDateFormat()));
@@ -119,11 +114,9 @@ public class OptionsDebugPage extends AbstractDebugPage {
 
 		// Tooling-related options
 		table.append("<tr class='header-tr'><td colspan='3'>Tooling-related options</td></tr>");
-		table.append(tr(DandelionConfig.TOOL_GZIP, conf.isToolGzipEnabled(), "Whether gzip is enabled or not"));
-		table.append(tr(DandelionConfig.TOOL_GZIP_MIME_TYPES, conf.getToolGzipMimeTypes(),
-				"All mime types that are gzipped"));
-		table.append(tr(DandelionConfig.TOOL_ASSET_PRETTY_PRINTING, conf.isToolAssetPrettyPrintingEnabled(),
-				"whether all generated asset are pretty printed or not"));
+		table.append(tr(DandelionConfig.TOOL_GZIP, conf.isToolGzipEnabled()));
+		table.append(tr(DandelionConfig.TOOL_GZIP_MIME_TYPES, conf.getToolGzipMimeTypes()));
+		table.append(tr(DandelionConfig.TOOL_ASSET_PRETTY_PRINTING, conf.isToolAssetPrettyPrintingEnabled()));
 		table.append(tr(DandelionConfig.TOOL_BUNDLE_GRAPH, conf.isToolBundleGraphEnabled()));
 		table.append(tr(DandelionConfig.TOOL_BUNDLE_RELOADING, conf.isToolBundleReloadingEnabled()));
 		table.append(tr(DandelionConfig.MONITORING_JMX, conf.isMonitoringJmxEnabled()));

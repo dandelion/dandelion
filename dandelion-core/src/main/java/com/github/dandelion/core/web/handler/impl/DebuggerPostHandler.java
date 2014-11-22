@@ -76,12 +76,13 @@ public class DebuggerPostHandler extends AbstractRequestHandler {
 
 	@Override
 	public int getRank() {
-		return 12;
+		return 100;
 	}
 
 	@Override
 	public boolean isApplicable(RequestHandlerContext context) {
 		return context.getContext().getConfiguration().isToolBundleGraphEnabled()
+				&& context.getResponse().getContentType() != null
 				&& context.getResponse().getContentType().contains("text/html")
 				&& context.getRequest().getParameter(WebConstants.DANDELION_DEBUGGER) != null;
 	}
@@ -125,7 +126,7 @@ public class DebuggerPostHandler extends AbstractRequestHandler {
 	private String getPage(DebugPage page, RequestHandlerContext context) throws IOException {
 
 		page.initWith(context);
-		
+
 		// Get the template
 		String template = page.getTemplate(context);
 
