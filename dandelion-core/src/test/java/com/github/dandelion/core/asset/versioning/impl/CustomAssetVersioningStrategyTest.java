@@ -44,7 +44,7 @@ public class CustomAssetVersioningStrategyTest {
 	public void should_return_a_version_based_on_a_custom_strategy() {
 
 		MockFilterConfig filterConfig = new MockFilterConfig();
-		filterConfig.addInitParameter(DandelionConfig.ASSET_VERSIONING.getName(), "true");
+		filterConfig.addInitParameter(DandelionConfig.ASSET_VERSIONING_MODE.getName(), "auto");
 		filterConfig.addInitParameter(DandelionConfig.ASSET_VERSIONING_STRATEGY.getName(), "my-strategy");
 		Context dandelionContext = new Context(filterConfig);
 

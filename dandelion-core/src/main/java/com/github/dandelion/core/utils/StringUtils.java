@@ -703,4 +703,8 @@ public final class StringUtils {
 	public static boolean hasText(String str) {
 		return hasText((CharSequence) str);
 	}
+	
+	public static String getTestString(String str){
+		return str.replaceAll("\n", "").replaceAll("\r", "").replaceAll(" ", "");
+	}
 }

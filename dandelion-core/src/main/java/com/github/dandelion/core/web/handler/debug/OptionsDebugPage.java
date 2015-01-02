@@ -92,11 +92,11 @@ public class OptionsDebugPage extends AbstractDebugPage {
 
 		// Versioning-related options
 		table.append("<tr class='header-tr'><td colspan='3'>Versioning-related options</td></tr>");
-		table.append(tr(DandelionConfig.ASSET_VERSIONING, conf.isAssetCachingEnabled()));
+		table.append(tr(DandelionConfig.ASSET_VERSIONING_MODE, conf.getAssetVersioningMode()));
 		table.append(tr(DandelionConfig.ASSET_VERSIONING_STRATEGY, conf.getAssetVersioningStrategy()));
 		table.append(tr(DandelionConfig.ASSET_FIXED_VERSION_TYPE, conf.getAssetFixedVersionType()));
 		table.append(tr(DandelionConfig.ASSET_FIXED_VERSION_VALUE, conf.getAssetFixedVersionValue()));
-		table.append(tr(DandelionConfig.ASSET_FIXED_VERSION_DATEFORMAT, conf.getAssetFixedVersionDateFormat()));
+		table.append(tr(DandelionConfig.ASSET_FIXED_VERSION_DATEPATTERN, conf.getAssetFixedVersionDatePattern()));
 		table.append(tr(DandelionConfig.ASSET_FIXED_VERSION_TYPE, conf.getAssetFixedVersionType()));
 
 		// Caching-related options
@@ -118,9 +118,10 @@ public class OptionsDebugPage extends AbstractDebugPage {
 		table.append("<tr class='header-tr'><td colspan='3'>Tooling-related options</td></tr>");
 		table.append(tr(DandelionConfig.TOOL_GZIP, conf.isToolGzipEnabled()));
 		table.append(tr(DandelionConfig.TOOL_GZIP_MIME_TYPES, conf.getToolGzipMimeTypes()));
-		table.append(tr(DandelionConfig.TOOL_ASSET_PRETTY_PRINTING, conf.isToolAssetPrettyPrintingEnabled()));
-		table.append(tr(DandelionConfig.TOOL_BUNDLE_GRAPH, conf.isToolBundleGraphEnabled()));
+		table.append(tr(DandelionConfig.TOOL_DEBUGGER, conf.isToolDebuggerEnabled()));
 		table.append(tr(DandelionConfig.TOOL_BUNDLE_RELOADING, conf.isToolBundleReloadingEnabled()));
+		
+		// Monitoring-related options
 		table.append(tr(DandelionConfig.MONITORING_JMX, conf.isMonitoringJmxEnabled()));
 
 		// Misc options

@@ -35,6 +35,7 @@ import org.springframework.mock.web.MockFilterConfig;
 import org.springframework.mock.web.MockHttpServletRequest;
 
 import com.github.dandelion.core.Context;
+import com.github.dandelion.core.utils.StringUtils;
 import com.github.dandelion.core.web.WebConstants;
 
 import static com.github.dandelion.core.asset.generator.js.jquery.JQueryContentPlaceholder.AFTER_ALL;
@@ -62,7 +63,6 @@ public class JQueryContentGeneratorTest {
 		request = new MockHttpServletRequest();
 		request.setContextPath("/context");
 		request.setAttribute(WebConstants.DANDELION_CONTEXT_ATTRIBUTE, context);
-		context.getConfiguration().setToolAssetPrettyPrintingEnabled(false);
 		request.setAttribute(WebConstants.DANDELION_CONTEXT_ATTRIBUTE, context);
 	}
 
@@ -89,7 +89,7 @@ public class JQueryContentGeneratorTest {
 		assertThat(jQueryContent.getPlaceholderContent().get(AFTER_ALL)).isNull();
 
 		assertThat(jQueryContentGenerator.getAssetContent(request)).isEqualTo(
-				"js codejs code$(document).ready(function(){});");
+				"js codejs code$(document).ready(function() {});");
 	}
 
 	@Test
@@ -106,7 +106,7 @@ public class JQueryContentGeneratorTest {
 		assertThat(jQueryContent.getPlaceholderContent().get(AFTER_ALL)).isNull();
 
 		assertThat(jQueryContentGenerator.getAssetContent(request)).isEqualTo(
-				"js codejs code$(document).ready(function(){});");
+				"js codejs code$(document).ready(function() {});");
 	}
 
 	@Test
@@ -122,8 +122,8 @@ public class JQueryContentGeneratorTest {
 				"js codejs code");
 		assertThat(jQueryContent.getPlaceholderContent().get(AFTER_ALL)).isNull();
 
-		assertThat(jQueryContentGenerator.getAssetContent(request)).isEqualTo(
-				"$(document).ready(function(){js codejs code});");
+		assertThat(StringUtils.getTestString(jQueryContentGenerator.getAssetContent(request))).isEqualTo(
+				"$(document).ready(function(){jscodejscode});");
 	}
 
 	@Test
@@ -138,8 +138,8 @@ public class JQueryContentGeneratorTest {
 				"js codejs code");
 		assertThat(jQueryContent.getPlaceholderContent().get(AFTER_ALL)).isNull();
 
-		assertThat(jQueryContentGenerator.getAssetContent(request)).isEqualTo(
-				"$(document).ready(function(){js codejs code});");
+		assertThat(StringUtils.getTestString(jQueryContentGenerator.getAssetContent(request))).isEqualTo(
+				"$(document).ready(function(){jscodejscode});");
 	}
 
 	@Test
@@ -155,8 +155,8 @@ public class JQueryContentGeneratorTest {
 				"js codejs code");
 		assertThat(jQueryContent.getPlaceholderContent().get(AFTER_ALL)).isNull();
 
-		assertThat(jQueryContentGenerator.getAssetContent(request)).isEqualTo(
-				"$(document).ready(function(){js codejs code});");
+		assertThat(StringUtils.getTestString(jQueryContentGenerator.getAssetContent(request))).isEqualTo(
+				"$(document).ready(function(){jscodejscode});");
 	}
 
 	@Test
@@ -171,8 +171,8 @@ public class JQueryContentGeneratorTest {
 				"js codejs code");
 		assertThat(jQueryContent.getPlaceholderContent().get(AFTER_ALL)).isNull();
 
-		assertThat(jQueryContentGenerator.getAssetContent(request)).isEqualTo(
-				"$(document).ready(function(){});js codejs code");
+		assertThat(StringUtils.getTestString(jQueryContentGenerator.getAssetContent(request))).isEqualTo(
+				"$(document).ready(function(){});jscodejscode");
 
 	}
 
@@ -187,7 +187,7 @@ public class JQueryContentGeneratorTest {
 		assertThat(jQueryContent.getPlaceholderContent().get(AFTER_ALL).toString()).isEqualTo("js codejs code");
 		assertThat(jQueryContent.getPlaceholderContent().get(BEFORE_ALL)).isNull();
 
-		assertThat(jQueryContentGenerator.getAssetContent(request)).isEqualTo(
-				"$(document).ready(function(){});js codejs code");
+		assertThat(StringUtils.getTestString(jQueryContentGenerator.getAssetContent(request))).isEqualTo(
+				"$(document).ready(function(){});jscodejscode");
 	}
 }

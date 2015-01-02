@@ -99,7 +99,7 @@ public class FixedAssetVersioningStrategy extends AbstractAssetVersioningStrateg
 		case DATE:
 			LOG.debug("Selected fixed version type: {}", FixedVersionType.DATE);
 			DateFormat dateFormat = null;
-			String desiredDateFormat = context.getConfiguration().getAssetFixedVersionDateFormat();
+			String desiredDateFormat = context.getConfiguration().getAssetFixedVersionDatePattern();
 
 			LOG.debug("Selected date format: {}", desiredDateFormat);
 			try {

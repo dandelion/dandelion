@@ -51,11 +51,11 @@ import com.github.dandelion.core.web.DandelionServlet;
 /**
  * <p>
  * EhCache implementation of the {@link AssetCache}.
- * 
+ * </p>
  * <p>
  * The initialization of this cache has two prerequisites: obtain a
  * {@link CacheManager} instance and a {@code ehcache.xml} configuration file.
- * 
+ * </p>
  * <p>
  * The {@link CacheManager} instance is obtained using the following strategy:
  * <ul>
@@ -63,10 +63,10 @@ import com.github.dandelion.core.web.DandelionServlet;
  * {@code cache.manager.name} configuration property.</li>
  * <li>If no {@link CacheManager} is configured, a default one is created.</li>
  * </ul>
- * 
  * <p>
  * Once the {@link CacheManager} obtained, then the configuration file is loaded
  * using the following strategy:
+ * </p>
  * <ul>
  * <li>First checks if the {@code cache.configuration.location} configuration
  * property exists and uses this path to load the file.</li>
@@ -79,9 +79,10 @@ import com.github.dandelion.core.web.DandelionServlet;
  * Note that Dandelion uses a cache called {@code dandelionCache}. If it doesn't
  * exist in your {@code ehcache.xml} configuration file, Dandelion will
  * automatically add and use it.
- * 
+ * </p>
  * <p>
  * Note finally that the same cache is used for two purposes:
+ * </p>
  * <ul>
  * <li>Store the content of {@link Asset}s that are served by the
  * {@link DandelionServlet}</li>
@@ -98,14 +99,11 @@ public class EhCacheAssetCache extends AbstractAssetCache {
 
 	private Cache cache;
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public String getCacheName() {
 		return "ehcache";
 	}
-	
+
 	@Override
 	public void initCache(Context context) {
 		super.initCache(context);
@@ -118,8 +116,8 @@ public class EhCacheAssetCache extends AbstractAssetCache {
 			cacheManager = CacheManager.getCacheManager(cacheManagerName);
 			LOG.warn("No cache manager found with the name '{}'. Dandelion will create one.", cacheManagerName);
 		}
-		
-		if(cacheManager == null){
+
+		if (cacheManager == null) {
 			InputStream stream = null;
 
 			String cacheConfigurationPath = context.getConfiguration().getCacheConfigurationLocation();
@@ -139,41 +137,29 @@ public class EhCacheAssetCache extends AbstractAssetCache {
 			cacheManager = stream == null ? CacheManager.create() : CacheManager.create(stream);
 		}
 
-		if(!cacheManager.cacheExists(DANDELION_CACHE_NAME)){
+		if (!cacheManager.cacheExists(DANDELION_CACHE_NAME)) {
 			cacheManager.addCache(DANDELION_CACHE_NAME);
 			LOG.debug("Added cache called '{}' to the cache manager", DANDELION_CACHE_NAME);
 		}
 		cache = cacheManager.getCache(DANDELION_CACHE_NAME);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public String getAssetContent(String cacheKey) {
 		Element element = cache.get(cacheKey);
 		return element == null ? null : (String) element.getObjectValue();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void storeAssetContent(String cacheKey, String cacheContent) {
 		cache.put(new Element(cacheKey, cacheContent));
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void remove(String cacheKey) {
 		cache.remove(cacheKey);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	@SuppressWarnings("unchecked")
 	public Set<Asset> getRequestAssets(String cacheKey) {
@@ -181,17 +167,11 @@ public class EhCacheAssetCache extends AbstractAssetCache {
 		return element == null ? null : (Set<Asset>) element.getObjectValue();
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void storeRequestAssets(String cacheKey, Set<Asset> assets) {
 		cache.put(new Element(cacheKey, assets));
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void clearAll() {
 		cache.removeAll();

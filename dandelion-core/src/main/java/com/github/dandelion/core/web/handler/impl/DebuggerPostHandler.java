@@ -81,7 +81,7 @@ public class DebuggerPostHandler extends AbstractRequestHandler {
 
 	@Override
 	public boolean isApplicable(RequestHandlerContext context) {
-		return context.getContext().getConfiguration().isToolBundleGraphEnabled()
+		return context.getContext().getConfiguration().isToolDebuggerEnabled()
 				&& context.getResponse().getContentType() != null
 				&& context.getResponse().getContentType().contains("text/html")
 				&& context.getRequest().getParameter(WebConstants.DANDELION_DEBUGGER) != null;

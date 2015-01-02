@@ -60,7 +60,7 @@ public class AssetMapperTest {
 	@Before
 	public void setup() {
 		MockFilterConfig filterConfig = new MockFilterConfig();
-		filterConfig.addInitParameter(DandelionConfig.ASSET_VERSIONING.getName(), "true");
+		filterConfig.addInitParameter(DandelionConfig.ASSET_VERSIONING_MODE.getName(), "auto");
 		context = new Context(filterConfig);
 		request = new MockHttpServletRequest();
 		request.setContextPath("/context");

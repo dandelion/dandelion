@@ -100,10 +100,8 @@ public class CustomProfileTest {
 				Integer.parseInt(DandelionConfig.CACHE_REQUEST_MAX_SIZE.defaultDevValue()));
 
 		// Tooling-related configurations
-		assertThat(config.isToolAssetPrettyPrintingEnabled()).isEqualTo(
-				Boolean.parseBoolean(DandelionConfig.TOOL_ASSET_PRETTY_PRINTING.defaultDevValue()));
-		assertThat(config.isToolBundleGraphEnabled()).isEqualTo(
-				Boolean.parseBoolean(DandelionConfig.TOOL_BUNDLE_GRAPH.defaultDevValue()));
+		assertThat(config.isToolDebuggerEnabled()).isEqualTo(
+				Boolean.parseBoolean(DandelionConfig.TOOL_DEBUGGER.defaultDevValue()));
 		assertThat(config.isToolBundleReloadingEnabled()).isEqualTo(
 				Boolean.parseBoolean(DandelionConfig.TOOL_BUNDLE_RELOADING.defaultDevValue()));
 
@@ -153,10 +151,8 @@ public class CustomProfileTest {
 				Integer.parseInt(DandelionConfig.CACHE_REQUEST_MAX_SIZE.defaultDevValue()));
 
 		// Tooling-related configurations
-		assertThat(config.isToolAssetPrettyPrintingEnabled()).isEqualTo(
-				Boolean.parseBoolean(DandelionConfig.TOOL_ASSET_PRETTY_PRINTING.defaultDevValue()));
-		assertThat(config.isToolBundleGraphEnabled()).isEqualTo(
-				Boolean.parseBoolean(DandelionConfig.TOOL_BUNDLE_GRAPH.defaultDevValue()));
+		assertThat(config.isToolDebuggerEnabled()).isEqualTo(
+				Boolean.parseBoolean(DandelionConfig.TOOL_DEBUGGER.defaultDevValue()));
 		assertThat(config.isToolBundleReloadingEnabled()).isEqualTo(
 				Boolean.parseBoolean(DandelionConfig.TOOL_BUNDLE_RELOADING.defaultDevValue()));
 
@@ -207,10 +203,8 @@ public class CustomProfileTest {
 				Integer.parseInt(DandelionConfig.CACHE_REQUEST_MAX_SIZE.defaultDevValue()));
 
 		// Tooling-related configurations
-		assertThat(config.isToolAssetPrettyPrintingEnabled()).isEqualTo(
-				Boolean.parseBoolean(DandelionConfig.TOOL_ASSET_PRETTY_PRINTING.defaultDevValue()));
-		assertThat(config.isToolBundleGraphEnabled()).isEqualTo(
-				Boolean.parseBoolean(DandelionConfig.TOOL_BUNDLE_GRAPH.defaultDevValue()));
+		assertThat(config.isToolDebuggerEnabled()).isEqualTo(
+				Boolean.parseBoolean(DandelionConfig.TOOL_DEBUGGER.defaultDevValue()));
 		assertThat(config.isToolBundleReloadingEnabled()).isEqualTo(
 				Boolean.parseBoolean(DandelionConfig.TOOL_BUNDLE_RELOADING.defaultDevValue()));
 
@@ -259,10 +253,8 @@ public class CustomProfileTest {
 				Integer.parseInt(DandelionConfig.CACHE_REQUEST_MAX_SIZE.defaultDevValue()));
 
 		// Tooling-related configurations
-		assertThat(config.isToolAssetPrettyPrintingEnabled()).isEqualTo(
-				Boolean.parseBoolean(DandelionConfig.TOOL_ASSET_PRETTY_PRINTING.defaultDevValue()));
-		assertThat(config.isToolBundleGraphEnabled()).isEqualTo(
-				Boolean.parseBoolean(DandelionConfig.TOOL_BUNDLE_GRAPH.defaultDevValue()));
+		assertThat(config.isToolDebuggerEnabled()).isEqualTo(
+				Boolean.parseBoolean(DandelionConfig.TOOL_DEBUGGER.defaultDevValue()));
 		assertThat(config.isToolBundleReloadingEnabled()).isEqualTo(
 				Boolean.parseBoolean(DandelionConfig.TOOL_BUNDLE_RELOADING.defaultDevValue()));
 

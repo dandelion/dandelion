@@ -48,17 +48,16 @@ public enum DandelionConfig {
 	ASSET_MINIFICATION("asset.minification", "false", "true"),
 	ASSET_LOCATIONS_RESOLUTION_STRATEGY("asset.locations.resolution.strategy", "webapp,webjar,jar,cdn", "webapp,webjar,jar,cdn"), 
 	ASSET_PROCESSORS("asset.processors", "cssurlrewriting,jsmin,cssmin", "cssurlrewriting,jsmin,cssmin"), 
-	ASSET_PROCESSORS_ENCODING("asset.processors.encoding", "UTF-8", "UTF-8"), 
 	ASSET_JS_EXCLUDES("asset.js.excludes", "", ""), 
 	ASSET_CSS_EXCLUDES("asset.css.excludes", "", ""),
 	ASSET_URL_PATTERN("asset.url.pattern", DandelionServlet.DANDELION_ASSETS_URL, DandelionServlet.DANDELION_ASSETS_URL),
 	
 	// Asset versioning
-	ASSET_VERSIONING("asset.versioning", "true", "true"),
+	ASSET_VERSIONING_MODE("asset.versioning.mode", "auto", "auto"),
 	ASSET_VERSIONING_STRATEGY("asset.versioning.strategy", "content", "content"),
 	ASSET_FIXED_VERSION_TYPE("asset.fixed.version.type", "", ""),
 	ASSET_FIXED_VERSION_VALUE("asset.fixed.version.value", "", ""),
-	ASSET_FIXED_VERSION_DATEFORMAT("asset.fixed.version.dateformat", "yyyyMMdd", "yyyyMMdd"),
+	ASSET_FIXED_VERSION_DATEPATTERN("asset.fixed.version.datepattern", "yyyyMMdd", "yyyyMMdd"),
 
 	// Caching-related configurations
 	ASSET_CACHING("asset.caching", "false", "true"),
@@ -76,8 +75,7 @@ public enum DandelionConfig {
 	// Tooling-related configurations
 	TOOL_GZIP("tool.gzip", "false", "true"),
 	TOOL_GZIP_MIME_TYPES("tool.gzip.mime.types", "text/html,text/css,application/x-javascript,application/javascript,text/javascript,text/plain,text/xml,application/xhtml+xml,image/svg+xml", "text/html,text/css,application/x-javascript,application/javascript,text/javascript,text/plain,text/xml,application/xhtml+xml,image/svg+xml"),
-	TOOL_ASSET_PRETTY_PRINTING("tool.asset.pretty.printing", "true", "false"), 
-	TOOL_BUNDLE_GRAPH("tool.bundle.graph", "true", "false"), 
+	TOOL_DEBUGGER("tool.debugger", "true", "false"), 
 	TOOL_BUNDLE_RELOADING("tool.bundle.reloading", "true", "false"),
 	
 	// Moniroting configurations

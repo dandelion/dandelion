@@ -169,7 +169,7 @@ public class AssetMapper {
 		asset.setCacheKey(cacheKey);
 		
 		if (asu.isNotVendor()
-				&& (this.context.getConfiguration().isAssetVersioningEnabled()
+				&& (this.context.getConfiguration().isAssetAutoVersioningEnabled()
 						|| this.context.getConfiguration().isAssetCachingEnabled() || locator.isCachingForced() || this.context
 						.getConfiguration().isAssetMinificationEnabled())) {
 
@@ -215,7 +215,7 @@ public class AssetMapper {
 	private String getFinalLocation(Asset asset, String location, AssetLocator assetLocator) {
 
 		if (asset.isNotVendor()
-				&& (this.context.getConfiguration().isAssetVersioningEnabled()
+				&& (this.context.getConfiguration().isAssetAutoVersioningEnabled()
 						|| this.context.getConfiguration().isAssetCachingEnabled() || assetLocator.isCachingForced() || this.context
 						.getConfiguration().isAssetMinificationEnabled())) {
 			return AssetUtils.getAssetFinalLocation(request, asset, null);
@@ -243,7 +243,7 @@ public class AssetMapper {
 	private String getVersion(Asset asset){
 		
 		// Auto versioning
-		if(this.context.getConfiguration().isAssetVersioningEnabled()){
+		if(this.context.getConfiguration().isAssetAutoVersioningEnabled()){
 			AssetVersioningStrategy avs = this.context.getActiveVersioningStrategy();
 			return avs.getAssetVersion(asset);
 		}

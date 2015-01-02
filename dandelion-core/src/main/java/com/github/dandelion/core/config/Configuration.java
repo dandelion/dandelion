@@ -78,11 +78,11 @@ public class Configuration {
 	private String assetUrlPattern;
 
 	// Asset versioning configurations
-	private boolean assetVersioning;
+	private String assetVersioningMode;
 	private String assetVersioningStrategy;
 	private String assetFixedVersionType;
 	private String assetFixedVersionValue;
-	private String assetFixedVersionDateFormat;
+	private String assetFixedVersionDatePattern;
 
 	// Caching-related configurations
 	private boolean assetCachingEnabled;
@@ -98,8 +98,7 @@ public class Configuration {
 	private List<String> bundleExcludes;
 
 	// Tooling-related configurations
-	private boolean toolAssetPrettyPrintingEnabled;
-	private boolean toolBundleGraphEnabled;
+	private boolean toolDebuggerEnabled;
 	private boolean toolBundleReloadingEnabled;
 	private boolean toolGzipEnabled;
 	private Set<String> toolGzipMimeTypes;
@@ -142,11 +141,11 @@ public class Configuration {
 		this.assetUrlPattern = getProcessedAssetUrlPattern(readConfig(DandelionConfig.ASSET_URL_PATTERN));
 
 		// Asset versioning
-		this.assetVersioning = Boolean.parseBoolean(readConfig(DandelionConfig.ASSET_VERSIONING));
+		this.assetVersioningMode = readConfig(DandelionConfig.ASSET_VERSIONING_MODE);
 		this.assetVersioningStrategy = readConfig(DandelionConfig.ASSET_VERSIONING_STRATEGY);
 		this.assetFixedVersionType = readConfig(DandelionConfig.ASSET_FIXED_VERSION_TYPE);
 		this.assetFixedVersionValue = readConfig(DandelionConfig.ASSET_FIXED_VERSION_VALUE);
-		this.assetFixedVersionDateFormat = readConfig(DandelionConfig.ASSET_FIXED_VERSION_DATEFORMAT);
+		this.assetFixedVersionDatePattern = readConfig(DandelionConfig.ASSET_FIXED_VERSION_DATEPATTERN);
 
 		// Caching-related configurations
 		this.assetCachingEnabled = Boolean.parseBoolean(readConfig(DandelionConfig.ASSET_CACHING));
@@ -174,9 +173,7 @@ public class Configuration {
 		this.cacheConfigurationLocation = readConfig(DandelionConfig.CACHE_CONFIGURATION_LOCATION);
 
 		// Tooling-related configurations
-		this.toolAssetPrettyPrintingEnabled = Boolean
-				.parseBoolean(readConfig(DandelionConfig.TOOL_ASSET_PRETTY_PRINTING));
-		this.toolBundleGraphEnabled = Boolean.parseBoolean(readConfig(DandelionConfig.TOOL_BUNDLE_GRAPH));
+		this.toolDebuggerEnabled = Boolean.parseBoolean(readConfig(DandelionConfig.TOOL_DEBUGGER));
 		this.toolBundleReloadingEnabled = Boolean.parseBoolean(readConfig(DandelionConfig.TOOL_BUNDLE_RELOADING));
 		this.toolGzipEnabled = Boolean.parseBoolean(readConfig(DandelionConfig.TOOL_GZIP));
 		this.toolGzipMimeTypes= PropertiesUtils.propertyAsSet(readConfig(DandelionConfig.TOOL_GZIP_MIME_TYPES));
@@ -263,24 +260,16 @@ public class Configuration {
 		return this.assetMinificationEnabled;
 	}
 
-	public boolean isToolAssetPrettyPrintingEnabled() {
-		return this.toolAssetPrettyPrintingEnabled;
-	}
-
-	public boolean isToolBundleGraphEnabled() {
-		return this.toolBundleGraphEnabled;
+	public boolean isToolDebuggerEnabled() {
+		return this.toolDebuggerEnabled;
 	}
 
 	public boolean isToolBundleReloadingEnabled() {
 		return this.toolBundleReloadingEnabled;
 	}
 
-	public void setToolAssetPrettyPrintingEnabled(boolean toolAssetPrettyPrinting) {
-		this.toolAssetPrettyPrintingEnabled = toolAssetPrettyPrinting;
-	}
-
 	public void setToolBundleGraphEnabled(boolean toolBundleGraph) {
-		this.toolBundleGraphEnabled = toolBundleGraph;
+		this.toolDebuggerEnabled = toolBundleGraph;
 	}
 
 	public void setToolBundleEnabledReloading(boolean toolBundleReloading) {
@@ -443,20 +432,20 @@ public class Configuration {
 		this.assetFixedVersionValue = assetFixedVersionValue;
 	}
 
-	public String getAssetFixedVersionDateFormat() {
-		return assetFixedVersionDateFormat;
+	public String getAssetFixedVersionDatePattern() {
+		return assetFixedVersionDatePattern;
 	}
 
-	public void setAssetFixedVersionDateFormat(String assetFixedVersionDateFormat) {
-		this.assetFixedVersionDateFormat = assetFixedVersionDateFormat;
+	public void setAssetFixedVersionDatePattern(String assetFixedVersionDateFormat) {
+		this.assetFixedVersionDatePattern = assetFixedVersionDateFormat;
 	}
 
-	public boolean isAssetVersioningEnabled() {
-		return assetVersioning;
+	public String getAssetVersioningMode() {
+		return assetVersioningMode;
 	}
 
-	public void setAssetVersioning(boolean assetVersioning) {
-		this.assetVersioning = assetVersioning;
+	public boolean isAssetAutoVersioningEnabled() {
+		return this.assetVersioningMode.equalsIgnoreCase("auto");
 	}
 
 	public String getAssetUrlPattern() {
