@@ -79,6 +79,8 @@ public class OptionsDebugPage extends AbstractDebugPage {
 		StringBuilder table = new StringBuilder("<table class='table table-striped table-hover table-bordered' style='margin-top:15px;'><thead>");
 		table.append("<tr><th>Option</th><th>Active value</th></tr></thead><tbody>");
 
+		table.append(tr("Active profile", conf.getActiveProfile()));
+		
 		// Asset-related options
 		table.append("<tr class='header-tr'><td colspan='3'>Asset-related options</td></tr>");
 		table.append(tr(DandelionConfig.ASSET_MINIFICATION, conf.isAssetMinificationEnabled()));
