@@ -4,7 +4,7 @@ NOTE: Pending
 
 One of the key features of Dandelion-Datatables is that it is highly configurable. Plenty of options are at your disposal to configure the component through several levels of granularity.
 
-See <<_appendix_c_configuration_options_reference>> for an exhaustive list of available options.
+See the <<_appendix_c_configuration_options_reference, configuration options reference>> for an exhaustive list of available options.
 
 === 11.1. Configuration loading
 

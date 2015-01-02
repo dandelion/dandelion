@@ -1,3 +1,11 @@
 == 10. Asset generators
 
 TIP: Pending
+
+=== 10.1. Raw JavaScript
+
+TIP: Pending
+
+=== 10.2. jQuery
+
+TIP: Pending

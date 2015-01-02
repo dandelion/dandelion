@@ -1,1 +1,21 @@
 == 12. Debugger
+
+Dandelion comes with a debugging tool that can be especially useful during development.
+
+=== 12.1. Accessing the debugger
+
+In order to access the debugger, append the following request parameter to the current URL: `ddl-debug`.
+
+For example, if you're currently browsing the JSP starter sample at the URL: http://localhost:8080/datatables-jsp-starter/, just modify the URL as follows: http://localhost:8080/datatables-jsp-starter/?ddl-debug. 
+
+As a consequence, Dandelion will override the response with the debugger and show information about the current request.
+
+image::debugger-home.png[]
+
+=== 12.2. Dandelion components
+
+Depending on the components being used on the current page, the debugger can contain additional pages.
+
+=== 12.3. Plugging-in custom debug pages
+
+TIP: pending... 

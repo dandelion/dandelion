@@ -4,10 +4,7 @@ TIP: Pending
 
 === 6.1. Introducing asset processors
 
-<p>
-   Dandelion provides some processors intended to be applied on assets. This section introduces
-   major concepts around these processors.
-</p>
+Dandelion provides some processors intended to be applied on assets. This section introduces major concepts around these processors.
 
 <h3 class="section-title" id="def">Definition</h3>
 <p>
