@@ -67,15 +67,13 @@ public class DandelionServlet extends HttpServlet {
 		getLogger().debug("Dandelion Asset servlet captured GET request {}", request.getRequestURI());
 
 		Context context = (Context) request.getAttribute(WebConstants.DANDELION_CONTEXT_ATTRIBUTE);
-		HttpHeadersConfigurer httpHeadersConfigurer = new HttpHeadersConfigurer(context);
 		
 		// Get the asset content thanks to the cache key
 		String assetKey = context.getCacheManager().extractCacheKeyFromRequest(request);
 		AssetType assetType = AssetType.typeOfAsset(assetKey);
 		LOG.debug("Retrieved asset type: {}, cache key: {}", assetType, assetKey);
 		
-		// Configure response headers
-		httpHeadersConfigurer.configureResponseHeaders(response, assetType.getContentType());
+		response.setContentType(assetType.getContentType() == null ? "text/plain" : assetType.getContentType());
 		
 		// Send the asset's content
 		PrintWriter writer = response.getWriter();

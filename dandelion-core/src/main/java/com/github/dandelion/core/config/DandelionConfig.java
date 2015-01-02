@@ -35,8 +35,8 @@ import com.github.dandelion.core.web.DandelionServlet;
 /**
  * <p>
  * Enum containing all configuration properties and their associated value both
- * in {@link Profile#DEFAULT_DEV_PROFILE} and
- * {@link Profile#DEFAULT_PROD_PROFILE} mode.
+ * with {@link Profile#DEFAULT_DEV_PROFILE} and
+ * {@link Profile#DEFAULT_PROD_PROFILE}.
  * </p>
  * 
  * @author Thibault Duchateau
@@ -74,7 +74,7 @@ public enum DandelionConfig {
 	BUNDLE_EXCLUDES("bundle.excludes", "", ""),
 
 	// Tooling-related configurations
-	TOOL_GZIP("tool.gzip", "true", "true"),
+	TOOL_GZIP("tool.gzip", "false", "true"),
 	TOOL_GZIP_MIME_TYPES("tool.gzip.mime.types", "text/html,text/css,application/x-javascript,application/javascript,text/javascript,text/plain,text/xml,application/xhtml+xml,image/svg+xml", "text/html,text/css,application/x-javascript,application/javascript,text/javascript,text/plain,text/xml,application/xhtml+xml,image/svg+xml"),
 	TOOL_ASSET_PRETTY_PRINTING("tool.asset.pretty.printing", "true", "false"), 
 	TOOL_BUNDLE_GRAPH("tool.bundle.graph", "true", "false"), 
