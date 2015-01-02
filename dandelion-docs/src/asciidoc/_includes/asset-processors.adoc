@@ -1,0 +1,390 @@
+== 6. Asset processors
+
+TIP: Pending
+
+=== 6.1. Introducing asset processors
+
+<p>
+   Dandelion provides some processors intended to be applied on assets. This section introduces
+   major concepts around these processors.
+</p>
+
+<h3 class="section-title" id="def">Definition</h3>
+<p>
+   An <i>asset processor</i> (or <i>processor</i> to simplify the language) is defined as follows:
+</p>
+<ul>
+   <li>A processor key, used as an identifier</li>
+   <li>A type of asset to process, such as <i>js</i> or <i>css</i></li>
+</ul>
+<p>
+   Most of the existing processors are used to minify assets thereby improving load times.
+</p>
+<p>
+   Dandelion already provides some
+   <a href="/built-in">built-in processors</a> which are configured by
+   default when the <a
+      href="/dandelion/features/production-mode">production mode</a> is
+   enabled. Note that in <a
+      href="/dandelion/features/development-mode">development mode</a>,
+   asset minification is disabled, and thus no processor is applied.
+</p>
+<p class="alert alert-info">
+   <strong><i class="fa fa-info-circle fa-2x"></i></strong>&nbsp; 
+   In upcoming releases, more processors will be provided, allowing to process more CSS and JavaScript languages such as
+   <a href="http://coffeescript.org/">CoffeeScript</a>.
+</p>
+
+<h3 class="section-title" id="ac">Configuring asset processors</h3>
+<p>
+   Asset processors are configured through the <a
+      href="/dandelion/docs/ref/configuration/#asset.processors">asset.processors</a> configuration property. You just need to define a
+   comma-separated list of processor keys to enable the corresponding processors.
+</p>
+<p>
+   For example, the default value is
+   <code>cssurlrewriting,jsmin,cssmin</code>
+   . This means that by default, the processors behing these keys will be applied sequentially on
+   all asset, depending on their compatible asset type(s).
+</p>
+
+<h3 class="section-title" id="ac">Enabling asset processing</h3>
+<p>
+   By default, no asset is processed, because the
+   <a href="/dandelion/docs/ref/configuration/#minification">minification</a> configuration property is set to
+   <code>false</code>
+   (see the <a href="/dandelion/features/development-mode/default-configuration.html">default
+      configuration</a>).
+</p>
+<p>
+   You can activate asset processing by turning the above configuration property to
+   <code>true</code>
+   . When set to
+   <code>true</code>
+   , Dandelion will use the asset processors configured thanks to the
+   <a href="/dandelion/docs/ref/configuration/#asset.processors">asset.processors</a> configuration property as seen in the previous section.
+</p>
+
+<h3 class="section-title" id="acns">Asset caching and naming strategy</h3>
+<p>
+   Once asset processing is enabled, there are two points to note:
+</p>
+<ul>
+   <li>
+      <p>
+         Asset naming: the <i>min</i> keyword is automatically appended to the asset name, just before the extension name.
+      </p>
+      <p>
+         For example, an asset non-minified called <code>app-1.0.0.css</code> will be called <code>app-1.0.0.min.css</code>. 
+      </p>
+   </li>
+   <li>
+      <p>
+         Asset caching: it is also worth noting that all processed assets will be first cached,
+         thanks to the
+         <a href="/dandelion/features/asset-caching">configured cache system</a>, and then served by
+         the {% javadoc ddl dandelion-core DandelionServlet %}.
+      </p>
+   </li>
+</ul>
+
+<h3 class="section-title" id="pyop">Plugging-in your own processor</h3>
+<p>
+   As all other parts of the framework, Dandelion provides an extension point allowing you to
+   plug-in your own asset processor. Read more
+   <a href="plugging-in-your-own-processor.html">here</a>.
+</p>
+
+=== 6.2. Built-in processors
+
+TIP: Pending
+
+==== 6.2.1. CSSMin
+
+<p>
+   This processor uses a <a href="https://github.com/andyroberts/csscompressor">fork</a> of the Yahoo's YUI Compressor authored by
+   <a href="http://www.andy-roberts.net/coding/csscompressor">Andrew Roberts</a>.
+</p>
+<p>
+   <table class="table table-striped table-hover">
+      <thead>
+         <tr>
+            <th>Processor key</th>
+            <th>Compatible asset type</th>
+            <th>Class(es)</th>
+         </tr>
+      </thead>
+      <tbody>
+         <tr>
+            <td>cssmin</td>
+            <td>CSS</td>
+            <td>{% javadoc ddl dandelion-core CssMinProcessor %}</td>
+         </tr>
+      </tbody>
+   </table>
+</p>
+
+<h3 class="section-title" id="cmpe">Example</h3>
+<p>
+   Before:
+</p>
+<pre class="prettyprint">
+.myclassA {
+   font-style: bold;
+}
+
+/* Some comments */
+.myclassB {
+   background-color: rgb(51,102,153);
+}
+
+.myclassC {
+   color: #AABBCC;
+}
+
+/* An empty rule */
+.myClassD {
+   
+}
+</pre>
+<p>
+   After:
+</p>
+<pre class="prettyprint">
+.myclassA{font-style:bold}.myclassB{background-color:#369}.myclassC{color:#ABC}
+</pre>
+
+==== 6.2.2. CSSMinYui
+
+<p>
+    This processor is based on the <a href="http://yui.github.io/yuicompressor/">Yahoo's YUI Compressor</a> project. 
+</p>
+<p>
+   <table class="table table-striped table-hover">
+      <thead>
+         <tr>
+            <th>Processor key</th>
+            <th>Compatible asset type</th>
+            <th>Class(es)</th>
+         </tr>
+      </thead>
+      <tbody>
+         <tr>
+            <td>cssminyui</td>
+            <td>CSS</td>
+            <td>{% javadoc ddl dandelion-yuicompressor CssMinYuiProcessor %}</td>
+         </tr>
+      </tbody>
+   </table>
+</p>
+
+<h3 class="section-title" id="cyci">Installation</h3>
+<p>
+   This processor is bundled in the <i>dandelion-yuicompressor</i> extra since it brings a new dependency to the
+   <a href="http://yui.github.io/yuicompressor/">YUI Compressor</a> project.
+</p>
+<p>
+   {% assign artifact = 'dandelion-yuicompressor' %} 
+   {% include build-tools.html %}
+</p>
+
+==== 6.2.3. CSS URL rewriting
+
+<p>
+   This processor uses a fork of the Yahoo's YUI Compressor authored by
+   <a href="http://www.andy-roberts.net/coding/csscompressor">Andrew Roberts</a>. This compressor
+   contains a number of enhancements to the original CSS compression algorithms.
+</p>
+<p>
+   <table class="table table-striped table-hover">
+      <thead>
+         <tr>
+            <th>Processor key</th>
+            <th>Compatible asset type</th>
+            <th>Class(es)</th>
+         </tr>
+      </thead>
+      <tbody>
+         <tr>
+            <td>cssMin</td>
+            <td>CSS</td>
+            <td>{% javadoc ddl dandelion-core CssUrlRewritingProcessor %}</td>
+         </tr>
+      </tbody>
+   </table>
+</p>
+
+==== 6.2.4. JsMin
+
+<p>
+   This processor is based on a translation frop C to Java of jsmin.c published by
+   <a href="http://www.crockford.com/javascript/jsmin.html">Douglas Crockford</a>.
+</p>
+<p>
+   <table class="table table-striped table-hover">
+      <thead>
+         <tr>
+            <th>Processor key</th>
+            <th>Compatible asset type</th>
+            <th>Class(es)</th>
+         </tr>
+      </thead>
+      <tbody>
+         <tr>
+            <td>jsMin</td>
+            <td>JS</td>
+            <td>{% javadoc ddl dandelion-core JsMinProcessor %}</td>
+         </tr>
+      </tbody>
+   </table>
+</p>
+
+<h3 class="section-title" id="jmpe">Example</h3>
+<p>
+   Before:
+</p>
+<pre class="prettyprint">
+// is.js
+
+// (c) 2001 Douglas Crockford
+// 2001 June 3
+
+
+// is
+
+// The -is- object is used to identify the browser.  Every browser edition
+// identifies itself, but there is no standard way of doing it, and some of
+// the identification is deceptive. This is because the authors of web
+// browsers are liars. For example, Microsoft's IE browsers claim to be
+// Mozilla 4. Netscape 6 claims to be version 5.
+
+var is = {
+    ie:      navigator.appName == 'Microsoft Internet Explorer',
+    java:    navigator.javaEnabled(),
+    ns:      navigator.appName == 'Netscape',
+    ua:      navigator.userAgent.toLowerCase(),
+    version: parseFloat(navigator.appVersion.substr(21)) ||
+             parseFloat(navigator.appVersion),
+    win:     navigator.platform == 'Win32'
+}
+is.mac = is.ua.indexOf('mac') >= 0;
+if (is.ua.indexOf('opera') >= 0) {
+    is.ie = is.ns = false;
+    is.opera = true;
+}
+if (is.ua.indexOf('gecko') >= 0) {
+    is.ie = is.ns = false;
+    is.gecko = true;
+}
+</pre>
+<p>
+   After:
+</p>
+<pre class="prettyprint">
+var is={ie:navigator.appName=='Microsoft Internet Explorer',java:navigator.javaEnabled(),ns:navigator.appName=='Netscape',ua:navigator.userAgent.toLowerCase(),version:parseFloat(navigator.appVersion.substr(21))||parseFloat(navigator.appVersion),win:navigator.platform=='Win32'}
+is.mac=is.ua.indexOf('mac')>=0;if(is.ua.indexOf('opera')>=0){is.ie=is.ns=false;is.opera=true;}
+if(is.ua.indexOf('gecko')>=0){is.ie=is.ns=false;is.gecko=true;}
+</pre>
+
+==== 6.2.5. JsMin YUI
+
+<p>
+   This processor is based on the <a href="http://yui.github.io/yuicompressor/">Yahoo's YUI Compressor</a> project.
+</p>
+<p>
+   <table class="table table-striped table-hover">
+      <thead>
+         <tr>
+            <th>Processor key</th>
+            <th>Compatible asset type</th>
+            <th>Class(es)</th>
+         </tr>
+      </thead>
+      <tbody>
+         <tr>
+            <td>jsminyui</td>
+            <td>JS</td>
+            <td>{% javadoc ddl dandelion-yuicompressor JsMinYuiProcessor %}</td>
+         </tr>
+      </tbody>
+   </table>
+</p>
+
+<h3 class="section-title" id="cyci">Installation</h3>
+<p>
+   This processor is bundled in the <i>dandelion-yuicompressor</i> extra since it brings a new dependency to the
+   <a href="http://yui.github.io/yuicompressor/">YUI Compressor</a> project.
+</p>
+<p>
+   {% assign artifact = 'dandelion-yuicompressor' %} 
+   {% include build-tools.html %}
+</p>
+
+=== 6.3. Plugging-in your own processor
+
+TIP: Pending
+
+<p>
+   You may wish to use a custom <a
+      href="introducing-asset-processor.html">processor</a>. Let's see here how to
+   proceed.
+</p>
+
+<h3 class="section-title" id="slw">SPI for asset processors</h3>
+<p>
+   In order to plug-in your own asset processor, just follow these steps:
+</p>
+<ol>
+   <li>Create a class:
+      <ul>
+         <li>that extends {% javadoc ddl dandelion-core AbstractAssetProcessor %}</li>
+         <li>annotated with {% javadoc ddl dandelion-core CompatibleAssetType %}</li>
+      </ul> 
+<pre class="prettyprint">
+package com.foo.asset.processor.impl;
+
+@CompatibleAssetType(types = AssetType.css)
+public class MyProcessor extends AbstractAssetLocator {
+
+   @Override
+   public String getProcessorKey() {
+      return "yourprocessorname";
+   }
+
+   @Override
+   public void doProcess(Asset asset, Reader reader, Writer writer) throws Exception {
+      ...
+   }
+}
+</pre>   
+   </li>
+   <li>
+      <p>
+         In the <code>META-INF/services</code> folder, create a text file (UTF-8 encoded) using the following convention:
+<pre class="prettyprint">
+yourJar
+|__ src
+   |__ main
+      |__ resources
+         |__ META-INF
+            |__ services
+               |__ com.github.dandelion.core.asset.processor.spi.AssetProcessor
+   
+</pre>   
+      </p>
+      <p>
+         Inside this file, just add the fully qualified name of your own implementation. For example:
+<pre class="prettyprint">
+com.foo.asset.processor.impl.MyProcessor
+</pre>
+      </p>   
+   </li>
+   <li>
+      Finally, you need to update the <a
+      href="/dandelion/docs/ref/configuration/#asset.processors">asset.processors</a>
+      configuration property by appending the name of your processor. For example:
+<pre class="prettyprint">
+asset.processors=cssurlrewriting,jsmin,cssmin,yourprocessorname
+</pre>
+   </li>
+</ol>

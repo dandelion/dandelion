@@ -1,0 +1,41 @@
+= Dandelion {ddl-version} Documentation
+Thibault Duchateau <https://github.com/tduchateau[@tduchateau]>
+
+:description: This guide describes the basic structure of an AsciiDoc document, how to create your first AsciiDoc document, how to add other structural elements such as lists, block quotes and source code, and how to convert an AsciiDoc document to HTML, DocBook and PDF.
+:keywords: AsciiDoc, Asciidoctor, syntax, reference, learn, how to, writers, authors
+:toc: left
+:toclevels: 4
+:imagesdir: images
+:include-dir: _includes
+:homepage: http://dandelion.github.io/dandelion
+:ddl-version: 0.11.0
+
+include::{include-dir}/introduction.adoc[]
+
+include::{include-dir}/installation.adoc[]
+
+include::{include-dir}/asset-bundles.adoc[]
+
+include::{include-dir}/asset-locators.adoc[]
+
+include::{include-dir}/asset-versioning.adoc[]
+
+include::{include-dir}/asset-processors.adoc[]
+
+include::{include-dir}/bundle-loaders.adoc[]
+
+include::{include-dir}/asset-caching.adoc[]
+
+include::{include-dir}/profiles.adoc[]
+
+include::{include-dir}/asset-generators.adoc[]
+
+include::{include-dir}/configuration-options.adoc[]
+ 
+include::{include-dir}/debugger.adoc[]
+
+include::{include-dir}/reference-jsp-taglib.adoc[]
+
+include::{include-dir}/reference-thymeleaf-dialect.adoc[]
+
+include::{include-dir}/reference-options.adoc[]

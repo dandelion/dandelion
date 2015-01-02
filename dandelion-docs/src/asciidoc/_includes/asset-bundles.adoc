@@ -1,0 +1,681 @@
+== 3. Assets and asset bundles
+
+=== 3.1. Introducing assets and asset bundles
+
+In web applications, static assets are basically all the JavaScript and CSS files loaded in your HTML pages. Dandelion-Core provides a wider representation of these assets, using _bundles_.
+
+An _assets bundle_, or _bundle_ to simplify the language, is a little more than just a set of assets, because it contains additional information that will be described afterwards.
+
+==== 3.1.1. Definitions
+
+A _bundle_ is defined as follows:
+
+.Bundle definition
+|===
+|Attribute |Description |Required
+
+|`name`
+|Name of the bundle
+|Yes
+
+|`dependencies`
+|Set of bundles that need to be loaded before this one
+|No
+
+|`assets`
+|Set of assets that compose the bundle
+|Yes
+
+|===
+
+And an _asset_ is defined as follows:
+
+.Asset definition
+|===
+|Attribute |Description |Required
+
+|`name`
+|Name of the asset
+|Yes
+
+|`version`
+|Version of the asset
+|No
+
+|`type`
+|Type of the asset, among `js` or `css`, inferred from the extension specified in the location
+|No
+
+|`locations`
+|Map of location key / location pair that provides information about how to fetch the asset
+|Yes
+
+|`dom`
+|Desired position in the DOM, among `body` or `head` (by default `body` for JS and `head` for CSS)
+|No
+
+|`attributes`
+|TODO
+|TODO
+
+|===
+
+==== 3.1.2. Possible representations
+
+All assets intented to be used in your web applications need to be known by the framework. For that, you have to create one or more bundles in a declarative approach.
+
+Two formats are supported: JSON and XML.
+
+[discrete]
+===== 3.1.2.1. JSON representation
+
+Each bundle is basically a JSON file.
+
+Assume you want to use http://jquery.com/[jQuery] in your web application. One representation could be the following:
+
+[source, json]
+----
+{  
+  "bundle":"jquery",
+  "assets":[  
+    {  
+      "name":"jquery",
+      "version":"1.11.0",
+      "type":"js",
+      "locations":{  
+        "cdn":"//cdnjs.cloudflare.com/ajax/libs/jquery/1.11.0/jquery.js"
+      }
+    }
+  ]
+}
+----
+
+In this bundle:
+
+* no dependency is declared
+* the `jquery` asset is configured with the `cdn` location key. This key is mapped to a particular asset locator used by Dandelion-Core to know the fetching strategy to use. See more about asset locators (TODO LIEN).
+
+===== 3.1.2.2. XML representation
+
+[source, xml]
+----
+<bundle>
+  <name>jquery</name>
+  <assets>
+    <asset name="jquery" version="1.11.0" type="js">
+      <locations>
+        <location key="cdn">//cdnjs.cloudflare.com/ajax/libs/jquery/1.11.0/jquery.js</location>
+      </locations>
+    </asset>
+  </assets>
+</bundle>
+----
+
+<h4>Example with a dependency</h4>
+<p>
+   The above example of the <i>jquery</i> bundle is quite simple. But now let's consider a new bundle
+   for the <a
+      href="http://datatables.net/">DataTables jQuery plugin</a>. It could be written as follows:
+<pre class="prettyprint">
+{
+   "bundle" : "datatables",
+   "dependencies": [ "jquery" ],
+   "assets": [{
+      "name": "datatables",
+      "version": "1.9.4",
+      "type": "js",
+      "locations": {
+         "cdn": "//ajax.aspnetcdn.com/ajax/jquery.dataTables/1.9.4/jquery.dataTables.js"
+      }
+   }, {
+      "name": "datatables",
+      "version": "1.9.4",
+      "type": "css",
+      "locations": {
+         "cdn": "//ajax.aspnetcdn.com/ajax/jquery.dataTables/1.9.4/css/jquery.dataTables.css"
+      }
+   }]
+}
+</pre>
+</p>
+<p>
+   This new bundle is slighlty different. You may have noticed that the
+   <i>dependencies</i> attribute is now used and indicates that the current bundle is dependent of
+   the <i>jquery</i> bundle. Actually we've just told Dandelion that the DataTables jQuery plugin
+   needs jQuery to work.
+</p>
+<p>
+   Little by little, depending on the presence of dependencies, your bundles will form a kind of
+   <a href="building-a-bundle-graph/">graph</a>.
+</p>
+
+<h3 class="section-title" id="wiaas">Bundle loading</h3>
+<p>
+   Once the JSON files written, Dandelion will load them in a particular order, using
+   <i>bundle loaders</i>. See the <a href="/dandelion/features/bundle-loaders">bundle
+      loaders</a> section for more information.
+</p>
+
+=== 3.2. Building a bundle graph
+
+TIP: Pending
+
+Once the application started and all bundles scanned, Dandelion-Core stores them internally as a http://en.wikipedia.org/wiki/Directed_acyclic_graph[directed acyclic graph] or _DAG_, which is used to implement the relationship of dependency between bundles.
+
+==== 3.2.1. Storage rules
+
+Before building any graph, Dandelion applies some storage rules in order to keep consistency between bundles. These rules are described below.
+
+[discrete]
+==== #1 The same asset can't be added twice in the same bundle definition
+
+.Rule #1 broken
+[source, json]
+----
+{  
+  "bundle":"my-bundle",
+  "assets":[  
+    {  
+      "name":"my-asset1",
+      "type":"js",
+      ...
+    },
+    {  
+      "name":"my-asset1",
+      "type":"js",
+      ...
+    }
+  ]
+}
+----
+
+. OK
+[source, json]
+----
+{  
+  "bundle":"my-bundle",
+  "assets":[  
+    {  
+      "name":"my-asset1",
+      "type":"js",
+      ...
+    },
+    {  
+      "name":"my-asset2",
+      "type":"js",
+      ...
+    }
+  ]
+}
+----
+
+IMPORTANT: The uniqueness of the assets is based both on the asset type and on its name. As a consequence, the following configuration is permitted:
+
+. OK
+[source, json]
+----
+{  
+  "bundle":"my-bundle",
+  "assets":[  
+    {  
+      "name":"my-asset1",
+      "type":"js",
+      ...
+    },
+    {  
+      "name":"my-asset1",
+      "type":"css",
+      ...
+    }
+  ]
+}
+----
+
+[discrete]
+==== #2 The same location key can't be used twice in the same asset definition
+
+.Rule #2 broken
+[source, json]
+----
+{  
+  "bundle":"my-bundle",
+  "assets":[  
+    {  
+      "name":"my-asset",
+      ...,
+      "locations":{  
+        "cdn":"//cdn1",
+        "cdn":"//cdn2",
+
+      }
+    }
+  }
+----
+
+. OK
+[source, json]
+----
+{  
+  "bundle":"my-bundle",
+  "assets":[  
+    {  
+      "name":"my-asset",
+      ...,
+      "locations":{  
+        "cdn":"//cdn",
+        "webapp":"/assets/...",
+      }
+    }
+  }
+----
+
+[discrete]
+==== #3 Cycles between bundles must be avoided
+
+.Bundle1 definition
+[source, json]
+----
+{  
+  "bundle":"bundle1",
+  "dependencies": ["bundle2"],
+}
+----
+
+.Bundle2 definition
+[source, json]
+----
+{  
+  "bundle":"bundle2",
+  "dependencies": ["bundle3"],
+}
+----
+
+.Bundle3 definition
+[source, json]
+----
+{  
+  "bundle":"bundle3",
+  "dependencies": ["bundle1"],
+}
+----
+
+IMPORTANT: An exception is thrown as soon as a cycle is detected among your bundles.
+
+
+<h4>Example</h4>
+<p>
+   Suppose we have the following bundles available in our application:
+   <i>jquery</i>, <i>datatables</i> and <i>bootstrap2</i>:
+</p>
+<div class="row-fluid">
+   <div class="span4">
+<pre class="prettyprint">
+{
+   "bundle" : "jquery",
+   "assets": [{
+      "name": "jquery",
+      "version": "1.11.0",
+      "type": "js",
+      "locations": {
+         "cdn": "//cdnjs.cloudflare.com/ajax/libs/jquery/1.11.0/jquery.js"
+      }
+   }]
+}
+</pre>
+      <p class="text-center"><i>jquery</i> bundle</p>
+   </div>
+   <div class="span4">
+<pre class="prettyprint">
+{
+   "bundle" : "datatables",
+   "dependencies": [ "jquery" ],
+   "assets": [{
+      "name": "datatables",
+      "version": "1.9.4",
+      "type": "js",
+      "locations": {
+         "cdn": "//ajax.aspnetcdn.com/ajax/jquery.dataTables/1.9.4/jquery.dataTables.js"
+      }
+   }, {
+      "name": "datatables",
+      "version": "1.9.4",
+      "type": "css",
+      "locations": {
+         "cdn": "//ajax.aspnetcdn.com/ajax/jquery.dataTables/1.9.4/css/jquery.dataTables.css"
+      }
+   }]
+}
+</pre>
+      <p class="text-center"><i>datatables</i> bundle</p>
+   </div>
+   <div class="span4">
+<pre class="prettyprint">
+{
+    "bundle" : "bootstrap2",
+    "dependencies" : [ "jquery" ],
+    "assets": [
+        {
+            "name": "bootstrap2",
+            "version": "2.3.2",
+            "type": "js",
+            "locations": {
+                "cdn": "//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.js"
+            }
+        },
+        {
+            "name": "bootstrap2",
+            "version": "2.3.2",
+            "type": "css",
+            "locations": {
+                "cdn": "//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap.css"
+            }
+        }
+    ]
+}
+</pre>
+      <p class="text-center"><i>bootstrap2</i> bundle</p>
+   </div>
+</div>
+<p>
+   Note the use of the
+   <code>dependencies</code>
+   attribute in both <i>datatables</i> and <i>bootstrap2</i> bundles, which implicitly join bundles
+   together into an graph.
+</p>
+<p>
+   A graphical representation would look like:
+</p>
+
+[graphviz, dot-example, svg]
+----
+digraph g {
+    bootstrap2 -> jquery
+    datatables -> jquery
+}
+----
+
+<p class="text-center">
+   <img src="/assets/images/dandelion/asset-bundles-00.png" />
+</p>
+<p>
+   With such a representation, it becomes easy to bring back all the necessary bundles - and thus
+   assets - as soon as you request one of them.
+</p>
+<p>
+   For example, as soon as you request the <i>bootstap2</i> bundle, Dandelion will read the bundle
+   graph and then return in the right order the following assets:
+</p>
+<ol>
+   <li>//cdnjs.cloudflare.com/ajax/libs/jquery/1.11.0/jquery.js</li>
+   <li>//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.js</li>
+   <li>//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap.css</li>
+</ol>
+
+<p class="alert alert-info">
+   <strong><i class="fa fa-info-circle fa-2x"></i></strong>&nbsp; 
+   Note that you can visualize a dynamic bundle graph in your running application using the
+   <a href="/dandelion/features/development-mode">development mode</a>.
+</p>
+
+<h3 class="section-title" id="wiaas">Organizing your bundles</h3>
+<p>
+   You are totally free to build a bundle the way you want it, e.g. by adding as many assets as you
+   want. However, you should take the following considerations into account:
+</p>
+<ul>
+   <li><strong>Reduce as much as possible the number of bundles</strong>.
+      <ul>
+         <li>First for performance concerns, even if the bundle loading phase is very fast.</li>
+         <li>But mostly for maintenance concerns. The more bundles you have, the harder the
+            maintenance will be over the time.
+         </li>
+      </ul>
+   </li>
+   <li><strong>Pay attention to the granularity of bundles</strong>: using only one bundle for all assets of your site would lead to bad consequences:
+      <ul>
+         <li>it would affect performances, especially if assets are injected into pages whereas they aren't used</li>
+         <li>it would become harder and harder to share bundles among multiple pages, causing
+            to create a new bundle each time you create a new page, finally leading to the consequences explained in the first point</li>
+      </ul>
+   </li>
+</ul>
+
+<h3 class="section-title" id="ns">Next steps</h3>
+<p>
+   Now you have seen how to build a graph, let's see how to
+   <a href="/dandelion/features/asset-bundles/interacting-with-the-asset-bundles">interact with
+      bundles</a>.
+</p>   
+
+=== 3.3. Interacting with asset bundles
+
+TIP: Pending
+
+<p>
+   Once <a href="/dandelion/features/asset-bundles/introducing-asset-bundles.html">asset
+      bundles</a> written and organized into a <a
+      href="/dandelion/features/asset-bundles/interacting-with-the-asset-bundles/">graph</a>, you're
+   done with the configuration part.
+</p>
+<p>
+   Now in order for Dandelion to handle the corresponding assets, you have to include bundles in all
+   pages where assets are needed.
+</p>
+<p>
+   Dandelion provides many different ways for this purpose:
+</p>
+<div class="section-index">
+   <ul>
+      <li><a href="using-the-jsp-taglib.html"><i class="fa fa-angle-double-right"></i> Using the JSP taglib</a></li>
+      <li><a href="using-the-thymeleaf-dialect.html"><i class="fa fa-angle-double-right"></i> Using the Thymeleaf dialect</a></li>
+      <li><a href="using-the-api.html"><i class="fa fa-angle-double-right"></i> Using the API</a></li>
+      <li><a href="using-the-configuration-properties.html"><i class="fa fa-angle-double-right"></i> Using the configuration properties</a></li>
+   </ul>
+</div>
+
+==== 3.3.1. Using the JSP taglib
+
+<h3 class="section-title" id="rq">Requirements</h3>
+<p>
+   First of all, please read the <a href="/dandelion/docs/installation/jsp.html">JSP installation guide</a>.
+</p>
+
+<h3 class="section-title" id="mb">Manipulating bundles</h3>
+<p>The JSP taglib allows you to manipulate bundles by using both {% refjsp ddl bundle %} and {% refjsp ddl asset %} tags.</p>
+
+<h4>Including one or more bundles</h4>
+<p>
+   You can use the {% refjsp ddl bundle includes %} attribute to add one or more bundles to the current request.
+</p>
+<p>
+<pre class="prettyprint">
+&lt;dandelion:bundle includes="bundle1" /&gt;
+</pre>
+</p>
+
+<h4>Excluding one or more bundles</h4>
+<p>
+   You can use the {% refjsp ddl bundle excludes %} attribute to remove one or more bundles from the current request.
+</p>
+<p>
+<pre class="prettyprint">
+&lt;dandelion:bundle excludes="bundle1" /&gt;
+</pre>
+</p>
+
+<h3 class="section-title" id="ma">Manipulating assets</h3>
+<p>
+   You can also manipule assets directly by using the {% refjsp ddl asset %} tag which provides the {% refjsp ddl asset exclude %}
+   attribute, allowing you to exclude one or more asset from the asset stack.</p>
+<p>
+<pre class="prettyprint">
+&lt;dandelion:asset excludes="asset2" /&gt;
+</pre>
+</p>
+<p>
+   For example, assuming the following asset stack:
+<pre class="prettyprint">
+{
+   "bundle": "bundle1",
+   "assets": [{
+      "name": "asset1",
+      ...
+      }
+   }, {
+      "name": "asset2",
+      ...
+   }]
+}
+</pre>
+   Only the <code>asset1</code> will be loaded.
+</p>
+
+==== 3.3.2. Using the Thymeleaf dialect
+
+<h3 class="section-title" id="rq">Requirements</h3>
+<p>
+   First of all, please read the <a href="/dandelion/docs/installation/thymeleaf.html">Thymeleaf installation guide</a>.
+</p>
+
+<h3 class="section-title" id="mb">Manipulating bundles</h3>
+<p>
+   The Thymeleaf dialect allows you to manipulate bundles by using the {% reftl ddl bundle %} attribute.
+</p>
+
+<h4>Including one or more bundles</h4>
+<p>
+   You can use the {% reftl ddl bundle bundle-include %} attribute in any HTML tag to add one or more bundles to the current request.
+</p>
+<p>
+<pre class="prettyprint">
+&lt;div ddl:bundle-include="bundle1">
+   ...
+&lt;/div&gt;
+</pre>
+</p>
+
+<h4>Excluding one or more bundles</h4>
+<p>
+   You can use the {% refjsp ddl bundle exclude %} attribute to remove one o rmore bundles from the current request.
+</p>
+<p>
+<pre class="prettyprint">
+&lt;div ddl:bundle-exclude="bundle1">
+   ...
+&lt;/div&gt;
+</pre>
+</p>
+
+<h3 class="section-title" id="ma">Manipulating assets</h3>
+<p>
+   You can also manipule assets directly by using the {% reftl ddl asset exclude %}
+   attribute, allowing you to exclude one or more asset from the asset stack.</p>
+<p>
+<pre class="prettyprint">
+&lt;div ddl:asset-exclude="asset2">
+   ...
+&lt;/div&gt;
+</pre>
+</p>
+<p>
+   For example, assuming the following asset stack:
+<pre class="prettyprint">
+{
+   "bundle": "bundle1",
+   "assets": [{
+      "name": "asset1",
+      ...
+      }
+   }, {
+      "name": "asset2",
+      ...
+   }]
+}
+</pre>
+   Only the <code>asset1</code> will be loaded.
+</p>
+
+==== 3.3.3. Using the API
+
+<p>
+   All <a href="/dandelion/features/asset-bundles/introducing-asset-bundles.html">bundles</a> can
+   also be accessed using the Dandelion API. This is the way used by current components such as
+   <a href="/datatables">Dandelion-Datatables</a> but you could of course make use of the API for
+   writing your own component or any kind of extension.
+</p>
+
+<h3 class="section-title" id="atbg">Accessing the bundle graph</h3>
+<p>
+   Each request of your application holds the Dandelion context and thus
+   gives access to Dandelion configuration, including the
+   <a href="/dandelion/features/asset-bundles/building-a-bundle-graph/">bundle
+      graph</a>.
+</p>
+<p>
+   The only requirement is that you have access to the <code>HttpServletRequest</code> API.
+</p>
+<p>
+   You can then access the {% javadoc ddl dandelion-core AssetRequestContext %} object, an utility made available to allow you to interact with
+   the bundle graph. See the examples below.
+</p>
+<ul>
+   <li><code>AssetRequestContext.get(request).addBundles(...)</code> allows you to add one or more bundles to the current request</li>
+   <li><code>AssetRequestContext.get(request).excludeBundles(...)</code> allows you exclude one or more bundles from the current request</li>
+   <li><code>AssetRequestContext.get(request).excludeJs(...)</code> allows you exclude one or more JavaScript assets from the current request</li>
+   <li><code>AssetRequestContext.get(request).excludeCss(...)</code> allows you exclude one or more CSS assets from the current request</li>
+   <li>...</li>
+</ul>
+
+<p class="alert alert-info">
+   <strong><i class="fa fa-info-circle fa-2x"></i></strong>&nbsp;
+   Remember that in <a href="/dandelion/features/development-mode/">development
+      mode</a>, the <a
+      href="/dandelion/features/development-mode/bundle-graph-viewer.html">bundle
+      graph viewer</a> can help you visualizing what bundles are added in
+   the current request.
+</p>
+
+==== 3.3.4. Using the configuration options
+
+<p>
+   Some configuration properties allow you to interact either with bundles or assets but in a
+   wider scope than the request.</p>
+</p>
+
+<h3 class="section-title" id="iebp">Include/exclude bundles permanently</h3>
+<p>
+   Sometimes you need to load some CSS files everywhere in your application.
+</p>
+<p>
+   For this purpose, just define the
+   <code>bundle.includes</code>
+   property in your <a href="/dandelion/docs/ref/configuration">dandelion.properties</a> file and
+   set all the bundle names you wish to include.
+</p>
+<p>
+   As a consequence, these bundles will be loaded in every request.
+</p>
+<p>
+   And for some reason, if you need to do the opposite, you can exclude bundles from the
+   application by using the
+   <code>bundle.excludes</code>
+   property.
+</p>
+
+<h3 class="section-title" id="ieap">Include/exclude assets permanently</h3>
+<p>
+   Similarly you can permanently exclude assets from the application. Two configuration properties
+   are available:
+   <code>asset.js.excludes</code>
+   and
+   <code>asset.css.excludes</code>
+   that allow to exclude JS and CSS files respectively.
+</p>
+
+<br />
+<p class="alert alert-warn">
+   <strong><i class="fa fa-warning fa-2x"></i></strong>&nbsp; 
+   Remember that interacting with the
+   asset bundles using any of the above configuration properties has a global impact on the
+   application.
+</p>

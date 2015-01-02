@@ -1,0 +1,212 @@
+== 8. Asset caching
+
+=== 8.1. Introducing asset caching
+
+TIP: Pending
+
+You may have seen in the section about <a href="/dandelion/features/asset-locators/introducing-asset-locators.html">asset locators</a> that some of them require caching. Actually caching operates at several levels that we'll see in this section.
+
+==== 8.1.1. Server caching
+
+As soon as a page is requested, Dandelion reads your
+   <a href="/dandelion/features/asset-bundles/building-a-bundle-graph/">bundle
+      graph</a>, grabs all necessary assets and apply asset processors
+   on them.
+</p>
+<p>
+   This is where the first caching pass occurs: as soon as an asset is
+   fetched, using its associated locator, the content can be stored in
+   the configured cache system, but under certain condition.
+</p>
+<h4>Production mode</h4>
+<p>
+   In <a href="/dandelion/features/production-mode/">production
+      mode</a>, the content of assets is always cached after
+   all enabled processors have processed the assets. This way, assets
+   processing is done only once.
+</p>
+<h4>Development mode</h4>
+<p>
+   In <a href="/dandelion/features/development-mode/">development
+      mode</a>, actually it depends on the locator used to fetch the asset.
+</p>
+<p>
+   Basically, if Dandelion can render the asset directly from its
+   source (e.g. with assets coming from the current webapp, or from a
+   CDN), the asset won't be cached.
+</p>
+<p>
+   However if the asset comes, for example, from a JAR, Dandelion
+   will generate direct link if your servlet container allows it
+   (Servlet API >3.0). If not, the asset will be cached.
+</p>
+
+==== Cache key
+<p>
+   Each asset that must be cached has an associated cache key defined as follows:
+</p>
+<p>
+   <strong>[SHA1_generated_from_the_current_URL]/[asset_name]-[asset_version].[asset_type]</strong>
+</p>
+
+<h3 class="section-title" id="rc">Request caching</h3>
+<p>
+   The second pass of caching occurs as soon as all assets requested by
+   a page are fetched and processed.
+</p>
+<p>
+   At this moment, Dandelion will store the association
+      between the request and all the corresponding assets into the
+   configured cache system.
+</p>
+<p>
+   <img src="/assets/images/dandelion/cache-request-assets.png" style="margin-top:20px;" />
+</p>
+<h4>Cache key</h4>
+<p>
+   These assets are stored under a simple cache key which corresponds to
+   the current request's URI with potential request parameters appended.
+</p>
+
+==== 8.1.2. Browser caching
+
+=== 8.2. Built-in server-side cache systems
+
+TIP: Pending
+
+==== 8.2.1. Memory
+
+Dandelion uses the _MemoryAssetCache_ service provider as the default implementation used for server-side caching.
+
+|===
+|Cache name|`default`
+|Service provider|_MemoryAssetCache_
+|===
+
+This implementation contains one map for asset caching and another one for request caching. The max element of each of them can be configured thanks to the <a href="/dandelion/docs/ref/configuration/#main-cache.asset.max.size">cache.asset.max.size</a> TODO and <a href="/dandelion/docs/ref/configuration/#main-cache.request.max.size">cache.request.max.size</a> TODO configuration properties.
+
+==== 8.2.2. Ehcache
+
+Alternatively, if you already use http://ehcache.org/[Ehcache] in your application, it can be handy to use it as a main cache system for Dandelion.
+
+The _dandelion-ehcache_ extra brings:
+
+* a new service provider for the _AssetCache_ SPI
+* a dependency to the http://ehcache.org/[Ehcache] project
+
+
+|===
+|Cache name|`ehcache`
+|Service provider|_EhcacheAssetCache_
+|===
+
+===== 8.2.2.1. Installation
+
+<p>
+   {% assign artifact = 'dandelion-ehcache' %} 
+   {% include build-tools.html %}
+</p>
+<p>
+   Once the artifact available in your classpath, you need to tell
+   Dandelion that you want to use the service provider bundled inside.
+</p>
+<p>
+For that, you just need to add the following configuration to your <code>dandelion.properties</code> file:
+
+ cache.name=ehcache
+
+===== 8.2.2.2. Configuration
+
+Dandelion comes with some configuration properties that allow to configure the Ehcache extra.
+
+The first one is <a href="/dandelion/docs/ref/configuration/#main-cache.configuration.location">cache.configuration.location</a> which allows to specify the location of the <code>ehcache.xml</code> file.
+
+The second one is <a href="/dandelion/docs/ref/configuration/#main-cache.manager.name">cache.manager.name</a> which allows to specify the name of the cache manager to use to manipulate the cache.
+
+=== 8.3. Plugging-in your own cache system
+
+TIP: Pending
+
+   As all other parts of the framework, Dandelion provides an extension point allowing you to
+   plug-in your own cache system. Read more
+   <a href="plugging-in-your-own-cache-system.html">here</a>.
+
+You may wish to use a custom cache system. Let's see here how to proceed.
+
+<h3 class="section-title" id="sac">SPI for asset cache</h3>
+
+In order to plug-in your own cache system, just follow these steps:
+
+* Create a class that extends {% javadoc ddl dandelion-core AbstractAssetCache %}
+
+[source, java]
+----
+package com.foo.asset.cache.impl;
+
+public class MyCacheSystem extends AbstractAssetCache {
+
+   @Override
+   public void initCache(Context context) {
+      ...
+   }
+
+   @Override
+   public String getCacheName() {
+      return "myowncachesystem";
+   }
+
+   @Override
+   public String getAssetContent(String cacheKey) {
+      ...
+   }
+
+   @Override
+   public Set&lt;Asset&gt; getRequestAssets(String cacheKey) {
+      ...
+   }
+
+   @Override
+   public void storeAssetContent(String cacheKey, String assetContent) {
+      ...
+   }
+
+   @Override
+   public void storeRequestAssets(String cacheKey, Set&lt;Asset&gt; assets) {
+      ...
+   }
+
+   @Override
+   public void remove(String cacheKey) {
+      ...
+   }
+
+   @Override
+   public void clearAll() {
+      ...
+   }
+}
+----
+
+* In the `META-INF/services` folder, create a text file (UTF-8 encoded) using the following convention:
+
+[source, xml]
+----
+yourJar
+|__ src
+   |__ main
+      |__ resources
+         |__ META-INF
+            |__ services
+               |__ com.github.dandelion.core.asset.cache.spi.AssetCache
+----
+   
+Inside this file, just add the fully qualified name of your own implementation. For example:
+
+ com.foo.asset.cache.impl.MyCacheSystem
+
+* Tell Dandelion to use your custom implementation thanks to the <<opt-cache.name, `cache.name`>> configuration option.
+
+ cache.name=myowncachesystem
+
+
+And that's all! Thanks to the SPI mechanism, Dandelion will automatically pick up your implementation on the next server restart.

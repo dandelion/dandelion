@@ -1,0 +1,23 @@
+== 5. Asset versioning
+
+As any other
+Dandelion
+
+TIP: Pending
+
+
+=== 5.1. Versioning modes
+
+
+==== 5.1.1. Manual
+
+basé sur la version du bundle
+
+==== 5.1.2. Automatic
+
+Dandelion allows you
+basé sur les stratégies
+
+=== 5.2. Activating an asset versioning strategy
+
+=== 5.3. Plugging-in your own asset versioning strategy

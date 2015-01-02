@@ -1,0 +1,363 @@
+== Appendix C: Configuration options reference
+
+TIP: Pending
+
+The table below lists all configuration options that you can use in the <a href="/datatables/features/configuration/configuration-loading.html">configuration files</a>.
+
+[discrete]
+==== Reference
+
+.Configuration options reference
+[cols="1,1,9"]
+|===
+
+3+|*Asset-related configuration options*
+
+.4+|[[opt-asset.minification]]*asset.minification*
+2+|Whether to activate asset minification or not
+
+|Possible values
+|true \| false
+
+|Default dev
+|false
+
+|Default prod
+|true
+
+.4+|[[opt-asset.locations.resolution.strategy]]*asset.locations.resolution.strategy*
+2+|Enable pipelining data for paging when server-side processing is enabled
+
+|Possible values
+|true \| false
+
+|Default dev
+|webapp,webjar,jar,cdn
+
+|Default prod
+|webapp,webjar,jar,cdn
+
+.4+|[[opt-asset.processors]]*asset.processors*
+2+|Pipe size used when pipelining is enabled, i.e. times that the user can page before a request must be made of the server
+
+|Possible values
+|Any integer starting from 1
+
+|Default dev
+|cssurlrewriting,jsmin,cssmin
+
+|Default prod
+|cssurlrewriting,jsmin,cssmin
+
+.4+|[[opt-asset.processors.encoding]]*asset.processors.encoding*
+2+|Allows you to override the default function which obtains the data from the server ($.getJSON) so something more suitable for your application
+
+|Possible values
+|Any String representing the name of an accessible Javascript function. Bundle special syntax allowed.
+
+|Default dev
+|
+
+|Default prod
+|yes
+
+.4+|[[opt-asset.js.excludes]]*asset.js.excludes*
+2+|Allows you to change the HTTP method called to obtain data when using an AJAX source
+
+|Possible values
+|Any valid HTTP method
+
+|Default dev
+|GET
+
+|Default prod
+|yes
+
+.4+|[[opt-asset.css.excludes]]*asset.css.excludes*
+2+|Allows you to send extra information to the server when using AJAX source
+
+|Possible values
+|Any String representing the name of an accessible Javascript function. Bundle special syntax allowed
+
+|Default dev
+|
+
+|Default prod
+|yes
+
+.4+|[[opt-asset.url.pattern]]*asset.url.pattern*
+2+|Configure DataTables to use server-side processing. Note that the url attribute must be given in order to give DataTables a source to obtain the required data for each draw
+
+|Possible values
+|true \| false
+
+|Default dev
+|
+
+|Default prod
+|yes
+
+3+|*Versioning-related configuration options*
+
+.4+|[[opt-asset.versioning]]*asset.versioning*
+2+|CSS class(es) to be applied on the `<table>` tag
+
+|Possible values
+|
+
+|Default dev
+|
+
+|Default prod
+|yes
+
+.4+|[[opt-asset.versioning.strategy]]*asset.versioning.strategy*
+2+|Comma-separated list of CSS classes that should be applied to displayed rows. This sequence of CSS classes may be of any length, and DataTables will apply each class sequentially, looping when required.
+
+|Possible values
+|
+
+|Default dev
+|
+
+|Default prod
+|yes
+
+.4+|[[opt-asset.fixed.version.type]]*asset.fixed.version.type*
+2+|CSS style to be applied on the `<table>` tag
+
+|Possible values
+|
+
+|Default dev
+|
+
+|Default prod
+|yes
+
+.4+|[[opt-asset.fixed.version.value]]*asset.fixed.version.value*
+2+|Name of a theme to activate for the current table
+
+|Possible values
+|bootstrap2 \| bootstrap3 \| jqueryui
+
+|Default dev
+|
+
+|Default prod
+|yes
+
+.4+|[[opt-asset.fixed.version.dateformat]]*asset.fixed.version.dateformat*
+2+|Name of an option to activate in relation to the current activated theme
+
+|Possible values
+|See the full list TODO
+
+|Default dev
+|
+
+|Default prod
+|yes
+
+3+|*Caching-related configuration options*
+
+.4+|[[opt-asset.caching]]*asset.caching*
+2+|CSS class(es) to be applied to the container used for export links
+
+|Possible values
+|
+
+|Default dev
+|
+
+|Default prod
+|yes
+
+.4+|[[opt-cache.name]]*cache.name*
+2+|CSS style to be applied to the container used for export links
+
+|Possible values
+|
+
+|Default dev
+|
+
+|Default prod
+|yes
+
+.4+|[[opt-export.enabled.formats]]*export.enabled.formats*
+2+|Comma-separated list of enabled export formats. Some formats use reserved words, such as 'csv', 'xls', 'xlsx', 'pdf' and 'xml'
+
+|Possible values
+|
+
+|Default dev
+|
+
+|Default prod
+|yes
+
+.4+|[[opt-cache.asset.max.size]]*cache.asset.max.size*
+2+|Java class name to use with filter-based exports in the CSV format
+
+|Possible values
+|Any class that implements com. github. dandelion. datatables. core. export. DatatablesExport
+
+|Default dev
+|
+
+|Default prod
+|yes
+
+.4+|[[opt-cache.request.max.size]]*cache.request.max.size*
+2+|Java class name to use with filter-based exports in the PDF format
+
+|Possible values
+|Any class that implements com. github. dandelion. datatables. core. export. DatatablesExport
+
+|Default dev
+|
+
+|Default prod
+|yes
+
+.4+|[[opt-cache.manager.name]]*cache.manager.name*
+2+|Java class name to use with filter-based exports in the XLS format
+
+|Possible values
+|Any class that implements com. github. dandelion. datatables. core. export. DatatablesExport
+
+|Default dev
+|
+
+|Default prod
+|yes
+
+.4+|[[opt-cache.configuration.location]]*cache.configuration.location*
+2+|Java class name to use with filter-based exports in the XLSX format
+
+|Possible values
+|Any class that implements com. github. dandelion. datatables. core. export. DatatablesExport
+
+|Default dev
+|
+
+|Default prod
+|yes
+
+3+|*Bundle-related configuration options*
+
+.4+|[[opt-bundle.location]]*bundle.location*
+2+|Java class name to use with filter-based exports in the XML format
+
+|Possible values
+|Any class that implements com. github. dandelion. datatables. core. export. DatatablesExport
+
+|Default dev
+|
+
+|Default prod
+|yes
+
+.4+|[[opt-bundle.includes]]*bundle.includes*
+2+|Display mode used when the table has finished loading and must appear in the page. A duration can be set (in milliseconds) if the display mode is set to fadein
+
+|Possible values
+|block \| fadein[,duration]
+
+|Default dev
+|
+
+|Default prod
+|yes
+
+.4+|[[opt-bundle.excludes]]*bundle.excludes*
+2+|Enable or disable automatic column width calculation
+
+|Possible values
+|true \| false
+
+|Default dev
+|
+
+|Default prod
+|yes
+
+3+|*Tooling-related configuration options*
+
+.4+|[[opt-tool.gzip]]*tool.gzip*
+2+|Number of rows to display on a single page when using pagination
+
+|Possible values
+|
+
+|Default dev
+|
+
+|Default prod
+|yes
+
+.4+|[[opt-tool.gzip.mime.types]]*tool.gzip.mime.types*
+2+|Allows you to specify exactly where in the DOM you want DataTables to inject the various controls it adds to the page (for example you might want the pagination controls at the top of the table)
+
+|Possible values
+|
+
+|Default dev
+|
+
+|Default prod
+|yes
+
+.4+|[[opt-tool.asset.pretty.printing]]*tool.asset.pretty.printing*
+2+|Enable or disable global filtering of data
+
+|Possible values
+|true \| false
+
+|Default dev
+|
+
+|Default prod
+|yes
+
+.4+|[[opt-tool.bundle.graph]]*tool.bundle.graph*
+2+|jQuery selector targeting the element on which a 'click' event will be bound to trigger the clearing of all filter elements
+
+|Possible values
+|Any jQuery selector
+
+|Default dev
+|
+
+|Default prod
+|yes
+
+.4+|[[opt-tool.bundle.reloading]]*tool.bundle.reloading*
+2+|Delay (in milliseconds) to be used before the AJAX call is performed to obtain data
+
+|Possible values
+|
+
+|Default dev
+|
+
+|Default prod
+|yes
+
+3+|*Monitoring-related configuration options*
+
+.4+|[[opt-monitoring.jmx]]*monitoring.jmx*
+2+|Placeholder used to hold the individual column filtering elements
+
+|Possible values
+|head_before \| head_after \| foot \| none
+
+|Default dev
+|
+
+|Default prod
+|yes
+
+|===
+   

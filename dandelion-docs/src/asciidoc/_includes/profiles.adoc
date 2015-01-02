@@ -1,0 +1,185 @@
+== 9. Profiles
+
+Introducing profiles.
+
+TIP: Pending
+
+=== 9.1. Default profiles
+
+==== 9.1.1. Dev profile
+
+<p>
+   Dandelion has been designed to make the web development simpler and as such ships a
+   <i>development mode</i> which will help you developing faster thanks to some useful features:
+</p>
+<ul>
+   <li><a href="asset-reloading.html">Asset reloading</a> thanks to
+      specific HTTP headers.</li>
+   <li>A <a href="bundle-graph-viewer.html">bundle graph viewer</a>,
+      allowing you to visualize at runtime how Dandelion will manage
+      your assets.
+   </li>
+   <li><a href="bundle-reloading.html">Bundle reloading</a>,
+      allowing you to refresh your bundle graph on-demand thanks to a
+      specific request parameter.</li>
+</ul>
+
+<p>
+   During project development, Dandelion applies a particular caching policy that prevents browsers to cache your assets.
+</p>
+<p>
+   This is done thanks to the following HTTP headers applied on each request that serves an asset:
+</p>
+<ul>
+   <li><code>Cache-Control</code>, set to <code>no-cache, no-store, must-revalidate</code></li>
+   <li><code>Pragma</code>, set to <code>no-cache</code></li>
+   <li><code>Expires</code>, set to 0</li>
+</ul>
+
+<p>
+   Dandelion ships a nice development tool: the <i>bundle
+      graph viewer</i> which will help you to visualize how Dandelion deals with your assets.
+</p>
+
+<h3 class="section-title" id="atbgv">Accessing the bundle graph viewer</h3>
+<p>
+   To access the <i>bundle graph viewer</i>, you just need to append a new
+   <code>showGraph</code>
+   request parameter to the current URL.
+</p>
+<p>
+   For example, if you're currently browsing the following URL:
+   <code>http://localhost/context/foo</code>
+   , just modify the URL as follows:
+   <code>http://localhost/context/foo?showGraph</code>
+   . As a consequence, Dandelion will override the response with the
+   <i>bundle graph viewer</i>.
+</p>
+<p class="alert alert-warn">
+   <strong><i class="fa fa-warning fa-2x"></i></strong>&nbsp; It is
+   worth noting that the <i>bundle
+      graph viewer</i> is only accessible when the
+   <i>development mode</i> is enabled.
+</p>
+
+<h3 class="section-title" id="bgve">Example</h3>
+<p>
+   For example, while running the <a href="https://github.com/dandelion/dandelion-samples/tree/master/datatables/datatables-jsp-ajax">datatables-jsp-ajax
+      sample application</a> at the following URL: <code>http://localhost:8080/datatables-jsp-ajax/server-side/enabling-server-side-processing</code> , you can
+   access the
+   <i>bundle graph viewer</i> at <code>http://localhost:8080/datatables-jsp-ajax/server-side/enabling-server-side-processing?showGraph</code>.
+</p>
+<p>
+   As a result, you'll see in your browser:
+</p>
+<p>
+   <img src="/assets/images/dandelion/development-mode-01.png" style="border: 1px dashed black;" />
+</p>
+<p>
+   This viewer allows you to:   
+</p>
+<ul>
+   <li><strong>Visualize the current request graph of bundles</strong>. Note that you can mouse
+      over the graph to see how Dandelion will inject into the current page all the assets contained
+      in the active bundles.</li>
+   <li><strong>Visualize the full application graph</strong>, with no other interaction.</li>
+   <li>Go back to app by clicking the <i>Back to app</i> button at right.
+   </li>
+</ul>
+
+<p>
+   During project development, you may need to add new or change existing
+   <a
+      href="/dandelion/features/asset-bundles/introducing-asset-bundles.html">asset
+      bundles</a>.
+</p>
+<p>
+   Dandelion doesn't support automatic bundle reloading yet. For now, you have to do it manually.
+</p>
+
+<h3 class="section-title" id="ryab">Reloading your asset bundles</h3>
+<p>
+   To reload your <a
+      href="/dandelion/features/asset-bundles/introducing-asset-bundles.html">asset
+      bundles</a>, you just need to append a new
+   <code>reloadBundles</code>
+   request parameter to the current URL.
+</p>
+<p>
+   For example, if you're currently browsing the following URL:
+   <code>http://localhost/context/foo</code>
+   , just modify the URL as follows:
+   <code>http://localhost/context/foo?reloadBundles</code>
+   . As a consequence, Dandelion will re-initialize your
+   <a href="/dandelion/features/asset-bundles/building-a-bundle-graph/">bundle
+      graph</a>.
+</p>
+<p class="alert alert-warn">
+   <strong><i class="fa fa-warning fa-2x"></i></strong>&nbsp; It is
+   worth noting that bundle reloading is only accessible in <i>development mode</i>.
+</p>
+
+==== 9.1.2. Prod profile
+
+<p>
+   Dandelion provides two modes: <i>development</i> and <i>production</i>. We'll see here what it is
+   hiding behind the <i>development mode</i>.
+</p>
+
+<h3 class="section-title" id="itdm">Default production properties</h3>
+<p>
+   It is important to note that when you switch to production mode, Dandelion will use some configurations.
+</p>
+
+<h3 class="section-title" id="itdm">Enabling the production mode</h3>
+<p>As most of the configuration properties, you have several options to do so:</p>
+<ul>
+   <li>
+      Using the properties file: just add the following key/value
+      pair to your <a
+      href="/dandelion/features/configuration/configuration-loading.html">dandelion.properties</a>
+      file: 
+<pre class="prettyprint">
+dandelion.mode=production
+</pre>
+   </li>
+   <li>Using a filter initialization parameter in your <code>web.xml</code> file:
+<pre class="prettyprint">
+&lt;filter>
+   &lt;filter-name>dandelion&lt;/filter-name>
+   &lt;filter-class>com.github.dandelion.core.web.DandelionFilter&lt;/filter-class>
+   &lt;init-param>
+      &lt;param-name>dandelion.mode&lt;/param-name>
+      &lt;param-value>production&lt;/param-value>
+   &lt;/init-param>
+&lt;/filter>
+</pre>
+   </li>
+   <li>
+      Using a system property: add the following system property to your server starting script:
+<pre class="prettyprint">
+-Ddandelion.mode=production
+</pre>   
+   </li>
+</ul>
+<p>
+   Remember that as for any other <a href="/dandelion/docs/ref/configuration/">configuration
+      property</a>, the following rule applies:
+   <i>system property</i> > <i>filter init param</i> > <i>properties file</i>.
+</p>
+
+<p>
+   When the <i>production mode</i> is enabled, Dandelion applies a
+   particular caching policy in order to optimize load times.
+</p>
+<p>
+   This is done thanks to the following HTTP headers applied on each request that serves an asset:
+</p>
+<ul>
+   <li><code>Cache-Control</code>, set to <code>public, max-age=315360000</code></li>
+   <li><code>Expires</code>, set to the current date plus one year</li>
+
+
+=== 9.2. Custom profiles
+
+TIP: Pending

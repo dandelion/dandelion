@@ -1,0 +1,120 @@
+== 2. Installation
+
+=== 2.1. Requirements
+
+* Java 6+ Runtime Environment
+* Servlet 3.0+ container such as Jetty 8.x, Tomcat 7.x, JBoss AS 6, Weblogic Server 12c...
+
+=== 2.2. Common installation steps
+
+The list below covers the common steps across all supported template engines.
+
+* *Step 1: Add the server-side dependency*
+
+Depending on the template engine you wish to use in your web application, add either `dandelion-jsp` or `dandelion-thymeleaf` to your project's dependencies.
+
+.Example with Apache Maven and a JSP-based project
+[source,xml,subs="+attributes"]
+----
+<dependency>
+  <groupId>com.github.dandelion</groupId>
+  <artifactId>dandelion-jsp</artifactId>
+  <version>{ddl-version}</version>
+</dependency>
+----
+
+.Example with Apache Maven and a Thymeleaf-based project
+[source,xml,subs="+attributes"]
+----
+<dependency>
+  <groupId>com.github.dandelion</groupId>
+  <artifactId>dandelion-thymeleaf</artifactId>
+  <version>{ddl-version}</version>
+</dependency>
+----
+
+NOTE: When using a build tool such as http://maven.apache.org/[Maven], the above dependencies are not explicitely needed when you directly use a component such as Dandelion-Datatables (TODO link), thanks to the transitive dependencies
+
+* *Step 2: Configure the Dandelion filter*
+
+Add the following configuration to your `web.xml` file:
+
+[source,xml]
+----
+<!-- Dandelion filter definition and mapping -->
+<filter>
+  <filter-name>dandelionFilter</filter-name>
+  <filter-class>com.github.dandelion.core.web.DandelionFilter</filter-class>
+</filter>
+<filter-mapping>
+  <filter-name>dandelionFilter</filter-name>
+  <url-pattern>/*</url-pattern>
+</filter-mapping>
+----
+
+* *Step 3: Configure the Dandelion servlet*
+
+Add the following configuration to your `web.xml` file:
+
+[source,xml]
+----
+<!-- Dandelion servlet definition and mapping -->
+<servlet>
+  <servlet-name>dandelionServlet</servlet-name>
+  <servlet-class>com.github.dandelion.core.web.DandelionServlet</servlet-class>
+</servlet>
+<servlet-mapping>
+  <servlet-name>dandelionServlet</servlet-name>
+  <url-pattern>/dandelion-assets/*</url-pattern>
+</servlet-mapping>
+----
+
+=== 2.3. JSP-based steps
+
+* *Declare the taglib definition*
+
+Everywhere you want to request assets manually, you need to add the taglib definition in your JSP:
+
+ <%@ taglib prefix="datatables" uri="http://github.com/dandelion" %>
+
+=== 2.4. Thymeleaf-based steps
+
+* *Declare the Thymeleaf dialect*
+
+If you're using Spring/Spring MVC, update the `SpringTemplateEngine` bean as follows:
+
+[source, xml]
+----
+<bean id="templateEngine" class="org.thymeleaf.spring3.SpringTemplateEngine">
+  <property name="templateResolver" ref="templateResolver" />
+  <property name="additionalDialects">
+    <set>
+      <bean class="com.github.dandelion.thymeleaf.dialect.DandelionDialect" />
+    </set>
+  </property>
+</bean>
+----
+
+Otherwise, add the `DandelionDialect` to your existing Thymeleaf template engine like this:
+
+[source, java]
+----
+...
+TemplateEngine templateEngine = new TemplateEngine();
+templateEngine.addDialect(new DandelionDialect());
+...
+----
+
+* *Declare the Thymeleaf namespace*
+
+[source, xml]
+----
+<html xmlns:th="http://www.thymeleaf.org" xmlns:dt="http://github.com/dandelion">
+----
+
+This way you can benefit from some content assist in your favorite IDE:
+
+* Eclipse: see the http://www.thymeleaf.org/ecosystem.html#thymeleaf-extras-eclipse-plugin[Thymeleaf Eclipse plugin]
+* IntelliJ IDEA (upcoming): see the http://blog.jetbrains.com/idea/2014/09/intellij-idea-14-ships-advanced-coding-assistance-for-thymeleaf/[blog post]
+
+WARNING: Using a wrong namespace will prevent the content assist from working correctly
