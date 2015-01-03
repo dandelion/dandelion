@@ -12,6 +12,8 @@ Thibault Duchateau <https://github.com/tduchateau[@tduchateau]>
 
 include::{include-dir}/introduction.adoc[]
 
+include::{include-dir}/requirements.adoc[]
+
 include::{include-dir}/installation.adoc[]
 
 include::{include-dir}/asset-bundles.adoc[]
