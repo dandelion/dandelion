@@ -82,7 +82,6 @@ public enum DandelionConfig {
 	@Beta MONITORING_JMX("monitoring.jmx", "false", "false"),
 	
 	// Misc configurations
-	OVERRIDE_SERVLET3("override.servlet3", "", ""),
 	ENCODING("encoding", "UTF-8", "UTF-8");
 	
 	/**

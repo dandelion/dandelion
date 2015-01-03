@@ -49,9 +49,9 @@ import static java.util.Collections.singletonMap;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class DelegatedLocatorTest {
+public class ApiLocatorTest {
 
-	private DelegateLocator locator = new DelegateLocator();
+	private ApiLocator locator = new ApiLocator();
 	private MockHttpServletRequest request;
 
 	@Rule
@@ -67,7 +67,7 @@ public class DelegatedLocatorTest {
 
 	@Test
 	public void should_return_the_same_absolute_url() {
-		AssetStorageUnit asu = new AssetStorageUnit("my-js", singletonMap("delegate", "my.js"));
+		AssetStorageUnit asu = new AssetStorageUnit("my-js", singletonMap("api", "my.js"));
 		String location = locator.getLocation(asu, request);
 		assertThat(location).isEqualTo("my.js");
 	}
@@ -75,7 +75,7 @@ public class DelegatedLocatorTest {
 	@Test
 	public void should_return_the_content() {
 
-		AssetRequestContext.get(request).addParameter("my-js", DelegateLocator.DELEGATED_CONTENT_PARAM,
+		AssetRequestContext.get(request).addParameter("my-js", ApiLocator.API_CONTENT_PARAM,
 				new AssetContentGenerator() {
 
 					@Override

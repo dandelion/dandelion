@@ -35,7 +35,6 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import com.github.dandelion.core.Context;
-import com.github.dandelion.core.asset.locator.Servlet3Compatible;
 import com.github.dandelion.core.asset.locator.spi.AbstractAssetLocator;
 import com.github.dandelion.core.storage.AssetStorageUnit;
 import com.github.dandelion.core.utils.ResourceUtils;
@@ -44,44 +43,29 @@ import com.github.dandelion.core.utils.ResourceUtils;
  * <p>
  * Servlet 3.x compatible locator for assets that use {@code jar} as a location
  * key.
- * 
- * <p>
- * This locator will be automatically selected if the Servlet 3.x API is being
- * used. See {@link Context#initAssetLocators()}.
+ * </p>
  * 
  * @author Thibault Duchateau
  * @since 0.10.0
  */
-public class JarLocator extends AbstractAssetLocator implements Servlet3Compatible {
+public class JarLocator extends AbstractAssetLocator {
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public String getLocationKey() {
 		return "jar";
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public boolean isCachingForced() {
 		return false;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public String doGetLocation(AssetStorageUnit asu, HttpServletRequest request) {
 		String location = asu.getLocations().get(getLocationKey());
 		return request.getContextPath() + "/" + (location.startsWith("/") ? location.substring(1) : location);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected String doGetContent(String location, Map<String, Object> parameters, HttpServletRequest request) {
 		return ResourceUtils.getContentFromUrl(request, location, true);

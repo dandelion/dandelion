@@ -2,20 +2,20 @@
  * [The "BSD licence"]
  * Copyright (c) 2013-2014 Dandelion
  * All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
  * are met:
- * 
+ *
  * 1. Redistributions of source code must retain the above copyright
  * notice, this list of conditions and the following disclaimer.
  * 2. Redistributions in binary form must reproduce the above copyright
  * notice, this list of conditions and the following disclaimer in the
  * documentation and/or other materials provided with the distribution.
- * 3. Neither the name of Dandelion nor the names of its contributors 
- * may be used to endorse or promote products derived from this software 
+ * 3. Neither the name of Dandelion nor the names of its contributors
+ * may be used to endorse or promote products derived from this software
  * without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
  * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
  * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
@@ -27,17 +27,54 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.github.dandelion.core.asset.locator;
 
-import com.github.dandelion.core.asset.locator.spi.AssetLocator;
+package com.github.dandelion.core.asset.locator.impl;
+
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+
+import com.github.dandelion.core.asset.generator.AssetContentGenerator;
+import com.github.dandelion.core.asset.locator.spi.AbstractAssetLocator;
+import com.github.dandelion.core.storage.AssetStorageUnit;
 
 /**
  * <p>
- * Marker interface used to indicate if the marked {@link AssetLocator} is
- * compatible with the Servlet 3.x API (JSR 315).
+ * Locator for assets that use {@code api} as a location key.
+ * </p>
+ * <p>
+ * These assets are created programmaticaly.
+ * </p>
  * 
  * @author Thibault Duchateau
- * @since 0.10.0
+ * @author Romain Lespinasse
+ * @since 0.2.0
  */
-public interface Servlet3Compatible {
+public class ApiLocator extends AbstractAssetLocator {
+
+	public static final String API_CONTENT_PARAM = "API_CONTENT_PARAM";
+
+	public ApiLocator() {
+		active = true;
+	}
+
+	@Override
+	public String getLocationKey() {
+		return "api";
+	}
+
+	@Override
+	public boolean isCachingForced() {
+		return true;
+	}
+
+	@Override
+	public String doGetLocation(AssetStorageUnit asu, HttpServletRequest request) {
+		return asu.getLocations().get(getLocationKey());
+	}
+
+	@Override
+	protected String doGetContent(String location, Map<String, Object> parameters, HttpServletRequest request) {
+		return ((AssetContentGenerator) parameters.get(API_CONTENT_PARAM)).getAssetContent(request);
+	}
 }

@@ -107,7 +107,6 @@ public class Configuration {
 	private boolean monitoringJmxEnabled;
 
 	// Misc configurations
-	private boolean servlet3Enabled;
 	private String encoding;
 
 	public Configuration(FilterConfig filterConfig, Properties userProperties, Context context) {
@@ -182,13 +181,6 @@ public class Configuration {
 		this.monitoringJmxEnabled = Boolean.parseBoolean(readConfig(DandelionConfig.MONITORING_JMX));
 
 		// Misc configuration
-		String overrideServlet3 = readConfig(DandelionConfig.OVERRIDE_SERVLET3);
-		if (StringUtils.isBlank(overrideServlet3) && filterConfig != null) {
-			this.servlet3Enabled = filterConfig.getServletContext().getMajorVersion() == 3;
-		}
-		else {
-			this.servlet3Enabled = Boolean.parseBoolean(overrideServlet3);
-		}
 		this.encoding = readConfig(DandelionConfig.ENCODING);
 	}
 
@@ -338,14 +330,6 @@ public class Configuration {
 
 	public String get(String key, String defaultValue) {
 		return this.userProperties.getProperty(key, defaultValue);
-	}
-
-	public boolean isServlet3Enabled() {
-		return this.servlet3Enabled;
-	}
-
-	public void setServlet3Enabled(boolean servlet3Enabled) {
-		this.servlet3Enabled = servlet3Enabled;
 	}
 
 	public boolean isMonitoringJmxEnabled() {

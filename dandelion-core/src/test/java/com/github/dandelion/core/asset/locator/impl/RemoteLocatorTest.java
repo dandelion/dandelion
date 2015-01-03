@@ -46,9 +46,9 @@ import static java.util.Collections.singletonMap;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class CdnLocatorTest {
+public class RemoteLocatorTest {
 
-	private CdnLocator locator = new CdnLocator();
+	private RemoteLocator locator = new RemoteLocator();
 	private String absolute_url = "http://domain/folder/sub/assets/css/my.css";
 	private String protocol_relative_url = "//domain/folder/sub/assets/css/my.css";
 	private MockHttpServletRequest request;
@@ -64,14 +64,14 @@ public class CdnLocatorTest {
 
 	@Test
 	public void should_return_the_same_absolute_url() {
-		AssetStorageUnit asu = new AssetStorageUnit("my.js", singletonMap("cdn", absolute_url));
+		AssetStorageUnit asu = new AssetStorageUnit("my.js", singletonMap("remote", absolute_url));
 		String location = locator.getLocation(asu, request);
 		assertThat(location).isEqualTo(absolute_url);
 	}
 
 	@Test
 	public void should_return_the_same_protocol_relative_url() {
-		AssetStorageUnit asu = new AssetStorageUnit("my.js", singletonMap("cdn", protocol_relative_url));
+		AssetStorageUnit asu = new AssetStorageUnit("my.js", singletonMap("remote", protocol_relative_url));
 		String location = locator.getLocation(asu, request);
 		assertThat(location).isEqualTo(protocol_relative_url);
 	}
@@ -79,7 +79,7 @@ public class CdnLocatorTest {
 	@Test
 	public void should_return_the_content() {
 		String filePath = new File("src/test/resources/locator/asset.js").toURI().toString();
-		AssetStorageUnit asu = new AssetStorageUnit("my.js", singletonMap("cdn", filePath));
+		AssetStorageUnit asu = new AssetStorageUnit("my.js", singletonMap("remote", filePath));
 		String content = locator.getContent(asu, request);
 		assertThat(content).isEqualTo("/* content */");
 	}

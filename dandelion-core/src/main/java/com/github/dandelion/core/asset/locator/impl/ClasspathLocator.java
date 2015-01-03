@@ -34,8 +34,6 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import com.github.dandelion.core.asset.locator.Servlet2Compatible;
-import com.github.dandelion.core.asset.locator.Servlet3Compatible;
 import com.github.dandelion.core.asset.locator.spi.AbstractAssetLocator;
 import com.github.dandelion.core.storage.AssetStorageUnit;
 import com.github.dandelion.core.utils.ResourceUtils;
@@ -43,23 +41,21 @@ import com.github.dandelion.core.utils.ResourceUtils;
 /**
  * <p>
  * Locator for assets that use {@code classpath} as a location key.
- * 
+ * </p>
  * <p>
  * Basically, this locator locates assets available in the classpath.
+ * </p>
  * 
  * @author Thibault Duchateau
  * @author Romain Lespinasse
  * @since 0.2.0
  */
-public class ClasspathLocator extends AbstractAssetLocator implements Servlet2Compatible, Servlet3Compatible {
+public class ClasspathLocator extends AbstractAssetLocator {
 
 	public ClasspathLocator() {
 		active = true;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public String getLocationKey() {
 		return "classpath";
@@ -70,17 +66,11 @@ public class ClasspathLocator extends AbstractAssetLocator implements Servlet2Co
 		return true;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public String doGetLocation(AssetStorageUnit asu, HttpServletRequest request) {
 		return asu.getLocations().get(getLocationKey());
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected String doGetContent(String location, Map<String, Object> parameters, HttpServletRequest request) {
 		return ResourceUtils.getFileContentFromClasspath(location, false);

@@ -98,8 +98,6 @@ public class DevProfileTest {
 		// Misc configurations
 		assertThat(config.isMonitoringJmxEnabled())
 				.isEqualTo(Boolean.parseBoolean(DandelionConfig.MONITORING_JMX.defaultDevValue()));
-		assertThat(config.isServlet3Enabled()).isEqualTo(
-				Boolean.parseBoolean(DandelionConfig.OVERRIDE_SERVLET3.defaultDevValue()));
 	}
 
 	@Test
@@ -147,8 +145,6 @@ public class DevProfileTest {
 		// Misc configurations
 		assertThat(config.isMonitoringJmxEnabled())
 				.isEqualTo(Boolean.parseBoolean(DandelionConfig.MONITORING_JMX.defaultDevValue()));
-		assertThat(config.isServlet3Enabled()).isEqualTo(
-				Boolean.parseBoolean(DandelionConfig.OVERRIDE_SERVLET3.defaultDevValue()));
 	}
 
 	@Test
@@ -198,8 +194,6 @@ public class DevProfileTest {
 		// Misc configurations
 		assertThat(config.isMonitoringJmxEnabled())
 				.isEqualTo(Boolean.parseBoolean(DandelionConfig.MONITORING_JMX.defaultDevValue()));
-		assertThat(config.isServlet3Enabled()).isEqualTo(
-				Boolean.parseBoolean(DandelionConfig.OVERRIDE_SERVLET3.defaultDevValue()));
 	}
 
 	@Test
@@ -247,8 +241,6 @@ public class DevProfileTest {
 		// Misc configurations
 		assertThat(config.isMonitoringJmxEnabled())
 				.isEqualTo(Boolean.parseBoolean(DandelionConfig.MONITORING_JMX.defaultDevValue()));
-		assertThat(config.isServlet3Enabled()).isEqualTo(
-				Boolean.parseBoolean(DandelionConfig.OVERRIDE_SERVLET3.defaultDevValue()));
 
 		System.clearProperty(DandelionConfig.ASSET_LOCATIONS_RESOLUTION_STRATEGY.getName());
 		System.clearProperty(DandelionConfig.CACHE_ASSET_MAX_SIZE.getName());

@@ -35,7 +35,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.webjars.WebJarAssetLocator;
 
-import com.github.dandelion.core.asset.locator.Servlet3Compatible;
 import com.github.dandelion.core.asset.locator.spi.AbstractAssetLocator;
 import com.github.dandelion.core.asset.locator.spi.AssetLocator;
 import com.github.dandelion.core.storage.AssetStorageUnit;
@@ -45,16 +44,17 @@ import com.github.dandelion.core.utils.UrlUtils;
 /**
  * <p>
  * Locator for asset stored inside WebJars.
- * 
+ * </p>
  * <p>
  * This {@link AssetLocator} uses the {@link WebJarAssetLocator} to locate
  * assets in the classpath before getting their content.
+ * </p>
  * 
  * @author Romain Lespinasse
  * @author Thibault Duchateau
  * @since 0.10.0
  */
-public class WebjarLocator extends AbstractAssetLocator implements Servlet3Compatible {
+public class WebjarLocator extends AbstractAssetLocator {
 
 	private static WebJarAssetLocator locator = new WebJarAssetLocator();
 
@@ -62,34 +62,22 @@ public class WebjarLocator extends AbstractAssetLocator implements Servlet3Compa
 		this.active = true;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public String getLocationKey() {
 		return "webjar";
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public boolean isCachingForced() {
 		return false;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public String doGetLocation(AssetStorageUnit asu, HttpServletRequest request) {
 		String location = asu.getLocations().get(getLocationKey());
 		return UrlUtils.getProcessedUrl(locator.getFullPath(location).substring(18), request, null);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected String doGetContent(String location, Map<String, Object> parameters, HttpServletRequest request) {
 		return ResourceUtils.getContentFromUrl(request, location, true);
