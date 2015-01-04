@@ -41,8 +41,8 @@ import com.github.dandelion.thymeleaf.util.AttributeName;
  */
 public enum AssetAttributeNames implements AttributeName {
 
-	JS_EXCLUDES("js-excludes"),
-	CSS_EXCLUDES("css-excludes");
+	JS_EXCLUDES("asset-js-excludes"),
+	CSS_EXCLUDES("asset-css-excludes");
 
 	private String attribute;
 
