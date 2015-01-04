@@ -1,23 +1,109 @@
-== 5. Asset versioning
-
-As any other
-Dandelion
+== 6. Asset versioning
 
 TIP: Pending
 
+Le versioning des assets a une grande importance pour les performance du site web, notamment à cause de la gestion du cache navigateur. Dandelion provides two modes: manual and automatic. 
 
-=== 5.1. Versioning modes
+=== 6.1. Versioning modes
 
+==== 6.1.1. Automatic
 
-==== 5.1.1. Manual
+The _automatic versioning mode_ is based on different strategies: either based on the content of each asset or on a fixed version. Each of these strategies are detailed below.
 
-basé sur la version du bundle
+This mode is the default one.
 
-==== 5.1.2. Automatic
+==== 6.1.2. Manual
 
-Dandelion allows you
-basé sur les stratégies
+The _manual versioning mode_ relies on bundle definitions, in which assets can have a `version` attribute. Si in such a case, the asset version is just read from the asset's attributes.
 
-=== 5.2. Activating an asset versioning strategy
+TIP: The versioning of _vendor assets_ (assets located in _vendor bundles_) is always manual, i.e. read from the bundle definitions.
 
-=== 5.3. Plugging-in your own asset versioning strategy
+=== 6.2. Versioning strategies
+
+==== 6.2.1. Content-based
+
+This strategy consists of generating a fingerprint for each asset, based on its contents. This technique is also known as _fingerprinting_ or _cache busting_. The fingerprint, which simply is a MD5 hash, is inserted into the asset name.
+
+.Example with a CSS file
+[source, html]
+----
+<link rel="stylesheet" href="/assets/css/application-[MD5-HASH].css"></link>
+----
+
+When the asset is static or infrequently changed, this provides an easy way to tell whether two versions of an asset are identical, even across different servers or deployment dates.
+
+When the asset content change, the fingerprint is updated. This will cause the remote clients to request a fresh copy of the asset. In combination with the right caching headers, this is the most powerful technique for better web performance. See the <<, asset caching section>> for more information.
+
+This strategy is *selected by default*, but if you wish, you can explicitely specify it using the <<opt-asset.versioning.strategy, `asset.versioning.strategy`>> configuration option:
+
+ asset.versioning.strategy=content
+
+==== 6.2.2. Fixed
+
+This strategy consists of using a fixed version for any asset, for example a date, a global version number from a property file, a Jenkins build number or anything else.
+
+In order to use this versioning strategy, use the <<opt-asset.versioning.strategy, `asset.versioning.strategy`>> configuration option as follows:
+
+ asset.versioning.strategy=fixed
+
+Once set, Dandelion provides some ready-to-use versioning types:
+
+|===
+|Versioning type |Activation
+
+|String | <<opt-asset.fixed.version.type, (default) `asset.fixed.version.type`>> = string
+
+|Date | <<opt-asset.fixed.version.type, `asset.fixed.version.type`>> = date
+|===
+
+TIP: pending...
+
+=== 6.3. Plugging-in your own asset versioning strategy
+
+In order to plug-in your own versioning strategy, just follow these steps:
+
+. Create a class that extends `AbstractAssetVersioningStrategy` (you can directly implement the `AssetVersioningStrategy` interface but you better use the abstract class)
+
++
+[source, java]
+----
+package com.foo.asset.versioning.impl;
+
+public class MyVersioningStrategy extends AbstractAssetVersioningStrategy {
+
+  @Override
+  public String getName() {
+    return "strategy-identifier";
+  }
+  
+  @Override
+  public String getAssetVersion(Asset asset) {
+    return "The version you wish";
+  }
+}
+----
+
+. In the `META-INF/services` folder, create a text file (UTF-8 encoded) using the following convention:
+
++
+.Example with a Maven project
+[source, xml]
+----
+project-root
+|__ src
+   |__ main
+      |__ resources
+         |__ META-INF
+            |__ services
+               |__ com.github.dandelion.core.asset.versioning.AssetVersioningStrategy
+----
+ 
++
+Inside this file, just add the fully qualified name of your own implementation. For example:
+
+ com.foo.asset.versioning.impl.MyVersioningStrategy
+
+. Once the strategy created, you just need to activate it using the <<opt-asset.versioning.strategy, `asset.versioning.strategy`>> configuration option and the strategy identifier configured in the above class:
+
+ asset.versioning.strategy = strategy-identifier
+
