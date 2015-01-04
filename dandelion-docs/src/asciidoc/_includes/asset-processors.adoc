@@ -1,8 +1,8 @@
-== 6. Asset processors
+== 7. Asset processors
 
 TIP: Pending
 
-=== 6.1. Introducing asset processors
+=== 7.1. Introducing asset processors
 
 Dandelion provides some processors intended to be applied on assets. This section introduces major concepts around these processors.
 
@@ -92,11 +92,11 @@ Dandelion provides some processors intended to be applied on assets. This sectio
    <a href="plugging-in-your-own-processor.html">here</a>.
 </p>
 
-=== 6.2. Built-in processors
+=== 7.2. Built-in processors
 
 TIP: Pending
 
-==== 6.2.1. CSSMin
+==== 7.2.1. CSSMin
 
 <p>
    This processor uses a <a href="https://github.com/andyroberts/csscompressor">fork</a> of the Yahoo's YUI Compressor authored by
@@ -151,7 +151,7 @@ TIP: Pending
 .myclassA{font-style:bold}.myclassB{background-color:#369}.myclassC{color:#ABC}
 </pre>
 
-==== 6.2.2. CSSMinYui
+==== 7.2.2. CSSMinYui
 
 <p>
     This processor is based on the <a href="http://yui.github.io/yuicompressor/">Yahoo's YUI Compressor</a> project. 
@@ -185,7 +185,7 @@ TIP: Pending
    {% include build-tools.html %}
 </p>
 
-==== 6.2.3. CSS URL rewriting
+==== 7.2.3. CSS URL rewriting
 
 <p>
    This processor uses a fork of the Yahoo's YUI Compressor authored by
@@ -211,7 +211,7 @@ TIP: Pending
    </table>
 </p>
 
-==== 6.2.4. JsMin
+==== 7.2.4. JsMin
 
 <p>
    This processor is based on a translation frop C to Java of jsmin.c published by
@@ -283,7 +283,7 @@ is.mac=is.ua.indexOf('mac')>=0;if(is.ua.indexOf('opera')>=0){is.ie=is.ns=false;i
 if(is.ua.indexOf('gecko')>=0){is.ie=is.ns=false;is.gecko=true;}
 </pre>
 
-==== 6.2.5. JsMin YUI
+==== 7.2.5. JsMin YUI
 
 <p>
    This processor is based on the <a href="http://yui.github.io/yuicompressor/">Yahoo's YUI Compressor</a> project.
@@ -317,7 +317,7 @@ if(is.ua.indexOf('gecko')>=0){is.ie=is.ns=false;is.gecko=true;}
    {% include build-tools.html %}
 </p>
 
-=== 6.3. Plugging-in your own processor
+=== 7.3. Plugging-in your own processor
 
 TIP: Pending
 

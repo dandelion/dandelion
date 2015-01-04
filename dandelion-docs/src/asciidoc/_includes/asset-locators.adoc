@@ -40,7 +40,7 @@ The most obvious case is to configure an asset with a single location.
 
 In the above bundle, Dandelion will always use the single `remote` location to fetch the jQuery asset.
 
-In cases where multiple locations are configured for a single asset, Dandelion uses a particular strategy to resolve them. It simply reads the <<opt-asset.locations.resolution.strategy, `asset.locations.resolution.strategy`>> option from your configuration file and tests the specified locators in the given order.
+In cases where multiple locations are configured for a single asset, Dandelion uses a particular strategy to resolve them. It simply reads the <<opt-asset.locations.resolution.strategy, `asset.locations.resolution.strategy`>> option from your configuration file and tests in a particular order if a location is present for a specified set of locators.
 
 The default resolution strategy is defined as follows:
 

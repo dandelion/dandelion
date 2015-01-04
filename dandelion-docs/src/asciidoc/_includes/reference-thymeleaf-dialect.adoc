@@ -1,12 +1,7 @@
 == Appendix B: Thymeleaf dialect reference
 
-=== `<table>` attributes
+=== B.1. `ddl:bundle*` attributes
 
-=== `<thead>` attributes
+=== B.2. `ddl:asset*` attributes
 
-=== `<th>` attributes
-
-=== `<td>` attributes
-
-=== `<div>` attributes
 

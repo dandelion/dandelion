@@ -1,4 +1,4 @@
-== 9. Profiles
+== 10. Profiles
 
 TIP: Pending
 
@@ -8,11 +8,11 @@ In order to activate a profile, specify the following system property in the ser
 
  -Ddandelion.profile.active=[profileName]
 
-=== 9.1. Built-in profiles
+=== 10.1. Built-in profiles
 
 All configuration options are created with two values, one for the built-in `dev` profile, another for the `prod` one. Each of these profiles are described below.
 
-==== 9.1.1. `dev` profile
+==== 10.1.1. `dev` profile
 
 The main goal of the `dev` profile is to accelerate the development. As such, it is *active by default*.
 
@@ -27,7 +27,7 @@ See the <<appendix-c-configuration-options-reference, configuration options refe
 
 TIP: this profile can be activated thanks to different aliases: `dev` and `development`. 
 
-==== 9.1.2. `prod` profile
+==== 10.1.2. `prod` profile
 
 The `prod` profile is focused both on performance and security. That is why it should be active in a production environment.
 
@@ -44,10 +44,12 @@ See the <<appendix-c-configuration-options-reference, configuration options refe
 
 TIP: this profile can be activated thanks to different aliases: `prod` and `production`. 
 
-=== 9.2. Custom profiles
+=== 10.2. Custom profiles
 
 You can of course define your own profiles. It is as simple as creating a new properties file under the `classpath_root/dandelion` folder, with a specific name: `dandelion_[yourProfileName].properties`
 
+WARNING: All options not explicitely declared in your own profile file will be read from the built-in `dev` profile.
+			
 .Example with a Maven project
 [source, xml]
 ----
@@ -105,7 +107,7 @@ You can then make use of these properties in your bundle definitions.
     {  
       ...,
       "locations":{  
-        "cdn":"%media.server%/js/app.js"
+        "remote":"%media.server%/js/app.js"
       }
     }
   ]

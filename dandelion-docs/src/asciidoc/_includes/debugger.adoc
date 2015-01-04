@@ -1,8 +1,8 @@
-== 12. Debugger
+== 13. Debugger
 
 Dandelion comes with a debugging tool that can be especially useful during development.
 
-=== 12.1. Accessing the debugger
+=== 13.1. Accessing the debugger
 
 In order to access the debugger, append the following request parameter to the current URL: `ddl-debug`.
 
@@ -12,10 +12,18 @@ As a consequence, Dandelion will override the response with the debugger and sho
 
 image::debugger-home.png[]
 
-=== 12.2. Dandelion components
+NOTE: access to the debugger can be disabled thanks to the <<opt-tool.debugger, `tool.debugger`>> configuration option.
 
-Depending on the components being used on the current page, the debugger can contain additional pages.
+=== 13.2. Debug pages
 
-=== 12.3. Plugging-in custom debug pages
+The Dandelion debugger is composed of several _debug pages_. Each of them can be browsed using the left menu.
+
+* *Bundles/assets*: reports all bundles/assets included in the current request in different formats
+* *Options*: lists all configuration options
+* *Cache store*: pending...
+
+Moreover, each Dandelion component can contain additional pages that will be displayed in the same menu.
+
+=== 13.3. Plugging-in custom debug pages
 
 TIP: pending... 

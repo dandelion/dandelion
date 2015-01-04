@@ -34,10 +34,10 @@ Note that you can also see the default value used with the both `dev` and `prod`
 |Comma-separated list of location keys. See the <<4-asset-locators, asset locators section>> for more information.
 
 |dev
-|webapp, webjar, jar, cdn
+|webapp, webjar, jar, remote
 
 |prod
-|webapp, webjar, jar, cdn
+|webapp, webjar, jar, remote
 
 .4+|[[opt-asset.processors]]*asset.processors*
 2+|List of asset processors globally enabled in the application

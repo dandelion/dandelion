@@ -1,4 +1,4 @@
-== 11. Configuration options
+== 12. Configuration options
 
 NOTE: Pending
 
@@ -6,9 +6,9 @@ One of the key features of Dandelion-Datatables is that it is highly configurabl
 
 See the <<_appendix_c_configuration_options_reference, configuration options reference>> for an exhaustive list of available options.
 
-=== 11.1. Configuration loading
+=== 12.1. Configuration loading
 
-==== 11.1.1. Loading strategy
+==== 12.1.1. Loading strategy
 
 Any configuration option must be set in a file called <code>datatables.properties</code>. Dandelion-Datatables will load it thanks to the http://docs.oracle.com/javase/6/docs/api/java/util/ResourceBundle.html[ResourceBundle mechanism] and using the following strategy:
 
@@ -20,7 +20,7 @@ If it exists, Dandelion-Datatables attempts to convert the value to a URL and us
 
 * If no `datatables.properties` file is found, the default configuration will be used
 
-==== 11.1.2. Example using classpath configuration
+==== 12.1.2. Example using classpath configuration
 
 Let's say you use Maven as a build tool. When reading configuration from classpath, you should strictly follow the convention, i.e. place the properties files under the <code>classpath_root/dandelion/datatables/</code> folder.
 
@@ -39,7 +39,7 @@ project-root
                |__ datatables_ES.properties
 ----
 
-==== 11.1.3. Example using externalized configuration
+==== 12.1.3. Example using externalized configuration
 
 Let's say you have the following files:
 
@@ -57,7 +57,7 @@ Just add `-Ddandelion.datatables.configuration="C:\Documents\MyApp\"` to the sta
 
 NOTE: Note that when reading from an externalized file, you don't have to put the properties file under the `dandelion/datatables` folder.
 
-=== 11.2. Overloading default options
+=== 12.2. Overloading default options
 
 By default, Dandelion-Datatables internally uses a properties file, containing some configuration properties.
 
@@ -91,7 +91,7 @@ But you can of course override it in multiple ways:
 </table>
 ----
 
-=== 11.3. Using global options
+=== 12.3. Using global options
 
 Almost all available attributes of the {% refjsp dt table %} (JSP) and {% reftl dt table %} (Thymeleaf) tags can be configured in the configuration file (<i>datatables.properties</i>) to be applied application-wide, i.e. on all tables in your application.
 
@@ -126,11 +126,11 @@ To apply it globally, just fill the _datatables.properties_ file with the follow
 
 And that's all! This way, the Bootstrap 2 (LIEN STYLING) theme will be applied on all tables in your application.
 
-=== 11.4. Using option groups
+=== 12.4. Using option groups
 
 You may have seen in the <a href="/datatables/features/configuration/global-configuration.html">tutorial about using global configuration</a> that all configuration names are prepended with <code>global.</code>. It actually means that all configurations belong to the <code>global</code> group. This group contain the configurations that will be applied on all tables in your application.
 
-==== 11.4.1. Creating option groups
+==== 12.4.1. Creating option groups
 
 The option groups have been introduced in the v0.9.0. It allows you to create groups of configuration that you can apply locally, i.e. on a particular table.
 
@@ -145,7 +145,7 @@ In the above example, the configuration set up in the <i>datatables.properties</
 * *global*: this one is used everywhere in your application, if no specific group is explicitely activated
 * *group1* and *group2*: those ones won't be used unless one of them is activated locally. Read the next section to see how.
 
-==== 11.4.2. Activating an option group
+==== 12.4.2. Activating an option group
 
 This is quite simple. Just use the <<jsp-table-confGroup, `confGroup`>> (JSP) or <<tml-table-confGroup, `dt:confGroup`>> (Thymeleaf) table attributes and set the group name as a value.
 

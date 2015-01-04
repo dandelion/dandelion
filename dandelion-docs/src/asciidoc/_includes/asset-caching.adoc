@@ -1,12 +1,12 @@
-== 8. Asset caching
+== 9. Asset caching
 
-=== 8.1. Introducing asset caching
+=== 9.1. Introducing asset caching
 
 TIP: Pending
 
 You may have seen in the section about <a href="/dandelion/features/asset-locators/introducing-asset-locators.html">asset locators</a> that some of them require caching. Actually caching operates at several levels that we'll see in this section.
 
-==== 8.1.1. Server caching
+==== 9.1.1. Server caching
 
 As soon as a page is requested, Dandelion reads your
    <a href="/dandelion/features/asset-bundles/building-a-bundle-graph/">bundle
@@ -68,13 +68,13 @@ As soon as a page is requested, Dandelion reads your
    the current request's URI with potential request parameters appended.
 </p>
 
-==== 8.1.2. Browser caching
+==== 9.1.2. Browser caching
 
-=== 8.2. Built-in server-side cache systems
+=== 9.2. Built-in server-side cache systems
 
 TIP: Pending
 
-==== 8.2.1. Memory
+==== 9.2.1. Memory
 
 Dandelion uses the _MemoryAssetCache_ service provider as the default implementation used for server-side caching.
 
@@ -85,7 +85,7 @@ Dandelion uses the _MemoryAssetCache_ service provider as the default implementa
 
 This implementation contains one map for asset caching and another one for request caching. The max element of each of them can be configured thanks to the <a href="/dandelion/docs/ref/configuration/#main-cache.asset.max.size">cache.asset.max.size</a> TODO and <a href="/dandelion/docs/ref/configuration/#main-cache.request.max.size">cache.request.max.size</a> TODO configuration properties.
 
-==== 8.2.2. Ehcache
+==== 9.2.2. Ehcache
 
 Alternatively, if you already use http://ehcache.org/[Ehcache] in your application, it can be handy to use it as a main cache system for Dandelion.
 
@@ -100,7 +100,7 @@ The _dandelion-ehcache_ extra brings:
 |Service provider|_EhcacheAssetCache_
 |===
 
-===== 8.2.2.1. Installation
+===== 9.2.2.1. Installation
 
 <p>
    {% assign artifact = 'dandelion-ehcache' %} 
@@ -115,7 +115,7 @@ For that, you just need to add the following configuration to your <code>dandeli
 
  cache.name=ehcache
 
-===== 8.2.2.2. Configuration
+===== 9.2.2.2. Configuration
 
 Dandelion comes with some configuration properties that allow to configure the Ehcache extra.
 
@@ -123,7 +123,7 @@ The first one is <a href="/dandelion/docs/ref/configuration/#main-cache.configur
 
 The second one is <a href="/dandelion/docs/ref/configuration/#main-cache.manager.name">cache.manager.name</a> which allows to specify the name of the cache manager to use to manipulate the cache.
 
-=== 8.3. Plugging-in your own cache system
+=== 9.3. Plugging-in your own cache system
 
 TIP: Pending
 

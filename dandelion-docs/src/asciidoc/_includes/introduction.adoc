@@ -8,7 +8,7 @@ Dandelion-Core is the foundation of the Dandelion framework. It is mainly focuse
 
 Major topics covered by Dandelion-Core are:
 
-* asset organization in bundles, with several possible asset locations such as `webapp`, `webjar`, `cdn`, ...
+* asset organization in bundles, with several possible asset locations such as `webapp`, `webjar`, `remote`, ...
 * asset processing, such as minification
 * asset caching, both server and client side
 * asset versioning, manual or automatic through different strategies
