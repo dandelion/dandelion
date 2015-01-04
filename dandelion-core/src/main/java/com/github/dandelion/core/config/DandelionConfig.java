@@ -46,7 +46,7 @@ public enum DandelionConfig {
 
 	// Asset-related configurations
 	ASSET_MINIFICATION("asset.minification", "false", "true"),
-	ASSET_LOCATIONS_RESOLUTION_STRATEGY("asset.locations.resolution.strategy", "webapp,webjar,jar,cdn", "webapp,webjar,jar,cdn"), 
+	ASSET_LOCATIONS_RESOLUTION_STRATEGY("asset.locations.resolution.strategy", "webapp,webjar,jar,remote", "webapp,webjar,jar,remote"), 
 	ASSET_PROCESSORS("asset.processors", "cssurlrewriting,jsmin,cssmin", "cssurlrewriting,jsmin,cssmin"), 
 	ASSET_JS_EXCLUDES("asset.js.excludes", "", ""), 
 	ASSET_CSS_EXCLUDES("asset.css.excludes", "", ""),
