@@ -45,7 +45,6 @@ import com.github.dandelion.core.asset.versioning.AbstractAssetVersioningStrateg
 import com.github.dandelion.core.bundle.loader.BundleLoader;
 import com.github.dandelion.core.bundle.loader.impl.VendorBundleLoader;
 import com.github.dandelion.core.utils.EnumUtils;
-import com.github.dandelion.core.utils.RandomUtils;
 import com.github.dandelion.core.utils.StringUtils;
 
 /**
@@ -126,13 +125,9 @@ public class FixedAssetVersioningStrategy extends AbstractAssetVersioningStrateg
 			}
 			this.fixedVersion = dateFormat.format(date);
 			break;
-		case NUMBER:
-			LOG.debug("Selected fixed version type: {}", FixedVersionType.NUMBER);
+		case STRING:
+			LOG.debug("Selected fixed version type: {}", FixedVersionType.STRING);
 			this.fixedVersion = context.getConfiguration().getAssetFixedVersionValue();
-			break;
-		case RANDOM:
-			LOG.debug("Selected fixed version type: {}", FixedVersionType.RANDOM);
-			this.fixedVersion = String.valueOf(RandomUtils.generateRandom(10));
 			break;
 		default:
 			break;

@@ -55,8 +55,8 @@ public enum DandelionConfig {
 	// Asset versioning
 	ASSET_VERSIONING_MODE("asset.versioning.mode", "auto", "auto"),
 	ASSET_VERSIONING_STRATEGY("asset.versioning.strategy", "content", "content"),
-	ASSET_FIXED_VERSION_TYPE("asset.fixed.version.type", "", ""),
-	ASSET_FIXED_VERSION_VALUE("asset.fixed.version.value", "", ""),
+	ASSET_FIXED_VERSION_TYPE("asset.fixed.version.type", "string", "string"),
+	ASSET_FIXED_VERSION_VALUE("asset.fixed.version.value", "UNDEFINED_VERSION", "UNDEFINED_VERSION"),
 	ASSET_FIXED_VERSION_DATEPATTERN("asset.fixed.version.datepattern", "yyyyMMdd", "yyyyMMdd"),
 
 	// Caching-related configurations

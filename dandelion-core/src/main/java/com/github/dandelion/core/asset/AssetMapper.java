@@ -46,6 +46,7 @@ import com.github.dandelion.core.asset.versioning.AssetVersioningStrategy;
 import com.github.dandelion.core.storage.AssetStorageUnit;
 import com.github.dandelion.core.utils.AssetUtils;
 import com.github.dandelion.core.utils.PathUtils;
+import com.github.dandelion.core.utils.StringUtils;
 
 /**
  * <p>
@@ -207,7 +208,7 @@ public class AssetMapper {
 	 * </p>
 	 * 
 	 * @param asset
-	 *            The asset for which the final locatin is to be computed.
+	 *            The asset for which the final location is to be computed.
 	 * @param location
 	 * @param assetLocator
 	 * @return
@@ -249,7 +250,7 @@ public class AssetMapper {
 		}
 		// Manual versioning
 		else {
-			return asset.getVersion();
+			return StringUtils.isNotBlank(asset.getVersion()) ? asset.getVersion() : "UNDEFINED_VERSION";
 		}
 	}
 }
