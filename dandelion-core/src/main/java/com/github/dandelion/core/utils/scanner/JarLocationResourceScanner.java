@@ -135,7 +135,7 @@ public class JarLocationResourceScanner implements LocationResourceScanner {
 		Enumeration<JarEntry> entries = jarFile.entries();
 		while (entries.hasMoreElements()) {
 			String entryName = entries.nextElement().getName();
-			LOG.debug("Resource path: {}", entryName);
+			LOG.trace("Resource path: {}", entryName);
 			if (entryName.startsWith(location)) {
 				resourceNames.add(entryName);
 			}

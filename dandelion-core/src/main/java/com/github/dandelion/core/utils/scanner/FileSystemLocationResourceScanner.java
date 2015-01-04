@@ -93,7 +93,7 @@ public class FileSystemLocationResourceScanner implements LocationResourceScanne
 				else {
 					String filePath = URLDecoder.decode(file.toURI().toURL().getFile(), "UTF-8");
 					String resourcePath = filePath.substring(classpathPhysicalRoot.length());
-					LOG.debug("Resource path: {}", resourcePath);
+					LOG.trace("Resource path: {}", resourcePath);
 					extractedResourcePaths.add(resourcePath);
 				}
 			}

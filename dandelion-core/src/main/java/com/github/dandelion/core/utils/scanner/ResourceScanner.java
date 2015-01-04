@@ -254,7 +254,7 @@ public final class ResourceScanner {
 			Set<String> excludedPaths, String nameFilter, String prefixFilter, String suffixFilter) {
 		Set<String> filteredResources = new HashSet<String>();
 
-		LOG.debug("Filtering scanned resources");
+		LOG.debug("Filtering scanned resources...");
 		for (String resourcePath : resourcePaths) {
 
 			if (isPathAuthorized(resourcePath, location, excludedPaths)) {
