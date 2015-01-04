@@ -35,7 +35,7 @@ import java.io.Writer;
 
 import org.junit.Test;
 
-import com.github.dandelion.core.asset.processor.spi.AssetProcessor;
+import com.github.dandelion.core.asset.processor.AssetProcessor;
 import com.github.dandelion.core.utils.ResourceUtils;
 
 import static org.assertj.core.api.Assertions.assertThat;

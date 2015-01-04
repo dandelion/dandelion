@@ -34,8 +34,8 @@ import java.util.Set;
 
 import com.github.dandelion.core.Context;
 import com.github.dandelion.core.asset.Asset;
-import com.github.dandelion.core.asset.cache.spi.AbstractAssetCache;
-import com.github.dandelion.core.asset.cache.spi.AssetCache;
+import com.github.dandelion.core.asset.cache.AbstractAssetCache;
+import com.github.dandelion.core.asset.cache.AssetCache;
 
 /**
  * <p>

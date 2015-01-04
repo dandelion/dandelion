@@ -40,8 +40,8 @@ import org.slf4j.LoggerFactory;
 
 import com.github.dandelion.core.Context;
 import com.github.dandelion.core.DandelionException;
-import com.github.dandelion.core.asset.cache.spi.AssetCache;
-import com.github.dandelion.core.asset.locator.spi.AssetLocator;
+import com.github.dandelion.core.asset.cache.AssetCache;
+import com.github.dandelion.core.asset.locator.AssetLocator;
 import com.github.dandelion.core.asset.versioning.AssetVersioningStrategy;
 import com.github.dandelion.core.storage.AssetStorageUnit;
 import com.github.dandelion.core.utils.AssetUtils;

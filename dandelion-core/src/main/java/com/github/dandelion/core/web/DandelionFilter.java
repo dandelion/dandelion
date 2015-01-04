@@ -44,7 +44,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.github.dandelion.core.Context;
-import com.github.dandelion.core.asset.processor.spi.AssetProcessor;
+import com.github.dandelion.core.asset.processor.AssetProcessor;
 import com.github.dandelion.core.web.handler.RequestHandler;
 import com.github.dandelion.core.web.handler.RequestHandlerContext;
 

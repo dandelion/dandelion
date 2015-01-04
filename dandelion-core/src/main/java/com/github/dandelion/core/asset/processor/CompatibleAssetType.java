@@ -37,7 +37,6 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 import com.github.dandelion.core.asset.AssetType;
-import com.github.dandelion.core.asset.processor.spi.AssetProcessor;
 
 /**
  * 

@@ -45,12 +45,12 @@ import javax.servlet.FilterConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.github.dandelion.core.asset.cache.AssetCache;
 import com.github.dandelion.core.asset.cache.AssetCacheManager;
 import com.github.dandelion.core.asset.cache.impl.MemoryAssetCache;
-import com.github.dandelion.core.asset.cache.spi.AssetCache;
-import com.github.dandelion.core.asset.locator.spi.AssetLocator;
+import com.github.dandelion.core.asset.locator.AssetLocator;
+import com.github.dandelion.core.asset.processor.AssetProcessor;
 import com.github.dandelion.core.asset.processor.AssetProcessorManager;
-import com.github.dandelion.core.asset.processor.spi.AssetProcessor;
 import com.github.dandelion.core.asset.versioning.AssetVersioningStrategy;
 import com.github.dandelion.core.bundle.loader.BundleLoader;
 import com.github.dandelion.core.bundle.loader.impl.DandelionBundleLoader;

@@ -35,7 +35,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import com.github.dandelion.core.asset.generator.AssetContentGenerator;
-import com.github.dandelion.core.asset.locator.spi.AbstractAssetLocator;
+import com.github.dandelion.core.asset.locator.AbstractAssetLocator;
 import com.github.dandelion.core.storage.AssetStorageUnit;
 
 /**

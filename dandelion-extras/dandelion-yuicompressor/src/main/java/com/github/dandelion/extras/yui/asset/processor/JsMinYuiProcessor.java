@@ -39,9 +39,9 @@ import org.slf4j.LoggerFactory;
 
 import com.github.dandelion.core.DandelionException;
 import com.github.dandelion.core.asset.AssetType;
+import com.github.dandelion.core.asset.processor.AbstractAssetProcessor;
 import com.github.dandelion.core.asset.processor.CompatibleAssetType;
 import com.github.dandelion.core.asset.processor.ProcessingContext;
-import com.github.dandelion.core.asset.processor.spi.AbstractAssetProcessor;
 import com.yahoo.platform.yui.compressor.JavaScriptCompressor;
 
 /**

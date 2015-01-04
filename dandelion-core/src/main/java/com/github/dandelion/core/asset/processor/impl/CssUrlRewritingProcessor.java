@@ -41,9 +41,9 @@ import com.github.dandelion.core.Beta;
 import com.github.dandelion.core.DandelionException;
 import com.github.dandelion.core.asset.Asset;
 import com.github.dandelion.core.asset.AssetType;
+import com.github.dandelion.core.asset.processor.AbstractAssetProcessor;
 import com.github.dandelion.core.asset.processor.CompatibleAssetType;
 import com.github.dandelion.core.asset.processor.ProcessingContext;
-import com.github.dandelion.core.asset.processor.spi.AbstractAssetProcessor;
 import com.github.dandelion.core.asset.processor.support.CssUrlRewriter;
 import com.github.dandelion.core.utils.StringBuilderUtils;
 

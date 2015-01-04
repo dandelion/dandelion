@@ -27,14 +27,14 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.github.dandelion.core.asset.locator.spi;
+package com.github.dandelion.core.asset.locator;
 
 import javax.servlet.http.HttpServletRequest;
 
 import com.github.dandelion.core.Beta;
 import com.github.dandelion.core.Context;
 import com.github.dandelion.core.asset.Asset;
-import com.github.dandelion.core.asset.processor.spi.AssetProcessor;
+import com.github.dandelion.core.asset.processor.AssetProcessor;
 import com.github.dandelion.core.storage.AssetStorageUnit;
 import com.github.dandelion.core.web.DandelionFilter;
 import com.github.dandelion.core.web.DandelionServlet;

@@ -2,20 +2,20 @@
  * [The "BSD licence"]
  * Copyright (c) 2013-2014 Dandelion
  * All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
  * are met:
- * 
+ *
  * 1. Redistributions of source code must retain the above copyright
  * notice, this list of conditions and the following disclaimer.
  * 2. Redistributions in binary form must reproduce the above copyright
  * notice, this list of conditions and the following disclaimer in the
  * documentation and/or other materials provided with the distribution.
- * 3. Neither the name of Dandelion nor the names of its contributors 
- * may be used to endorse or promote products derived from this software 
+ * 3. Neither the name of Dandelion nor the names of its contributors
+ * may be used to endorse or promote products derived from this software
  * without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
  * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
  * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
@@ -27,39 +27,44 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.github.dandelion.core.asset.processor.spi;
+package com.github.dandelion.core.asset.processor;
 
 import java.io.Reader;
 import java.io.Writer;
 
-import com.github.dandelion.core.Context;
 import com.github.dandelion.core.DandelionException;
 import com.github.dandelion.core.asset.Asset;
-import com.github.dandelion.core.asset.processor.ProcessingContext;
-import com.github.dandelion.core.config.Configuration;
 
 /**
  * <p>
- * SPI for all asset processors.
- * 
- * <p>
- * In order for any custom implementation to be scanned, see <a href=
- * "http://dandelion.github.io/dandelion/features/asset-processors/plugging-in-your-own-processor.html"
- * >here</a>.
+ * Abstract superclass for all asset processors. Mostly used to handle
+ * exceptions thrown by any of the active processors.
  * 
  * @author Thibault Duchateau
  * @since 0.10.0
- * 
- * @see Context#initAssetProcessors()
  */
-public interface AssetProcessor {
+public abstract class AbstractAssetProcessor implements AssetProcessor {
 
 	/**
-	 * @return the processor key associated with the processor. The key is used
-	 *         in the in the {@link Configuration} to activate the corresponding
-	 *         processor.
+	 * <p>
+	 * Wrapper method for the actual
+	 * {@link #doProcess(Reader, Writer, ProcessingContext)} method which handle
+	 * exceptions.
 	 */
-	String getProcessorKey();
+	@Override
+	public void process(Reader reader, Writer writer, ProcessingContext processingContext) throws DandelionException {
+
+		try {
+			doProcess(reader, writer, processingContext);
+		}
+		catch (Exception e) {
+			StringBuilder sb = new StringBuilder("An exception occurred while applying the processor ");
+			sb.append(getProcessorKey());
+			sb.append(" on the asset ");
+			sb.append(processingContext.getAsset().toLog());
+			throw new DandelionException(sb.toString(), e);
+		}
+	}
 
 	/**
 	 * <p>
@@ -74,8 +79,9 @@ public interface AssetProcessor {
 	 * @param processingContext
 	 *            The processing context that includes the {@link Asset} to be
 	 *            processed.
-	 * @throws DandelionException
+	 * @throws Exception
 	 *             if something goes wrong during the processing of the asset.
 	 */
-	void process(Reader reader, Writer writer, ProcessingContext processingContext) throws DandelionException;
+	protected abstract void doProcess(Reader reader, Writer writer, ProcessingContext processingContext)
+			throws Exception;
 }
