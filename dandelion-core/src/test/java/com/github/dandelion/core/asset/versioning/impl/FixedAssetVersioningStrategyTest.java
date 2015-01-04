@@ -84,12 +84,12 @@ public class FixedAssetVersioningStrategyTest {
 	}
 
 	@Test
-	public void should_return_a_fixed_version_based_on_a_number() {
+	public void should_return_a_fixed_version_based_on_a_string() {
 
 		MockFilterConfig filterConfig = new MockFilterConfig();
 		filterConfig.addInitParameter(DandelionConfig.ASSET_VERSIONING_MODE.getName(), "auto");
 		filterConfig.addInitParameter(DandelionConfig.ASSET_VERSIONING_STRATEGY.getName(), "fixed");
-		filterConfig.addInitParameter(DandelionConfig.ASSET_FIXED_VERSION_TYPE.getName(), "number");
+		filterConfig.addInitParameter(DandelionConfig.ASSET_FIXED_VERSION_TYPE.getName(), "string");
 		filterConfig.addInitParameter(DandelionConfig.ASSET_FIXED_VERSION_VALUE.getName(), "42");
 		Context dandelionContext = new Context(filterConfig);
 
@@ -148,20 +148,5 @@ public class FixedAssetVersioningStrategyTest {
 		filterConfig.addInitParameter(DandelionConfig.ASSET_FIXED_VERSION_DATEPATTERN.getName(), desiredDateFormat);
 		filterConfig.addInitParameter(DandelionConfig.ASSET_FIXED_VERSION_VALUE.getName(), desiredDate);
 		new Context(filterConfig);
-	}
-
-	@Test
-	public void should_return_a_fixed_version_based_on_a_random_number() {
-
-		MockFilterConfig filterConfig = new MockFilterConfig();
-		filterConfig.addInitParameter(DandelionConfig.ASSET_VERSIONING_MODE.getName(), "auto");
-		filterConfig.addInitParameter(DandelionConfig.ASSET_VERSIONING_STRATEGY.getName(), "fixed");
-		filterConfig.addInitParameter(DandelionConfig.ASSET_FIXED_VERSION_TYPE.getName(), "random");
-		Context dandelionContext = new Context(filterConfig);
-
-		AssetVersioningStrategy strategy = new FixedAssetVersioningStrategy();
-		strategy.init(dandelionContext);
-
-		assertThat(strategy.getAssetVersion(null)).matches("[0-9]{10}");
 	}
 }
