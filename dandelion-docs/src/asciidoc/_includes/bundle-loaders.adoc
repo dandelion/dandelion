@@ -1,59 +1,28 @@
-== 7. Bundle loaders
+== 8. Bundle loaders
 
-=== 7.1. Introducing bundle loaders
+=== 8.1. Introducing bundle loaders
 
-TIP: Pending
+The main goals of bundle loaders are:
 
-<p>
-   As mentionned in the <a
-      href="/dandelion/features/asset-bundles/introducing-asset-bundles.html">introduction about
-      asset bundles</a>, all bundles are stored in JSON files. This section describes how these files are loaded.
-</p>
+* to scan for bundle definitions in the classpath (JSON format in first, then XML format)
+* to map each of the loaded files into a comprehensive format and feeds the bundle graph
 
-<h3 class="section-title" id="sbl">Definition</h3>
-<p>
-   A bundle loader has one role: load JSON files from the classpath depending on some
-   configurations.
-</p>
-<p>
-   All bundle loaders are defined as follows:
-</p>
-<ul>
-   <li>A name</li>
-   <li>A path where to scan</li>
-   <li>A flag indicating whether the scanning is recursive or not</li>
-   <li>And a set of path to exclude during the classpath scanning</li>
-</ul>
+=== 8.1. Built-in loaders
 
-<h3 class="section-title" id="sbl">Built-in loaders</h3>
-<p>
-   Dandelion comes with two built-in bundle loaders: {% javadoc ddl dandelion-core DandelionBundleLoader %} and
-   {% javadoc ddl dandelion-core VendorBundleLoader %}. They basically do the same job except the location where JSON files
-   are scanned.
-</p>
-<p>
-   Note that they're all mutually exclusive. It means that a folder or subfolder will never be
-   scanned twice.
-</p>
+Dandelion comes with two built-in bundle loaders: `DandelionBundleLoader` and `VendorBundleLoader`. They basically do the same job except the location where to scan for bundle definitions.
 
-<h4>{% javadoc ddl dandelion-core VendorBundleLoader %}</h4>
-<p>
-   This loader is intended to load vendor's librairies, such as
-   <a href="http://jquery.com/">jQuery</a> or <a href="http://getbootstrap.com/">Bootstrap</a>. The
-   only difference with the other built-in loader is that it scans for JSON files inside the
-   <code>/dandelion/vendor</code>
-   folder and all subfolders.
-</p>
-<p>
-   Assuming the following <a href="https://maven.apache.org/">Maven</a> structure, the
-   {% javadoc ddl dandelion-core VendorBundleLoader %} will only pick up and load
-   <code>jquery.json</code>
-   and
-   <code>bootstrap2.json</code>
-   files.
-</p>
-<pre class="prettyprint">
-YourWebApp
+Note that they're all mutually exclusive. It means that a folder or subfolder will never be scanned twice.
+
+==== 8.1.1. `VendorBundleLoader`
+
+This loader is intended to load vendor's librairies, such as http://jquery.com/[jQuery] or http://getbootstrap.com/[Bootstrap]. The only difference with the other built-in loader is that it scans for bundles inside the `dandelion/vendor` folder and all subfolders in the classpath.
+
+Assuming the following https://maven.apache.org/[Maven] structure, the `VendorBundleLoader` will only pick up and load `jquery.json` and `bootstrap2.json` files.
+
+.Example with a Maven project
+[source, xml]
+----
+project-root
 |__ src
    |__ main
       |__ resources
@@ -61,191 +30,117 @@ YourWebApp
             |__ vendor
                |__ jquery.json
                |__ bootstap2.json
-            |__ foo.json
-            |__ bar.json 
-</pre>
-<p>
-   All bundles loaded by this loader will be considered as <i>vendor bundles</i> in the rest
-   of the documentation.
-</p>
-<p class="alert alert-info">
-   <strong><i class="fa fa-info-circle fa-2x"></i></strong>&nbsp; 
-   In upcoming releases, all assets defined in "vendor bundles" will have a specific caching policy applied.
-</p>
+            |__ foo.json <1>
+            |__ bar.json <1>
+----
+<1> Both `foo.json` and `bar.json` bundles won't be picked up by the `VendorBundleLoader` because they are outside of the `dandelion/vendor` folder
 
-<h4>{% javadoc ddl dandelion-core DandelionBundleLoader %}</h4>
-<p>
-   Its role is to scan the classpath recursively, starting from the
-   <code>/dandelion</code>
-   folder, for files that ends with the
-   <code>.json</code>
-   extension.
-</p>
-<p>
-   All files found in the
-   <code>/dandelion</code>
-   folder will then be converted into an internal representation: AssetComponent (lien javadoc).
-</p>
+All bundles loaded by this loader will be considered as *vendor bundles* in the rest of the documentation.
 
-<p>
-   Assuming the following <a
-      href="https://maven.apache.org/">Maven</a> structure, the standard bundle loader will pick up
-   and load
-   <code>bundle1.json</code>
-   ,
-   <code>bundle2.json</code>
-   and
-   <code>bundle3.json</code>
-   files.
-</p>
-<pre class="prettyprint">
-YourWebApp
+==== 8.1.2. `DandelionBundleLoader`
+
+Its role is to scan the classpath recursively for bundles, starting from the `dandelion` folder.
+
+Assuming the following https://maven.apache.org/[Maven] structure, the standard bundle loader will pick up and load `bundle1.json`, `bundle2.json` and `bundle3.json` files.
+
+.Example with a Maven project
+[source, xml]
+----
+project-root
 |__ src
    |__ main
       |__ resources
          |__ dandelion
+            |__ vendor
+               |__ jquery.json <1>
             |__ bundle1.json
             |__ bundle2.json
             |__ bundle3.json 
-</pre>
-<p>
-   All bundles loaded by this loader will be considered as <i>user bundles</i> in the rest of the
-   documentation.
-</p>
+----
+<1> The `jquery.json` bundle won't be picked up by the `DandelionBundleLoader` because all bundle loaders are mutually exclusive, i.e. they never scan the same location more than once.
 
-<h3 class="section-title" id="bleo">Bundle loaders execution order</h3>
-<p>
-   At startup, Dandelion loads all bundles in a particular order:
-</p>
-<ol>
-   <li>
-      <p>First, by executing the {% javadoc ddl dandelion-core VendorBundleLoader %}.</p>
-   </li>
-   <li>
-      <p>
-         Then, by executing all other bundle loaders present in the classpath, i.e. classes that
-         extends {% javadoc ddl dandelion-core AbstractBundleLoader %}. All bundles loaded by these loaders will be considered as
-         <i>component bundles</i> in the rest of the documentation.
-      </p>
-      <p>
-         For example, <a href="/datatables">Dandelion-Datatables</a> provides its own bundle loader,
-         intended to load all bundles present in the
-         <code>/dandelion/datatables</code>
-         folder. Not that in the same way, you can plug in any other bundle loader, including
-         <a href="plugging-in-your-own-bundle-loader.html">your own one</a>.
-      </p>
-   </li>
-   <li>
-      <p>
-         Finally by executing the {% javadoc ddl dandelion-core DandelionBundleLoader %}.
-      </p>
-      <p>
-         The <i>user bundles</i> are always loaded in last, for the purpose of allowing to override
-         existing assets, e.g. coming from a
-         <i>vendor bundle</i>.
-      </p>
-   </li>
-</ol>
-<p class="text-center">
-   <img src="/assets/images/dandelion/bundle-loaders-00.png" style="margin:10px;" />
-</p>
+All bundles loaded by this loader will be considered as *user bundles* in the rest of the documentation.
 
-<p class="alert alert-info">
-   <strong><i class="fa fa-info-circle fa-2x"></i></strong>&nbsp; In a near or more distant future,
-   Dandelion will provide a collection of components, which <a href="/datatables">Dandelion-Datatables</a>
-   is already a part of. As <a href="/datatables">Dandelion-Datatables</a>, each component will
-   provide its own collection of bundles (<i>vendor</i> and <i>component</i>).
-</p>
+=== 8.2. Bundle loaders execution order
 
-=== 7.2. Plugging-in your own bundle loaders
+At startup, Dandelion loads all bundles in a particular order:
 
-TIP: Pending
+. First, by scanning for bundles using the `VendorBundleLoader`
 
-<p>
-   You may wish to write an extension that use its own bundle loader, e.g. if you wish to scan
-   JSON files somewhere else than in the classpath. Let's see here how to do it.
-</p>
+. Then, by scanning for bundles using all other loaders present in the classpath, i.e. classes that extends `AbstractBundleLoader`. All bundles loaded by these loaders will be considered as *component bundles* in the rest of the documentation.
 
-<h3 class="section-title" id="sal">SPI for asset loader</h3>
-<p>
-   Dandelion intensively uses the <a
-      href="http://docs.oracle.com/javase/tutorial/sound/SPI-intro.html">Service Provider
-      Interface</a> mechanism introduced in Java 6.
-</p>
-<p>
-   So, in order to plug-in your own asset loader, just follow these steps:
-</p>
-<ol>
-   <li>Create a class that extends {% javadoc ddl dandelion-core AbstractBundleLoader %} or directly implements {% javadoc ddl dandelion-core BundleLoader %}.
-<pre class="prettyprint">
++
+For example, Dandelion-Datatables provides its own bundle loader, intended to load all bundles present in the `dandelion/datatables/` folder.
+
+. Finally by scanning for bundles using the `DandelionBundleLoader`
+
++
+The *user bundles* are always loaded in last, for the purpose of allowing to override existing assets, e.g. coming from a *vendor bundle*.
+
+image::bundle-loaders-00.png[]
+
+NOTE: In a near or more distant future, Dandelion will provide a collection of components, which Dandelion-Datatables is already a part of. As Dandelion-Datatables, each component will provide its own collection of bundles (*vendor* and *component*).
+
+=== 8.3. Plugging-in your own component bundle loaders
+
+You may wish to write an extension that uses its own bundle loader, e.g. if you wish to scan for bundles somewhere else than in the classpath. Let's see here how to do it.
+
+Dandelion intensively uses the http://docs.oracle.com/javase/tutorial/sound/SPI-intro.html[Service Provider Interface] mechanism introduced in Java 6.
+
+So, in order to plug-in your own bundle loader, just follow these steps:
+
+. Create a class that extends `AbstractBundleLoader` (you can directly implement the `BundleLoader` interface but you better use the abstract class)
+
++
+[source, java]
+----
 package com.foo.bundle.loader.impl;
 
 public class MyBundleLoader extends AbstractBundleLoader {
 
-   private static final Logger LOG = LoggerFactory.getLogger(MyBundleLoader.class);
+  private static final Logger LOG = LoggerFactory.getLogger(MyBundleLoader.class);
+  
+  @Override 
+  protected Logger getLogger() {
+    return LOG;
+  }
 
-	@Override
-	public String getName() {
-		return "myLoader";
-	}
+  @Override
+  public String getName() {
+    return "my-bundle"; // <1>
+  }
 
-	@Override
-	public boolean isRecursive() {
-		return false;
-	}
+  @Override
+  public String getPath() {
+    return "any path";
+  }
 
-	@Override
-	protected Logger getLogger() {
-		return LOG;
-	}
-
-	@Override
-	public String getPath() {
-		return "myPath";
-	}
+  @Override
+  protected void doCustomBundlePostProcessing(List<BundleStorageUnit> bundles) {
+    // Perform here any post processing on bundles	
+  }
 }
-</pre>   
-   </li>
-   <li>
-      <p>
-         In the <code>META-INF/services</code> folder, create a text file (UTF-8 encoded) using the following convention:
-<pre class="prettyprint">
-yourJar
+----
+<1> The loader name is used for logging concerns only
+
+. In the `META-INF/services` folder, create a text file (UTF-8 encoded) using the following convention:
+
++
+.Example with a Maven project
+[source, xml]
+----
+project-root
 |__ src
    |__ main
       |__ resources
          |__ META-INF
             |__ services
-               |__ com.github.dandelion.core.bundle.loader.spi.BundleLoader
-   
-</pre>   
-      </p>
-      <p>
-         Inside this file, just add the fully qualified name of your own implementation. For example:
-<pre class="prettyprint">
-com.foo.bundle.loader.impl.MyBundleLoader
-</pre>
-      </p>   
-   </li>
-</ol>
-<p>
-   And that's all! Thanks to the SPI mechanism, Dandelion will automatically pick up your
-   implementation and add it to the active bundle loaders on the next server restart.
-</p>
+               |__ com.github.dandelion.core.bundle.loader.BundleLoader
+----
 
-<h3 class="section-title" id="sal">Example with Dandelion-Datatables</h3>
-<p>
-   <a href="/datatables">Dandelion-Datatables</a> is a nice example of how a custom bundle loader
-   can be plugged into the bundle loader system.
-</p>
-<p>
-   Indeed, the <a href="/datatables">Dandelion-Datatables</a> component provides its own bundle
-   loader: {% javadoc dt datatables-core DatatablesBundleLoader %}. This loaders scans for JSON files only inside the
-   <code>dandelion/datatables</code>
-   folder.
-</p>
-<p>
-   You can find the SPI configuration <a
-      href="https://github.com/dandelion/dandelion-datatables/tree/dandelion-datatables-{{ site.dandelion.components.[page.module].version }}/datatables-core/src/main/resources/META-INF/services">in
-      the sources</a>.
-</p>
++
+Inside this file, just add the fully qualified name of your own implementation. For example:
+
+ com.foo.bundle.loader.impl.MyBundleLoader
+
+And that's all! Thanks to the SPI mechanism, Dandelion will automatically pick up your implementation and add it to the active bundle loaders on the next server restart.
