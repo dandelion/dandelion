@@ -1,124 +1,102 @@
-== 4. Asset locators
+== 5. Asset locators
 
-You may have noticed in the <a href="/dandelion/features/asset-bundles/introducing-asset-bundles.html">introduction about asset bundles</a> that each asset can be defined with multiple locations. This feature is explained in this section.
+Assets can be fetched from different location thanks to _asset locators_. This section describes how it works and the available _asset locators_.
 
-=== 4.1. Introducing asset locators
+=== 5.1. Introducing asset locators
 
 An _asset locator_ (or _locator_ to simplify the language) is defined as follows:
 
-* A location key, used as an identifier
+* A location key, used as an identifier in the bundle definitions
 * An associated location that may be processed, depending on the locator
 * A flag indicating whether the asset should be cached or not
 
-=== 4.2 Asset caching
+=== 5.2 Asset caching
 
-Depending on the locator, Dandelion generates the right URL to serve the asset directly from the location where it lives. For example, all assets present in the webapp directory are defaultly served by the webapp itself. In this case, Dandelion will just process the given location by prepending the context path and there will be no caching.
+Depending on the locator, Dandelion generates the right URL to serve the asset directly from the location where it lives. 
 
-However, an asset stored in the classpath, for example, cannot be served directly by the webapp. Instead, in such a case, Dandelion grabs its content and stores it in the configured <a href="/dandelion/features/asset-caching/">cache system</a>, with a particular cache key. Later, the generated link pointing to this asset will be served by the {% javadoc ddl dandelion-core DandelionServlet %}, the role of which is to retrieve the content from the cache system and serve it.
+For example, all assets present in the webapp directory are defaultly served by the webapp itself. In this case, Dandelion will just process the given location by prepending the context path and no caching is necessary.
 
-See the <a href="/dandelion/features/asset-caching/">asset caching</a> section for more details.
+However, an asset stored in the classpath for example, cannot be served directly by the webapp. Instead, in such a case, Dandelion fetches its content and stores it in the configured <<9-asset-caching, cache system>>, with a particular cache key. Later, the generated link pointing to this asset will be served by the `DandelionServlet`, the role of which is to retrieve the content from the cache system and serve it.
 
+See the <<9-asset-caching, asset caching section>> for more information.
 
-<h3 class="section-title" id="ex">Example</h3>
-<p>
-   Assuming the following <i>jquery</i> bundle:
-<pre class="prettyprint">
-{
-   "bundle" : "jquery",
-   "assets": [{
-      "name": "jquery",
-      "version": "1.11.0",
-      "type": "js",
-      "locations": {
-         "cdn": "//cdnjs.cloudflare.com/ajax/libs/jquery/1.11.0/jquery.js",
-      }
-   }]
-}
-</pre>
-</p>
-<p>
-   This bundle defines only one asset called
-   <code>jquery</code>
-   with a single location, pointing to a CDN. In this case, Dandelion will always pick up the CDN location.
-</p>
-<p>
-   Now assume that the same asset of the same bundle is defined with more locations:
-<pre class="prettyprint">
-{
-   "bundle" : "jquery",
-   "parent": "none",
-   "assets": [{
-      "name": "jquery",
-      "version": "1.11.0",
-      "type": "js",
-      "locations": {
-         "cdn": "//cdnjs.cloudflare.com/ajax/libs/jquery/1.11.0/jquery.js",
-         "webapp" : "/assets/js/jquery.js"
-      }
-   }]
-}
-</pre>
-</p>
-<p>
-   Both
-   <code>webapp</code>
-   and
-   <code>cdn</code>
-   are used in the declaration of the
-   <code>jquery</code>
-   asset. In this case, Dandelion will apply a resolution strategy described below.
-</p>
+=== 5.3. Locations resolution strategy
 
-<h3 class="section-title" id="wialw">Locations resolution strategy</h3>
-<p>
-   By default, the following resolution strategy is used when multiples locations are declared:
-</p>
-<ul>
-   <li>Dandelion checks first if a <code>webjar</code> location key is
-      defined. If so, the corresponding location will be selected.</li>
-   <li>Otherwise, if the <code>webapp</code> location key is defined, the corresponding
-      location will be selected.
-   </li>
-   <li>Finally, if none of the above location keys is used, Dandelion checks if a <code>cdn</code>
-      location key is defined. If so, the corresponding location will be selected.
-   </li>
-</ul>
-<p>
-   You can of course override this behaviour by using the
-   <code>asset.locations.resolution.strategy</code>
-   <a href="/dandelion/docs/ref/configuration#asset.locations.resolution.strategy">configuration property</a>.
-</p>
-<p>
-   Just change the order of selection of location keys in your configuration file.
-</p>
+The most obvious case is to configure an asset with a single location.
 
-[source, xml]
+.jquery.json
+[source, json]
 ----
-asset.locations.resolution.strategy=cdn,jar,webjar
+{
+  "assets": [
+    {
+      "locations": {
+        "remote": "//cdnjs.cloudflare.com/ajax/libs/jquery/1.11.0/jquery.js",
+      }
+    }
+  ]
+}
 ----
 
-=== 4.2. Built-in locators
+In the above bundle, Dandelion will always use the single `remote` location to fetch the jQuery asset.
+
+In cases where multiple locations are configured for a single asset, Dandelion uses a particular strategy to resolve them. It simply reads the <<opt-asset.locations.resolution.strategy, `asset.locations.resolution.strategy`>> option from your configuration file and tests the specified locators in the given order.
+
+The default resolution strategy is defined as follows:
+
+ asset.locations.resolution.strategy = webapp, webjar, jar, remote
+
+Here is what happens:
+
+. First checks if a `webapp` location key is specified. If so, the corresponding location will be selected and processed
+. Then, if a `webjar` location key is defined, the corresponding location will be selected and processed
+. Then, the same a `jar` location key
+. And finally with a `remote` location key
+. If none of the above is specified, an exception will be thrown.
+
+Assuming the following bundle:
+
+.jquery.json
+[source, json]
+----
+{
+  "assets": [
+    {
+      "locations": {
+        "webapp" : "/assets/js/jquery.js",
+        "remote": "//cdnjs.cloudflare.com/ajax/libs/jquery/1.11.0/jquery.js",
+      }
+    }
+  ]
+}
+----
+
+In such a case, thanks to the default resolution strategy, Dandelion will first prioritize the `webapp` location.
+
+TIP: Combined with <<10-profiles, profiles>>, this feature is powerful enough to handle multiple locations in multiple environments.
+
+=== 5.4. Built-in locators
 
 Dandelion comes with a couple of built-in locators. They are all listed below.
 
-==== 4.2.1. `webapp` locator
+==== 5.4.1. `webapp` locator
 
-The _webapp locator_ should be used whenever you need to load an asset stored in the web application directory.
-
-|===
-| *Location key*
-| `webapp`
-
-| *Corresponding value*
-| Relative path to the web application root directory*
-
-| *Caching forced*
-| no
+The `webapp` locator should be used whenever you need to load an asset stored in the web application directory.
 
 |===
+| *Location key* | `webapp`
+
+| *Corresponding value* | Relative path to the web application root directory
+
+| *Caching forced* | No
+|===
+
+[discrete]
+==== Example
 
 Assuming the following project structure:
 
+.Example with a Maven project
 [source, xml]
 ----
 your-project
@@ -132,15 +110,17 @@ your-project
 
 The asset declaration should look like:
 
+.dandelion/bundle.json
 [source, json]
 ----
 {
-   "bundle" : "my-bundle",
-   "assets": [{
+  "assets": [
+    {
       "locations": {
-         "webapp": "/assets/js/application.js"
+        "webapp": "/assets/js/application.js"
       }
-   }]
+    }
+  ]
 }
 ----
 
@@ -151,184 +131,117 @@ Client-side, Dandelion will generate the following link:
 <script src="/[contextPath]/assets/js/application.js"></script>
 ----
 
-==== 4.2.2. `classpath` locator
+==== 5.2.2. `classpath` locator
 
-<h3 class="section-title" id="clu">Usage</h3>
-<p>
-   The <i>classpath locator</i> should be used whenever you need to load an asset stored in the classpath.
-</p>
-<p>
-   <table class="table table-striped table-hover">
-      <tbody>
-         <tr>
-            <td>Location key</td>
-            <td><code>classpath</code></td>
-         </tr>
-         <tr>
-            <td>Corresponding value</td>
-            <td>Absolute name of the asset (no leading "/", as it internally uses <code>ClassLoader.getResourceAsStream()</code>)</td>
-         </tr>
-         <tr>
-            <td>Caching forced</td>
-            <td>yes</td>
-         </tr>
-         <tr>
-            <td>Class(es)</td>
-            <td>{% javadoc ddl dandelion-core ClasspathLocator %}</td>
-         </tr>
-      </tbody>
-   </table>
-</p>   
+The `classpath` should be used whenever you need to load an asset stored in the classpath.
 
-<h3 class="section-title" id="cle">Example</h3>
-<p>
-   Assuming the following project structure:
-<pre class="prettyprint">
+|===
+| *Location key* | `classpath`
+
+| *Corresponding value* | Absolute name of the asset (no leading "/", as it internally uses `ClassLoader.getResourceAsStream()`)
+
+| *Caching forced* | Yes
+|===
+
+[discrete]
+==== Example
+
+Assuming the following project structure:
+
+.Example with a Maven project
+[source, xml]
+----
 your-project
 |__ src
    |__ main
       |__ resources
          |__ js
             |__ application.js
-</pre>   
-</p>
-<p>
+----
+
 The asset declaration should look like:
-<pre class="prettyprint">
+
+.dandelion/bundle.json
+[source, json]
+----
 {
-   "bundle" : "my-bundle",
-   "assets": [{
-      "name": "my-application",
-      "version": "1.0.0",
-      "type": "js",
+  "assets": [
+    {
       "locations": {
-          "classpath": "js/application.js"
+        "classpath": "js/application.js"
       }
-   }]
+    }
+  ]
 }
-</pre>
-</p>
-<p>
-   Client-side, Dandelion will generate the following link:
-<pre class="prettyprint">
-&lt;script src="/[contextPath]/dandelion-assets/[cacheKey]/application.js">&lt;/script>
-</pre>
-</p>
+----
 
-==== 4.2.3. `cdn` locator
+Client-side, Dandelion will generate the following link:
 
-<h3 class="section-title" id="cdnlu">Usage</h3>
-<p>
-   The <i>CDN locator</i> should be used whenever you need to load an asset hosted by a
-   <a href="http://en.wikipedia.org/wiki/Content_delivery_network">Content Delivery Network</a>.
-</p>
-<p>
-   <table class="table table-striped table-hover">
-      <tbody>
-         <tr>
-            <td>Location key</td>
-            <td><code>cdn</code></td>
-         </tr>
-         <tr>
-            <td>Corresponding value</td>
-            <td>URL of the asset (protocal-relative URLs such as <i>//domain/foo.js</i> are supported)</td>
-         </tr>
-         <tr>
-            <td>Caching forced</td>
-            <td>no</td>
-         </tr>
-         <tr>
-            <td>Class(es)</td>
-            <td>{% javadoc ddl dandelion-core CdnLocator %}</td>
-         </tr>
-      </tbody>
-   </table>
-</p>
+[source, html]
+----
+<script src="/[contextPath]/dandelion-assets/[cacheKey]/application.js"></script>
+----
 
-<h3 class="section-title" id="cdnle">Example</h3>
-<p>
-<pre class="prettyprint">
+==== 5.2.3. `remote` locator
+
+The `remote` locator should be used whenever you need to load an asset hosted externally, e.g. on a http://en.wikipedia.org/wiki/Content_delivery_network[Content Delivery Network].
+
+|===
+| *Location key* | `remote`
+
+| *Corresponding value* | URL of the asset (protocal-relative URLs such as _//domain/foo.js_ are supported)
+
+| *Caching forced* | No
+|===
+
+[discrete]
+==== Example
+
+Assuming the following asset declaration:
+
+.dandelion/bundle.json
+[source, json]
+----
 {
-   "bundle" : "jquery",
-   "assets": [{
-      "name": "jquery",
-      "version": "1.11.0",
-      "type": "js",
+  "assets": [
+    {
       "locations": {
-         "cdn": "//cdnjs.cloudflare.com/ajax/libs/jquery/1.11.0/jquery.js"
+        "remote": "//cdnjs.cloudflare.com/ajax/libs/jquery/1.11.0/jquery.js"
       }
-   }]
+    }
+  ]
 }
-</pre>
-</p>
-<p>
-   Client-side, Dandelion will generate the following link:
-<pre class="prettyprint">
-&lt;script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.11.0/jquery.js">&lt;/script>
-</pre>
-</p>
+----
 
-==== 4.2.4. `jar` locator
+Client-side, Dandelion will generate the following link:
 
-<h3 class="section-title" id="jlu">Usage</h3>
-<p>
-   The <i>JAR locator</i> should be used whenever you need to load an asset stored inside a JAR,
-   under the
-   <code>META-INF/resources</code>
-   folder.
-</p>
-<p>
-   <table class="table table-striped table-hover">
-      <tbody>
-         <tr>
-            <td>Location key</td>
-            <td><code>jar</code></td>
-         </tr>
-         <tr>
-            <td>Corresponding value</td>
-            <td>Relative path to the <code>META-INF/resources</code> folder.</td>
-         </tr>
-         <tr>
-            <td>Caching forced</td>
-            <td>
-               <p>No if the Servlet 3.x API is being used, yes otherwise.
-            </td>
-         </tr>
-         <tr>
-            <td>Class(es)</td>
-            <td>{% javadoc ddl dandelion-core JarLocator %}, {% javadoc ddl dandelion-core JarServlet2Locator %}</td>
-         </tr>
-      </tbody>
-   </table>
-</p>
+[source, html]
+----
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.11.0/jquery.js"></script>
+----
 
-<h3 class="section-title" id="jls2s3">Servlet 2.x vs Servlet 3.x</h3>
-<p>
-   Dandelion automatically detects whether the running server is using the Servlet 3.x API (<a
-      href="https://jcp.org/en/jsr/detail?id=315">JSR 315</a>) or lower.
-</p>
-<p>
-   If so, it takes profit of the feature that consists of serving from the application web context
-   root all resources placed under the
-   <code>META-INF/resources</code>
-   directory of any JAR placed in
-   <code>WEB-INF/lib</code>
-   . In such a case, the asset is not cached but directly served from the JAR instead.
-</p>
-<p>
-   On the contrary, if the Servlet 2.x API is being used, Dandelion will apply the strategy
-   <a href="/dandelion/features/asset-locators/introducing-asset-locators.html#ac">described in
-      the introduction</a>.
-</p>
+==== 5.2.4. `jar` locator
 
-<h3 class="section-title" id="jle">Example</h3>
-<p>
-   <a href="/datatables">Dandelion-Datatables</a> internally uses this locator to serve almost all
-   DataTables-related assets.
-</p>
-<p>
-   For example, the <i>datatables-core</i> project contains the following tree structure:
-<pre class="prettyprint">
+The `jar` locator should be used whenever you need to load an asset stored inside a JAR, under the `META-INF/resources` folder. 
+
+|===
+| *Location key* | `jar`
+
+| *Corresponding value* | Relative path to the `META-INF/resources` folder
+
+| *Caching forced* | No. Dandelion takes profit of the Servlet 3.x feature that consists of serving from the application web context root all assets placed under the `META-INF/resources` directory of any JAR placed in `WEB-INF/lib`. In such a case, the asset is not cached but directly served from the JAR instead.
+|===
+
+[discrete]
+==== Example
+
+Dandelion-Datatables internally uses this locator to serve almost all DataTables-related assets.
+
+For example, the _datatables-core_ project contains the following tree structure:
+
+.datatables-core project
+[source, xml]
+----
 datatables-core
 |__ src
    |__ main
@@ -339,272 +252,167 @@ datatables-core
                   |__ datatables
                      |__ ajax
                         |__ reload.js
-</pre>   
-</p>
-<p>
-   According to the above structure, the corresponding bundle should look like:
-<pre class="prettyprint">
+----
+
+According to the above structure, the corresponding bundle should look like:
+
+[source, json]
+----
 {
-   "bundle" : "ddl-dt-ajax-reload",
-   "dependencies": [ "datatables" ],
-   "assets": [{
-      "name": "reload",
-      "version": "1.0.0",
-      "type": "js",
+  ...
+  "assets": [
+    {
       "locations": {
          "jar": "dandelion/datatables/ajax/reload.js"
       }
-   }]
+    }
+  ]
 }
-</pre>
-</p>
-<p>
-   Now client-side, if the application is running inside a Servlet 3.x-compatible container, the link will look like:
-<pre class="prettyprint">
-&lt;script src="/[contextPath]/dandelion/datatables/ajax/reload.js">&lt;/script>
-</pre>
-</p>
-<p>
-   Whereas with a Servlet 2.x-compatible container, the link will look like:
-<pre class="prettyprint">
-&lt;script src="/[contextPath]/dandelion-assets/[cacheKey]/reload.js">&lt;/script>
-</pre>
-</p>
+----
 
-==== 4.2.5. `webjar` locator
+Client-side, Dandelion will generate the following link:
 
-<h3 class="section-title" id="wjli">Installation</h3>
-<p>
-   This locator is bundled in the <i>dandelion-webjars</i> extra since it brings a new dependency to the
-   <a href="https://github.com/webjars/webjars-locator">webjars-locator</a> project. This project is internally used
-   by the <i>webjar locator</i> to locate assets inside <a href="http://www.webjars.org/">WebJars</a>.
-</p>
-<p>
-   {% assign artifact = 'dandelion-webjars' %} 
-   {% include build-tools.html %}
-</p>
+[source, html]
+----
+<script src="/[contextPath]/dandelion/datatables/ajax/reload.js"></script>
+----
 
-<h3 class="section-title" id="wjlu">Usage</h3>
-<p>
-   The <i>webjar locator</i> should be used whenever you need to load an asset stored inside a
-   <a href="http://www.webjars.org/">WebJar</a>.
-</p>
-<p>
-   <table class="table table-striped table-hover">
-      <tbody>
-         <tr>
-            <td>Location key</td>
-            <td><code>webjars</code></td>
-         </tr>
-         <tr>
-            <td>Corresponding value</td>
-            <td>Name of the asset (path excluded but extension included)</td>
-         </tr>
-         <tr>
-            <td>Caching forced</td>
-            <td>
-               <p>No if the Servlet 3.x API is being used, yes otherwise.
-            </td>
-         </tr>
-         <tr>
-            <td>Class(es)</td>
-            <td>{% javadoc ddl dandelion-extras/dandelion-webjars WebjarLocator %}, {% javadoc ddl dandelion-extras/dandelion-webjars WebjarServlet2Locator %}</td>
-         </tr>
-      </tbody>
-   </table>
-</p>   
+==== 5.2.5. `webjar` locator
 
-<h3 class="section-title" id="jls2s3">Servlet 2.x vs Servlet 3.x</h3>
-<p>
-   Dandelion automatically detects whether the running server is using the Servlet 3.x API (<a
-      href="https://jcp.org/en/jsr/detail?id=315">JSR 315</a>) or lower.
-</p>
-<p>
-   If so, it takes profit of the feature that consists of serving from the application web context
-   root all resources placed under the
-   <code>META-INF/resources</code>
-   directory of any JAR placed in
-   <code>WEB-INF/lib</code>
-   . In such a case, the asset is not cached but directly served from the JAR instead.
-</p>
-<p>
-   On the contrary, if the Servlet 2.x API is being used, Dandelion will apply the strategy
-   <a href="/dandelion/features/asset-locators/introducing-asset-locators.html#ac">described in
-      the introduction</a>.
-</p>
+This locator is bundled in the _dandelion-webjars_ extra since it brings a new dependency to the https://github.com/webjars/webjars-locator[webjars-locator] project. This project is internally used by the _webjar locator_ to locate assets inside http://www.webjars.org/[WebJars].
 
-<h3 class="section-title" id="wjle">Example</h3>
-<p>
-   Assuming that the <strong>bootstrap-2.3.0.jar</strong> is present in your classpath, the bundle
-   definition should look like:
-<pre class="prettyprint">
+.New dependency required
+[source,xml,subs="+attributes"]
+----
+<dependency>
+  <groupId>com.github.dandelion</groupId>
+  <artifactId>dandelion-webjars</artifactId>
+  <version>{ddl-version}</version>
+</dependency>
+----
+
+The `webjar` locator should be used whenever you need to load an asset stored inside a http://www.webjars.org/[WebJar].
+
+|===
+| *Location key* | `webjar`
+
+| *Corresponding value* | Name of the asset (path excluded but extension included)
+
+| *Caching forced* | No
+|===
+
+[discrete]
+==== Example
+
+Assuming that the _bootstrap-2.3.0.jar_ is present in the classpath, the bundle definition should look like:
+
+[source, json]
+----
 {
-   "bundle" : "my-bundle",
-   "assets": [{
-      "name": "bootstrap",
-      "version": "2.3.0",
-      "type": "css",
+  "assets": [
+    {
       "locations": {
-         "webjars": "bootstrap.css"
+        "webjars": "bootstrap.css"
       }
-   }]
+    }
+  ]
 }
-</pre>
-</p>
-<p>
-   Now client-side, if the application is running inside a Servlet 3.x-compatible container, the link will look like:
-<pre class="prettyprint">
-&lt;link rel="stylesheet" href="/[contextPath]/webjars/bootstrap/2.3.0/css/bootstrap.css" />
-</pre>
-</p>
-<p>
-   Whereas with a Servlet 2.x-compatible container, the link will look like:
-<pre class="prettyprint">
-&lt;link rel="stylesheet" href="/[contextPath]/dandelion-assets/[cacheKey]/bootstrap.css"/>
-</pre>
-</p>
+----
 
-==== 4.2.6. `delegate` locator
+Client-side, Dandelion will generate the following link:
 
-<h3 class="section-title" id="dlu">Usage</h3>
-<p>
-   The <i>delegate locator</i> should be used for generated assets, i.e. assets whose content is
-   dynamically generated.
-</p>
-<p>
-   <table class="table table-striped table-hover">
-      <tbody>
-         <tr>
-            <td>Location key</td>
-            <td><code>delegate</code></td>
-         </tr>
-         <tr>
-            <td>Corresponding value</td>
-            <td>Name given to the asset</td>
-         </tr>
-         <tr>
-            <td>Caching forced</td>
-            <td>yes</td>
-         </tr>
-         <tr>
-            <td>Class(es)</td>
-            <td>{% javadoc ddl dandelion-core DelegateLocator %}</td>
-         </tr>
-      </tbody>
-   </table>
-</p>
+[source, html]
+----
+<link rel="stylesheet" href="/[contextPath]/webjars/bootstrap/2.3.0/css/bootstrap.css" />
+----
 
-<p>
-   This locator is a bit particular since it reads the content of the asset from a special parameter
-   stored inside the {% javadoc ddl dandelion-core AssetRequestContext %}.
-</p>
-<p>
-   This parameter:
-</p>
-<ul>
-   <li>must be stored under the key <code>DelegateLocator.DELEGATED_CONTENT_PARAM</code></li>
-   <li>must be a class that implements {% javadoc ddl dandelion-core DelegatedContent %} and where the
-      <code>getContent()</code> method must return the asset content to be injected</li>
-</ul>
+==== 5.2.6. `api` locator
 
-<h3 class="section-title" id="dle">Example</h3>
-<p>
-   <a href="/datatables">Dandelion-Datatables</a> internally uses this locator to delegate the
-   content generation to {% javadoc ddl dandelion-core JavascriptGenerator %}.
-</p>
-<p>
-   Below is the main Dandelion-Datatables bundle:
-<pre class="prettyprint">
+The `api` locator should be used for generated assets, i.e. assets whose content is programmaticaly generated.
+
+|===
+| *Location key* | `api`
+
+| *Corresponding value* | Name given to the asset
+
+| *Caching forced* | Yes
+|===
+
+This locator is a bit particular since it reads the content of the asset from a special parameter stored inside the `AssetRequestContext`.
+
+This parameter:
+
+* must be stored under the `ApiLocator.API_CONTENT_PARAM` key
+* must be a class that implements `AssetContentGenerator` and where the `getAssetContent()` method must return the content of the asset
+
+[discrete]
+==== Example
+
+Dandelion-Datatables internally uses this locator to delegate the asset generation to a custom generator.
+
+Below is the main Dandelion-Datatables bundle:
+
+.src/main/resources/dandelion/datatables/ddl-dt.json
+[source, json]
+----
 {
-   "bundle": "ddl-dt",
-   "dependencies": [ "datatables" ], 
-   "assets": [{
-      "name": "dandelion-datatables", 
-      "version": "0.10.0",
-      "type": "js", 
+  ...
+  "assets": [
+    {
+      ...
+      "name": "dandelion-datatables",
       "locations": {
-         "delegate": "dandelion-datatables.js"
+        "api": "dandelion-datatables.js"
       }
-   }]
+    }
+  ]
 }
-</pre>
-</p>
-<p>
-   In the above bundle, an asset called <strong>dandelion-datatables</strong> has a delegated
-   content. It basically means that a delegate object must return the content to be injected into
-   this asset.
-</p>
-<p>
-   This can be done thanks to the {% javadoc ddl dandelion-core AssetRequestContext %}:
-<pre class="prettyprint">
+----
+
+TODO
+In the above bundle, an asset called `dandelion-datatables` will be used to store a particular entry in the `AssetRequestContext` object, which is the main user-side entry point for manipulating the bundle graph associated to the current `HttpServletRequest`.
+
+TODO
+To such a key will be associated a specific entry: 
+has a delegated content. It basically means that a delegate object must return the content to be injected into this asset.
+
+TODO
+This can be done thanks to the `AssetRequestContext` object which is the main user-side entry point for manipulating the bundle graph associated to the current `HttpServletRequest`.
+
+[source, java]
+----
+JQueryContentGenerator javascriptGenerator = new JQueryContentGenerator(...);
+
 AssetRequestContext
-   .get(request)
-   .addBundles("ddl-dt", "datatables")
-   .addParameter("dandelion-datatables", DelegateLocator.DELEGATED_CONTENT_PARAM, DatatablesConfigurator.getJavascriptGenerator(), false);
-</pre>
-   where:
-</p>
-<ul>
-   <li>
-      <code>get(request)</code> returns the asset context of the current request, which is the main
-      user-side entry point for manipulating the assets graph associated to the current <code>HttpServletRequest</code>.
-   </li>
-   <li>
-      <code>addBundles("ddl-dt", "datatables")</code> just adds the given bundle to the {% javadoc ddl dandelion-core AssetRequestContext %}.
-   </li>
-   <li>
-      <p>
-         <code>addParameter(...)</code>
-         fills the request context with a particular entry: the Dandelion-Datatables Javascript
-         generator, which generates the DataTables configuration.
-      </p> 
-      <p>
-         Note that this entry uses
-         <code>DelegateLocator.DELEGATED_CONTENT_PARAM</code>
-         as key since the <i>delegate locator</i> will attempt to find an entry in the
-         parameters map with this key.
-      </p>
-      <p>
-         Also note that the given JavaScriptGenerator (lien javadoc) implements the {% javadoc ddl dandelion-core DelegatedContent %} interface.
-<pre class="prettyprint">
-public class SomeJavascriptGenerator extends DelegatedContent {
-   ...
-}
-</pre>
-      </p>
-   </li>
-</ul>
-<p>
-   Finally, client-side, Dandelion will generate the following link:
-<pre class="prettyprint">
-&lt;script src="/[contextPath]/dandelion-assets/[cacheKey]/dandelion-datatables-0.10.0.js">&lt;/script>
-</pre>
-</p>
+  .get(request) // <1>
+  .addBundles("ddl-dt") // <2>
+  .addParameter("dandelion-datatables", ApiLocator.API_CONTENT_PARAM, javascriptGenerator, false); // <3>
+----
+<1> `get(request)` returns the `AssetRequestContext` object
+<2> `addBundles("ddl-dt")` just adds the given bundle to the `AssetRequestContext`. This way, all assets specified in this bundle will be loaded into the page
+<3> `addParameter(...)` fills the request context with a particular entry: `dandelion-datatables` <--> `<ApiLocator.API_CONTENT_PARAM, javascriptGenerator>`. 
 
-=== 4.3. Plugging-in your own asset locator
+Finally, Dandelion will generate the following link:
 
-TIP: Pending
+[source, html]
+----
+<script src="/[contextPath]/dandelion-assets/[cacheKey]/dandelion-datatables-xxx.js"></script>
+----
 
-<p>
-   You may wish to use a custom <a
-      href="introducing-asset-locator.html">locator</a>. Let's see here how to
-   proceed.
-</p>
+=== 5.3. Plugging-in your own asset locator
 
-<h3 class="section-title" id="slw">SPI for locators</h3>
-<p>
-   In order to plug-in your own locator, just follow these steps:
-</p>
-<ol>
-   <li>Create a class:
-      <ul>
-         <li>that extends AbstractAssetLocator (lien)</li>
-         <li>that implement either the {% javadoc ddl dandelion-core Servlet2Compatible %} interface, or {% javadoc ddl dandelion-core Servlet3Compatible %}, or both</li>
-      </ul> 
-<pre class="prettyprint">
+Like most parts of the framework, you can use your own asset locator thanks to the SPI mechanism.
+
+In order to plug-in your own locator, just follow these steps:
+
+. Create a class that extends `AbstractAssetLocator` (you can directly implement the `AssetLocator` interface but you better use the abstract class)
+
++
+[source, java]
+----
 package com.foo.asset.locator.impl;
 
-public class MyLocator extends AbstractAssetLocator implements Servlet2Compatible {
+public class MyLocator extends AbstractAssetLocator {
 
    @Override
    public String getLocationKey() {
@@ -622,35 +430,30 @@ public class MyLocator extends AbstractAssetLocator implements Servlet2Compatibl
    }
 
    @Override
-   protected String doGetContent(String location, Map&lt;String, Object> parameters, HttpServletRequest request) {
+   protected String doGetContent(String location, Map<String, Object> parameters, HttpServletRequest request) {
       return "the content of the asset";
    }
 }
-</pre>   
-   </li>
-   <li>
-      <p>
-         In the <code>META-INF/services</code> folder, create a text file (UTF-8 encoded) using the following convention:
-<pre class="prettyprint">
-yourJar
+----
+
+. In the `META-INF/services` folder, create a text file (UTF-8 encoded) using the following convention:
+
++
+.Example with a Maven project
+[source, xml]
+----
+project-root
 |__ src
    |__ main
       |__ resources
          |__ META-INF
             |__ services
                |__ com.github.dandelion.core.asset.locator.spi.AssetLocator
-   
-</pre>   
-      </p>
-      <p>
-         Inside this file, just add the fully qualified name of your own implementation. For example:
-<pre class="prettyprint">
-com.foo.asset.locator.impl.MyLocator
-</pre>
-      </p>   
-   </li>
-</ol>
-<p>
-   And that's all! Dandelion, thanks to the SPI mechanism, will automatically pick up your
-   implementation on the next restart.
-</p>
+----
+ 
++
+Inside this file, just add the fully qualified name of your own implementation. For example:
+
+ com.foo.asset.locator.impl.MyLocator
+
+And that's all! Dandelion, thanks to the SPI mechanism, will automatically pick up your implementation on the next restart.
