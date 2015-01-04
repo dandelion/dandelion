@@ -1,11 +1,6 @@
-== 2. Installation
+== 3. Installation
 
-=== 2.1. Requirements
-
-* Java 6+ Runtime Environment
-* Servlet 3.0+ container such as Jetty 8.x, Tomcat 7.x, JBoss AS 6, Weblogic Server 12c...
-
-=== 2.2. Common installation steps
+=== 3.1. Common installation steps
 
 The list below covers the common steps across all supported template engines.
 
@@ -69,7 +64,7 @@ Add the following configuration to your `web.xml` file:
 </servlet-mapping>
 ----
 
-=== 2.3. JSP-based steps
+=== 3.2. JSP-based steps
 
 * *Declare the taglib definition*
 
@@ -77,7 +72,7 @@ Everywhere you want to request assets manually, you need to add the taglib defin
 
  <%@ taglib prefix="datatables" uri="http://github.com/dandelion" %>
 
-=== 2.4. Thymeleaf-based steps
+=== 3.3. Thymeleaf-based steps
 
 * *Declare the Thymeleaf dialect*
 
