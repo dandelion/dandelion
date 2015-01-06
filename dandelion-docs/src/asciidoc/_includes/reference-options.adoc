@@ -1,19 +1,32 @@
 == Appendix C: Configuration options reference
 
-TIP: Pending
+The table below lists all available <<12-configuration-options, configuration options>>.
 
-The table below lists all configuration options that you can use in the <a href="/datatables/features/configuration/configuration-loading.html">configuration files</a>. TODO
+Note that all options are presented in the following format:
 
-Note that you can also see the default value used with the both `dev` and `prod` profiles. See the <<9-profiles, profiles section>> for more information.
+[cols="31,5,62"]
+|===
+.4+|*option.name*
+2+|Description of the option
+
+|Values
+|All possible values
+
+|dev
+|The default value set in the `dev` profile
+
+|prod
+|The default value set in the `prod` profile
+|===
 
 [discrete]
 ==== Reference
 
 .Configuration options reference
-[cols="1,1,9"]
+[cols="31,5,62"]
 |===
 
-3+|*Asset-related configuration options*
+3+|*Asset-related options*
 
 .4+|[[opt-asset.minification]]*asset.minification*
 2+|Enable or disable asset minification
@@ -87,7 +100,7 @@ Note that you can also see the default value used with the both `dev` and `prod`
 |Default prod
 |yes
 
-3+|*Versioning-related configuration options*
+3+|*Versioning-related options*
 
 .4+|[[opt-asset.versioning.mode]]*asset.versioning.mode*
 2+|Versioning mode to be used for assets
@@ -149,7 +162,7 @@ Note that you can also see the default value used with the both `dev` and `prod`
 |prod
 |yyyyMMdd
 
-3+|*Caching-related configuration options*
+3+|*Caching-related options*
 
 .4+|[[opt-asset.caching]]*asset.caching* TODO
 2+|CSS class(es) to be applied to the container used for export links
@@ -223,7 +236,7 @@ Note that you can also see the default value used with the both `dev` and `prod`
 |Default prod
 |
 
-3+|*Bundle-related configuration options*
+3+|*Bundle-related options*
 
 .4+|[[opt-bundle.location]]*bundle.location*
 2+|Root location (in the classpath) of bundles
@@ -261,7 +274,7 @@ Note that you can also see the default value used with the both `dev` and `prod`
 |prod
 |yes
 
-3+|*Tooling-related configuration options*
+3+|*Tooling-related options*
 
 .4+|[[opt-tool.gzip]]*tool.gzip*
 2+|Enable or disable GZIP compression of 
@@ -311,7 +324,7 @@ Note that you can also see the default value used with the both `dev` and `prod`
 |prod
 |prod
 
-3+|*Monitoring-related configuration options*
+3+|*Monitoring-related options*
 
 .4+|[[opt-monitoring.jmx]]*monitoring.jmx*
 2+| (beta) Enable or disable JMX monitoring
