@@ -34,8 +34,10 @@ import javax.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.github.dandelion.core.Context;
 import com.github.dandelion.core.asset.generator.AssetContentGenerator;
 import com.github.dandelion.core.scripting.ScriptingUtils;
+import com.github.dandelion.core.web.WebConstants;
 
 /**
  * @author Romain Lespinasse
@@ -49,11 +51,17 @@ public abstract class AbstractJsContentGenerator implements AssetContentGenerato
 	@Override
 	public String getAssetContent(HttpServletRequest request) {
 
+		Context context = (Context) request.getAttribute(WebConstants.DANDELION_CONTEXT_ATTRIBUTE);
+
 		logger.debug("Generating asset...");
 		String generatedContent = getJavascriptContent(request);
 		logger.debug("Asset generated successfully");
 
-		return ScriptingUtils.prettyPrintJs(generatedContent);
+		if (context.getConfiguration().isToolAssetPrettyPrintingEnabled()) {
+			return ScriptingUtils.prettyPrintJs(generatedContent);
+		}
+		
+		return generatedContent;
 	}
 
 	protected abstract String getJavascriptContent(HttpServletRequest request);

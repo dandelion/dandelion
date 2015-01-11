@@ -99,6 +99,7 @@ public class Configuration {
 
 	// Tooling-related configurations
 	private boolean toolDebuggerEnabled;
+	private boolean toolAssetPrettyPrintingEnabled;
 	private boolean toolBundleReloadingEnabled;
 	private boolean toolGzipEnabled;
 	private Set<String> toolGzipMimeTypes;
@@ -173,10 +174,12 @@ public class Configuration {
 
 		// Tooling-related configurations
 		this.toolDebuggerEnabled = Boolean.parseBoolean(readConfig(DandelionConfig.TOOL_DEBUGGER));
+		this.toolAssetPrettyPrintingEnabled = Boolean
+				.parseBoolean(readConfig(DandelionConfig.TOOL_ASSET_PRETTY_PRINTING));
 		this.toolBundleReloadingEnabled = Boolean.parseBoolean(readConfig(DandelionConfig.TOOL_BUNDLE_RELOADING));
 		this.toolGzipEnabled = Boolean.parseBoolean(readConfig(DandelionConfig.TOOL_GZIP));
-		this.toolGzipMimeTypes= PropertiesUtils.propertyAsSet(readConfig(DandelionConfig.TOOL_GZIP_MIME_TYPES));
-		
+		this.toolGzipMimeTypes = PropertiesUtils.propertyAsSet(readConfig(DandelionConfig.TOOL_GZIP_MIME_TYPES));
+
 		// Monitoring configurations
 		this.monitoringJmxEnabled = Boolean.parseBoolean(readConfig(DandelionConfig.MONITORING_JMX));
 
@@ -254,6 +257,10 @@ public class Configuration {
 
 	public boolean isToolDebuggerEnabled() {
 		return this.toolDebuggerEnabled;
+	}
+
+	public boolean isToolAssetPrettyPrintingEnabled() {
+		return toolAssetPrettyPrintingEnabled;
 	}
 
 	public boolean isToolBundleReloadingEnabled() {

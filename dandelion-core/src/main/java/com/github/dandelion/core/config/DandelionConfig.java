@@ -75,7 +75,8 @@ public enum DandelionConfig {
 	// Tooling-related configurations
 	TOOL_GZIP("tool.gzip", "false", "true"),
 	TOOL_GZIP_MIME_TYPES("tool.gzip.mime.types", "text/html,text/css,application/x-javascript,application/javascript,text/javascript,text/plain,text/xml,application/xhtml+xml,image/svg+xml", "text/html,text/css,application/x-javascript,application/javascript,text/javascript,text/plain,text/xml,application/xhtml+xml,image/svg+xml"),
-	TOOL_DEBUGGER("tool.debugger", "true", "false"), 
+	TOOL_DEBUGGER("tool.debugger", "true", "false"),
+    TOOL_ASSET_PRETTY_PRINTING("tool.asset.pretty.printing", "true", "false"), 
 	TOOL_BUNDLE_RELOADING("tool.bundle.reloading", "true", "false"),
 	
 	// Moniroting configurations
