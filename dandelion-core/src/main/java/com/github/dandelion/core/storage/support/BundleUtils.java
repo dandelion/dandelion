@@ -166,16 +166,19 @@ public final class BundleUtils {
 									+ "\" has an empty location. Please correct it before continuing.");
 						}
 						else {
-							boolean extensionNotFound = true;
-							for (AssetType assetType : AssetType.values()) {
-								if (location.toLowerCase().endsWith("." + assetType.toString())) {
-									extensionNotFound = false;
-									break;
+							// The asset type can be specified explicitely
+							if(asu.getType() == null){
+								boolean extensionNotFound = true;
+								for (AssetType assetType : AssetType.values()) {
+									if (location.toLowerCase().endsWith("." + assetType.toString())) {
+										extensionNotFound = false;
+										break;
+									}
 								}
-							}
-							if (extensionNotFound) {
-								logBuilder.error("- Missing extension", "[" + bsu.getName()
-										+ "] The extension is required in all locations.");
+								if (extensionNotFound) {
+									logBuilder.error("- Missing extension", "[" + bsu.getName()
+											+ "] The extension is required in all locations.");
+								}
 							}
 						}
 					}

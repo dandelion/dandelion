@@ -82,7 +82,6 @@ public class AssetMapperTest {
 		AssetStorageUnit asu = new AssetStorageUnit();
 		asu.setName("asset-name");
 		asu.setType(AssetType.js);
-		asu.setVersion("1.0.0");
 		asu.setLocations(singletonMap("webapp", "/assets/js/asset-name.js"));
 		Asset asset = assetMapper.mapToAsset(asu);
 		assertThat(asset.getName()).isEqualTo("asset-name");
@@ -145,7 +144,6 @@ public class AssetMapperTest {
 		AssetStorageUnit asu = new AssetStorageUnit();
 		asu.setName("asset-name");
 		asu.setType(AssetType.js);
-		asu.setVersion("1.0.0");
 
 		Map<String, String> locations = new HashMap<String, String>();
 		locations.put("cdn", "//asset-name.js");

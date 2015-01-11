@@ -64,7 +64,7 @@ public class AssetMapper {
 	 * The current HTTP request.
 	 */
 	private final HttpServletRequest request;
-	
+
 	/**
 	 * The Dandelion context.
 	 */
@@ -168,7 +168,7 @@ public class AssetMapper {
 
 		String cacheKey = this.context.getCacheManager().generateCacheKey(this.request, asset);
 		asset.setCacheKey(cacheKey);
-		
+
 		if (asu.isNotVendor()
 				&& (this.context.getConfiguration().isAssetAutoVersioningEnabled()
 						|| this.context.getConfiguration().isAssetCachingEnabled() || locator.isCachingForced() || this.context
@@ -177,7 +177,7 @@ public class AssetMapper {
 			String content = this.context.getCacheManager().getContent(asset.getCacheKey());
 
 			if (content == null || this.context.getConfiguration().isAssetCachingEnabled()) {
-				
+
 				if (locator.isActive()) {
 
 					content = locator.getContent(asu, request);
@@ -188,19 +188,17 @@ public class AssetMapper {
 			}
 		}
 
-		asset.setName(PathUtils.extractLowerCasedName(location));
+		asset.setName(getName(asu, location));
 		asset.setBundle(asu.getBundle());
-		asset.setType(AssetType.typeOf(location));
+		asset.setType(getType(asu, location));
 		asset.setConfigLocationKey(locationKey);
 		asset.setConfigLocation(asu.getLocations().get(locationKey));
-		if (!asset.isVendor()) {
-			asset.setVersion(getVersion(asset));
-		}
+		asset.setVersion(getVersion(asu, asset));
 		asset.setFinalLocation(getFinalLocation(asset, location, locator));
-		
+
 		return asset;
 	}
-	
+
 	/**
 	 * <p>
 	 * Computes the final location of the provided {@link Asset}. This location
@@ -210,8 +208,10 @@ public class AssetMapper {
 	 * @param asset
 	 *            The asset for which the final location is to be computed.
 	 * @param location
+	 *            The selected location.
 	 * @param assetLocator
-	 * @return
+	 *            The selected asset locator.
+	 * @return The final location of the asset.
 	 */
 	private String getFinalLocation(Asset asset, String location, AssetLocator assetLocator) {
 
@@ -225,32 +225,92 @@ public class AssetMapper {
 			return location;
 		}
 	}
-	
+
 	/**
 	 * <p>
 	 * Returns the version of the provided asset:
 	 * </p>
-	 * <ul>
-	 * <li>using the active {@link AssetVersioningStrategy} if automatic
-	 * versioning is enabled</li>
-	 * <li>directly using the version configured in the corresponding bundle
-	 * otherwise</li>
-	 * </ul>
+	 * <ol>
+	 * <li>first by selecting the version specified in the bundle definition</li>
+	 * <li>or by applying the active {@link AssetVersioningStrategy} if
+	 * automatic versioning is enabled</li>
+	 * <li>or finally a version called <code>UNDEFINED_VERSION</code> that
+	 * indicates the versioning information is missing</li>
+	 * </ol>
 	 * 
+	 * @param asu
+	 *            The asset storage unit definition coming from the bundle
+	 *            definition.
 	 * @param asset
 	 *            The asset to extract the version from.
 	 * @return the version of the asset.
 	 */
-	private String getVersion(Asset asset){
-		
-		// Auto versioning
-		if(this.context.getConfiguration().isAssetAutoVersioningEnabled()){
+	private String getVersion(AssetStorageUnit asu, Asset asset) {
+
+		// First: manual versioning if specified
+		if (StringUtils.isNotBlank(asu.getVersion())) {
+			return asu.getVersion();
+		}
+
+		// Then, auto versioning if enabled
+		if (this.context.getConfiguration().isAssetAutoVersioningEnabled()) {
 			AssetVersioningStrategy avs = this.context.getActiveVersioningStrategy();
 			return avs.getAssetVersion(asset);
 		}
-		// Manual versioning
+
+		// Finally, a clear version indicating some configuration is missing
+		return "UNDEFINED_VERSION";
+	}
+
+	/**
+	 * <p>
+	 * Computes the final asset name:
+	 * <ol>
+	 * <li>First by reading the asset storage unit if the name if specified</li>
+	 * <li>Otherwise by extracting the asset name from its first location</li>
+	 * </ol>
+	 * </p>
+	 * 
+	 * @param asu
+	 *            The asset storage unit definition coming from the bundle
+	 *            definition.
+	 * @param location
+	 *            The selected location.
+	 * 
+	 * @return the name of the asset.
+	 */
+	private String getName(AssetStorageUnit asu, String location) {
+		if (StringUtils.isNotBlank(asu.getName())) {
+			return asu.getName();
+		}
 		else {
-			return StringUtils.isNotBlank(asset.getVersion()) ? asset.getVersion() : "UNDEFINED_VERSION";
+			return PathUtils.extractLowerCasedName(location);
+		}
+	}
+
+	/**
+	 * <p>
+	 * Computes the asset type:
+	 * <ol>
+	 * <li>First by reading the asset storage unit definition, if the type is
+	 * manually specified</li>
+	 * <li>Otherwise by extracting the asset type from its first location</li>
+	 * </ol>
+	 * </p>
+	 * 
+	 * @param asu
+	 *            The asset storage unit definition coming from the bundle
+	 *            definition.
+	 * @param location
+	 *            The selected location.
+	 * @return the type of the asset.
+	 */
+	private AssetType getType(AssetStorageUnit asu, String location) {
+		if (asu.getType() != null) {
+			return asu.getType();
+		}
+		else {
+			return AssetType.typeOf(location);
 		}
 	}
 }
