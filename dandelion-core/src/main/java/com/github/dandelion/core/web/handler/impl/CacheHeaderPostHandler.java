@@ -89,7 +89,8 @@ public class CacheHeaderPostHandler extends AbstractRequestHandler {
 			httpResponse.setHeader(HttpHeader.PRAGMA.getName(), "cache");
 
 			// Proxy caching, see rfc2616-sec14.21
-			httpResponse.setDateHeader(HttpHeader.EXPIRES.getName(), ONE_YEAR_IN_MILLISECONDS);
+			httpResponse.setDateHeader(HttpHeader.EXPIRES.getName(), System.currentTimeMillis()
+					+ ONE_YEAR_IN_MILLISECONDS);
 
 			// Brower caching, see rfc2616-sec14.29
 			// Considered the last modified date as the start up time of the
