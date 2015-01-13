@@ -16,10 +16,12 @@ Major topics covered by Dandelion-Core are:
 
 All these topics will be addressed in this document.
 
-=== 1.3. Overall architecture
+=== 1.3. Overall functioning
 
 Dandelion-Core is mainly based on a http://docs.oracle.com/javaee/6/api/javax/servlet/Filter.html[Filter] which dynamically injects static assets into http://docs.oracle.com/javaee/6/api/javax/servlet/http/HttpServletResponse.html[HttpServletResponse]s, that is - HTML pages. Dandelion-Core is therefore considered as a _runtime solution_ (as opposed to _build time solutions_ provided by other frameworks/libraries).
 
-Dandelion-Core reads a set of bundle definitions, either embedded within existing components or directly provided by end-users, and represented in different formats (such as JSON or XML). Once these bundle definitions consumed, Dandelion-Core builds a directed acyclic graph of bundles (or _bundles graph_ later in this document) and traverses this graph as soon as one or more bundles are requested by the end-user.
+Dandelion-Core reads a set of bundle definitions, either embedded within existing components, directly provided by end-users or both, and represented in different formats (such as JSON or XML). Once these bundle definitions consumed, Dandelion-Core builds a directed acyclic graph of bundles (or _bundles graph_ later in this document) and attaches it to every requests made against the web application.
+
+As soon as the end-user requests a bundle, using any of the provided ways (JSP taglib, http://www.thymeleaf.org/[Thymeleaf] dialect, ...), Dandelion-Core traverses the _bundle graph_ to extract all corresponding assets and then injects `<script>` ans `<link>` tags into the HTML page.
 
 Since Dandelion-Core have full control over the static assets, many actions can be performed such as asset versioning, browser caching, and many more.
