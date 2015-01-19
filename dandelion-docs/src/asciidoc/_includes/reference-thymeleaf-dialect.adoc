@@ -2,6 +2,108 @@
 
 === B.1. `ddl:bundle*` attributes
 
+The `ddl:bundle*` attributes allow you to include bundles in (or exclude them from) the current HTTP request.
+
+[discrete]
+==== Usage
+
+In order to include a bundle to the current HTTP request, use the `ddl:bundle-includes` attribute as follows:
+
+[source, html]
+----
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:ddl="http://www.thymeleaf.org/dandelion">
+  <head ddl:bundle-includes="bundle-to-include, another-bundle-to-include">
+    ...
+  </head>
+  <body>
+    ...
+  </body>
+</html>
+----
+
+In the same way, use the `ddl:bundle-excludes` attribute as follows to exclude a bundle from the current HTTP request:
+
+[source, html]
+----
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:ddl="http://www.thymeleaf.org/dandelion">
+  <head ddl:bundle-excludes="bundle-to-exclude">
+    ...
+  </head>
+  <body>
+    ...
+  </body>
+</html>
+----
+
+TIP: Both `ddl:bundle-includes` and `ddl:bundle-excludes` attributes can be used on *any HTML tag*.
+
+[discrete]
+==== Reference
+
+.`ddl:bundle*` attributes reference
+[cols="2,8"]
+|===
+|Attribute |Description
+
+|[[jsp-bundle-includes]]*ddl:bundle-includes*
+|Comma-separated list of bundles to include in the current HTTP request
+
+|[[jsp-bundle-excludes]]*ddl:bundle-excludes*
+|Comma-separated list of bundles to exclude from the current HTTP request
+|===
+
 === B.2. `ddl:asset*` attributes
 
+The `ddl:asset*` attributes allow you to exclude assets (JS and/or CSS) from the current HTTP request.
 
+[discrete]
+==== Usage
+
+In order to exclude one JS asset from the current request, use the `ddl:asset-js-excludes` as follows:
+
+[source, html]
+----
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:ddl="http://www.thymeleaf.org/dandelion">
+  <head>
+    ...
+  </head>
+  <body ddl:asset-js-excludes="js-asset-to-exclude, another-js-asset-to-exclude">
+    ...
+  </body>
+</html>
+----
+
+And in order to exclude one CSS asset from the current HTTP request, use the `ddl:asset-css-excludes` as follows:
+
+[source, html]
+----
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:ddl="http://www.thymeleaf.org/dandelion">
+  <head>
+    ...
+  </head>
+  <body ddl:asset-css-excludes="css-asset-to-exclude">
+    ...
+  </body>
+</html>
+----
+
+TIP: As `ddl:bundle*` attributes, `ddl:asset*` attributes can be used on *any HTML tag*.
+
+[discrete]
+==== Reference
+
+.`ddl:asset*` attributes reference
+[cols="2,8"]
+|===
+|Attribute |Description
+
+|[[jsp-asset-js-excludes]]*ddl:asset-js-excludes*
+|Comma-separated list of JS asset names to exclude from the current HTTP request
+
+|[[jsp-asset-css-excludes]]*ddl:asset-css-excludes*
+|Comma-separated list of CSS asset names to exclude from the current HTTP request
+|===
