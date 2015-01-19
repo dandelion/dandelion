@@ -114,7 +114,7 @@ public class CacheHeaderPostHandler extends AbstractHandlerChain {
 
 			// RFC 2616, section 14.21
 			Calendar past = Calendar.getInstance();
-			past.add(Calendar.YEAR, -2);
+			past.add(Calendar.YEAR, -1);
 			httpResponse.setDateHeader(HttpHeader.EXPIRES.getName(), past.getTimeInMillis());
 		}
 
