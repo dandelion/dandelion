@@ -1,8 +1,8 @@
 == 6. Asset versioning
 
-TIP: Pending
+Versioning of assets is not only an important aspect of optimizing for performance, but can also be critical for correct functioning of your application.
 
-Le versioning des assets a une grande importance pour les performance du site web, notamment à cause de la gestion du cache navigateur. Dandelion provides two modes: manual and automatic. 
+In order to facilitate the versioning, Dandelion-Core provides two modes: manual and automatic. They are described below.
 
 === 6.1. Versioning modes
 
@@ -14,7 +14,7 @@ This mode is the default one.
 
 ==== 6.1.2. Manual
 
-The _manual versioning mode_ relies on bundle definitions, in which assets can have a `version` attribute. Si in such a case, the asset version is just read from the asset's attributes.
+The _manual versioning mode_ relies on bundle definitions, in which assets can have a `version` attribute. In such a case, the asset version is just read from the asset's attributes.
 
 TIP: The versioning of _vendor assets_ (assets located in _vendor bundles_) is always manual, i.e. read from the bundle definitions.
 
@@ -32,7 +32,7 @@ This strategy consists of generating a fingerprint for each asset, based on its 
 
 When the asset is static or infrequently changed, this provides an easy way to tell whether two versions of an asset are identical, even across different servers or deployment dates.
 
-When the asset content change, the fingerprint is updated. This will cause the remote clients to request a fresh copy of the asset. In combination with the right caching headers, this is the most powerful technique for better web performance. See the <<, asset caching section>> for more information.
+When the asset content change, the fingerprint is updated. This will cause the remote clients to request a fresh copy of the asset. In combination with the right caching headers, this is the most powerful technique for better web performance. See the <<10-asset-caching, asset caching section>> for more information.
 
 This strategy is *selected by default*, but if you wish, you can explicitely specify it using the <<opt-asset.versioning.strategy, `asset.versioning.strategy`>> configuration option:
 
@@ -46,7 +46,7 @@ In order to use this versioning strategy, use the <<opt-asset.versioning.strateg
 
  asset.versioning.strategy=fixed
 
-Once set, Dandelion provides some ready-to-use versioning types:
+Once set, Dandelion-Core provides some ready-to-use versioning types:
 
 |===
 |Versioning type |Activation

@@ -1,18 +1,18 @@
-== 10. Profiles
+== 9. Profiles
 
 TIP: Pending
 
 Dandelion profiles provide a way to segregate parts of your configuration and make it only available in certain environments.
 
-In order to activate a profile, specify the following system property in the server startup script:
+In order to activate a profile, specify the following System property in the server startup script:
 
  -Ddandelion.profile.active=[profileName]
 
-=== 10.1. Built-in profiles
+=== 9.1. Built-in profiles
 
-All configuration options are created with two values, one for the built-in `dev` profile, another for the `prod` one. Each of these profiles are described below.
+All <<12-configuration-options, configuration options>> are created with two values, one for the built-in `dev` profile, another for the `prod` one. Each of these profiles are described below.
 
-==== 10.1.1. `dev` profile
+==== 9.1.1. `dev` profile
 
 The main goal of the `dev` profile is to accelerate the development. As such, it is *active by default*.
 
@@ -25,28 +25,28 @@ Here follow some of the features enabled with the `dev` profile:
 
 See the <<appendix-c-configuration-options-reference, configuration options reference>> for the complete list of dev values.
 
-TIP: this profile can be activated thanks to different aliases: `dev` and `development`. 
+TIP: This profile can be activated thanks to different aliases: `dev` and `development`. 
 
-==== 10.1.2. `prod` profile
+==== 9.1.2. `prod` profile
 
 The `prod` profile is focused both on performance and security. That is why it should be active in a production environment.
 
 Here follow some of the features enabled with the `prod` profile:
 
-* the HTTP response is gzipped depending on the MIME type of the requested document (performance) 
 * specific HTTP headers are set in order to optimize load times (performance) 
 * asset minification is enabled (performance) 
+* GZIP compression is enabled for compatible MIME types (performance)
 * automatic versioning is enabled (performance) 
 * the debugger is no longer accessible (security)
 * bundle can't be reloaded any longer (security)
 
 See the <<appendix-c-configuration-options-reference, configuration options reference>> for the complete list of prod values.
 
-TIP: this profile can be activated thanks to different aliases: `prod` and `production`. 
+TIP: This profile can be activated thanks to different aliases: `prod` and `production`. 
 
-=== 10.2. Custom profiles
+=== 9.2. Custom profiles
 
-You can of course define your own profiles. It is as simple as creating a new properties file under the `classpath_root/dandelion` folder, with a specific name: `dandelion_[yourProfileName].properties`
+You can of course define your own profiles. It is as simple as creating a new properties file under the `classpath_root/dandelion` folder, with a specific name: `dandelion_[profileName].properties`
 
 WARNING: All options not explicitely declared in your own profile file will be read from the built-in `dev` profile.
 			
@@ -56,17 +56,16 @@ WARNING: All options not explicitely declared in your own profile file will be r
 project-root
 |__ src
    |__ main
-      |__ java
       |__ resources
          |__ dandelion
-            |__ dandelion_[yourProfileName].properties 
+            |__ dandelion_[profileName].properties 
 ----
 
 Then, just activate it using the right system property:
 
- -Ddandelion.profile.active=[yourProfileName]
+ -Ddandelion.profile.active=[profileName]
 
-Remember that in addition to all <<appendix-c-configuration-options-reference, configuration options>>, you can define your own properties in profiles and use them in bundle definitions with the following syntax:
+Note that you can also define your own properties in profiles and use them in bundle definitions with the following syntax:
 
  %PROPERTY%
 
@@ -79,6 +78,7 @@ Consider the two following profiles: `qa` and `prod`.
 .dandelion/dandelion_qa.properties
 [source, xml]
 ----
+# Dandelion options here
 asset.minification=false
 tool.gzip=false
 tool.asset.pretty.printing=true
@@ -90,6 +90,7 @@ media.server=http://qa-media.company.com/
 .dandelion/dandelion_prod.properties
 [source, xml]
 ----
+# Dandelion options here
 asset.minification=true
 tool.gzip=true
 tool.asset.pretty.printing=false
@@ -98,8 +99,9 @@ tool.asset.pretty.printing=false
 media.server=https://prod-media.company.com/
 ----
 
-You can then make use of these properties in your bundle definitions.
+You can then make use of the custom property in your bundle definitions with the following format: `%property%`
 
+.any-bundle.json
 [source, json]
 ----
 {  
@@ -113,3 +115,5 @@ You can then make use of these properties in your bundle definitions.
   ]
 }
 ----
+
+Dandelion will perform the variable substitution as soon as the application server starts.

@@ -11,7 +11,7 @@ Major topics covered by Dandelion-Core are:
 * asset organization in bundles, with several possible asset locations such as `webapp`, `webjar`, `remote`, ...
 * asset processing, such as minification
 * asset caching, both server and client side
-* asset versioning, manual or automatic through different strategies
+* asset versioning, manual or automatic via different strategies
 * asset generation, allowing to extend the core with components
 
 All these topics will be addressed in this document.

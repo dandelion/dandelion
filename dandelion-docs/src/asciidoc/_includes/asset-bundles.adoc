@@ -2,13 +2,13 @@
 
 === 4.1. Introducing assets and asset bundles
 
-In web applications, static assets are basically all the JavaScript and CSS files loaded in your HTML pages. Dandelion-Core provides a wider representation of these assets, using _bundles_.
+In web applications, assets are basically all the JavaScript and CSS files loaded in your HTML pages. Dandelion-Core provides a wider representation of these assets, using _bundles_.
 
-An _assets bundle_, or _bundle_ to simplify the language, is a little more than just a set of assets, because it contains additional information that will be described afterwards.
+An _assets bundle_, or _bundle_ to simplify the language, is a logical group of assets.
 
 ==== 4.1.1. Definitions
 
-A _bundle_ is defined as follows:
+More formally, a _bundle_ is defined as follows:
 
 .Bundle definition
 |===
@@ -25,7 +25,6 @@ A _bundle_ is defined as follows:
 |`assets`
 |Set of assets that compose the bundle
 |Yes
-
 |===
 
 And an _asset_ is defined as follows:
@@ -53,10 +52,6 @@ And an _asset_ is defined as follows:
 |`dom`
 |Desired position in the DOM, among `body` or `head`
 |No. By default `body` for JS and `head` for CSS
-
-|`attributes`
-|TODO
-|TODO
 |===
 
 ===== Example

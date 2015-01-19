@@ -325,7 +325,7 @@ Note that all options are presented in the following format:
 |false
 
 .4+|[[opt-tool.bundle.reloading]]*tool.asset.pretty.printing*
-2+|Enable or disable pretty printing of generated asset (those configured with a `api` location key)
+2+|Enable or disable pretty printing of generated asset (those configured with the `api` location key)
 
 |Values
 |true \| false

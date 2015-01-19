@@ -2,7 +2,7 @@
 
 === A.1. `<dandelion:bundle>` tag
 
-The `<dandelion:bundle>` tag allows you to include bundles to the current HTTP request (or exclude them).
+The `<dandelion:bundle>` tag allows you to include bundles in (or exclude them from) the current HTTP request.
 
 [discrete]
 ==== Usage
