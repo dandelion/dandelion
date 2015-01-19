@@ -53,23 +53,23 @@ import com.github.dandelion.core.asset.AssetDomPosition;
 import com.github.dandelion.core.asset.AssetQuery;
 import com.github.dandelion.core.asset.AssetType;
 import com.github.dandelion.core.web.WebConstants;
-import com.github.dandelion.core.web.handler.RequestHandler;
-import com.github.dandelion.core.web.handler.RequestHandlerContext;
+import com.github.dandelion.core.web.handler.HandlerContext;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 import static org.mockito.Matchers.any;
+
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import static org.powermock.api.mockito.PowerMockito.whenNew;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ AssetInjectionPostHandler.class, RequestHandlerContext.class })
+@PrepareForTest({ AssetInjectionPostHandler.class, Context.class })
 public class AssetInjectionHandlerTest {
 
 	private static final String HTML = "<html><head></head><body></body></html>";
-	private RequestHandler requestHandler;
+	private AssetInjectionPostHandler handler;
 	private MockHttpServletRequest request;
 	private HttpServletResponse response;
 
@@ -84,7 +84,7 @@ public class AssetInjectionHandlerTest {
 
 	@Before
 	public void setup() {
-		requestHandler = new AssetInjectionPostHandler();
+		handler = new AssetInjectionPostHandler();
 		request = new MockHttpServletRequest();
 		response = new MockHttpServletResponse();
 	}
@@ -92,38 +92,38 @@ public class AssetInjectionHandlerTest {
 	@Test
 	public void should_not_apply_on_javascript() {
 		response.setContentType("text/javascript");
-		RequestHandlerContext rhc = new RequestHandlerContext(context, request, response);
-		assertThat(requestHandler.isApplicable(rhc)).isFalse();
+		HandlerContext handlerContext = new HandlerContext(context, request, response, null);
+		assertThat(handler.isApplicable(handlerContext)).isFalse();
 	}
 
 	@Test
 	public void should_not_apply_on_css() {
 		response.setContentType("text/css");
-		RequestHandlerContext rhc = new RequestHandlerContext(context, request, response);
-		assertThat(requestHandler.isApplicable(rhc)).isFalse();
+		HandlerContext handlerContext = new HandlerContext(context, request, response, null);
+		assertThat(handler.isApplicable(handlerContext)).isFalse();
 	}
 
 	@Test
 	public void should_not_apply_if_explicitely_disabled_by_a_request_parameter() {
 		request.addParameter(WebConstants.DANDELION_ASSET_FILTER_STATE, "false");
 		response.setContentType("text/html");
-		RequestHandlerContext rhc = new RequestHandlerContext(context, request, response);
-		assertThat(requestHandler.isApplicable(rhc)).isFalse();
+		HandlerContext handlerContext = new HandlerContext(context, request, response, null);
+		assertThat(handler.isApplicable(handlerContext)).isFalse();
 	}
 
 	@Test
 	public void should_not_apply_if_explicitely_disabled_by_a_request_attribute() {
 		request.setAttribute(WebConstants.DANDELION_ASSET_FILTER_STATE, "false");
 		response.setContentType("text/html");
-		RequestHandlerContext rhc = new RequestHandlerContext(context, request, response);
-		assertThat(requestHandler.isApplicable(rhc)).isFalse();
+		HandlerContext handlerContext = new HandlerContext(context, request, response, null);
+		assertThat(handler.isApplicable(handlerContext)).isFalse();
 	}
 
 	@Test
 	public void should_apply_on_html() {
 		response.setContentType("text/html");
-		RequestHandlerContext rhc = new RequestHandlerContext(context, request, response);
-		assertThat(requestHandler.isApplicable(rhc)).isTrue();
+		HandlerContext handlerContext = new HandlerContext(context, request, response, null);
+		assertThat(handler.isApplicable(handlerContext)).isTrue();
 	}
 
 	// TODO: assets are not properly filtered
@@ -136,14 +136,17 @@ public class AssetInjectionHandlerTest {
 		assets.add(new Asset("a1", "1.0.0", AssetType.js, "final-location/a1.js"));
 		assets.add(new Asset("a2", "1.0.0", AssetType.js, "final-location/a2.js"));
 
+		context = mock(Context.class, Mockito.RETURNS_DEEP_STUBS);
+		when(context.getConfiguration().getEncoding()).thenReturn("UTF-8");
+		
 		whenNew(AssetQuery.class).withAnyArguments().thenReturn(assetQuery);
 		when(assetQuery.atPosition(any(AssetDomPosition.class))).thenReturn(assetQuery);
 		when(assetQuery.perform()).thenReturn(assets);
 
-		RequestHandlerContext rhc = mock(RequestHandlerContext.class, Mockito.RETURNS_DEEP_STUBS);
-		when(rhc.getContext().getConfiguration().getEncoding()).thenReturn("UTF-8");
+		HandlerContext handlerContext = new HandlerContext(context, request, response, HTML.getBytes());
 
-		byte[] processedResponse = requestHandler.handle(rhc, HTML.getBytes());
+		handler.handle(handlerContext);
+		byte[] processedResponse = handlerContext.getResponseAsBytes();
 		String processedResponseAsString = new String(processedResponse);
 		assertThat(processedResponseAsString).contains("<script src=\"final-location/a1.js\"></script>");
 		assertThat(processedResponseAsString).contains("<script src=\"final-location/a2.js\"></script>");
@@ -166,9 +169,15 @@ public class AssetInjectionHandlerTest {
 		exception.expectMessage("Unable to encode the HTML page using the '" + wrongEncoding
 				+ "', which doesn't seem to be supported");
 
-		RequestHandlerContext rhc = mock(RequestHandlerContext.class, Mockito.RETURNS_DEEP_STUBS);
-		when(rhc.getContext().getConfiguration().getEncoding()).thenReturn(wrongEncoding);
+		context = mock(Context.class, Mockito.RETURNS_DEEP_STUBS);
+		when(context.getConfiguration().getEncoding()).thenReturn(wrongEncoding);
+		
+		HandlerContext handlerContext = new HandlerContext(context, request, response, HTML.getBytes());
 
-		requestHandler.handle(rhc, HTML.getBytes());
+//		HandlerContext handlerContext = mock(HandlerContext.class, Mockito.RETURNS_DEEP_STUBS);
+//		when(handlerContext.getContext().getConfiguration().getEncoding()).thenReturn(wrongEncoding);
+//		when(handlerContext.getResponseAsBytes()).thenReturn(HTML.getBytes());
+
+		handler.handle(handlerContext);
 	}
 }

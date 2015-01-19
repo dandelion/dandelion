@@ -29,25 +29,28 @@
  */
 package com.github.dandelion.core.web.handler.impl;
 
+import java.util.Calendar;
+
 import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.github.dandelion.core.web.HttpHeader;
-import com.github.dandelion.core.web.handler.AbstractRequestHandler;
-import com.github.dandelion.core.web.handler.RequestHandlerContext;
+import com.github.dandelion.core.web.handler.AbstractHandlerChain;
+import com.github.dandelion.core.web.handler.HandlerContext;
+import com.github.dandelion.core.web.handler.cache.HttpHeader;
+import com.github.dandelion.core.web.handler.cache.HttpHeaderUtils;
 
 /**
  * <p>
- * Post-filtering request handler intended to set various HTTP cache headers on
+ * Post-filtering response handler intended to set various HTTP cache headers on
  * the response.
  * </p>
  * 
  * @author Thibault Duchateau
  * @since 0.11.0
  */
-public class CacheHeaderPostHandler extends AbstractRequestHandler {
+public class CacheHeaderPostHandler extends AbstractHandlerChain {
 
 	private static final Logger LOG = LoggerFactory.getLogger(CacheHeaderPostHandler.class);
 
@@ -67,49 +70,54 @@ public class CacheHeaderPostHandler extends AbstractRequestHandler {
 
 	@Override
 	public int getRank() {
-		return 20;
+		return 40;
 	}
 
 	@Override
-	public boolean isApplicable(RequestHandlerContext context) {
-		return context.getResponse().getContentType() != null
-				&& !context.getResponse().getContentType().contains("text/html");
+	public boolean isApplicable(HandlerContext handlerContext) {
+		return handlerContext.getResponse().getContentType() != null
+				&& !handlerContext.getResponse().getContentType().contains("text/html");
 	}
 
 	@Override
-	public byte[] handle(RequestHandlerContext context, byte[] response) {
+	public boolean handle(HandlerContext handlerContext) {
 
-		HttpServletResponse httpResponse = context.getResponse();
+		HttpServletResponse httpResponse = handlerContext.getResponse();
 
-		if (context.getContext().getConfiguration().isAssetCachingEnabled()) {
+		if (handlerContext.getContext().getConfiguration().isAssetCachingEnabled()) {
 
+			// RFC 2616, section 14.9
 			httpResponse.setHeader(HttpHeader.CACHE_CONTROL.getName(), "public, max-age=" + ONE_YEAR_IN_SECONDS);
 
-			// Backward compatibility with HTTP/1.0, see rfc2616-sec14.32
-			httpResponse.setHeader(HttpHeader.PRAGMA.getName(), "cache");
+			// RFC 2616, section 14.19
+			httpResponse.setHeader(HttpHeader.ETAG.getName(),
+					HttpHeaderUtils.computeETag(handlerContext.getResponseAsBytes(), handlerContext));
 
-			// Proxy caching, see rfc2616-sec14.21
+			// RFC 2616, section 14.21
 			httpResponse.setDateHeader(HttpHeader.EXPIRES.getName(), System.currentTimeMillis()
 					+ ONE_YEAR_IN_MILLISECONDS);
 
-			// Brower caching, see rfc2616-sec14.29
+			// RFC 2616,section 14.29
 			// Considered the last modified date as the start up time of the
 			// server
 			httpResponse.setDateHeader(HttpHeader.LAST_MODIFIED.getName(), LAST_MODIFIED);
 		}
 		// Disable cache (default in dev profile)
 		else {
-			httpResponse.setHeader(HttpHeader.CACHE_CONTROL.getName(), "no-cache, no-store, must-revalidate");
 
-			// Backward compatibility with HTTP/1.0, see rfc2616-sec14..32
-			httpResponse.setHeader(HttpHeader.PRAGMA.getName(), "no-cache");
+			// RFC 2616, section 14.9
+			httpResponse.setHeader(HttpHeader.CACHE_CONTROL.getName(), "no-cache, no-store");
 
-			// Proxy caching, see rfc2616-sec14.21
-			httpResponse.setHeader(HttpHeader.EXPIRES.getName(), String.valueOf(0));
+			// RFC 2616, section 14.19
+			httpResponse.setHeader(HttpHeader.ETAG.getName(),
+					HttpHeaderUtils.computeETag(handlerContext.getResponseAsBytes(), handlerContext));
+
+			// RFC 2616, section 14.21
+			Calendar past = Calendar.getInstance();
+			past.add(Calendar.YEAR, -2);
+			httpResponse.setDateHeader(HttpHeader.EXPIRES.getName(), past.getTimeInMillis());
 		}
 
-		// The response is left untouched. Only headers should have been
-		// modified
-		return response;
+		return true;
 	}
 }

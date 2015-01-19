@@ -46,8 +46,8 @@ import com.github.dandelion.core.html.AbstractHtmlTag;
 import com.github.dandelion.core.storage.BundleStorage;
 import com.github.dandelion.core.utils.HtmlUtils;
 import com.github.dandelion.core.web.WebConstants;
-import com.github.dandelion.core.web.handler.AbstractRequestHandler;
-import com.github.dandelion.core.web.handler.RequestHandlerContext;
+import com.github.dandelion.core.web.handler.AbstractHandlerChain;
+import com.github.dandelion.core.web.handler.HandlerContext;
 
 /**
  * <p>
@@ -62,7 +62,7 @@ import com.github.dandelion.core.web.handler.RequestHandlerContext;
  * @author Thibault Duchateau
  * @since 0.11.0
  */
-public class AssetInjectionPostHandler extends AbstractRequestHandler {
+public class AssetInjectionPostHandler extends AbstractHandlerChain {
 
 	private static final Logger LOG = LoggerFactory.getLogger(DebuggerPostHandler.class);
 
@@ -77,10 +77,15 @@ public class AssetInjectionPostHandler extends AbstractRequestHandler {
 	}
 
 	@Override
-	public boolean isApplicable(RequestHandlerContext context) {
+	public int getRank() {
+		return 20;
+	}
 
-		HttpServletRequest request = context.getRequest();
-		HttpServletResponse wrappedResponse = context.getResponse();
+	@Override
+	public boolean isApplicable(HandlerContext handlerContext) {
+
+		HttpServletRequest request = handlerContext.getRequest();
+		HttpServletResponse wrappedResponse = handlerContext.getResponse();
 		boolean retval = true;
 
 		// Not applicable in non-HTML resources
@@ -117,19 +122,14 @@ public class AssetInjectionPostHandler extends AbstractRequestHandler {
 	}
 
 	@Override
-	public int getRank() {
-		return 2;
-	}
-
-	@Override
-	public byte[] handle(RequestHandlerContext context, byte[] response) {
+	public boolean handle(HandlerContext handlerContext) {
 
 		// Convert the response to a String in order to perform easier
 		// replacements
-		String html = new String(response);
+		String html = new String(handlerContext.getResponseAsBytes());
 
 		// Get all assets to be injected in the <head> section
-		Set<Asset> assetsHead = new AssetQuery(context.getRequest(), context.getContext()).atPosition(
+		Set<Asset> assetsHead = new AssetQuery(handlerContext.getRequest(), handlerContext.getContext()).atPosition(
 				AssetDomPosition.head).perform();
 
 		if (!assetsHead.isEmpty()) {
@@ -144,7 +144,7 @@ public class AssetInjectionPostHandler extends AbstractRequestHandler {
 		}
 
 		// Get all assets to be injected in the <body> section
-		Set<Asset> assetsBody = new AssetQuery(context.getRequest(), context.getContext()).atPosition(
+		Set<Asset> assetsBody = new AssetQuery(handlerContext.getRequest(), handlerContext.getContext()).atPosition(
 				AssetDomPosition.body).perform();
 
 		if (!assetsBody.isEmpty()) {
@@ -159,10 +159,10 @@ public class AssetInjectionPostHandler extends AbstractRequestHandler {
 
 		// Once all requested assets injected, convert back to a byte array to
 		// let other handler do their work
-		String configuredEncoding = context.getContext().getConfiguration().getEncoding();
+		String configuredEncoding = handlerContext.getContext().getConfiguration().getEncoding();
 		byte[] updatedResponse;
 		try {
-			context.getResponse().setContentLength(html.getBytes(configuredEncoding).length);
+			handlerContext.getResponse().setContentLength(html.getBytes(configuredEncoding).length);
 			updatedResponse = html.getBytes(configuredEncoding);
 		}
 		catch (UnsupportedEncodingException e) {
@@ -170,6 +170,7 @@ public class AssetInjectionPostHandler extends AbstractRequestHandler {
 					+ "', which doesn't seem to be supported", e);
 		}
 
-		return updatedResponse;
+		handlerContext.setResponseAsBytes(updatedResponse);
+		return true;
 	}
 }

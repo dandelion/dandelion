@@ -33,6 +33,7 @@ import java.lang.management.ManagementFactory;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.ServiceLoader;
@@ -65,7 +66,8 @@ import com.github.dandelion.core.storage.BundleStorageUnit;
 import com.github.dandelion.core.utils.ClassUtils;
 import com.github.dandelion.core.utils.ServiceLoaderUtils;
 import com.github.dandelion.core.utils.StringUtils;
-import com.github.dandelion.core.web.handler.RequestHandler;
+import com.github.dandelion.core.web.DandelionFilter;
+import com.github.dandelion.core.web.handler.HandlerChain;
 import com.github.dandelion.core.web.handler.debug.DebugMenu;
 import com.github.dandelion.core.web.handler.debug.DebugPage;
 
@@ -101,8 +103,8 @@ public class Context {
 	private Map<String, AssetLocator> assetLocatorsMap;
 	private BundleStorage bundleStorage;
 	private Configuration configuration;
-	private List<RequestHandler> preHandlers;
-	private List<RequestHandler> postHandlers;
+	private HandlerChain preHandlerChain;
+	private HandlerChain postHandlerChain;
 	private Map<String, DebugMenu> debugMenuMap;
 	private Map<String, DebugPage> debugPageMap;
 
@@ -138,7 +140,7 @@ public class Context {
 
 		initBundleStorage();
 		initMBean(filterConfig);
-		initHandlers(this);
+		initHandlers();
 		initDebugMenus();
 	}
 
@@ -410,13 +412,19 @@ public class Context {
 		}
 	}
 
-	public void initHandlers(Context context) {
+	/**
+	 * <p>
+	 * Initializes the handler chains to be invoked in the
+	 * {@link DandelionFilter} to preprocess requests and postprocess responses.
+	 * </p>
+	 */
+	public void initHandlers() {
 
-		List<RequestHandler> preHandlers = new ArrayList<RequestHandler>();
-		List<RequestHandler> postHandlers = new ArrayList<RequestHandler>();
+		List<HandlerChain> preHandlers = new ArrayList<HandlerChain>();
+		List<HandlerChain> postHandlers = new ArrayList<HandlerChain>();
 
-		List<RequestHandler> allHandlers = ServiceLoaderUtils.getProvidersAsList(RequestHandler.class);
-		for (RequestHandler handler : allHandlers) {
+		List<HandlerChain> allHandlers = ServiceLoaderUtils.getProvidersAsList(HandlerChain.class);
+		for (HandlerChain handler : allHandlers) {
 			if (handler.isAfterChaining()) {
 				postHandlers.add(handler);
 			}
@@ -425,30 +433,50 @@ public class Context {
 			}
 		}
 
-		this.preHandlers = preHandlers;
-		this.postHandlers = postHandlers;
+		// Sort all handlers using their rank
+		Collections.sort(preHandlers);
+		Collections.sort(postHandlers);
 
-		if (this.preHandlers.isEmpty()) {
-			LOG.debug("No pre-filtering request handlers enabled");
-		}
-		else {
-			LOG.debug("Enabled pre-filtering request handlers:");
-			Collections.sort(this.preHandlers);
-			for (RequestHandler preHandler : this.preHandlers) {
-				LOG.debug("[Rank {}] {}", preHandler.getRank(), preHandler.getClass().getSimpleName());
-			}
-		}
+		// Build the pre-handlers chain
+		Iterator<HandlerChain> preHandlerIterator = preHandlers.iterator();
+		HandlerChain preHandler = preHandlerIterator.next();
+		int index = 1;
+		do {
 
-		if (this.postHandlers.isEmpty()) {
-			LOG.debug("No post-filtering request handlers enabled");
-		}
-		else {
-			Collections.sort(this.postHandlers);
-			LOG.debug("Enabled post-filtering request handlers:");
-			for (RequestHandler postHandler : this.postHandlers) {
-				LOG.debug("[Rank {}] {}", postHandler.getRank(), postHandler.getClass().getSimpleName());
+			LOG.debug("Pre-handler ({}/{}) {} (rank: {})", index, preHandlers.size(), preHandler.getClass()
+					.getSimpleName(), preHandler.getRank());
+
+			if (preHandlerIterator.hasNext()) {
+				HandlerChain next = preHandlerIterator.next();
+				preHandler.setNext(next);
+				preHandler = next;
 			}
+
+			index++;
 		}
+		while (index <= preHandlers.size());
+		this.preHandlerChain = preHandlers.get(0);
+
+		// Build the post-handlers chain
+		Iterator<HandlerChain> postHandlerIterator = postHandlers.iterator();
+		HandlerChain postHandler = postHandlerIterator.next();
+		index = 1;
+		do {
+
+			LOG.debug("Post-handler ({}/{}) {} (rank: {})", index, postHandlers.size(), postHandler.getClass()
+					.getSimpleName(), postHandler.getRank());
+
+			if (postHandlerIterator.hasNext()) {
+				HandlerChain next = postHandlerIterator.next();
+				postHandler.setNext(next);
+				postHandler = next;
+			}
+
+			index++;
+		}
+		while (index <= postHandlers.size());
+
+		this.postHandlerChain = postHandlers.get(0);
 	}
 
 	public void initDebugMenus() {
@@ -538,24 +566,33 @@ public class Context {
 	}
 
 	/**
-	 * TODO
-	 * 
-	 * @return
+	 * @return the active {@link AssetVersioningStrategy}.
 	 */
 	public AssetVersioningStrategy getActiveVersioningStrategy() {
 		return this.activeVersioningStrategy;
 	}
 
+	/**
+	 * @return the map of all available {@link AssetVersioningStrategy}.
+	 */
 	public Map<String, AssetVersioningStrategy> getVersioningStrategyMap() {
 		return versioningStrategyMap;
 	}
 
-	public List<RequestHandler> getPreHandlers() {
-		return preHandlers;
+	/**
+	 * @return the {@link HandlerChain} to be invoked in the
+	 *         {@link DandelionFilter} to preprocess requests.
+	 */
+	public HandlerChain getPreHandlerChain() {
+		return preHandlerChain;
 	}
 
-	public List<RequestHandler> getPostHandlers() {
-		return postHandlers;
+	/**
+	 * @return the {@link HandlerChain} to be invoked in the
+	 *         {@link DandelionFilter} to postprocess server responses.
+	 */
+	public HandlerChain getPostHandlerChain() {
+		return postHandlerChain;
 	}
 
 	public Map<String, DebugMenu> getDebugMenuMap() {

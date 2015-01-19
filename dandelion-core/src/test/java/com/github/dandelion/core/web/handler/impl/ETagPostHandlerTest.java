@@ -29,13 +29,8 @@
  */
 package com.github.dandelion.core.web.handler.impl;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.util.zip.GZIPInputStream;
-
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.io.IOUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.mock.web.MockFilterConfig;
@@ -48,9 +43,11 @@ import com.github.dandelion.core.web.handler.cache.HttpHeader;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class GZipCompressionPostHandlerTest {
+public class ETagPostHandlerTest {
 
-	private GzipCompressionPostHandler handler;
+	private static String RESOURCE_RAW = "some-resource";
+	private static String RESOURCE_MD5 = "e6b6c052bdb0a50cf2bc0e4aa9c7d921";
+	private ETagPostHandler handler;
 	private MockHttpServletRequest request;
 	private MockHttpServletResponse response;
 	private MockFilterConfig filterConfig;
@@ -58,7 +55,7 @@ public class GZipCompressionPostHandlerTest {
 
 	@Before
 	public void setup() throws Exception {
-		handler = new GzipCompressionPostHandler();
+		handler = new ETagPostHandler();
 		filterConfig = new MockFilterConfig();
 		context = new Context(filterConfig);
 		request = new MockHttpServletRequest();
@@ -66,62 +63,47 @@ public class GZipCompressionPostHandlerTest {
 	}
 
 	@Test
-	public void should_not_apply_if_gzip_is_not_accepted_by_the_browser() {
-		request.addHeader(HttpHeader.ACCEPT_ENCODING.getName(), "compress");
+	public void should_not_apply_on_html() {
+		response.setContentType("text/html");
 		HandlerContext handlerContext = new HandlerContext(context, request, response, null);
 		assertThat(handler.isApplicable(handlerContext)).isFalse();
 	}
 
 	@Test
-	public void should_not_apply_if_the_response_has_an_incompatible_mimeType() {
-		response.setContentType("incompatible-content-type");
+	public void should_apply_on_everything_else_but_html() {
+		response.setContentType("text/javascript");
 		HandlerContext handlerContext = new HandlerContext(context, request, response, null);
-		assertThat(handler.isApplicable(handlerContext)).isFalse();
+		assertThat(handler.isApplicable(handlerContext)).isTrue();
+
+		response.setContentType("application/javascript");
+		handlerContext = new HandlerContext(context, request, response, null);
+		assertThat(handler.isApplicable(handlerContext)).isTrue();
+
+		response.setContentType("text/css");
+		handlerContext = new HandlerContext(context, request, response, null);
+		assertThat(handler.isApplicable(handlerContext)).isTrue();
 	}
 
 	@Test
-	public void should_return_gzipped_content() throws Exception {
+	public void should_stop_chaining_when_ifnonematch_equals_etag() {
 
-		String content = "response-to-compress";
+		HandlerContext handlerContext = new HandlerContext(context, request, response, RESOURCE_RAW.getBytes());
+		request.addHeader(HttpHeader.IFNONEMATCH.getName(), "\"" + RESOURCE_MD5 + "\"");
 
-		HandlerContext handlerContext = new HandlerContext(context, request, response, content.getBytes());
-		handler.handle(handlerContext);
+		boolean shouldContinue = handler.handle(handlerContext);
 
-		InputStream ungzippedStream = new GZIPInputStream(new ByteArrayInputStream(handlerContext.getResponseAsBytes()));
-
-		assertThat(IOUtils.toString(ungzippedStream)).isEqualTo(content);
-		assertThat(response.getHeader(HttpHeader.CONTENT_ENCODING.getName())).isEqualTo("gzip");
+		assertThat(shouldContinue).isFalse();
+		assertThat(response.getStatus()).isEqualTo(HttpServletResponse.SC_NOT_MODIFIED);
 	}
 
 	@Test
-	public void should_return_false_if_the_response_is_already_commited() throws Exception {
+	public void should_continue_chaining_when_ifnonematch_ne_etag() {
 
-		response.setCommitted(true);
-		HandlerContext handlerContext = new HandlerContext(context, request, response, "".getBytes());
-		assertThat(handler.handle(handlerContext)).isFalse();
-	}
+		HandlerContext handlerContext = new HandlerContext(context, request, response, "content-has-changed".getBytes());
+		request.addHeader(HttpHeader.IFNONEMATCH.getName(), "\"" + RESOURCE_MD5 + "\"");
 
-	@Test
-	public void should_return_false_if_204() throws Exception {
+		boolean shouldContinue = handler.handle(handlerContext);
 
-		response.setStatus(HttpServletResponse.SC_NO_CONTENT);
-		HandlerContext handlerContext = new HandlerContext(context, request, response, "".getBytes());
-		assertThat(handler.handle(handlerContext)).isFalse();
-	}
-
-	@Test
-	public void should_return_false_if_205() throws Exception {
-
-		response.setStatus(HttpServletResponse.SC_RESET_CONTENT);
-		HandlerContext handlerContext = new HandlerContext(context, request, response, "".getBytes());
-		assertThat(handler.handle(handlerContext)).isFalse();
-	}
-
-	@Test
-	public void should_return_false_if_304() throws Exception {
-
-		response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
-		HandlerContext handlerContext = new HandlerContext(context, request, response, "".getBytes());
-		assertThat(handler.handle(handlerContext)).isFalse();
+		assertThat(shouldContinue).isTrue();
 	}
 }

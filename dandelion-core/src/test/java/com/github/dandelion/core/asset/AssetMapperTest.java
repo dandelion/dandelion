@@ -77,7 +77,7 @@ public class AssetMapperTest {
 		String assetUrlPattern = context.getConfiguration().getAssetUrlPattern();
 		Pattern versionPattern = Pattern.compile("^[a-f0-9]{32}$");
 		Pattern finalLocationPattern = Pattern
-				.compile("/context" + assetUrlPattern + "[a-f0-9]{40}/asset-name/js/asset-name-[a-f0-9]{32}.js");
+				.compile("/context" + assetUrlPattern + "[a-f0-9]{32}/js/asset-name-[a-f0-9]{32}.js");
 
 		AssetStorageUnit asu = new AssetStorageUnit();
 		asu.setName("asset-name");
@@ -139,7 +139,7 @@ public class AssetMapperTest {
 		String assetUrlPattern = context.getConfiguration().getAssetUrlPattern();
 
 		Pattern finalLocationPattern = Pattern
-				.compile("/context" + assetUrlPattern + "[a-f0-9]{40}/asset-name/js/asset-name-[a-f0-9]{32}.js");
+				.compile("/context" + assetUrlPattern + "[a-f0-9]{32}/js/asset-name-[a-f0-9]{32}.js");
 
 		AssetStorageUnit asu = new AssetStorageUnit();
 		asu.setName("asset-name");

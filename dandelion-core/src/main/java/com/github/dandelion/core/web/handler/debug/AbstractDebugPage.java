@@ -37,7 +37,7 @@ import java.util.Map;
 import com.github.dandelion.core.config.DandelionConfig;
 import com.github.dandelion.core.utils.UrlUtils;
 import com.github.dandelion.core.web.WebConstants;
-import com.github.dandelion.core.web.handler.RequestHandlerContext;
+import com.github.dandelion.core.web.handler.HandlerContext;
 
 /**
  * <p>
@@ -52,14 +52,14 @@ import com.github.dandelion.core.web.handler.RequestHandlerContext;
  */
 public abstract class AbstractDebugPage implements DebugPage {
 
-	protected RequestHandlerContext context;
+	protected HandlerContext context;
 
-	public void initWith(RequestHandlerContext context) {
+	public void initWith(HandlerContext context) {
 		this.context = context;
 	}
 
 	@Override
-	public Map<String, String> getParameters(RequestHandlerContext context) {
+	public Map<String, String> getParameters(HandlerContext context) {
 		Map<String, String> params = new HashMap<String, String>();
 
 		// Default variables, available in all debug pages
@@ -115,7 +115,7 @@ public abstract class AbstractDebugPage implements DebugPage {
 	/**
 	 * <p>
 	 * Returns a {@link Map} of parameters that will be merged will the default
-	 * ones coming from {@link #getParameters(RequestHandlerContext)} and used
+	 * ones coming from {@link #getParameters(HandlerContext)} and used
 	 * inside the template for variables substitution.
 	 * </p>
 	 * 
@@ -124,7 +124,7 @@ public abstract class AbstractDebugPage implements DebugPage {
 	 * 
 	 * @return a {@link Map} of custom parameters.
 	 */
-	protected abstract Map<String, String> getCustomParameters(RequestHandlerContext context);
+	protected abstract Map<String, String> getCustomParameters(HandlerContext context);
 
 	protected StringBuilder tr(Object... cols) {
 		StringBuilder line = new StringBuilder();

@@ -29,7 +29,7 @@
  */
 /**
  * <p>
- * All interfaces and base classes used by request handlers.
+ * Public API for handlers.
  * </p>
  * 
  * @author Thibault Duchateau

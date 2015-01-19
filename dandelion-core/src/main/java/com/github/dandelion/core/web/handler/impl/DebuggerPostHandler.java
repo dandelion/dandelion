@@ -41,8 +41,8 @@ import org.slf4j.LoggerFactory;
 import com.github.dandelion.core.DandelionException;
 import com.github.dandelion.core.utils.StringUtils;
 import com.github.dandelion.core.web.WebConstants;
-import com.github.dandelion.core.web.handler.AbstractRequestHandler;
-import com.github.dandelion.core.web.handler.RequestHandlerContext;
+import com.github.dandelion.core.web.handler.AbstractHandlerChain;
+import com.github.dandelion.core.web.handler.HandlerContext;
 import com.github.dandelion.core.web.handler.debug.AssetsDebugPage;
 import com.github.dandelion.core.web.handler.debug.DebugPage;
 
@@ -60,7 +60,7 @@ import com.github.dandelion.core.web.handler.debug.DebugPage;
  * @author Thibault Duchateau
  * @since 0.11.0
  */
-public class DebuggerPostHandler extends AbstractRequestHandler {
+public class DebuggerPostHandler extends AbstractHandlerChain {
 
 	private static final Logger LOG = LoggerFactory.getLogger(DebuggerPostHandler.class);
 
@@ -76,37 +76,38 @@ public class DebuggerPostHandler extends AbstractRequestHandler {
 
 	@Override
 	public int getRank() {
-		return 100;
+		return 50;
 	}
 
 	@Override
-	public boolean isApplicable(RequestHandlerContext context) {
-		return context.getContext().getConfiguration().isToolDebuggerEnabled()
-				&& context.getResponse().getContentType() != null
-				&& context.getResponse().getContentType().contains("text/html")
-				&& context.getRequest().getParameter(WebConstants.DANDELION_DEBUGGER) != null;
+	public boolean isApplicable(HandlerContext handlerContext) {
+		return handlerContext.getContext().getConfiguration().isToolDebuggerEnabled()
+				&& handlerContext.getResponse().getContentType() != null
+				&& handlerContext.getResponse().getContentType().contains("text/html")
+				&& handlerContext.getRequest().getParameter(WebConstants.DANDELION_DEBUGGER) != null;
 	}
 
 	@Override
-	public byte[] handle(RequestHandlerContext context, byte[] response) {
+	public boolean handle(HandlerContext handlerContext) {
 
 		byte[] newResponse;
 
-		String debugPage = context.getRequest().getParameter(WebConstants.DANDELION_DEBUGGER_PAGE);
+		String debugPage = handlerContext.getRequest().getParameter(WebConstants.DANDELION_DEBUGGER_PAGE);
 
 		try {
-			String responseAsString = getView(debugPage, context);
-			newResponse = responseAsString.getBytes(context.getContext().getConfiguration().getEncoding());
+			String responseAsString = getView(debugPage, handlerContext);
+			newResponse = responseAsString.getBytes(handlerContext.getContext().getConfiguration().getEncoding());
 		}
 		catch (Exception e) {
 			throw new DandelionException("An error occured when generating the \"" + debugPage + "\"debug page.", e);
 		}
 
+		handlerContext.setResponseAsBytes(newResponse);
 		// The response is overriden with a new one containing the debug page
-		return newResponse;
+		return false;
 	}
 
-	private String getView(String pageName, RequestHandlerContext context) throws IOException {
+	private String getView(String pageName, HandlerContext context) throws IOException {
 
 		DebugPage page;
 
@@ -123,7 +124,7 @@ public class DebuggerPostHandler extends AbstractRequestHandler {
 		return getPage(page, context);
 	}
 
-	private String getPage(DebugPage page, RequestHandlerContext context) throws IOException {
+	private String getPage(DebugPage page, HandlerContext context) throws IOException {
 
 		page.initWith(context);
 

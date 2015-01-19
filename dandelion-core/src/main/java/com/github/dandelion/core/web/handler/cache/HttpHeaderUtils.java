@@ -27,74 +27,70 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.github.dandelion.core.web.handler.debug;
+package com.github.dandelion.core.web.handler.cache;
 
-import java.io.IOException;
-import java.util.Map;
+import java.io.UnsupportedEncodingException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.github.dandelion.core.config.Configuration;
+import com.github.dandelion.core.utils.DigestUtils;
+import com.github.dandelion.core.utils.Sha1Utils;
 import com.github.dandelion.core.web.handler.HandlerContext;
 
 /**
  * <p>
- * Contract for all debug pages.
+ * Collection of utilities to ease working with HTTP headers.
  * </p>
  * 
  * @author Thibault Duchateau
  * @since 0.11.0
  */
-public interface DebugPage {
+public final class HttpHeaderUtils {
+
+	private static final Logger LOG = LoggerFactory.getLogger(Sha1Utils.class);
 
 	/**
 	 * <p>
-	 * Initializes the debug page with the current context.
+	 * Computes a MD5 hash of the provided response. This hash is used as an
+	 * ETag value.
+	 * </p>
+	 * <p>
+	 * The ETag is wrapped with {@code "} as suggested in the RFC 2616, section
+	 * 14.19.
 	 * </p>
 	 * 
+	 * @param response
+	 *            The response from which the ETag is computed.
 	 * @param context
-	 *            The wrapper object holding the context.
+	 *            The context in which the ETag must be computed.
+	 * @return a MD5 hash of the provided response, used as an ETag.
 	 */
-	void initWith(HandlerContext context);
+	public static String computeETag(byte[] response, HandlerContext context) {
+
+		Configuration configuration = context.getContext().getConfiguration();
+
+		StringBuilder etagValue = new StringBuilder();
+		try {
+			etagValue.append("\"");
+			etagValue.append(DigestUtils.md5Digest(new String(response, configuration.getEncoding())));
+			etagValue.append("\"");
+		}
+		catch (UnsupportedEncodingException e) {
+			LOG.warn("Unable to calculte the ETag of the resource corresponding to the request URL: {}", context
+					.getRequest().getRequestURL());
+		}
+
+		return etagValue.toString();
+	}
 
 	/**
 	 * <p>
-	 * Returns the identifier of the debug page, used in its URI.
+	 * Suppress default constructor for noninstantiability.
 	 * </p>
-	 * <p>
-	 * For example "assets" in
-	 * <code>http://domain/context/?ddl-debug&ddl-debug-page=assets</code>.
-	 * </p>
-	 * 
-	 * @return the idenfier of the debug page, used its URI.
 	 */
-	String getId();
-
-	/**
-	 * @return the name of the debug page, used in the sidebar menu.
-	 */
-	String getName();
-
-	/**
-	 * <p>
-	 * Loads the template of the debug page and returns it as a String in order
-	 * to be processed.
-	 * </p>
-	 * 
-	 * @param context
-	 *            The wrapper object holding the context.
-	 * @return the template as a String
-	 * @throws IOException
-	 *             if something goes wrong while loading the template.
-	 */
-	String getTemplate(HandlerContext context) throws IOException;
-
-	/**
-	 * <p>
-	 * Populates a {@link Map} of parameters that will be injected into the
-	 * template.
-	 * </p>
-	 * 
-	 * @param context
-	 *            The wrapper object holding the context.
-	 * @return a {@link Map} of parameters.
-	 */
-	Map<String, String> getParameters(HandlerContext context);
+	private HttpHeaderUtils() {
+		throw new AssertionError();
+	}
 }

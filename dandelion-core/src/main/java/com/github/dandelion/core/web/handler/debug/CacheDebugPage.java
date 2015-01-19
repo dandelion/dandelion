@@ -34,7 +34,7 @@ import java.util.Collections;
 import java.util.Map;
 
 import com.github.dandelion.core.utils.ResourceUtils;
-import com.github.dandelion.core.web.handler.RequestHandlerContext;
+import com.github.dandelion.core.web.handler.HandlerContext;
 
 public class CacheDebugPage extends AbstractDebugPage {
 
@@ -53,13 +53,13 @@ public class CacheDebugPage extends AbstractDebugPage {
 	}
 
 	@Override
-	public String getTemplate(RequestHandlerContext context) throws IOException {
+	public String getTemplate(HandlerContext context) throws IOException {
 		return ResourceUtils.getContentFromInputStream(Thread.currentThread().getContextClassLoader()
 				.getResourceAsStream(PAGE_LOCATION));
 	}
 
 	@Override
-	protected Map<String, String> getCustomParameters(RequestHandlerContext context) {
+	protected Map<String, String> getCustomParameters(HandlerContext context) {
 		return Collections.emptyMap();
 	}
 }

@@ -41,7 +41,7 @@ import org.slf4j.LoggerFactory;
 import com.github.dandelion.core.Context;
 import com.github.dandelion.core.asset.Asset;
 import com.github.dandelion.core.config.DandelionConfig;
-import com.github.dandelion.core.utils.Sha1Utils;
+import com.github.dandelion.core.utils.DigestUtils;
 import com.github.dandelion.core.utils.UrlUtils;
 import com.github.dandelion.core.web.WebConstants;
 
@@ -69,36 +69,31 @@ public class AssetCacheManager {
 	}
 
 	public String generateCacheKey(HttpServletRequest request, Asset asset) {
-		String context = UrlUtils.getCurrentUrl(request, true).toString();
-		context = context.replaceAll("\\?", "_").replaceAll("&", "_");
 
-		StringBuilder key = new StringBuilder(Sha1Utils.generateSha1(context, true));
-		key.append("/");
-		key.append(asset.getName());
-		key.append('/');
-		key.append(asset.getType().name());
-		return key.toString();
+		StringBuilder keyContext = new StringBuilder(UrlUtils.getCurrentUrl(request, true));
+		keyContext.append(asset.getBundle());
+		keyContext.append(asset.getName());
+		
+		StringBuilder cacheKey = new StringBuilder(DigestUtils.md5Digest(keyContext.toString()));
+		cacheKey.append("/");
+		cacheKey.append(asset.getType().name());
+		return cacheKey.toString();
 	}
 
 	public String generateMinCacheKey(HttpServletRequest request, Asset asset) {
-		String context = UrlUtils.getCurrentUrl(request, true).toString();
-		context = context.replaceAll("\\?", "_").replaceAll("&", "_");
+		
+		StringBuilder keyContext = new StringBuilder(UrlUtils.getCurrentUrl(request, true));
+		keyContext.append(asset.getBundle());
+		keyContext.append(asset.getName());
+		
+//		String context = UrlUtils.getCurrentUrl(request, true).toString();
+//		context = context.replaceAll("\\?", "_").replaceAll("&", "_");
 
-		StringBuilder key = new StringBuilder(Sha1Utils.generateSha1(context, true));
-		key.append("/");
-		key.append(asset.getName());
-		key.append("/min/");
-		key.append(asset.getType().name());
-		return key.toString();
-	}
-
-	public String generateCacheKeyMin(String context, Asset asset) {
-		StringBuilder key = new StringBuilder(Sha1Utils.generateSha1(context, true));
-		key.append("/");
-		key.append(asset.getName());
-		key.append("/");
-		key.append(asset.getType().name());
-		return key.toString();
+		StringBuilder cacheKey = new StringBuilder(DigestUtils.md5Digest(keyContext.toString()));
+		cacheKey.append("/");
+		cacheKey.append(asset.getName());
+		cacheKey.append("/min/");
+		return cacheKey.toString();
 	}
 
 	/**

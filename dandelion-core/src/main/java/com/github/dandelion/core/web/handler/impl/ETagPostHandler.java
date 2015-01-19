@@ -27,53 +27,56 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.github.dandelion.core.web.handler;
+package com.github.dandelion.core.web.handler.impl;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.github.dandelion.core.Context;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-/**
- * <p>
- * Wrapper object holding the context in which a {@link RequestHandler} is
- * applied.
- * </p>
- * 
- * @author Thibault Duchateau
- * @since 0.11.0
- */
-public final class RequestHandlerContext {
+import com.github.dandelion.core.utils.StringUtils;
+import com.github.dandelion.core.web.handler.AbstractHandlerChain;
+import com.github.dandelion.core.web.handler.HandlerContext;
+import com.github.dandelion.core.web.handler.cache.HttpHeader;
+import com.github.dandelion.core.web.handler.cache.HttpHeaderUtils;
 
-	private final Context context;
-	private final HttpServletRequest request;
-	private final HttpServletResponse response;
-	private RequestHandlerResult result;
+public class ETagPostHandler extends AbstractHandlerChain {
 
-	public RequestHandlerContext(Context context, HttpServletRequest request, HttpServletResponse response) {
-		super();
-		this.context = context;
-		this.request = request;
-		this.response = response;
+	private static final Logger LOG = LoggerFactory.getLogger(ETagPostHandler.class);
+
+	@Override
+	protected Logger getLogger() {
+		return LOG;
 	}
 
-	public Context getContext() {
-		return context;
+	@Override
+	public boolean isAfterChaining() {
+		return true;
 	}
 
-	public HttpServletRequest getRequest() {
-		return request;
+	@Override
+	public int getRank() {
+		return 10;
 	}
 
-	public HttpServletResponse getResponse() {
-		return response;
+	@Override
+	public boolean isApplicable(HandlerContext handlerContext) {
+		return handlerContext.getResponse().getContentType() != null
+				&& !handlerContext.getResponse().getContentType().contains("text/html");
 	}
 
-	public RequestHandlerResult getResult() {
-		return result;
-	}
+	@Override
+	public boolean handle(HandlerContext handlerContext) {
 
-	public void setResult(RequestHandlerResult result) {
-		this.result = result;
+		String ifNoneMatchValue = handlerContext.getRequest().getHeader(HttpHeader.IFNONEMATCH.getName());
+		String etagValue = HttpHeaderUtils.computeETag(handlerContext.getResponseAsBytes(), handlerContext);
+
+		if (StringUtils.isNotBlank(ifNoneMatchValue) && ifNoneMatchValue.equals(etagValue)) {
+			handlerContext.getResponse().setStatus(HttpServletResponse.SC_NOT_MODIFIED);
+			return false;
+		}
+		else {
+			return true;
+		}
 	}
 }

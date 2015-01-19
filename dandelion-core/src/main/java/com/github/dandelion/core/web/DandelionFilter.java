@@ -44,30 +44,25 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.github.dandelion.core.Context;
-import com.github.dandelion.core.asset.processor.AssetProcessor;
-import com.github.dandelion.core.web.handler.RequestHandler;
-import com.github.dandelion.core.web.handler.RequestHandlerContext;
+import com.github.dandelion.core.web.handler.HandlerChain;
+import com.github.dandelion.core.web.handler.HandlerContext;
 
 /**
  * <p>
- * Main Dandelion filter that serves several purposes:
+ * Main Dandelion filter. This filter is used to:
  * </p>
  * <ul>
- * <li>It initializes the Dandelion {@link Context}, containing the bundle
- * graph, the active {@link AssetProcessor}s, and all other configurations. The
- * {@link Context} is then injected into all requests.</li>
- * <li>It can intercept some query parameters either to display a debug page or
- * to interact with the bundle graph</li>
- * <li>It reads the {@link AssetRequestContext}, holding all information about
- * requested bundles/assets and then modify the HTML response by injecting all
- * requested assets in their configured location.</li>
- * <li>TODO gzip</li>
+ * <li>bootstraps the Dandelion {@link Context}. It occurs only once in the
+ * {@link #init(FilterConfig)} method.</li>
+ * <li>injects into all requests this {@link Context}, so that it can be
+ * accessed later in the web application</li>
+ * <li>invoke two handler chains: a first one that pre-processes requests and
+ * another one that post-processes responses. These chains are used, e.g. to
+ * injects assets into HTML source code or to GZIP responses.</li>
  * </ul>
  * 
  * <p>
- * If the URLs pointing to your views always follow the same pattern, you can
- * restrict the scope of application of this filter using a custom mapping,
- * otherwise it is recommended to use <code>/*</code>.
+ * This filter needs to be registered in your {@code web.xml} file:
  * </p>
  * 
  * <pre>
@@ -115,62 +110,46 @@ public class DandelionFilter implements Filter {
 
 		HttpServletRequest request = (HttpServletRequest) servletRequest;
 		HttpServletResponse response = (HttpServletResponse) servletResponse;
-		LOG.debug("Request \"{}\" is about to be processed", request.getRequestURL());
+		LOG.trace("Request URL: \"{}\" is about to be processed", request.getRequestURL());
 
 		// Make the Dandelion context available through a request attribute for
 		// potential use by end-users or components
 		request.setAttribute(WebConstants.DANDELION_CONTEXT_ATTRIBUTE, context);
 
 		// Pre-filtering handlers processing
-		RequestHandlerContext preHandlerContext = new RequestHandlerContext(context, request, response);
-		int index = 1;
-		for (RequestHandler preHandler : context.getPreHandlers()) {
-			boolean isHandlerApplicable = preHandler.isApplicable(preHandlerContext);
-
-			LOG.debug("Pre-handler  ({}/{}) {} (rank: {}, applicable: {})", index, context.getPreHandlers().size(), preHandler
-					.getClass().getSimpleName(), preHandler.getRank(), isHandlerApplicable);
-
-			if (isHandlerApplicable) {
-				preHandler.handle(preHandlerContext, null);
-			}
-
-			index++;
+		HandlerChain preHandlerChain = context.getPreHandlerChain();
+		if (preHandlerChain != null) {
+			HandlerContext preHandlerContext = new HandlerContext(context, request, response, null);
+			preHandlerChain.doHandle(preHandlerContext);
 		}
 
 		// Wraps the response before applying the filter chain
 		ByteArrayResponseWrapper wrappedResponse = new ByteArrayResponseWrapper(response);
 		filterChain.doFilter(request, wrappedResponse);
 
-		// Extracts the response as a byte array
+		// Extracts the response as a byte array so that it can be passed to the
+		// post-handlers chain
 		byte[] finalResponse = wrappedResponse.toByteArray();
 
 		// Post-filtering handlers processing
-		RequestHandlerContext postHandlerContext = new RequestHandlerContext(context, request, wrappedResponse);
-		index = 1;
-		for (RequestHandler postHandler : context.getPostHandlers()) {
-			boolean isHandlerApplicable = postHandler.isApplicable(postHandlerContext);
-			LOG.debug("Post-handler ({}/{}) {} (rank: {}, applicable: {})", index, context.getPostHandlers().size(), postHandler
-					.getClass().getSimpleName(), postHandler.getRank(), isHandlerApplicable);
-
-			if (isHandlerApplicable && finalResponse != null) {
-				finalResponse = postHandler.handle(postHandlerContext, finalResponse);
-			}
-
-			index++;
+		HandlerChain postHandlerChain = context.getPostHandlerChain();
+		HandlerContext postHandlerContext = null;
+		if (postHandlerChain != null) {
+			postHandlerContext = new HandlerContext(context, request, response, finalResponse);
+			postHandlerChain.doHandle(postHandlerContext);
 		}
 
 		// The response may have been set to null by one of the handlers
-		if (finalResponse == null) {
+		if (postHandlerContext != null && postHandlerContext.getResponseAsBytes() == null) {
 			return;
 		}
 
-		response.setContentLength(finalResponse.length);
-		response.getOutputStream().write(finalResponse);
+		response.setContentLength(postHandlerContext.getResponseAsBytes().length);
+		response.getOutputStream().write(postHandlerContext.getResponseAsBytes());
 	}
 
 	@Override
 	public void destroy() {
 		context.destroy();
 	}
-
 }

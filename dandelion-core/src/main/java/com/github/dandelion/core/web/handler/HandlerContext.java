@@ -29,65 +29,53 @@
  */
 package com.github.dandelion.core.web.handler;
 
-import javax.servlet.FilterChain;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import com.github.dandelion.core.Context;
 
 /**
  * <p>
- * Interface for all handlers intended to process requests and/or responses.
+ * Wrapper object holding the context in which a {@link HandlerChain} is
+ * applied.
  * </p>
- * <p>
- * It is worth noting that:
- * </p>
- * <ul>
- * <li>
- * The request/response processing can occur before the invokation of the
- * {@link FilterChain} or after, depending on the value returned by the
- * {@link #isAfterChaining()} method.</li>
- * <li>
- * If multiple request handlers are configured, they will be executed in a
- * particular order, depending on the value returned by the {@link #getRank()}
- * method. A handler with a rank set to 1 will be executed before another
- * handler with a rank set to 2.</li>
- * </ul>
  * 
  * @author Thibault Duchateau
  * @since 0.11.0
  */
-public interface RequestHandler extends Comparable<RequestHandler> {
+public final class HandlerContext {
 
-	/**
-	 * <p>
-	 * Whether the handler is applicable in this context or not.
-	 * </p>
-	 * 
-	 * @param context
-	 *            The wrapper object holding the context.
-	 * @return {@code true} if the handler can be executed in the context,
-	 *         otherwise {@code false}.
-	 */
-	boolean isApplicable(RequestHandlerContext context);
+	private final Context context;
+	private final HttpServletRequest request;
+	private final HttpServletResponse response;
+	private byte[] responseAsBytes;
 
-	/**
-	 * @return {@code true} if the request handler should be executed after the
-	 *         call of the
-	 *         {@link FilterChain#doFilter(javax.servlet.ServletRequest, javax.servlet.ServletResponse)}
-	 *         method, {@code false} otherwise.
-	 */
-	boolean isAfterChaining();
+	public HandlerContext(Context context, HttpServletRequest request, HttpServletResponse response,
+			byte[] responseAsBytes) {
+		super();
+		this.context = context;
+		this.request = request;
+		this.response = response;
+		this.responseAsBytes = responseAsBytes;
+	}
 
-	/**
-	 * @return the rank of the handler.
-	 */
-	int getRank();
+	public Context getContext() {
+		return context;
+	}
 
-	/**
-	 * <p>
-	 * TODO
-	 * </p>
-	 * 
-	 * @param context
-	 * @param response
-	 * @return
-	 */
-	byte[] handle(RequestHandlerContext context, byte[] response);
+	public HttpServletRequest getRequest() {
+		return request;
+	}
+
+	public HttpServletResponse getResponse() {
+		return response;
+	}
+
+	public byte[] getResponseAsBytes() {
+		return responseAsBytes;
+	}
+
+	public void setResponseAsBytes(byte[] responseAsBytes) {
+		this.responseAsBytes = responseAsBytes;
+	}
 }

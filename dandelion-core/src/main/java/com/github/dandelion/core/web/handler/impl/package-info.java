@@ -29,7 +29,7 @@
  */
 /**
  * <p>
- * Built-in implementations of request handlers.
+ * All built-in service providers of {@link com.github.dandelion.core.web.handler.HandlerChain}.
  * </p>
  * 
  * @author Thibault Duchateau

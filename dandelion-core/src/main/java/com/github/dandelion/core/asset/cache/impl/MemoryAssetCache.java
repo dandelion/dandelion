@@ -39,7 +39,7 @@ import com.github.dandelion.core.asset.cache.AssetCache;
 
 /**
  * <p>
- * Service provider for {@link AssetCache} that uses {@link SimpleLruCache}s as
+ * Service provider for {@link AssetCache} that uses {@link ConcurrentLruCache}s as
  * stores.
  * </p>
  * 
@@ -65,30 +65,22 @@ public class MemoryAssetCache extends AbstractAssetCache {
 		return "default";
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public String getAssetContent(String cacheKey) {
 		return mapAssetContent.get(cacheKey);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public Set<Asset> getRequestAssets(String cacheKey) {
 		return mapRequestAssets.get(cacheKey);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public void storeAssetContent(String cacheKey, String cacheContent) {
 		mapAssetContent.put(cacheKey, cacheContent);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
+	@Override
 	public void storeRequestAssets(String cacheKey, Set<Asset> a) {
 		mapRequestAssets.put(cacheKey, a);
 	}

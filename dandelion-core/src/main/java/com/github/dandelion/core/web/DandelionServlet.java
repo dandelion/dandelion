@@ -75,7 +75,7 @@ public class DandelionServlet extends HttpServlet {
 		
 		response.setContentType(assetType.getContentType() == null ? "text/plain" : assetType.getContentType());
 		
-		// Send the asset's content
+		// Write the asset content
 		PrintWriter writer = response.getWriter();
 		writer.write(context.getCacheManager().getContent(assetKey));
 		

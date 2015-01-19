@@ -33,10 +33,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.github.dandelion.core.web.WebConstants;
-import com.github.dandelion.core.web.handler.AbstractRequestHandler;
-import com.github.dandelion.core.web.handler.RequestHandlerContext;
+import com.github.dandelion.core.web.handler.AbstractHandlerChain;
+import com.github.dandelion.core.web.handler.HandlerContext;
 
-public class BundleReloadingPreHandler extends AbstractRequestHandler {
+public class BundleReloadingPreHandler extends AbstractHandlerChain {
 
 	private static final Logger LOG = LoggerFactory.getLogger(BundleReloadingPreHandler.class);
 
@@ -49,24 +49,23 @@ public class BundleReloadingPreHandler extends AbstractRequestHandler {
 	public boolean isAfterChaining() {
 		return false;
 	}
-	
+
 	@Override
 	public int getRank() {
 		return 0;
 	}
 
 	@Override
-	public boolean isApplicable(RequestHandlerContext context) {
-		return context.getContext().getConfiguration().isToolBundleReloadingEnabled()
-				&& context.getRequest().getParameter(WebConstants.DANDELION_RELOAD_BUNDLES) != null;
+	public boolean isApplicable(HandlerContext handlerContext) {
+		return handlerContext.getContext().getConfiguration().isToolBundleReloadingEnabled()
+				&& handlerContext.getRequest().getParameter(WebConstants.DANDELION_RELOAD_BUNDLES) != null;
 	}
 
 	@Override
-	public byte[] handle(RequestHandlerContext requestHandlingContext, byte[] response) {
+	public boolean handle(HandlerContext handlerContext) {
 		LOG.info("Bundle reloading requested via request parameter");
-		requestHandlingContext.getContext().initBundleStorage();
+		handlerContext.getContext().initBundleStorage();
 		LOG.info("Bundle reloaded");
-		
-		return null;
+		return true;
 	}
 }

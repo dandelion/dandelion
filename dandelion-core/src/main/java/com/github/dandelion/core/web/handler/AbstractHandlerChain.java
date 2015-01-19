@@ -33,13 +33,55 @@ import org.slf4j.Logger;
 
 /**
  * <p>
- * Abstract base class for all request handlers.
+ * Abstract base class for handlers.
+ * </p>
+ * <p>
+ * Consider extending this class if you wish to insert a custom handler into the
+ * chain.
  * </p>
  * 
  * @author Thibault Duchateau
  * @since 0.11.0
  */
-public abstract class AbstractRequestHandler implements RequestHandler {
+public abstract class AbstractHandlerChain implements HandlerChain {
+
+	/**
+	 * The next handler to be executed in the chain.
+	 */
+	private HandlerChain nextHandler;
+
+	@Override
+	public void setNext(HandlerChain nextHandler) {
+		this.nextHandler = nextHandler;
+	}
+
+	@Override
+	public final void doHandle(HandlerContext context) {
+
+		boolean shouldContinue = true;
+
+		if (isApplicable(context)) {
+			shouldContinue = this.handle(context);
+		}
+
+		if (nextHandler != null && shouldContinue) {
+			nextHandler.doHandle(context);
+		}
+	}
+
+	/**
+	 * Called by start().
+	 * 
+	 * @param request
+	 *            the request parameter
+	 * @return a boolean indicates whether this node handled the request
+	 */
+	protected abstract boolean handle(HandlerContext context);
+
+	/**
+	 * @return the logger associated with this handler.
+	 */
+	protected abstract Logger getLogger();
 
 	/**
 	 * <p>
@@ -56,11 +98,11 @@ public abstract class AbstractRequestHandler implements RequestHandler {
 	 * @return the comparison result.
 	 */
 	@Override
-	public int compareTo(RequestHandler o) {
+	public int compareTo(HandlerChain o) {
 		if (o == null) {
 			return 1;
 		}
-		if (!(o instanceof AbstractRequestHandler)) {
+		if (!(o instanceof AbstractHandlerChain)) {
 			// The other object does not rely on rank, so we should delegate to
 			// the other object (and its comparison policy) and invert the
 			// result
@@ -68,7 +110,7 @@ public abstract class AbstractRequestHandler implements RequestHandler {
 			return (-1) * result;
 		}
 		int thisRank = getRank();
-		int otherRank = ((AbstractRequestHandler) o).getRank();
+		int otherRank = ((AbstractHandlerChain) o).getRank();
 		if (thisRank > otherRank) {
 			return 1;
 		}
@@ -77,9 +119,4 @@ public abstract class AbstractRequestHandler implements RequestHandler {
 		}
 		return 0;
 	}
-
-	/**
-	 * @return the logger associated with this handler.
-	 */
-	protected abstract Logger getLogger();
 }

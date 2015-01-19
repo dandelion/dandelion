@@ -63,7 +63,7 @@ public final class DigestUtils {
 			encodedDigest = encodeHex(digest);
 		}
 		catch (UnsupportedEncodingException e) {
-			throw new DandelionException("Unable to get a MD5 hash of " + string);
+			throw new DandelionException("Unable to get a MD5 hash of " + string, e);
 		}
 
 		return new String(encodedDigest);
@@ -99,8 +99,8 @@ public final class DigestUtils {
 		try {
 			return MessageDigest.getInstance(algorithm);
 		}
-		catch (NoSuchAlgorithmException ex) {
-			throw new IllegalStateException("Could not find MessageDigest with algorithm \"" + algorithm + "\"", ex);
+		catch (NoSuchAlgorithmException e) {
+			throw new IllegalStateException("Could not find MessageDigest with algorithm \"" + algorithm + "\"", e);
 		}
 	}
 

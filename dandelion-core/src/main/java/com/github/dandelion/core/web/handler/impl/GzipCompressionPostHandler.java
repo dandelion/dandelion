@@ -47,9 +47,9 @@ import org.slf4j.LoggerFactory;
 import com.github.dandelion.core.Context;
 import com.github.dandelion.core.DandelionException;
 import com.github.dandelion.core.utils.UrlUtils;
-import com.github.dandelion.core.web.HttpHeader;
-import com.github.dandelion.core.web.handler.AbstractRequestHandler;
-import com.github.dandelion.core.web.handler.RequestHandlerContext;
+import com.github.dandelion.core.web.handler.AbstractHandlerChain;
+import com.github.dandelion.core.web.handler.HandlerContext;
+import com.github.dandelion.core.web.handler.cache.HttpHeader;
 
 /**
  * <p>
@@ -64,7 +64,7 @@ import com.github.dandelion.core.web.handler.RequestHandlerContext;
  * @author Thibault Duchateau
  * @since 0.11.0
  */
-public class GzipCompressionPostHandler extends AbstractRequestHandler {
+public class GzipCompressionPostHandler extends AbstractHandlerChain {
 
 	private static final Logger LOG = LoggerFactory.getLogger(GzipCompressionPostHandler.class);
 
@@ -92,21 +92,21 @@ public class GzipCompressionPostHandler extends AbstractRequestHandler {
 
 	@Override
 	public int getRank() {
-		return 10;
+		return 30;
 	}
 
 	@Override
-	public boolean isApplicable(RequestHandlerContext context) {
+	public boolean isApplicable(HandlerContext handlerContext) {
 
 		// Retrieves the content type from the filtered response
-		String mimeType = context.getResponse().getContentType();
+		String mimeType = handlerContext.getResponse().getContentType();
 
 		// Required conditions
-		boolean gzipEnabled = context.getContext().getConfiguration().isToolGzipEnabled();
-		boolean requestNotIncluded = !isIncluded(context.getRequest());
-		boolean browserAcceptsGzip = acceptsGzip(context.getRequest());
-		boolean responseNotCommited = !context.getResponse().isCommitted();
-		boolean compatibleMimeType = getSupportedMimeTypes(context.getContext()).contains(mimeType);
+		boolean gzipEnabled = handlerContext.getContext().getConfiguration().isToolGzipEnabled();
+		boolean requestNotIncluded = !isIncluded(handlerContext.getRequest());
+		boolean browserAcceptsGzip = acceptsGzip(handlerContext.getRequest());
+		boolean responseNotCommited = !handlerContext.getResponse().isCommitted();
+		boolean compatibleMimeType = getSupportedMimeTypes(handlerContext.getContext()).contains(mimeType);
 
 		if (LOG.isTraceEnabled()) {
 			LOG.trace("Checking if the {} handler is applicable against \"{}\"");
@@ -121,38 +121,40 @@ public class GzipCompressionPostHandler extends AbstractRequestHandler {
 	}
 
 	@Override
-	public byte[] handle(RequestHandlerContext context, byte[] response) {
+	public boolean handle(HandlerContext handlerContext) {
 
-		byte[] compressedContent = getGzippedContent(response);
+		byte[] compressedContent = getGzippedContent(handlerContext.getResponseAsBytes());
 
 		// Double check one more time before writing out
 		// response might have been committed due to error
-		if (context.getResponse().isCommitted()) {
-			return null;
+		if (handlerContext.getResponse().isCommitted()) {
+			return false;
 		}
 
 		// Special cases where the response does not need to be compressed
-		switch (context.getResponse().getStatus()) {
+		switch (handlerContext.getResponse().getStatus()) {
 		case HttpServletResponse.SC_NO_CONTENT:
 		case HttpServletResponse.SC_RESET_CONTENT:
 		case HttpServletResponse.SC_NOT_MODIFIED:
-			return null;
+			return false;
 		default:
 		}
 
 		// No reason to add GZIP headers or write body if no content was written
 		// or status code specifies no content
-		boolean shouldGzippedBodyBeZero = shouldGzippedBodyBeZero(compressedContent, context.getRequest());
-		boolean shouldBodyBeZero = shouldBodyBeZero(context.getRequest(), context.getResponse().getStatus());
+		boolean shouldGzippedBodyBeZero = shouldGzippedBodyBeZero(compressedContent, handlerContext.getRequest());
+		boolean shouldBodyBeZero = shouldBodyBeZero(handlerContext.getRequest(), handlerContext.getResponse().getStatus());
 		if (shouldGzippedBodyBeZero || shouldBodyBeZero) {
-			context.getResponse().setContentLength(0);
-			return null;
+			handlerContext.getResponse().setContentLength(0);
+			return false;
 		}
 
-		context.getResponse().setContentLength(compressedContent.length);
-		addGzipHeader(context.getResponse());
+		handlerContext.getResponse().setContentLength(compressedContent.length);
+		addGzipHeader(handlerContext.getResponse());
 
-		return compressedContent;
+		handlerContext.setResponseAsBytes(compressedContent);
+
+		return true;
 	}
 
 	/**

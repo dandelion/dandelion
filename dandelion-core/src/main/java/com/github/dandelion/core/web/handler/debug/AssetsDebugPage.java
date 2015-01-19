@@ -52,7 +52,7 @@ import com.github.dandelion.core.storage.AssetStorageUnit;
 import com.github.dandelion.core.storage.BundleStorageUnit;
 import com.github.dandelion.core.utils.ResourceUtils;
 import com.github.dandelion.core.web.AssetRequestContext;
-import com.github.dandelion.core.web.handler.RequestHandlerContext;
+import com.github.dandelion.core.web.handler.HandlerContext;
 
 /**
  * <p>
@@ -93,13 +93,13 @@ public class AssetsDebugPage extends AbstractDebugPage {
 	}
 
 	@Override
-	public String getTemplate(RequestHandlerContext context) throws IOException {
+	public String getTemplate(HandlerContext context) throws IOException {
 		return ResourceUtils.getContentFromInputStream(Thread.currentThread().getContextClassLoader()
 				.getResourceAsStream(PAGE_LOCATION));
 	}
 
 	@Override
-	protected Map<String, String> getCustomParameters(RequestHandlerContext context) {
+	protected Map<String, String> getCustomParameters(HandlerContext context) {
 		StringBuilder sbNodesRequest = new StringBuilder();
 		AssetMapper assetMapper = new AssetMapper(context.getRequest(), context.getContext());
 		HttpServletRequest request = context.getRequest();
