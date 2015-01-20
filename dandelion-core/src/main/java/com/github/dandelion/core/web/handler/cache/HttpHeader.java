@@ -31,7 +31,7 @@ package com.github.dandelion.core.web.handler.cache;
 
 /**
  * <p>
- * All HTTP headers manipulated by Dandelion.
+ * All HTTP headers manipulated (R and/or W) by Dandelion.
  * </p>
  * 
  * @author Thibault Duchateau
@@ -39,14 +39,54 @@ package com.github.dandelion.core.web.handler.cache;
  */
 public enum HttpHeader {
 
-	CACHE_CONTROL("Cache-Control"), // HTTP 1.1
-	EXPIRES("Expires"), // Proxies
-	LAST_MODIFIED("Last-Modified"), 
-	CONTENT_TYPE("Content-Type"), 
-	ACCEPT("Accept"), 
+	/**
+	 * RFC 2616, section 14.9
+	 */
+	CACHE_CONTROL("Cache-Control"),
+
+	/**
+	 * RFC 2616, section 14.21
+	 */
+	EXPIRES("Expires"),
+
+	/**
+	 * RFC 2616, section 14.29
+	 */
+	LAST_MODIFIED("Last-Modified"),
+
+	/**
+	 * RFC 2616, section 14.17
+	 */
+	CONTENT_TYPE("Content-Type"),
+
+	/**
+	 * RFC 2616, section 14.1
+	 */
+	ACCEPT("Accept"),
+
+	/**
+	 * RFC 2616, section 14.3
+	 */
 	ACCEPT_ENCODING("Accept-Encoding"),
+
+	/**
+	 * RFC 2616, section 14.11
+	 */
 	CONTENT_ENCODING("Content-Encoding"),
+
+	/**
+	 * RFC 2616, section 14.44
+	 */
+	VARY("Vary"),
+
+	/**
+	 * RFC 2616, section 14.19
+	 */
 	ETAG("ETag"),
+
+	/**
+	 * RFC 2616, section 14.26
+	 */
 	IFNONEMATCH("If-None-Match");
 
 	private String name;

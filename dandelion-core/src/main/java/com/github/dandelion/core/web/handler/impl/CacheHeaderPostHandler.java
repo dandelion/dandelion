@@ -86,37 +86,33 @@ public class CacheHeaderPostHandler extends AbstractHandlerChain {
 
 		if (handlerContext.getContext().getConfiguration().isAssetCachingEnabled()) {
 
-			// RFC 2616, section 14.9
 			httpResponse.setHeader(HttpHeader.CACHE_CONTROL.getName(), "public, max-age=" + ONE_YEAR_IN_SECONDS);
 
-			// RFC 2616, section 14.19
 			httpResponse.setHeader(HttpHeader.ETAG.getName(),
 					HttpHeaderUtils.computeETag(handlerContext.getResponseAsBytes(), handlerContext));
 
-			// RFC 2616, section 14.21
 			httpResponse.setDateHeader(HttpHeader.EXPIRES.getName(), System.currentTimeMillis()
 					+ ONE_YEAR_IN_MILLISECONDS);
 
-			// RFC 2616,section 14.29
 			// Considered the last modified date as the start up time of the
 			// server
 			httpResponse.setDateHeader(HttpHeader.LAST_MODIFIED.getName(), LAST_MODIFIED);
 		}
-		// Disable cache (default in dev profile)
+		// Headers are set in order to disable cache and force new resource
+		// updates to fetched (default in dev profile)
 		else {
 
-			// RFC 2616, section 14.9
 			httpResponse.setHeader(HttpHeader.CACHE_CONTROL.getName(), "no-cache, no-store");
 
-			// RFC 2616, section 14.19
 			httpResponse.setHeader(HttpHeader.ETAG.getName(),
 					HttpHeaderUtils.computeETag(handlerContext.getResponseAsBytes(), handlerContext));
 
-			// RFC 2616, section 14.21
 			Calendar past = Calendar.getInstance();
 			past.add(Calendar.YEAR, -1);
 			httpResponse.setDateHeader(HttpHeader.EXPIRES.getName(), past.getTimeInMillis());
 		}
+
+		httpResponse.setHeader(HttpHeader.VARY.getName(), "Accept-Encoding");
 
 		return true;
 	}
