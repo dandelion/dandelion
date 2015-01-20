@@ -86,14 +86,10 @@ public class AssetCacheManager {
 		keyContext.append(asset.getBundle());
 		keyContext.append(asset.getName());
 		
-//		String context = UrlUtils.getCurrentUrl(request, true).toString();
-//		context = context.replaceAll("\\?", "_").replaceAll("&", "_");
-
-		StringBuilder cacheKey = new StringBuilder(DigestUtils.md5Digest(keyContext.toString()));
-		cacheKey.append("/");
-		cacheKey.append(asset.getName());
-		cacheKey.append("/min/");
-		return cacheKey.toString();
+		StringBuilder minCacheKey = new StringBuilder(DigestUtils.md5Digest(keyContext.toString()));
+		minCacheKey.append("/min/");
+		minCacheKey.append(asset.getType().name());
+		return minCacheKey.toString();
 	}
 
 	/**

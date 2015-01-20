@@ -62,6 +62,10 @@ import com.github.dandelion.core.utils.AssetUtils;
 public final class AssetProcessorManager {
 
 	private static final Logger LOG = LoggerFactory.getLogger(AssetProcessorManager.class);
+
+	/**
+	 * The Dandelion context.
+	 */
 	private final Context context;
 
 	public AssetProcessorManager(Context context) {
@@ -70,42 +74,50 @@ public final class AssetProcessorManager {
 
 	public Set<Asset> process(Set<Asset> assets, HttpServletRequest request) {
 
-		if (!context.getActiveProcessors().isEmpty()) {
-			LOG.debug("Processing assets with the following processors: {}", context.getActiveProcessors());
+		if (context.getActiveProcessors().isEmpty()) {
+			return assets;
+		}
 
-			for (Asset asset : assets) {
+		// Process only non-vendor assets
+		for (Asset asset : AssetUtils.filtersNotVendor(assets)) {
 
+			List<AssetProcessor> compatibleAssetProcessors = getCompatibleProcessorFor(asset);
+
+			if (!compatibleAssetProcessors.isEmpty()) {
+
+				// Context to be passed in asset processors
 				ProcessingContext processingContext = new ProcessingContext(context, asset, request);
-				if (anyProcessorCanBeAppliedFor(asset)) {
 
-					String content = context.getCacheManager().getContent(asset.getCacheKey());
+				String content = context.getCacheManager().getContent(asset.getCacheKey());
 
-					Reader assetReader = new StringReader(content);
-					Writer assetWriter = new StringWriter();
+				Reader assetReader = new StringReader(content);
+				Writer assetWriter = new StringWriter();
 
-					List<AssetProcessor> compatibleAssetProcessors = getCompatibleProcessorFor(asset);
-					for (AssetProcessor assetProcessor : compatibleAssetProcessors) {
-						LOG.trace("Applying processor {} on {}", assetProcessor.getProcessorKey(), asset.toLog());
-						assetWriter = new StringWriter();
-						assetProcessor.process(assetReader, assetWriter, processingContext);
-						assetReader = new StringReader(assetWriter.toString());
-					}
-
-					// The old asset is removed from the cache
-					context.getCacheManager().remove(asset.getCacheKey());
-
-					String newCacheKey = this.context.getCacheManager().generateMinCacheKey(request, asset);
-					asset.setCacheKey(newCacheKey);
-
-					if (!asset.isVendor()
-							&& (this.context.getConfiguration().isAssetCachingEnabled() || this.context
-									.getConfiguration().isAssetMinificationEnabled())) {
-						asset.setFinalLocation(AssetUtils.getAssetFinalLocation(request, asset, "min"));
-					}
-
-					// The cache system is updated with the new key/content pair
-					context.getCacheManager().storeContent(newCacheKey, assetWriter.toString());
+				for (AssetProcessor assetProcessor : compatibleAssetProcessors) {
+					LOG.trace("Applying processor {} on {}", assetProcessor.getProcessorKey(), asset.toLog());
+					assetWriter = new StringWriter();
+					assetProcessor.process(assetReader, assetWriter, processingContext);
+					assetReader = new StringReader(assetWriter.toString());
 				}
+
+				// The old asset is removed from the cache
+				// TODO: ideally, it should not have been put in even once
+				context.getCacheManager().remove(asset.getCacheKey());
+
+				String newCacheKey = this.context.getCacheManager().generateMinCacheKey(request, asset);
+				asset.setCacheKey(newCacheKey);
+
+				if (!asset.isVendor()
+						&& (this.context.getConfiguration().isAssetCachingEnabled() || this.context.getConfiguration()
+								.isAssetMinificationEnabled())) {
+					asset.setFinalLocation(AssetUtils.getAssetFinalLocation(request, asset, "min"));
+				}
+
+				// The cache system is updated with the new key/content pair
+				context.getCacheManager().storeContent(newCacheKey, assetWriter.toString());
+			}
+			else {
+				LOG.trace("No compatible processor was found for the asset {}", asset.toLog());
 			}
 		}
 
@@ -124,37 +136,7 @@ public final class AssetProcessorManager {
 				compatibleProcessors.add(assetProcessor);
 			}
 		}
+
 		return compatibleProcessors;
-	}
-
-	public boolean anyProcessorCanBeAppliedFor(Asset asset) {
-
-		if (asset.isVendor()) {
-			return false;
-		}
-
-		for (AssetProcessor assetProcessor : context.getActiveProcessors()) {
-			Annotation annotation = assetProcessor.getClass().getAnnotation(CompatibleAssetType.class);
-			CompatibleAssetType compatibleAssetType = (CompatibleAssetType) annotation;
-			List<AssetType> compatibleAssetTypes = Arrays.asList(compatibleAssetType.types());
-
-			if (compatibleAssetTypes.contains(asset.getType())) {
-				return true;
-			}
-		}
-
-		return false;
-	}
-
-	/**
-	 * <p>
-	 * Clears the scanned {@link AssetProcessor}s.
-	 * 
-	 * <p>
-	 * FOR INTERNAL USE ONLY
-	 */
-	public static void clear() {
-		// processorsMap.clear();
-		// activeProcessors.clear();
 	}
 }

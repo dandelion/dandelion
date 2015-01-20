@@ -69,15 +69,15 @@ public class DandelionServlet extends HttpServlet {
 		Context context = (Context) request.getAttribute(WebConstants.DANDELION_CONTEXT_ATTRIBUTE);
 		
 		// Get the asset content thanks to the cache key
-		String assetKey = context.getCacheManager().extractCacheKeyFromRequest(request);
-		AssetType assetType = AssetType.typeOfAsset(assetKey);
-		LOG.debug("Retrieved asset type: {}, cache key: {}", assetType, assetKey);
+		String cacheKey = context.getCacheManager().extractCacheKeyFromRequest(request);
+		AssetType assetType = AssetType.typeOfAsset(cacheKey);
+		LOG.debug("Retrieved asset type: {}, cache key: {}", assetType, cacheKey);
 		
 		response.setContentType(assetType.getContentType() == null ? "text/plain" : assetType.getContentType());
 		
 		// Write the asset content
 		PrintWriter writer = response.getWriter();
-		writer.write(context.getCacheManager().getContent(assetKey));
+		writer.write(context.getCacheManager().getContent(cacheKey));
 		
 		// The response is explicitely closed here instead of setting a
 		// Content-Length header

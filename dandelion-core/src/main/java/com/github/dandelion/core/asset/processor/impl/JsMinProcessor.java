@@ -45,6 +45,7 @@ import com.github.dandelion.core.utils.WriterOutputStream;
 /**
  * <p>
  * JS processor based on the {@link JSMin} implementation.
+ * </p>
  * 
  * @author Thibault Duchateau
  * @since 0.10.0
@@ -52,17 +53,11 @@ import com.github.dandelion.core.utils.WriterOutputStream;
 @CompatibleAssetType(types = AssetType.js)
 public class JsMinProcessor extends AbstractAssetProcessor {
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public String getProcessorKey() {
 		return "jsmin";
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void doProcess(Reader reader, Writer writer, ProcessingContext processingContext) throws Exception {
 		InputStream is = new ReaderInputStream(reader, processingContext.getContext().getConfiguration().getEncoding());

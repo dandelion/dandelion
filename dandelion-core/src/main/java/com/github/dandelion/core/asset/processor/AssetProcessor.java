@@ -32,7 +32,6 @@ package com.github.dandelion.core.asset.processor;
 import java.io.Reader;
 import java.io.Writer;
 
-import com.github.dandelion.core.Context;
 import com.github.dandelion.core.DandelionException;
 import com.github.dandelion.core.asset.Asset;
 import com.github.dandelion.core.config.Configuration;
@@ -40,16 +39,10 @@ import com.github.dandelion.core.config.Configuration;
 /**
  * <p>
  * SPI for all asset processors.
- * 
- * <p>
- * In order for any custom implementation to be scanned, see <a href=
- * "http://dandelion.github.io/dandelion/features/asset-processors/plugging-in-your-own-processor.html"
- * >here</a>.
+ * </p>
  * 
  * @author Thibault Duchateau
  * @since 0.10.0
- * 
- * @see Context#initAssetProcessors()
  */
 public interface AssetProcessor {
 
@@ -65,6 +58,7 @@ public interface AssetProcessor {
 	 * Performs the processing of the {@link Asset} stored in the given
 	 * {@link ProcessingContext} by reading its content from the given
 	 * {@link Reader} and writing the new content to the {@link Writer}.
+	 * </p>
 	 * 
 	 * @param reader
 	 *            The reader containig the content to process.

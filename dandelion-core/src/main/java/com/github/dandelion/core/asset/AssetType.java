@@ -60,9 +60,9 @@ public enum AssetType {
 		return defaultDom;
 	}
 
-	public static AssetType typeOfAsset(String assetName) {
+	public static AssetType typeOfAsset(String cacheKey) {
 		for (AssetType type : values()) {
-			if (assetName.toLowerCase().endsWith(type.name())) {
+			if (cacheKey.toLowerCase().endsWith(type.name())) {
 				return type;
 			}
 		}

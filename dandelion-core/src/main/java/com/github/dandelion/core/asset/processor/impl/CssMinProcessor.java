@@ -41,6 +41,7 @@ import com.github.dandelion.core.asset.processor.vendor.CssCompressor;
 /**
  * <p>
  * CSS processor based on the {@link CssCompressor} implementation.
+ * </p>
  * 
  * @author Thibault Duchateau
  * @since 0.10.0
@@ -48,17 +49,11 @@ import com.github.dandelion.core.asset.processor.vendor.CssCompressor;
 @CompatibleAssetType(types = AssetType.css)
 public class CssMinProcessor extends AbstractAssetProcessor {
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public String getProcessorKey() {
 		return "cssmin";
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void doProcess(Reader reader, Writer writer, ProcessingContext processingContext) throws Exception {
 		new CssCompressor(reader).compress(writer, -1);

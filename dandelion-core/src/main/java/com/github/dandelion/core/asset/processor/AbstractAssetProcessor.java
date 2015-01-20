@@ -39,6 +39,7 @@ import com.github.dandelion.core.asset.Asset;
  * <p>
  * Abstract superclass for all asset processors. Mostly used to handle
  * exceptions thrown by any of the active processors.
+ * </p>
  * 
  * @author Thibault Duchateau
  * @since 0.10.0
@@ -50,6 +51,7 @@ public abstract class AbstractAssetProcessor implements AssetProcessor {
 	 * Wrapper method for the actual
 	 * {@link #doProcess(Reader, Writer, ProcessingContext)} method which handle
 	 * exceptions.
+	 * </p>
 	 */
 	@Override
 	public void process(Reader reader, Writer writer, ProcessingContext processingContext) throws DandelionException {
@@ -71,6 +73,7 @@ public abstract class AbstractAssetProcessor implements AssetProcessor {
 	 * Performs the processing of the {@link Asset} stored in the given
 	 * {@link ProcessingContext} by reading its content from the given
 	 * {@link Reader} and writing the new content to the {@link Writer}.
+	 * </p>
 	 * 
 	 * @param reader
 	 *            The reader containig the content to process.

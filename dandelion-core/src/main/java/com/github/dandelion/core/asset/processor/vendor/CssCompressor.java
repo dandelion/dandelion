@@ -87,10 +87,11 @@ import java.util.regex.Pattern;
  * <p>
  * Fork from Yahoo's YUI Compressor authored by Andrew Roberts which contains a
  * number of enhancements to the original CSS compression algorithms.
- * 
+ * </p>
  * <p>
  * The original class has been slightly adapted to suit the Dandelion dev
  * guidelines.
+ * </p>
  * 
  * @author Thibault Duchateau
  * @since 0.10.0

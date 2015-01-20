@@ -37,19 +37,26 @@ import com.github.dandelion.core.asset.Asset;
 /**
  * <p>
  * Bean holding all needed information from the context when processing assets.
+ * </p>
  * 
  * @author tduchateau
  * @since 0.10.1
  */
 public class ProcessingContext {
 
-	// The Dandelion context
+	/**
+	 * The Dandelion context.
+	 */
 	private final Context context;
 
-	// The asset to be processed
+	/**
+	 * The asset to be processed.
+	 */
 	private final Asset asset;
 
-	// The current request
+	/**
+	 * The current HTTP request.
+	 */
 	private final HttpServletRequest request;
 
 	public ProcessingContext(Context context, Asset asset, HttpServletRequest request) {

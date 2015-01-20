@@ -164,6 +164,25 @@ public final class AssetUtils {
 		return filteredAsus;
 	}
 
+	/**
+	 * <p>
+	 * Filters the given set of {@link Asset}s by removing all vendor assets.
+	 * </p>
+	 * 
+	 * @param assets
+	 *            The set of {@link Asset}s to filter.
+	 * @return a filtered collection of {@link Asset}s.
+	 */
+	public static Set<Asset> filtersNotVendor(Set<Asset> assets) {
+		Set<Asset> retval = new LinkedHashSet<Asset>();
+		for (Asset asset : assets) {
+			if (asset.isNotVendor()) {
+				retval.add(asset);
+			}
+		}
+		return retval;
+	}
+
 	public static String getAssetFinalLocation(HttpServletRequest request, Asset asset, String suffix) {
 
 		Context context = (Context) request.getAttribute(WebConstants.DANDELION_CONTEXT_ATTRIBUTE);

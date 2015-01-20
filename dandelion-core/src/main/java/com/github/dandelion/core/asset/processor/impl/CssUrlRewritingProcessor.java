@@ -51,12 +51,14 @@ import com.github.dandelion.core.utils.StringBuilderUtils;
  * <p>
  * Processes all relative paths in the given content, line by line and replace
  * it with an absolute path.
+ * </p>
  * <p>
  * The given url modified according to the number of occurrences of ".." counted
  * in the line.
- * 
+ * </p>
  * <p>
  * For example, if the CSS file is loaded from:
+ * </p>
  * 
  * <pre>
  * http://cdnjs.cloudflare.com/ajax/libs/datatables/1.9.4/css/jquery.dataTables.css
@@ -90,17 +92,11 @@ public class CssUrlRewritingProcessor extends AbstractAssetProcessor {
 	private static final Logger LOG = LoggerFactory.getLogger(CssUrlRewritingProcessor.class);
 	private CssUrlRewriter urlRewriter = new CssUrlRewriter();
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public String getProcessorKey() {
 		return "cssurlrewriting";
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	protected void doProcess(Reader reader, Writer writer, ProcessingContext processingContext) throws Exception {
 		Asset asset = processingContext.getAsset();
@@ -112,8 +108,8 @@ public class CssUrlRewritingProcessor extends AbstractAssetProcessor {
 
 		BufferedWriter bufferedWriter = null;
 		try {
-			LOG.debug("  Old location: {}", asset.getConfigLocation());
-			LOG.debug("  New location: {}", asset.getFinalLocation());
+			LOG.debug("  Old location: \"{}\"", asset.getConfigLocation());
+			LOG.debug("  New location: \"{}\"", asset.getFinalLocation());
 
 			bufferedWriter = new BufferedWriter(writer);
 			bufferedWriter.write(urlRewriter.rewriteUrl("/" + contextPath + asset.getConfigLocation(),

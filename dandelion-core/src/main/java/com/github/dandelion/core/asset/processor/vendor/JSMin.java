@@ -62,10 +62,11 @@ import java.io.PushbackInputStream;
  * translation from C to Java of jsmin.c published by Douglas Crockford.
  * Permission is hereby granted to use the Java version under the same
  * conditions as the jsmin.c on which it is based.
- * 
+ * </p>
  * <p>
  * The original class has been slightly adapted to suit the Dandelion dev
  * guidelines.
+ * </p>
  * 
  * @author Thibault Duchateau
  * @since 0.10.0

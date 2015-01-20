@@ -40,10 +40,11 @@ import com.github.dandelion.core.utils.StringUtils;
  * <p>
  * Rewrites URLs in CSS files according to the new relative location of the CSS
  * file
- * 
+ * </p>
  * <p>
  * Part of this code has been kindly borrowed and adapted from Ibrahim Chaehoi
  * (Jawr Project).
+ * </p>
  * 
  * @author Thibault Duchateau
  * @since 0.10.1
@@ -102,7 +103,8 @@ public class CssUrlRewriter {
 	}
 
 	/**
-	 * <p>Rewrites all URLs present in the originalCssContent using the newCssPath.
+	 * <p>
+	 * Rewrites all URLs present in the originalCssContent using the newCssPath.
 	 * 
 	 * @param originalCssPath
 	 *            the original CSS path.
@@ -113,8 +115,7 @@ public class CssUrlRewriter {
 	 * @return the new CSS content with URLs rewritten.
 	 * @throws IOException
 	 */
-	public StringBuffer rewriteUrl(String originalCssPath, String newCssPath, String originalCssContent)
-			 {
+	public StringBuffer rewriteUrl(String originalCssPath, String newCssPath, String originalCssContent) {
 
 		Matcher matcher = URL_PATTERN.matcher(originalCssContent);
 		StringBuffer sb = new StringBuffer();
@@ -198,7 +199,7 @@ public class CssUrlRewriter {
 	 * @throws IOException
 	 *             if an IOException occurs
 	 */
-	protected String getRewrittenImagePath(String originalCssPath, String newCssPath, String url)  {
+	protected String getRewrittenImagePath(String originalCssPath, String newCssPath, String url) {
 
 		// Here we generate the full path of the CSS image
 		// to be able to define the relative path from the full bundle path

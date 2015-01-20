@@ -39,10 +39,10 @@ import java.lang.annotation.Target;
 import com.github.dandelion.core.asset.AssetType;
 
 /**
- * 
  * <p>
  * Annotation used to mark that an {@link AssetProcessor} can only process the
  * configured {@link AssetType}s.
+ * </p>
  * 
  * @author Thibault Duchateau
  * @since 0.10.0
@@ -55,7 +55,6 @@ public @interface CompatibleAssetType {
 
 	/**
 	 * @return the asset types compatible with the marked {@link AssetProcessor}
-	 *         .
 	 */
 	AssetType[] types();
 }
