@@ -159,10 +159,9 @@ public class Context {
 	 * @return an implementation of {@link ConfigurationLoader}.
 	 */
 	public void initConfiguration(FilterConfig filterConfig) {
+		LOG.info("Initializing configuration loader");
 
 		ConfigurationLoader configurationLoader = null;
-
-		LOG.debug("Initializing the configuration loader...");
 
 		if (StringUtils.isNotBlank(System.getProperty(ConfigurationLoader.DANDELION_CONFLOADER_CLASS))) {
 			Class<?> clazz;
@@ -190,6 +189,7 @@ public class Context {
 	 * </p>
 	 */
 	public void initAssetVersioning() {
+		LOG.info("Initializing asset versioning");
 
 		List<AssetVersioningStrategy> availableStrategies = ServiceLoaderUtils
 				.getProvidersAsList(AssetVersioningStrategy.class);
@@ -197,7 +197,7 @@ public class Context {
 		versioningStrategyMap = new HashMap<String, AssetVersioningStrategy>();
 
 		for (AssetVersioningStrategy strategy : availableStrategies) {
-			LOG.info("Asset versioning strategy found: {}", strategy.getClass().getSimpleName());
+			LOG.info("Found asset versioning strategy: {}", strategy.getName());
 			versioningStrategyMap.put(strategy.getName(), strategy);
 		}
 
@@ -230,6 +230,8 @@ public class Context {
 	 * </ol>
 	 */
 	public void initBundleLoaders() {
+		LOG.info("Initializing bundle loaders");
+
 		ServiceLoader<BundleLoader> blServiceLoader = ServiceLoader.load(BundleLoader.class);
 
 		VendorBundleLoader vendorLoader = new VendorBundleLoader();
@@ -246,11 +248,19 @@ public class Context {
 		for (BundleLoader bl : blServiceLoader) {
 			bl.initLoader(this);
 			bundleLoaders.add(bl);
-			LOG.info("Active bundle loader found: {}", bl.getClass().getSimpleName());
+			LOG.info("Found bundle loader: {}", bl.getName());
 		}
 
 		// Finally all bundles created by users
 		bundleLoaders.add(dandelionLoader);
+
+		Iterator<BundleLoader> i = bundleLoaders.iterator();
+		StringBuilder log = new StringBuilder(i.next().getName());
+		while (i.hasNext()) {
+			log.append(", ");
+			log.append(i.next().getName());
+		}
+		LOG.info("Bundle loaders initialized: {}", log.toString());
 	}
 
 	/**
@@ -260,12 +270,14 @@ public class Context {
 	 * </p>
 	 */
 	public void initAssetCache() {
+		LOG.info("Initializing asset caching system");
+
 		ServiceLoader<AssetCache> assetCacheServiceLoader = ServiceLoader.load(AssetCache.class);
 
 		Map<String, AssetCache> caches = new HashMap<String, AssetCache>();
 		for (AssetCache ac : assetCacheServiceLoader) {
 			caches.put(ac.getCacheName().toLowerCase().trim(), ac);
-			LOG.info("Asset caching system found: {}", ac.getClass().getSimpleName());
+			LOG.info("Found asset caching system: {}", ac.getCacheName());
 		}
 
 		String desiredCacheName = configuration.getCacheName();
@@ -287,8 +299,7 @@ public class Context {
 
 		assetCache.initCache(this);
 
-		LOG.info("Selected asset cache system: {} (based on {})", assetCache.getCacheName(), assetCache.getClass()
-				.getSimpleName());
+		LOG.info("Asset cache system initialized with: {}", assetCache.getCacheName());
 	}
 
 	/**
@@ -298,6 +309,8 @@ public class Context {
 	 * </p>
 	 */
 	public void initAssetLocators() {
+		LOG.info("Initializing asset locators");
+
 		ServiceLoader<AssetLocator> alServiceLoader = ServiceLoader.load(AssetLocator.class);
 
 		assetLocatorsMap = new HashMap<String, AssetLocator>();
@@ -306,7 +319,7 @@ public class Context {
 
 			al.initLocator(this);
 			assetLocatorsMap.put(al.getLocationKey(), al);
-			LOG.info("Asset locator found: {} ({})", al.getLocationKey(), al.getClass().getSimpleName());
+			LOG.info("Found asset locator: {}", al.getLocationKey());
 		}
 	}
 
@@ -322,6 +335,7 @@ public class Context {
 	 * </p>
 	 */
 	public void initAssetProcessors() {
+		LOG.info("Initializing asset processors");
 
 		ServiceLoader<AssetProcessor> apServiceLoader = ServiceLoader.load(AssetProcessor.class);
 
@@ -329,8 +343,8 @@ public class Context {
 		activeProcessors = new ArrayList<AssetProcessor>();
 
 		for (AssetProcessor ape : apServiceLoader) {
-			processorsMap.put(ape.getProcessorKey().toLowerCase(), ape);
-			LOG.info("Asset processor found: {}", ape.getClass().getSimpleName());
+			processorsMap.put(ape.getProcessorKey().toLowerCase().trim(), ape);
+			LOG.info("Found asset processor: {}", ape.getClass().getSimpleName());
 		}
 
 		if (configuration.isAssetMinificationEnabled()) {
@@ -344,7 +358,7 @@ public class Context {
 			}
 		}
 		else {
-			LOG.info("Asset processors disabled. All assets will be left untouched.");
+			LOG.info("Asset processors disabled. All assets will be served as-is.");
 		}
 	}
 
@@ -359,7 +373,7 @@ public class Context {
 	 * </p>
 	 */
 	public void initBundleStorage() {
-		LOG.debug("Bundle storage initializating...");
+		LOG.info("Initializing bundle storage");
 
 		bundleStorage = new BundleStorage();
 
@@ -369,23 +383,13 @@ public class Context {
 			// Load all bundles using the current BundleLoader
 			List<BundleStorageUnit> loadedBundles = bundleLoader.loadBundles();
 
-			// // First check: required configuration
-			// BundleStorageLogBuilder bslb =
-			// bundleStorage.checkRequiredConfiguration(loadedBundles);
-			// if (bslb.hasError()) {
-			// throw new DandelionException(bslb.toString());
-			// }
-
 			LOG.debug("Found {} bundle{}: {}", loadedBundles.size(), loadedBundles.size() <= 1 ? "" : "s",
 					loadedBundles);
 
 			bundleStorage.storeBundles(loadedBundles);
-
-			// Second and last check: consistency
-			// bundleStorage.checkBundleConsistency(loadedBundles);
 		}
 
-		LOG.debug("Bundle storage initialized.");
+		LOG.info("Bundle storage initialized with {} bundles", bundleStorage.getBundleDag().getVertexMap().size());
 	}
 
 	/**
@@ -419,6 +423,7 @@ public class Context {
 	 * </p>
 	 */
 	public void initHandlers() {
+		LOG.info("Initializing handlers");
 
 		List<HandlerChain> preHandlers = new ArrayList<HandlerChain>();
 		List<HandlerChain> postHandlers = new ArrayList<HandlerChain>();
@@ -443,7 +448,7 @@ public class Context {
 		int index = 1;
 		do {
 
-			LOG.debug("Pre-handler ({}/{}) {} (rank: {})", index, preHandlers.size(), preHandler.getClass()
+			LOG.info("Pre-handler ({}/{}) {} (rank: {})", index, preHandlers.size(), preHandler.getClass()
 					.getSimpleName(), preHandler.getRank());
 
 			if (preHandlerIterator.hasNext()) {
@@ -463,7 +468,7 @@ public class Context {
 		index = 1;
 		do {
 
-			LOG.debug("Post-handler ({}/{}) {} (rank: {})", index, postHandlers.size(), postHandler.getClass()
+			LOG.info("Post-handler ({}/{}) {} (rank: {})", index, postHandlers.size(), postHandler.getClass()
 					.getSimpleName(), postHandler.getRank());
 
 			if (postHandlerIterator.hasNext()) {
@@ -507,6 +512,9 @@ public class Context {
 		}
 	}
 
+	/**
+	 * @return the selected asset caching system.
+	 */
 	public AssetCache getAssetCache() {
 		return assetCache;
 	}

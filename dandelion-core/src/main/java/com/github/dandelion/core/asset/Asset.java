@@ -316,7 +316,14 @@ public class Asset {
 	}
 
 	public String toLog() {
-		return name + " (" + type + ", v" + version + ")";
+		StringBuilder log = new StringBuilder("\"");
+		log.append(name);
+		log.append("\" (type: ");
+		log.append(type);
+		log.append(", version: ");
+		log.append(version);
+		log.append(")");
+		return log.toString();
 	}
 
 	@Override

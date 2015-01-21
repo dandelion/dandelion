@@ -138,7 +138,7 @@ public class AssetInjectionHandlerTest {
 
 		context = mock(Context.class, Mockito.RETURNS_DEEP_STUBS);
 		when(context.getConfiguration().getEncoding()).thenReturn("UTF-8");
-		
+
 		whenNew(AssetQuery.class).withAnyArguments().thenReturn(assetQuery);
 		when(assetQuery.atPosition(any(AssetDomPosition.class))).thenReturn(assetQuery);
 		when(assetQuery.perform()).thenReturn(assets);
@@ -171,12 +171,8 @@ public class AssetInjectionHandlerTest {
 
 		context = mock(Context.class, Mockito.RETURNS_DEEP_STUBS);
 		when(context.getConfiguration().getEncoding()).thenReturn(wrongEncoding);
-		
-		HandlerContext handlerContext = new HandlerContext(context, request, response, HTML.getBytes());
 
-//		HandlerContext handlerContext = mock(HandlerContext.class, Mockito.RETURNS_DEEP_STUBS);
-//		when(handlerContext.getContext().getConfiguration().getEncoding()).thenReturn(wrongEncoding);
-//		when(handlerContext.getResponseAsBytes()).thenReturn(HTML.getBytes());
+		HandlerContext handlerContext = new HandlerContext(context, request, response, HTML.getBytes());
 
 		handler.handle(handlerContext);
 	}

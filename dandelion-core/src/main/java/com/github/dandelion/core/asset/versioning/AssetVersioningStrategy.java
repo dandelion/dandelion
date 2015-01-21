@@ -43,11 +43,6 @@ import com.github.dandelion.core.asset.Asset;
 public interface AssetVersioningStrategy {
 
 	/**
-	 * @return the name of the versioning strategy.
-	 */
-	String getName();
-
-	/**
 	 * <p>
 	 * Initiliazes the versioning strategy by injecting the Dandelion context.
 	 * </p>
@@ -56,6 +51,11 @@ public interface AssetVersioningStrategy {
 	 *            The Dandelion context.
 	 */
 	void init(Context context);
+
+	/**
+	 * @return the name of the versioning strategy.
+	 */
+	String getName();
 
 	/**
 	 * <p>

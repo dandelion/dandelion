@@ -74,7 +74,8 @@ public abstract class AbstractBundleLoader implements BundleLoader {
 
 		getLogger().debug("Scanning \"{}\" for JSON-formatted bundles...", getBundleLocation());
 		Set<String> resourcePaths = jsonLoadingStrategy.getResourcePaths(getBundleLocation(), getExcludedPaths());
-
+		getLogger().debug("{} bundles selected", resourcePaths.size());
+		
 		if (!resourcePaths.isEmpty()) {
 			List<BundleStorageUnit> bsus = jsonLoadingStrategy.mapToBundles(resourcePaths);
 			bundles.addAll(bsus);

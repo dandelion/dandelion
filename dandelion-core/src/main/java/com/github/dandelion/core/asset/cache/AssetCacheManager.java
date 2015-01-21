@@ -73,7 +73,7 @@ public class AssetCacheManager {
 		StringBuilder keyContext = new StringBuilder(UrlUtils.getCurrentUrl(request, true));
 		keyContext.append(asset.getBundle());
 		keyContext.append(asset.getName());
-		
+
 		StringBuilder cacheKey = new StringBuilder(DigestUtils.md5Digest(keyContext.toString()));
 		cacheKey.append("/");
 		cacheKey.append(asset.getType().name());
@@ -81,11 +81,11 @@ public class AssetCacheManager {
 	}
 
 	public String generateMinCacheKey(HttpServletRequest request, Asset asset) {
-		
+
 		StringBuilder keyContext = new StringBuilder(UrlUtils.getCurrentUrl(request, true));
 		keyContext.append(asset.getBundle());
 		keyContext.append(asset.getName());
-		
+
 		StringBuilder minCacheKey = new StringBuilder(DigestUtils.md5Digest(keyContext.toString()));
 		minCacheKey.append("/min/");
 		minCacheKey.append(asset.getType().name());
@@ -131,7 +131,7 @@ public class AssetCacheManager {
 	}
 
 	public String getContent(String cacheKey) {
-		LOG.debug("Retrieving asset with the key {}", cacheKey);
+		LOG.debug("Retrieving asset with the key \"{}\"", cacheKey);
 		return context.getAssetCache().getAssetContent(cacheKey);
 	}
 
@@ -140,7 +140,7 @@ public class AssetCacheManager {
 	}
 
 	public String storeContent(String key, String content) {
-		LOG.debug("Storing asset under the key {}", key);
+		LOG.debug("Storing asset under the key \"{}\"", key);
 		context.getAssetCache().storeAssetContent(key, content);
 		return content;
 	}
@@ -151,7 +151,7 @@ public class AssetCacheManager {
 	}
 
 	public void remove(String key) {
-		LOG.debug("Removing asset under the key {}", key);
+		LOG.debug("Removing asset under the key \"{}\"", key);
 		context.getAssetCache().remove(key);
 	}
 

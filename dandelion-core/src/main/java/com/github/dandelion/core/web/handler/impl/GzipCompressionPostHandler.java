@@ -108,14 +108,9 @@ public class GzipCompressionPostHandler extends AbstractHandlerChain {
 		boolean responseNotCommited = !handlerContext.getResponse().isCommitted();
 		boolean compatibleMimeType = getSupportedMimeTypes(handlerContext.getContext()).contains(mimeType);
 
-		if (LOG.isTraceEnabled()) {
-			LOG.trace("Checking if the {} handler is applicable against \"{}\"");
-			LOG.trace("gzipEnabled: {}", gzipEnabled);
-			LOG.trace("requestNotInclude: {}", requestNotIncluded);
-			LOG.trace("browserAcceptsGzip: {}", browserAcceptsGzip);
-			LOG.trace("responseNotCommited: {}", responseNotCommited);
-			LOG.trace("compatibleMimeType: {}", compatibleMimeType);
-		}
+		LOG.trace(
+				"gzipEnabled: {}, requestNotInclude: {}, browserAcceptsGzip: {}, responseNotCommited: {}, compatibleMimeType: {}",
+				gzipEnabled, requestNotIncluded, browserAcceptsGzip, responseNotCommited, compatibleMimeType);
 
 		return gzipEnabled && requestNotIncluded && browserAcceptsGzip && responseNotCommited && compatibleMimeType;
 	}
@@ -143,7 +138,8 @@ public class GzipCompressionPostHandler extends AbstractHandlerChain {
 		// No reason to add GZIP headers or write body if no content was written
 		// or status code specifies no content
 		boolean shouldGzippedBodyBeZero = shouldGzippedBodyBeZero(compressedContent, handlerContext.getRequest());
-		boolean shouldBodyBeZero = shouldBodyBeZero(handlerContext.getRequest(), handlerContext.getResponse().getStatus());
+		boolean shouldBodyBeZero = shouldBodyBeZero(handlerContext.getRequest(), handlerContext.getResponse()
+				.getStatus());
 		if (shouldGzippedBodyBeZero || shouldBodyBeZero) {
 			handlerContext.getResponse().setContentLength(0);
 			return false;
@@ -182,8 +178,7 @@ public class GzipCompressionPostHandler extends AbstractHandlerChain {
 
 	/**
 	 * <p>
-	 * Checks whether the "gzip" encoding is supported or not. See
-	 * http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html#sec14.3.
+	 * Checks whether the "gzip" encoding is supported or not.
 	 * </p>
 	 * 
 	 * @param request

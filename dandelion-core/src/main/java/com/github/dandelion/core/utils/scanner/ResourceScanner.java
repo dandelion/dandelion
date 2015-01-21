@@ -162,7 +162,7 @@ public final class ResourceScanner {
 	private static Set<String> scanForResourcePaths(String location, Set<String> excludedPaths, String nameFilter,
 			String prefixFilter, String suffixFilter) throws IOException {
 
-		LOG.debug("Scanning for resources at '{}'...", location);
+		LOG.trace("Scanning for resources at '{}'...", location);
 
 		Set<String> resourcePaths = new HashSet<String>();
 
@@ -186,7 +186,7 @@ public final class ResourceScanner {
 			resourcePaths.addAll(classPathLocationScanner.findResourcePaths(location, resolvedUrl));
 		}
 
-		LOG.debug("{} resources found before filtering", resourcePaths.size());
+		LOG.trace("{} resources found before filtering", resourcePaths.size());
 		return filterResourcePaths(location, resourcePaths, excludedPaths, nameFilter, prefixFilter, suffixFilter);
 	}
 
@@ -254,7 +254,7 @@ public final class ResourceScanner {
 			Set<String> excludedPaths, String nameFilter, String prefixFilter, String suffixFilter) {
 		Set<String> filteredResources = new HashSet<String>();
 
-		LOG.debug("Filtering scanned resources...");
+		LOG.trace("Filtering scanned resources...");
 		for (String resourcePath : resourcePaths) {
 
 			if (isPathAuthorized(resourcePath, location, excludedPaths)) {
@@ -289,7 +289,7 @@ public final class ResourceScanner {
 			}
 		}
 
-		LOG.debug("{} resources found after filtering", filteredResources.size());
+		LOG.trace("{} resources found after filtering", filteredResources.size());
 		return filteredResources;
 	}
 
@@ -307,7 +307,7 @@ public final class ResourceScanner {
 
 		// Websphere
 		if (protocol.startsWith("wsjar")) {
-			LOG.debug("Selected URL resolver: {}", WebSphereUrlResolver.class.getSimpleName());
+			LOG.trace("Selected URL resolver: {}", WebSphereUrlResolver.class.getSimpleName());
 			return new WebSphereUrlResolver();
 		}
 
@@ -315,17 +315,17 @@ public final class ResourceScanner {
 		if (protocol.startsWith("vfs") || protocol.startsWith("vfszip")) {
 
 			if (LibraryDetector.isJBossVFS2Available()) {
-				LOG.debug("Selected URL resolver: {}", JBossVFS2UrlResolver.class.getSimpleName());
+				LOG.trace("Selected URL resolver: {}", JBossVFS2UrlResolver.class.getSimpleName());
 				return new JBossVFS2UrlResolver();
 			}
 
 			if (LibraryDetector.isJBossVFS3Available()) {
-				LOG.debug("Selected URL resolver: {}", JBossVFS3UrlResolver.class.getSimpleName());
+				LOG.trace("Selected URL resolver: {}", JBossVFS3UrlResolver.class.getSimpleName());
 				return new JBossVFS3UrlResolver();
 			}
 		}
 
-		LOG.debug("Selected URL resolver: {}", StandardUrlResolver.class.getSimpleName());
+		LOG.trace("Selected URL resolver: {}", StandardUrlResolver.class.getSimpleName());
 		return new StandardUrlResolver();
 	}
 
@@ -344,14 +344,14 @@ public final class ResourceScanner {
 	private static LocationResourceScanner createLocationScanner(String protocol) {
 
 		if ("file".equals(protocol)) {
-			LOG.debug("Selected resource scanner: {}", FileSystemLocationResourceScanner.class.getSimpleName());
+			LOG.trace("Selected resource scanner: {}", FileSystemLocationResourceScanner.class.getSimpleName());
 			return new FileSystemLocationResourceScanner();
 		}
 
 		if ("jar".equals(protocol) || "zip".equals(protocol) // WebLogic
 				|| "wsjar".equals(protocol) // WebSphere
 		) {
-			LOG.debug("Selected resource scanner: {}", JarLocationResourceScanner.class.getSimpleName());
+			LOG.trace("Selected resource scanner: {}", JarLocationResourceScanner.class.getSimpleName());
 			return new JarLocationResourceScanner();
 		}
 

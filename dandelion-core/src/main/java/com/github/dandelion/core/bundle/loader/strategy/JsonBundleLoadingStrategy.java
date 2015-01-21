@@ -49,7 +49,7 @@ import com.github.dandelion.core.utils.scanner.ResourceScanner;
 
 /**
  * <p>
- * 
+ * TODO
  * </p>
  * 
  * @author Thibault Duchateau
@@ -104,7 +104,7 @@ public class JsonBundleLoadingStrategy implements LoadingStrategy {
 				bsu.setRelativePath(resourcePath);
 				BundleUtils.checkRequiredConfiguration(bslb, bsu);
 				BundleUtils.finalizeBundleConfiguration(bsu, context);
-				LOG.debug("Parsed bundle \"{}\" ({})", bsu.getName(), bsu);
+				LOG.trace("Parsed bundle \"{}\" ({})", bsu.getName(), bsu);
 				bundles.add(bsu);
 			}
 			catch (IOException e) {

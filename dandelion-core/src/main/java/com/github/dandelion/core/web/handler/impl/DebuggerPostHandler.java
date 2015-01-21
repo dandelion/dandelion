@@ -79,6 +79,9 @@ public class DebuggerPostHandler extends AbstractHandlerChain {
 		return 50;
 	}
 
+	/**
+	 * The debugger is only accessible from a HTML page.
+	 */
 	@Override
 	public boolean isApplicable(HandlerContext handlerContext) {
 		return handlerContext.getContext().getConfiguration().isToolDebuggerEnabled()

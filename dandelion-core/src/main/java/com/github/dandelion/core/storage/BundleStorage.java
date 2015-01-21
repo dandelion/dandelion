@@ -60,7 +60,7 @@ import com.github.dandelion.core.storage.support.TopologicalSorter;
  */
 public class BundleStorage {
 
-	private static final Logger logger = LoggerFactory.getLogger(BundleStorage.class);
+	private static final Logger LOG = LoggerFactory.getLogger(BundleStorage.class);
 
 	private final BundleDag bundleDag;
 
@@ -113,7 +113,7 @@ public class BundleStorage {
 						if (existingAsu.getName().equalsIgnoreCase(asu.getName())
 								&& existingAsu.getType().equals(asu.getType())) {
 
-							logger.debug(
+							LOG.trace(
 									"Replacing asset '{}' ({}) from the bundle '{}' by the asset {} ({}) from the bundle {}.",
 									existingAsu.getName(), existingAsu.getVersion(), existingBundle.getName(),
 									asu.getName(), asu.getVersion(), bsuToAdd.getName());
@@ -139,7 +139,7 @@ public class BundleStorage {
 				// current bundle
 				if (!assetAlreadyExists) {
 
-					logger.debug("Adding {} '{}' ({}) to the bundle '{}'", asu.getType(), asu.getName(),
+					LOG.trace("Adding {} '{}' ({}) to the bundle '{}'", asu.getType(), asu.getName(),
 							asu.getVersion(), bsuToAdd.getName());
 					bsuToAdd.getAssetStorageUnits().add(asu);
 				}
