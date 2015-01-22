@@ -2,27 +2,17 @@
 
 NOTE: Pending
 
-One of the key features of Dandelion-Datatables is that it is highly configurable. Plenty of options are at your disposal to configure the component through several levels of granularity.
+One of the key features of Dandelion is that it is highly configurable. Plenty of options, with default values depending on the active <<10-profiles, profile>>, are at your disposal to configure the framework.
 
-See the <<_appendix_c_configuration_options_reference, configuration options reference>> for an exhaustive list of available options.
+=== 12.1. Available options
 
-=== 12.1. Configuration loading
+See the <<appendix-c-configuration-options-reference, configuration options reference>> for an exhaustive list of available options and their corresponding default value with both `dev` and `prod` <<10-1-built-in-profiles, profiles>>.
 
-==== 12.1.1. Loading strategy
+=== 12.2. Reading configuration options
 
-Any configuration option must be set in a file called <code>datatables.properties</code>. Dandelion-Datatables will load it thanks to the http://docs.oracle.com/javase/6/docs/api/java/util/ResourceBundle.html[ResourceBundle mechanism] and using the following strategy:
+==== 12.2.1. From classpath
 
-* First, check if the `dandelion.datatables.configuration` system property is defined.
-
-If it exists, Dandelion-Datatables attempts to convert the value to a URL and use it to load a resource bundle called `datatables.properties`
-
-* Then, if no system property is defined, Dandelion-Datatables tries to load the same resource bundle (called `datatables.properties`) from the `dandelion/datatables/` folder within the classpath.
-
-* If no `datatables.properties` file is found, the default configuration will be used
-
-==== 12.1.2. Example using classpath configuration
-
-Let's say you use Maven as a build tool. When reading configuration from classpath, you should strictly follow the convention, i.e. place the properties files under the <code>classpath_root/dandelion/datatables/</code> folder.
+By default, Dandelion expects a file called `dandelion.properties` to be located in the `classpath-root/dandelion` folder.
 
 .Example with a Maven project
 [source, xml]
@@ -31,16 +21,18 @@ project-root
 |__ src
    |__ main
       |__ java
-      |__ resources
-         |__ dandelion
-            |__ datatables 
-               |__ datatables.properties
-               |__ datatables_FR.properties
-               |__ datatables_ES.properties
+         |__ resources
+            |__ dandelion
+               |__ dandelion.properties
 ----
 
-==== 12.1.3. Example using externalized configuration
+IMPORTANT: Note that when a profile is explicitely activated, Dandelion will try to load a file called `dandelion_[profileName].properties`. See the <<10-profiles, profile section>> for more information.
 
+==== 12.2.2. From System property
+
+Dandelion can also load an externalized configuration file, using the `dandelion.configuration` System property.
+
+If you wish to externalize the configuration file, 
 Let's say you have the following files:
 
 [source, xml]
@@ -55,162 +47,66 @@ C:
 
 Just add `-Ddandelion.datatables.configuration="C:\Documents\MyApp\"` to the starting script of the application server.
 
-NOTE: Note that when reading from an externalized file, you don't have to put the properties file under the `dandelion/datatables` folder.
+NOTE: Note that when reading from an externalized file, you don't have to put the properties file under the `dandelion/` folder.
 
-=== 12.2. Overloading default options
 
-By default, Dandelion-Datatables internally uses a properties file, containing some configuration properties.
+==== 12.2.3. Loading strategy
 
-But you can of course override it in multiple ways:
-   
-* First, you can add a file called <code>datatables.properties</code> under the <code>/dandelion/datatables</code> folder, allowing you to redefine every property you need. Your custom global configuration will then be merged with the default one.
-* Or you can locally overload properties using the {% refjsp dt prop %} JSP tag or the <a href="/datatables/features/advanced/configuration-div.html">Thymeleaf configuration div</a>.
+Any configuration option must be set in a file called <code>datatables.properties</code>. Dandelion-Datatables will load it thanks to the http://docs.oracle.com/javase/6/docs/api/java/util/ResourceBundle.html[ResourceBundle mechanism] and using the following strategy:
 
-[discrete]
-==== Using JSP
+* First, check if the `dandelion.datatables.configuration` system property is defined.
 
++
+If it exists, Dandelion-Datatables attempts to convert the value to a URL and use it to load a resource bundle called `datatables.properties`
+
+* Then, if no system property is defined, Dandelion-Datatables tries to load the same resource bundle (called `datatables.properties`) from the `dandelion/datatables/` folder within the classpath.
+
+* If no `datatables.properties` file is found, the default configuration will be used
+
+
+=== 12.3. Setting configuration options
+
+Dandelion uses a very particular PropertySource order that is designed to allow sensible overriding of values, properties are considered in the the following order:
+
+==== 12.3.1. Using properties
+
+.dandelion/dandelion.properties
+[source, properties]
+----
+asset.minification=true
+----
+
+==== 12.3.2. Using filter initialization parameters
+
+You can also set configuration options as initialization parameters of the `DandelionFilter`:
+
+.web.xml
 [source, xml]
 ----
-<datatables:table id="myTableId" data="${persons}">
-  ...
-  <datatables:prop name="some.property" value="true" />
-</datatables:table>
+<filter>
+  <filter-name>dandelion</filter-name>
+  <filter-class>com.github.dandelion.core.web.DandelionFilter</filter-class>
+  <init-param>
+    <param-name>asset.minification</param-name>
+    <param-value>true</param-value>
+  </init-param>
+</filter>
 ----
 
-[discrete]
-==== Using Thymeleaf
+==== 12.3.3. Using Java System properties
 
-[source, xml]
+And finally as Java System properties:
+
+.Inside your server startup script
+[source, bash]
 ----
-<div dt:conf="myTableId">
-  <div dt:confType="property" dt:name="some.property" dt:value="true"></div>
-</div>
-      
-<table id="myTableId" dt:table="true">
-  ...
-</table>
+-Dasset.minification=true
 ----
 
-=== 12.3. Using global options
+[IMPORTANT] 
+==== 
+Remember that the following precedence rule applies:
 
-Almost all available attributes of the {% refjsp dt table %} (JSP) and {% reftl dt table %} (Thymeleaf) tags can be configured in the configuration file (<i>datatables.properties</i>) to be applied application-wide, i.e. on all tables in your application.
+*System property* > *filter init param* > *properties file*
+====
 
-Since Dandelion-Datatables will defautly look for a file called <i>datatables.properties</i> at the root of the classpath, you just need to create it and write some key-value pairs inside.
-
-All pairs you write in your file will override the default values contained in the default properties file which is embedded in the JAR. Nothing beats a nice drawing:
-
-image::global-configuration.png[]
-
-Feel free to browse the <<appendix-c-configuration-options-reference,configuration reference>> to see all available options.
-
-[discrete]
-==== Examples
-
-* Global theme
-
-Assume you would like to apply the Bootstrap2 (LIEN SECTION STYLING) theme everywhere in your application, i.e. in all tables of the application.
-
-Locally, you would use the following attributes: <<jsp-table-theme, `theme`>> attribute and add custom CSS classes using the <<jsp-table-cssClass, `cssClass`>> attribute:
-
-[source, xml]
-----
-<datatables:table id="myTableId" data="${persons}" cssClass="table table-striped table-bordered table-condensed" theme="bootstrap2">
-  ...
-</datatables:table>
-----
-
-To apply it globally, just fill the _datatables.properties_ file with the following configuration:
-
- global.css.class=table table-striped table-bordered table-condensed
- global.extra.theme=bootstrap2
-
-And that's all! This way, the Bootstrap 2 (LIEN STYLING) theme will be applied on all tables in your application.
-
-=== 12.4. Using option groups
-
-You may have seen in the <a href="/datatables/features/configuration/global-configuration.html">tutorial about using global configuration</a> that all configuration names are prepended with <code>global.</code>. It actually means that all configurations belong to the <code>global</code> group. This group contain the configurations that will be applied on all tables in your application.
-
-==== 12.4.1. Creating option groups
-
-The option groups have been introduced in the v0.9.0. It allows you to create groups of configuration that you can apply locally, i.e. on a particular table.
-
-Note that any group you create will extend the <code>global</code> one, which himself extends the global group declared in the <i>datatables-default.properties</i> file, which is included in the JAR.
-
-Once again, nothing beats a nice drawing...
-
-image::configuration-groups.png[]
-
-In the above example, the configuration set up in the <i>datatables.properties</i> file will result in 3 groups:
-
-* *global*: this one is used everywhere in your application, if no specific group is explicitely activated
-* *group1* and *group2*: those ones won't be used unless one of them is activated locally. Read the next section to see how.
-
-==== 12.4.2. Activating an option group
-
-This is quite simple. Just use the <<jsp-table-confGroup, `confGroup`>> (JSP) or <<tml-table-confGroup, `dt:confGroup`>> (Thymeleaf) table attributes and set the group name as a value.
-
-[discrete]
-===== Using JSP
-
-[source, xml]
-----
-<datatables:table id="myTableId" data="${persons}" confGroup="group1">
-  ...
-</datatables:table>
-----
-
-[discrete]
-===== Using Thymeleaf
-
-[source, xml]
-----
-<table id="myTableId" dt:table="true" dt:confGroup="group1">
-  ...
-</table>
-----
-
-WARNING: You can only activate one group at a time.
-
-
-
-
-
-
-<p>
-   Any of the <a href="/dandelion/docs/ref/configuration">configuration properties</a> can be loaded using the same strategy. 
-</p>
-<p>As most of the configuration properties, you have several options to do so:</p>
-<ul>
-   <li>
-      Using the properties file: just add the following key/value
-      pair to your <a
-      href="/dandelion/features/configuration/configuration-loading.html">dandelion.properties</a>
-      file: 
-<pre class="prettyprint">
-minification=true
-</pre>
-   </li>
-   <li>Using a filter initialization parameter in your <code>web.xml</code> file:
-<pre class="prettyprint">
-&lt;filter>
-   &lt;filter-name>dandelion&lt;/filter-name>
-   &lt;filter-class>com.github.dandelion.core.web.DandelionFilter&lt;/filter-class>
-   &lt;init-param>
-      &lt;param-name>minification&lt;/param-name>
-      &lt;param-value>true&lt;/param-value>
-   &lt;/init-param>
-&lt;/filter>
-</pre>
-   </li>
-   <li>
-      Using a system property: add the following system property to your server starting script:
-<pre class="prettyprint">
--Dminification=true
-</pre>   
-   </li>
-</ul>
-<p>
-   Remember that as for any other <a href="/dandelion/docs/ref/configuration">configuration
-      property</a>, the following rule applies:
-   <i>system property</i> > <i>filter init param</i> > <i>properties file</i>.
-</p>
