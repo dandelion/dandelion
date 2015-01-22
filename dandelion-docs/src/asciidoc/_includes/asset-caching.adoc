@@ -33,11 +33,12 @@ NOTE: The caching policy of resources fetched from external locations, such as h
 The HTTP headers are set on all resources except those with the `text/html` content type.
 
 |===
-|HTTP header |With asset caching enabled |With asset caching disabled
+|HTTP header |Caching enabled |Caching disabled
 
 |`Cache-Control` | public, max-age=31536000 | no-cache, no-store
 |`Expires` | current date + 1 year | current date - 1 year
 |`Last-Modified` | start up time of the server | 
+|`Vary` | Accept-Encoding | Accept-Encoding
 
 |===
 
@@ -173,7 +174,7 @@ project-root
       |__ resources
          |__ META-INF
             |__ services
-               |__ com.github.dandelion.core.asset.cache.spi.AssetCache
+               |__ com.github.dandelion.core.asset.cache.AssetCache
 ----
  
 +
