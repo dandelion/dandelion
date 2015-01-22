@@ -519,6 +519,9 @@ public class Context {
 		return assetCache;
 	}
 
+	/**
+	 * @return the map of all available {@link AssetProcessor}.
+	 */
 	public Map<String, AssetProcessor> getProcessorsMap() {
 		return processorsMap;
 	}
@@ -527,6 +530,9 @@ public class Context {
 		return bundleLoaders;
 	}
 
+	/**
+	 * @return the map of all available {@link AssetLocator}.
+	 */
 	public Map<String, AssetLocator> getAssetLocatorsMap() {
 		return assetLocatorsMap;
 	}
