@@ -5,13 +5,13 @@
 The main goals of bundle loaders are:
 
 * to scan for bundle definitions in the classpath (JSON format in first, then XML format)
-* to map each of the loaded files into a comprehensive format and feeds the bundle graph
+* to map each of the loaded files into a comprehensive format and feeds the <<#4-2-building-a-bundle-graph, bundle graph>>
 
 === 8.1. Built-in loaders
 
 Dandelion comes with two built-in bundle loaders: `DandelionBundleLoader` and `VendorBundleLoader`. They basically do the same job except the location where to scan for bundle definitions.
 
-Note that they're all mutually exclusive. It means that a folder or subfolder will never be scanned twice.
+Note that they're all mutually exclusive, which means that a folder or subfolder will never be scanned twice.
 
 ==== 8.1.1. `VendorBundleLoader`
 

@@ -175,14 +175,14 @@ if(is.ua.indexOf('gecko')>=0){is.ie=is.ns=false;is.gecko=true;}
 
 In order to plug-in your own asset processor, just follow these steps:
 
-. Create a class that extends `AbstractAssetProcessor` and annotate it with `CompatibleAssetType `
+. Create a class that extends `AbstractAssetProcessor` and annotate it with `@CompatibleAssetType`
 
 +
 [source, java]
 ----
 package com.foo.asset.processor.impl;
 
-@CompatibleAssetType(types = AssetType.css)
+@CompatibleAssetType(types = AssetType.css) // <1>
 public class MyProcessor extends AbstractAssetLocator {
 
    @Override
@@ -196,6 +196,7 @@ public class MyProcessor extends AbstractAssetLocator {
    }
 }
 ----
+<1> Specify the asset type for which the processor is compatible
 
 . In the `META-INF/services` folder, create a text file (UTF-8 encoded) using the following convention:
 
