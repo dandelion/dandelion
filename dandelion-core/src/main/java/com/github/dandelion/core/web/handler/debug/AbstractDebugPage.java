@@ -72,7 +72,7 @@ public abstract class AbstractDebugPage implements DebugPage {
 
 		StringBuilder componentMenus = new StringBuilder();
 		for (DebugMenu debugMenu : context.getContext().getDebugMenuMap().values()) {
-			componentMenus.append(getComponentMenu(debugMenu));
+			componentMenus.append(getComponentMenu(debugMenu, appUri));
 		}
 		params.put("%COMPONENTS%", componentMenus.toString());
 
@@ -86,11 +86,11 @@ public abstract class AbstractDebugPage implements DebugPage {
 		return params;
 	}
 
-	private StringBuilder getComponentMenu(DebugMenu debugMenu) {
+	private StringBuilder getComponentMenu(DebugMenu debugMenu, String appUri) {
 		StringBuilder menu = new StringBuilder("<ul class=\"nav nav-sidebar\">");
 		menu.append("<li class=\"nav-header disabled\"><a>").append(debugMenu.getDisplayName()).append("</a></li>");
 		for (DebugPage page : debugMenu.getPages()) {
-			String href = getComponentDebugPageUrl(page);
+			String href = getComponentDebugPageUrl(appUri, page);
 			menu.append("<li");
 			if (this.getClass().getSimpleName().equals(page.getClass().getSimpleName())) {
 				menu.append(" class=\"active\"");
@@ -106,17 +106,25 @@ public abstract class AbstractDebugPage implements DebugPage {
 		return menu;
 	}
 
-	private String getComponentDebugPageUrl(DebugPage debugPage) {
-		String href = UrlUtils.getContext(context.getRequest()).toString() + "/" + "?"
-				+ WebConstants.DANDELION_DEBUGGER + "&ddl-debug-page=" + debugPage.getId();
-		return href;
+	private String getComponentDebugPageUrl(String appUri, DebugPage debugPage) {
+		StringBuilder componentPage = new StringBuilder(appUri);
+		if (componentPage.indexOf("?") == -1) {
+			componentPage.append("?");
+		}
+		else {
+			componentPage.append("&");
+		}
+		componentPage.append(WebConstants.DANDELION_DEBUGGER);
+		componentPage.append("&ddl-debug-page=");
+		componentPage.append(debugPage.getId());
+		return componentPage.toString();
 	}
 
 	/**
 	 * <p>
 	 * Returns a {@link Map} of parameters that will be merged will the default
-	 * ones coming from {@link #getParameters(HandlerContext)} and used
-	 * inside the template for variables substitution.
+	 * ones coming from {@link #getParameters(HandlerContext)} and used inside
+	 * the template for variables substitution.
 	 * </p>
 	 * 
 	 * @param context
