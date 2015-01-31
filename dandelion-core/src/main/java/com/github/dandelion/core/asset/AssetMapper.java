@@ -40,9 +40,9 @@ import org.slf4j.LoggerFactory;
 
 import com.github.dandelion.core.Context;
 import com.github.dandelion.core.DandelionException;
-import com.github.dandelion.core.asset.cache.AssetCache;
 import com.github.dandelion.core.asset.locator.AssetLocator;
 import com.github.dandelion.core.asset.versioning.AssetVersioningStrategy;
+import com.github.dandelion.core.cache.Cache;
 import com.github.dandelion.core.storage.AssetStorageUnit;
 import com.github.dandelion.core.utils.AssetUtils;
 import com.github.dandelion.core.utils.PathUtils;
@@ -50,7 +50,7 @@ import com.github.dandelion.core.utils.StringUtils;
 
 /**
  * <p>
- * Used to map an {@link AssetStorageUnit} to an {@link Asset}.
+ * Mapper that converts {@link AssetStorageUnit}s to {@link Asset}s.
  * </p>
  * 
  * @author Thibault Duchateau
@@ -61,18 +61,18 @@ public class AssetMapper {
 	private static final Logger LOG = LoggerFactory.getLogger(AssetMapper.class);
 
 	/**
-	 * The current HTTP request.
-	 */
-	private final HttpServletRequest request;
-
-	/**
 	 * The Dandelion context.
 	 */
 	private final Context context;
 
-	public AssetMapper(HttpServletRequest request, Context context) {
-		this.request = request;
+	/**
+	 * The current HTTP request.
+	 */
+	private final HttpServletRequest request;
+
+	public AssetMapper(Context context, HttpServletRequest request) {
 		this.context = context;
+		this.request = request;
 	}
 
 	/**
@@ -103,7 +103,7 @@ public class AssetMapper {
 	 * <p>
 	 * Depending on how the {@link AssetStorageUnit} is configured, the
 	 * {@link Asset} will contains resolved locations and its content will be
-	 * cached in the configured {@link AssetCache}.
+	 * cached in the configured {@link Cache}.
 	 * </p>
 	 * 
 	 * @param asu
@@ -118,7 +118,59 @@ public class AssetMapper {
 
 		LOG.trace("Resolving location for the asset {}", asset.toLog());
 
-		// no available locations = no locations
+		// Selecting location key
+		String locationKey = getLocationKey(asu);
+
+		Map<String, AssetLocator> locators = this.context.getAssetLocatorsMap();
+		if (!locators.containsKey(locationKey)) {
+			StringBuilder msg = new StringBuilder("The location key '");
+			msg.append(locationKey);
+			msg.append("' is not valid. Please choose a valid one among ");
+			msg.append(locators.keySet());
+			msg.append(".");
+			throw new DandelionException(msg.toString());
+		}
+
+		// Otherwise check for the locator
+		String location = null;
+		AssetLocator locator = locators.get(locationKey);
+		if (locators.containsKey(locationKey)) {
+			LOG.trace("Locator '{}' will be applied on the asset {}.", locator.getClass().getSimpleName(), asu.toLog());
+			location = locators.get(locationKey).getLocation(asu, request);
+		}
+		asset.setAssetLocator(locator);
+		asset.setProcessedConfigLocation(location);
+
+		String cacheKey = AssetUtils.generateCacheKey(asset);
+		asset.setCacheKey(cacheKey);
+
+		// Vendor assets are served as-is, no need to store them
+		if (asset.isNotVendor()) {
+
+			// Update the asset storage with minified contents
+			if (context.getConfiguration().isAssetMinificationEnabled()) {
+				asset = this.context.getProcessorManager().process(asset, request);
+			}
+			// Update the asset storage with normal contents
+			else if (context.getConfiguration().isAssetAutoVersioningEnabled()
+					|| asset.getAssetLocator().isCachingForced()) {
+				String contents = asset.getAssetLocator().getContent(asset, request);
+				this.context.getAssetStorage().put(asset.getCacheKey(), contents);
+			}
+		}
+
+		asset.setName(getName(asu, location));
+		asset.setType(getType(asu, location));
+		asset.setConfigLocationKey(locationKey);
+		asset.setConfigLocation(asu.getLocations().get(locationKey));
+		asset.setVersion(getVersion(asset));
+		asset.setFinalLocation(getFinalLocation(asset));
+
+		return asset;
+	}
+
+	private String getLocationKey(AssetStorageUnit asu) {
+
 		if (asu.getLocations() == null || asu.getLocations().isEmpty()) {
 			StringBuilder msg = new StringBuilder("No location is configured for the asset ");
 			msg.append(asu.toLog());
@@ -126,7 +178,6 @@ public class AssetMapper {
 			throw new DandelionException(msg.toString());
 		}
 
-		// Selecting location key
 		String locationKey = null;
 
 		if (asu.getLocations().size() == 1) {
@@ -148,55 +199,7 @@ public class AssetMapper {
 		}
 		LOG.trace("Location key '{}' selected for the asset {}", locationKey, asu.toString());
 
-		Map<String, AssetLocator> locators = this.context.getAssetLocatorsMap();
-		if (!locators.containsKey(locationKey)) {
-			StringBuilder msg = new StringBuilder("The location key '");
-			msg.append(locationKey);
-			msg.append("' is not valid. Please choose a valid one among ");
-			msg.append(locators.keySet());
-			msg.append(".");
-			throw new DandelionException(msg.toString());
-		}
-
-		// Otherwise check for the locator
-		String location = null;
-		AssetLocator locator = locators.get(locationKey);
-		if (locators.containsKey(locationKey) && locators.get(locationKey).isActive()) {
-			LOG.trace("Locator '{}' will be applied on the asset {}.", locator.getClass().getSimpleName(), asu.toLog());
-			location = locators.get(locationKey).getLocation(asu, request);
-		}
-
-		String cacheKey = this.context.getCacheManager().generateCacheKey(this.request, asset);
-		asset.setCacheKey(cacheKey);
-
-		if (asu.isNotVendor()
-				&& (this.context.getConfiguration().isAssetAutoVersioningEnabled()
-						|| this.context.getConfiguration().isAssetCachingEnabled() || locator.isCachingForced() || this.context
-						.getConfiguration().isAssetMinificationEnabled())) {
-
-			String content = this.context.getCacheManager().getContent(asset.getCacheKey());
-
-			if (content == null || this.context.getConfiguration().isAssetCachingEnabled()) {
-
-				if (locator.isActive()) {
-
-					content = locator.getContent(asu, request);
-
-					// Finally store the final content in cache
-					this.context.getCacheManager().storeContent(asset.getCacheKey(), content);
-				}
-			}
-		}
-
-		asset.setName(getName(asu, location));
-		asset.setBundle(asu.getBundle());
-		asset.setType(getType(asu, location));
-		asset.setConfigLocationKey(locationKey);
-		asset.setConfigLocation(asu.getLocations().get(locationKey));
-		asset.setVersion(getVersion(asu, asset));
-		asset.setFinalLocation(getFinalLocation(asset, location, locator));
-
-		return asset;
+		return locationKey;
 	}
 
 	/**
@@ -213,16 +216,16 @@ public class AssetMapper {
 	 *            The selected asset locator.
 	 * @return The final location of the asset.
 	 */
-	private String getFinalLocation(Asset asset, String location, AssetLocator assetLocator) {
+	private String getFinalLocation(Asset asset) {
 
 		if (asset.isNotVendor()
 				&& (this.context.getConfiguration().isAssetAutoVersioningEnabled()
-						|| this.context.getConfiguration().isAssetCachingEnabled() || assetLocator.isCachingForced() || this.context
-						.getConfiguration().isAssetMinificationEnabled())) {
+						|| asset.getAssetLocator().isCachingForced() || this.context.getConfiguration()
+						.isAssetMinificationEnabled())) {
 			return AssetUtils.getAssetFinalLocation(request, asset, null);
 		}
 		else {
-			return location;
+			return asset.getProcessedConfigLocation();
 		}
 	}
 
@@ -245,14 +248,15 @@ public class AssetMapper {
 	 *            The asset to extract the version from.
 	 * @return the version of the asset.
 	 */
-	private String getVersion(AssetStorageUnit asu, Asset asset) {
+	private String getVersion(Asset asset) {
 
-		// First: manual versioning if specified
-		if (StringUtils.isNotBlank(asu.getVersion())) {
-			return asu.getVersion();
+		// First: manual versioning if specified, coming from the
+		// AssetStorageUnit
+		if (StringUtils.isNotBlank(asset.getVersion())) {
+			return asset.getVersion();
 		}
 
-		// Then, auto versioning if enabled
+		// If enabled, auto versioning takes precedence over manual one
 		if (this.context.getConfiguration().isAssetAutoVersioningEnabled()) {
 			AssetVersioningStrategy avs = this.context.getActiveVersioningStrategy();
 			return avs.getAssetVersion(asset);
@@ -310,7 +314,7 @@ public class AssetMapper {
 			return asu.getType();
 		}
 		else {
-			return AssetType.typeOf(location);
+			return AssetType.extractFromAssetLocation(location);
 		}
 	}
 }

@@ -39,6 +39,7 @@ import org.springframework.mock.web.MockFilterConfig;
 import org.springframework.mock.web.MockHttpServletRequest;
 
 import com.github.dandelion.core.Context;
+import com.github.dandelion.core.asset.Asset;
 import com.github.dandelion.core.storage.AssetStorageUnit;
 import com.github.dandelion.core.web.WebConstants;
 
@@ -48,39 +49,40 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class RemoteLocatorTest {
 
-	private RemoteLocator locator = new RemoteLocator();
-	private String absolute_url = "http://domain/folder/sub/assets/css/my.css";
-	private String protocol_relative_url = "//domain/folder/sub/assets/css/my.css";
-	private MockHttpServletRequest request;
+   private RemoteLocator locator = new RemoteLocator();
+   private String absolute_url = "http://domain/folder/sub/assets/css/my.css";
+   private String protocol_relative_url = "//domain/folder/sub/assets/css/my.css";
+   private MockHttpServletRequest request;
 
-	@Rule
-	public ExpectedException exception = ExpectedException.none();
+   @Rule
+   public ExpectedException exception = ExpectedException.none();
 
-	@Before
-	public void setup() {
-		request = new MockHttpServletRequest();
-		request.setAttribute(WebConstants.DANDELION_CONTEXT_ATTRIBUTE, new Context(new MockFilterConfig()));
-	}
+   @Before
+   public void setup() {
+      request = new MockHttpServletRequest();
+      request.setAttribute(WebConstants.DANDELION_CONTEXT_ATTRIBUTE, new Context(new MockFilterConfig()));
+   }
 
-	@Test
-	public void should_return_the_same_absolute_url() {
-		AssetStorageUnit asu = new AssetStorageUnit("my.js", singletonMap("remote", absolute_url));
-		String location = locator.getLocation(asu, request);
-		assertThat(location).isEqualTo(absolute_url);
-	}
+   @Test
+   public void should_return_the_same_absolute_url() {
+      AssetStorageUnit asu = new AssetStorageUnit("my.js", singletonMap("remote", absolute_url));
+      String location = locator.getLocation(asu, request);
+      assertThat(location).isEqualTo(absolute_url);
+   }
 
-	@Test
-	public void should_return_the_same_protocol_relative_url() {
-		AssetStorageUnit asu = new AssetStorageUnit("my.js", singletonMap("remote", protocol_relative_url));
-		String location = locator.getLocation(asu, request);
-		assertThat(location).isEqualTo(protocol_relative_url);
-	}
+   @Test
+   public void should_return_the_same_protocol_relative_url() {
+      AssetStorageUnit asu = new AssetStorageUnit("my.js", singletonMap("remote", protocol_relative_url));
+      String location = locator.getLocation(asu, request);
+      assertThat(location).isEqualTo(protocol_relative_url);
+   }
 
-	@Test
-	public void should_return_the_content() {
-		String filePath = new File("src/test/resources/locator/asset.js").toURI().toString();
-		AssetStorageUnit asu = new AssetStorageUnit("my.js", singletonMap("remote", filePath));
-		String content = locator.getContent(asu, request);
-		assertThat(content).isEqualTo("/* content */");
-	}
+   @Test
+   public void should_return_the_asset_contents() {
+      String filePath = new File("src/test/resources/locator/asset.js").toURI().toString();
+      Asset asset = new Asset();
+      asset.setProcessedConfigLocation(filePath);
+      String content = locator.getContent(asset, request);
+      assertThat(content).isEqualTo("/* content */");
+   }
 }

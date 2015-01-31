@@ -35,17 +35,47 @@ import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.github.dandelion.core.Context;
+import com.github.dandelion.core.cache.Cache;
 import com.github.dandelion.core.storage.AssetStorageUnit;
 import com.github.dandelion.core.storage.BundleStorageUnit;
 import com.github.dandelion.core.utils.AssetUtils;
 import com.github.dandelion.core.utils.UrlUtils;
 import com.github.dandelion.core.web.AssetRequestContext;
 
+/**
+ * <p>
+ * Builder that allows to create and execute queries in order to retrieve all
+ * {@link Asset} to be loaded for the current {@link HttpServletRequest}.
+ * </p>
+ * <p>
+ * If caching is enabled, the result of the query is cached in the configured
+ * {@link Cache} system to be returned faster.
+ * </p>
+ * 
+ * @author Thibault Duchateau
+ * @since 0.9.0
+ */
 public class AssetQuery {
 
+	private static final Logger LOG = LoggerFactory.getLogger(AssetQuery.class);
+
+	/**
+	 * The Dandelion context.
+	 */
 	private final Context context;
+
+	/**
+	 * The current request.
+	 */
 	private final HttpServletRequest request;
+
+	/**
+	 * The desired position in the DOM.
+	 */
 	private AssetDomPosition assetDomPosition;
 
 	public AssetQuery(HttpServletRequest request, Context context) {
@@ -53,208 +83,115 @@ public class AssetQuery {
 		this.request = request;
 	}
 
+	/**
+	 * <p>
+	 * Filters the desired {@link Asset}s on their {@link AssetDomPosition}.
+	 * </p>
+	 * <p>
+	 * If no DOM position is provided, all assets required in the current page
+	 * will be returned.
+	 * </p>
+	 * 
+	 * @param assetDomPosition
+	 *            the DOM position used to filter.
+	 * @return the current instance of {@link AssetQuery}.
+	 */
 	public AssetQuery atPosition(AssetDomPosition assetDomPosition) {
 		this.assetDomPosition = assetDomPosition;
 		return this;
 	}
 
+	/**
+	 * <p>
+	 * Actually performs the query to retrieve the desired {@link Asset}s.
+	 * </p>
+	 * 
+	 * @return an ordered set of {@link Asset} to be used in the current
+	 *         {@link HttpServletRequest}.
+	 */
 	public Set<Asset> perform() {
 
-		String key = UrlUtils.getCurrentUri(request).toString();
-		Set<Asset> requestedAssets = context.getCacheManager().getAssets(key);
+		Set<Asset> requestedAssets = null;
+		String requestCacheKey = null;
 
-		if (requestedAssets == null || context.getConfiguration().isAssetCachingEnabled()) {
+		LOG.debug("Performing query for the request \"{}\"", UrlUtils.getCurrentUri(request));
 
-			// All asset storage units are fetched in an ordered set
-			Set<AssetStorageUnit> assetStorageUnits = new LinkedHashSet<AssetStorageUnit>();
-
-			String[] bundleNames = AssetRequestContext.get(request).getBundles(true);
-			for (BundleStorageUnit bsu : context.getBundleStorage().bundlesFor(bundleNames)) {
-				assetStorageUnits.addAll(bsu.getAssetStorageUnits());
-			}
-
-			// Convert all asset storage units into assets
-			AssetMapper assetMapper = new AssetMapper(request, context);
-			Set<Asset> mappedAssets = assetMapper.mapToAssets(assetStorageUnits);
-
-			// Applying the active processors
-			mappedAssets = context.getProcessorManager().process(mappedAssets, request);
-
-			requestedAssets = context.getCacheManager().storeAssets(key, mappedAssets);
+		if (this.context.getConfiguration().isCachingEnabled()) {
+			requestCacheKey = this.context.getCacheManager().generateRequestCacheKey(this.request,
+					this.assetDomPosition);
+			requestedAssets = this.context.getCacheManager().getAssets(requestCacheKey);
 		}
 
-		// Once all assets gathered, they are now filtered
-		Set<String> excludedJsNames = new HashSet<String>();
+		if (requestedAssets == null) {
+
+			// All asset storage units are gathered in an ordered set
+			Set<AssetStorageUnit> assetStorageUnits = gatherAssetStorageUnits();
+
+			// Convert all asset storage units into assets
+			AssetMapper assetMapper = new AssetMapper(context, request);
+			requestedAssets = assetMapper.mapToAssets(assetStorageUnits);
+
+			// If caching is enabled, the assocation request<=>assets is cached
+			// for
+			// quicker future access
+			if (this.context.getConfiguration().isCachingEnabled()) {
+				requestedAssets = context.getCacheManager().storeAssets(requestCacheKey, requestedAssets);
+			}
+		}
+
+		LOG.debug("-> Query returned {} assets: {}", requestedAssets.size(), requestedAssets);
+		return requestedAssets;
+	}
+
+	private Set<AssetStorageUnit> gatherAssetStorageUnits() {
+
+		Set<AssetStorageUnit> asus = new LinkedHashSet<AssetStorageUnit>();
+
+		String[] bundleNames = AssetRequestContext.get(this.request).getBundles(true);
+		for (BundleStorageUnit bsu : this.context.getBundleStorage().bundlesFor(bundleNames)) {
+			asus.addAll(bsu.getAssetStorageUnits());
+		}
+
 		// First collect JS from the excluded bundles
-		for (String bundleToExclude : AssetRequestContext.get(request).getExcludedBundles()) {
-			Set<BundleStorageUnit> bsus = context.getBundleStorage().bundlesFor(bundleToExclude);
+		Set<String> excludedJsNames = new HashSet<String>();
+		for (String bundleToExclude : AssetRequestContext.get(this.request).getExcludedBundles()) {
+			Set<BundleStorageUnit> bsus = this.context.getBundleStorage().bundlesFor(bundleToExclude);
 			for (BundleStorageUnit bsu : bsus) {
 				excludedJsNames.addAll(bsu.getJsAssetStorageUnitNames());
 			}
 		}
 
 		// Then add JS "manually" excluded
-		for (String assetToExclude : AssetRequestContext.get(request).getExcludedJs()) {
+		for (String assetToExclude : AssetRequestContext.get(this.request).getExcludedJs()) {
 			excludedJsNames.add(assetToExclude);
 		}
 
-		// if (excludedJsNames.length > 0) {
-		// excludeJs(excludedJsNames);
-		// }
-
-		// First collect CSS from the excluded bundles
+		// Then collect CSS from the excluded bundles
 		Set<String> excludedCssNames = new HashSet<String>();
-		for (String bundleToExclude : AssetRequestContext.get(request).getExcludedBundles()) {
-			Set<BundleStorageUnit> bsus = context.getBundleStorage().bundlesFor(bundleToExclude);
+		for (String bundleToExclude : AssetRequestContext.get(this.request).getExcludedBundles()) {
+			Set<BundleStorageUnit> bsus = this.context.getBundleStorage().bundlesFor(bundleToExclude);
 			for (BundleStorageUnit bsu : bsus) {
 				excludedCssNames.addAll(bsu.getCssAssetStorageUnitNames());
 			}
 		}
 
 		// Then add CSS "manually" excluded
-		for (String assetToExclude : AssetRequestContext.get(request).getExcludedCss()) {
+		for (String assetToExclude : AssetRequestContext.get(this.request).getExcludedCss()) {
 			excludedCssNames.add(assetToExclude);
 		}
 
-		// String[] excludedCssNames = collectCssToExclude();
-		// if (excludedCssNames.length > 0) {
-		// excludeCss(excludedCssNames);
-		// }
-
 		if (this.assetDomPosition != null) {
-			requestedAssets = AssetUtils.filtersByDomPosition(requestedAssets, this.assetDomPosition);
+			asus = AssetUtils.filtersByDomPosition(asus, this.assetDomPosition);
 		}
 
 		if (!excludedJsNames.isEmpty()) {
-			requestedAssets = AssetUtils.filtersByNameAndType(requestedAssets, excludedJsNames, AssetType.js);
+			asus = AssetUtils.filtersByNameAndType(asus, excludedJsNames, AssetType.js);
 		}
 
 		if (!excludedCssNames.isEmpty()) {
-			requestedAssets = AssetUtils.filtersByNameAndType(requestedAssets, excludedCssNames, AssetType.css);
+			asus = AssetUtils.filtersByNameAndType(asus, excludedCssNames, AssetType.css);
 		}
 
-		return requestedAssets;
+		return asus;
 	}
-	/**
-	 * TODO
-	 * 
-	 * @param request
-	 * @param context
-	 */
-	// public AssetQueryB(HttpServletRequest request, Context context) {
-	//
-	// this.request = request;
-	// this.context = context;
-	//
-	// String key = UrlUtils.getCurrentUri(request).toString();
-	// this.requestedAssets = context.getCacheManager().getAssets(key);
-	//
-	// if (this.requestedAssets == null ||
-	// context.getConfiguration().isAssetCachingEnabled()) {
-	//
-	// // All asset storage units are fetched in an ordered set
-	// Set<AssetStorageUnit> assetStorageUnits = new
-	// LinkedHashSet<AssetStorageUnit>();
-	//
-	// String[] bundleNames = AssetRequestContext.get(request).getBundles(true);
-	// for (BundleStorageUnit bsu :
-	// context.getBundleStorage().bundlesFor(bundleNames)) {
-	// assetStorageUnits.addAll(bsu.getAssetStorageUnits());
-	// }
-	//
-	// // Convert all asset storage units into assets
-	// AssetMapper assetMapper = new AssetMapper(request, context);
-	// Set<Asset> mappedAssets = assetMapper.mapToAssets(assetStorageUnits);
-	//
-	// // Applying the active processors
-	// mappedAssets = context.getProcessorManager().process(mappedAssets,
-	// request);
-	//
-	// this.requestedAssets = context.getCacheManager().storeAssets(key,
-	// mappedAssets);
-	// }
-	//
-	// // Once all assets gathered, they are now filtered
-	// String[] excludedJsNames = collectJsToExclude();
-	// if (excludedJsNames.length > 0) {
-	// excludeJs(excludedJsNames);
-	// }
-	//
-	// String[] excludedCssNames = collectCssToExclude();
-	// if (excludedCssNames.length > 0) {
-	// excludeCss(excludedCssNames);
-	// }
-	// }
-
-	// public AssetQuery withPosition(AssetDomPosition desiredPosition) {
-	// this.requestedAssets =
-	// AssetUtils.filtersByDomPosition(this.requestedAssets, desiredPosition);
-	// return this;
-	// }
-	//
-	// public AssetQuery excludeJs(String[] excludedJsNames) {
-	// this.requestedAssets =
-	// AssetUtils.filtersByNameAndType(this.requestedAssets, excludedJsNames,
-	// AssetType.js);
-	// return this;
-	// }
-	//
-	// public AssetQuery excludeCss(String[] excludedCssNames) {
-	// this.requestedAssets =
-	// AssetUtils.filtersByNameAndType(this.requestedAssets, excludedCssNames,
-	// AssetType.css);
-	// return this;
-	// }
-	//
-	// public Set<Asset> perform() {
-	// return this.requestedAssets;
-	// }
-
-	// private String[] collectJsToExclude() {
-	//
-	// Set<String> excludedJs = new HashSet<String>();
-	//
-	// // First collect JS from the excluded bundles
-	// for (String bundleToExclude :
-	// AssetRequestContext.get(request).getExcludedBundles()) {
-	// Set<BundleStorageUnit> bsus =
-	// context.getBundleStorage().bundlesFor(bundleToExclude);
-	// for (BundleStorageUnit bsu : bsus) {
-	// excludedJs.addAll(bsu.getJsAssetStorageUnitNames());
-	// }
-	// }
-	//
-	// // Then add JS "manually" excluded
-	// for (String assetToExclude :
-	// AssetRequestContext.get(request).getExcludedJs()) {
-	// excludedJs.add(assetToExclude);
-	// }
-	//
-	// return excludedJs.toArray(new String[excludedJs.size()]);
-	// }
-	//
-	// private String[] collectCssToExclude() {
-	//
-	// Set<String> excludedCss = new HashSet<String>();
-	//
-	// // First collect CSS from the excluded bundles
-	// for (String bundleToExclude :
-	// AssetRequestContext.get(request).getExcludedBundles()) {
-	// Set<BundleStorageUnit> bsus =
-	// context.getBundleStorage().bundlesFor(bundleToExclude);
-	// for (BundleStorageUnit bsu : bsus) {
-	// excludedCss.addAll(bsu.getCssAssetStorageUnitNames());
-	// }
-	// }
-	//
-	// // Then add CSS "manually" excluded
-	// for (String assetToExclude :
-	// AssetRequestContext.get(request).getExcludedCss()) {
-	// excludedCss.add(assetToExclude);
-	// }
-	//
-	// return excludedCss.toArray(new String[excludedCss.size()]);
-	// }
-	//
-
 }

@@ -57,6 +57,7 @@ public final class DigestUtils {
 
 	public static String md5Digest(String string) {
 
+		Validate.notBlank(string, "The string to get the hash from cannot be blank");
 		char[] encodedDigest;
 		try {
 			byte[] digest = digest(MD5_ALGORITHM_NAME, string.getBytes("UTF-8"));

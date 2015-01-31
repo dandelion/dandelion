@@ -76,6 +76,7 @@ public class Configuration {
 	private List<String> assetJsExcludes;
 	private List<String> assetCssExcludes;
 	private String assetUrlPattern;
+	private String assetStorage;
 
 	// Asset versioning configurations
 	private String assetVersioningMode;
@@ -85,10 +86,9 @@ public class Configuration {
 	private String assetFixedVersionDatePattern;
 
 	// Caching-related configurations
-	private boolean assetCachingEnabled;
+	private boolean cachingEnabled;
 	private String cacheName;
-	private int cacheAssetMaxSize;
-	private int cacheRequestMaxSize;
+	private int cacheMaxSize;
 	private String cacheManagerName;
 	private String cacheConfigurationLocation;
 
@@ -139,7 +139,8 @@ public class Configuration {
 		this.assetJsExcludes = PropertiesUtils.propertyAsList(readConfig(DandelionConfig.ASSET_JS_EXCLUDES));
 		this.assetCssExcludes = PropertiesUtils.propertyAsList(readConfig(DandelionConfig.ASSET_CSS_EXCLUDES));
 		this.assetUrlPattern = getProcessedAssetUrlPattern(readConfig(DandelionConfig.ASSET_URL_PATTERN));
-
+		this.assetStorage = readConfig(DandelionConfig.ASSET_STORAGE);
+		
 		// Asset versioning
 		this.assetVersioningMode = readConfig(DandelionConfig.ASSET_VERSIONING_MODE);
 		this.assetVersioningStrategy = readConfig(DandelionConfig.ASSET_VERSIONING_STRATEGY);
@@ -148,26 +149,17 @@ public class Configuration {
 		this.assetFixedVersionDatePattern = readConfig(DandelionConfig.ASSET_FIXED_VERSION_DATEPATTERN);
 
 		// Caching-related configurations
-		this.assetCachingEnabled = Boolean.parseBoolean(readConfig(DandelionConfig.ASSET_CACHING));
+		this.cachingEnabled = Boolean.parseBoolean(readConfig(DandelionConfig.CACHE));
 
 		this.cacheName = readConfig(DandelionConfig.CACHE_NAME);
 		try {
-			this.cacheAssetMaxSize = Integer.parseInt(readConfig(DandelionConfig.CACHE_ASSET_MAX_SIZE));
+			this.cacheMaxSize = Integer.parseInt(readConfig(DandelionConfig.CACHE_MAX_SIZE));
 		}
 		catch (NumberFormatException e) {
 			LOG.warn("The '{}' property is incorrectly configured. Falling back to the default value ({})",
-					DandelionConfig.CACHE_ASSET_MAX_SIZE.getName(),
-					DandelionConfig.CACHE_ASSET_MAX_SIZE.defaultDevValue());
-			this.cacheAssetMaxSize = Integer.parseInt(DandelionConfig.CACHE_ASSET_MAX_SIZE.defaultDevValue());
-		}
-		try {
-			this.cacheRequestMaxSize = Integer.parseInt(readConfig(DandelionConfig.CACHE_REQUEST_MAX_SIZE));
-		}
-		catch (NumberFormatException e) {
-			LOG.warn("The '{}' property is incorrectly configured. Falling back to the default value ({})",
-					DandelionConfig.CACHE_REQUEST_MAX_SIZE.getName(),
-					DandelionConfig.CACHE_REQUEST_MAX_SIZE.defaultDevValue());
-			this.cacheRequestMaxSize = Integer.parseInt(DandelionConfig.CACHE_REQUEST_MAX_SIZE.defaultDevValue());
+					DandelionConfig.CACHE_MAX_SIZE.getName(),
+					DandelionConfig.CACHE_MAX_SIZE.defaultDevValue());
+			this.cacheMaxSize = Integer.parseInt(DandelionConfig.CACHE_MAX_SIZE.defaultDevValue());
 		}
 		this.cacheManagerName = readConfig(DandelionConfig.CACHE_MANAGER_NAME);
 		this.cacheConfigurationLocation = readConfig(DandelionConfig.CACHE_CONFIGURATION_LOCATION);
@@ -275,8 +267,8 @@ public class Configuration {
 		this.toolBundleReloadingEnabled = toolBundleReloading;
 	}
 
-	public boolean isAssetCachingEnabled() {
-		return this.assetCachingEnabled;
+	public boolean isCachingEnabled() {
+		return this.cachingEnabled;
 	}
 
 	public List<String> getAssetLocationsResolutionStrategy() {
@@ -295,12 +287,8 @@ public class Configuration {
 		return this.assetCssExcludes;
 	}
 
-	public int getCacheAssetMaxSize() {
-		return this.cacheAssetMaxSize;
-	}
-
-	public int getCacheRequestMaxSize() {
-		return this.cacheRequestMaxSize;
+	public int getCacheMaxSize() {
+		return this.cacheMaxSize;
 	}
 
 	public String getCacheManagerName() {
@@ -375,6 +363,10 @@ public class Configuration {
 		this.assetVersioningStrategy = assetVersioningStrategy;
 	}
 
+	public String getAssetStorage() {
+		return assetStorage;
+	}
+
 	public String getCacheName() {
 		return this.cacheName;
 	}
@@ -383,12 +375,8 @@ public class Configuration {
 		this.cacheName = cacheName;
 	}
 
-	public void setCacheAssetMaxSize(int cacheAssetMaxSize) {
-		this.cacheAssetMaxSize = cacheAssetMaxSize;
-	}
-
-	public void setCacheRequestMaxSize(int cacheRequestMaxSize) {
-		this.cacheRequestMaxSize = cacheRequestMaxSize;
+	public void setCacheMaxSize(int cacheMaxSize) {
+		this.cacheMaxSize = cacheMaxSize;
 	}
 
 	public void setCacheManagerName(String cacheManagerName) {

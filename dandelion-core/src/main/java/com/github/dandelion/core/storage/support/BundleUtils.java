@@ -105,7 +105,7 @@ public final class BundleUtils {
 					LOG.trace("Name of the asset extracted from its first location: \"{}\"", extractedName);
 				}
 				if (asu.getType() == null) {
-					AssetType extractedType = AssetType.typeOf(firstFoundLocation);
+					AssetType extractedType = AssetType.extractFromAssetLocation(firstFoundLocation);
 					asu.setType(extractedType);
 					LOG.trace("Type of the asset extracted from its first location: \"{}\"", extractedType);
 				}

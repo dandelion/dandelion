@@ -51,7 +51,7 @@ public class ContentAssetVersioningStrategy extends AbstractAssetVersioningStrat
 
 	@Override
 	public String getAssetVersion(Asset asset) {
-		String content = getContext().getCacheManager().getContent(asset.getCacheKey());
+		String content = getContext().getAssetStorage().get(asset.getCacheKey());
 		String version = DigestUtils.md5Digest(content);
 		return version;
 	}

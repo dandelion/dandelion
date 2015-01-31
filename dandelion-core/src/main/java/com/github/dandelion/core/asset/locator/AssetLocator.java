@@ -31,7 +31,6 @@ package com.github.dandelion.core.asset.locator;
 
 import javax.servlet.http.HttpServletRequest;
 
-import com.github.dandelion.core.Beta;
 import com.github.dandelion.core.Context;
 import com.github.dandelion.core.asset.Asset;
 import com.github.dandelion.core.asset.processor.AssetProcessor;
@@ -42,6 +41,7 @@ import com.github.dandelion.core.web.DandelionServlet;
 /**
  * <p>
  * SPI for all asset locators.
+ * </p>
  * 
  * @author Romain Lespinasse
  * @author Thibault Duchateau
@@ -79,19 +79,6 @@ public interface AssetLocator {
 
 	/**
 	 * <p>
-	 * Returns the content of the given {@link AssetStorageUnit}.
-	 * 
-	 * @param asu
-	 *            The asset storage unit from which the content should be
-	 *            extracted.
-	 * @param request
-	 *            The current HTTP request.
-	 * @return a String holding the content of the {@link AssetStorageUnit}.
-	 */
-	String getContent(AssetStorageUnit asu, HttpServletRequest request);
-
-	/**
-	 * <p>
 	 * Returns the content of the given {@link Asset}.
 	 * <p>
 	 * Note that this method can be used to access the asset's content after the
@@ -104,13 +91,6 @@ public interface AssetLocator {
 	 * @return a String holding the content of the {@link Asset}.
 	 */
 	String getContent(Asset asset, HttpServletRequest request);
-
-	/**
-	 * @return {@code true} if the asset locator is active, otherwise
-	 *         {@code false}. By default, all {@link AssetLocator}s are active.
-	 */
-	@Beta
-	boolean isActive();
 
 	/**
 	 * @return {@code true} if the asset has to be cached in order to be

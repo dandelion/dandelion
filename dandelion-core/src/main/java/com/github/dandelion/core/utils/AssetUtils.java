@@ -34,6 +34,8 @@ import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -41,6 +43,8 @@ import com.github.dandelion.core.Context;
 import com.github.dandelion.core.asset.Asset;
 import com.github.dandelion.core.asset.AssetDomPosition;
 import com.github.dandelion.core.asset.AssetType;
+import com.github.dandelion.core.config.DandelionConfig;
+import com.github.dandelion.core.storage.AssetStorageUnit;
 import com.github.dandelion.core.web.WebConstants;
 
 /**
@@ -118,15 +122,16 @@ public final class AssetUtils {
 	 *            The type of asset to exclude.
 	 * @return a filtered collection of {@link Asset}s.
 	 */
-	public static Set<Asset> filtersByNameAndType(Set<Asset> assets, Set<String> excludedAssetNames, AssetType type) {
+	public static Set<AssetStorageUnit> filtersByNameAndType(Set<AssetStorageUnit> asus,
+			Set<String> excludedAssetNames, AssetType type) {
 
 		List<String> excludedAssetNameList = new ArrayList<String>(excludedAssetNames);
 
-		Set<Asset> filteredAsus = new LinkedHashSet<Asset>();
-		for (Asset asset : assets) {
+		Set<AssetStorageUnit> filteredAsus = new LinkedHashSet<AssetStorageUnit>();
+		for (AssetStorageUnit asu : asus) {
 
-			if (!asset.getType().equals(type) || !excludedAssetNameList.contains(asset.getName().trim().toLowerCase())) {
-				filteredAsus.add(asset);
+			if (!asu.getType().equals(type) || !excludedAssetNameList.contains(asu.getName().trim().toLowerCase())) {
+				filteredAsus.add(asu);
 			}
 		}
 
@@ -145,17 +150,18 @@ public final class AssetUtils {
 	 *            The DOM position used to filter.
 	 * @return a filtered collection of {@link Asset}s.
 	 */
-	public static Set<Asset> filtersByDomPosition(Set<Asset> assets, AssetDomPosition desiredPosition) {
-		Set<Asset> filteredAsus = new LinkedHashSet<Asset>();
-		Set<Asset> filteredJsAsus = new LinkedHashSet<Asset>();
-		for (Asset asset : assets) {
+	public static Set<AssetStorageUnit> filtersByDomPosition(Set<AssetStorageUnit> asus,
+			AssetDomPosition desiredPosition) {
+		Set<AssetStorageUnit> filteredAsus = new LinkedHashSet<AssetStorageUnit>();
+		Set<AssetStorageUnit> filteredJsAsus = new LinkedHashSet<AssetStorageUnit>();
+		for (AssetStorageUnit asu : asus) {
 
-			AssetDomPosition assetPosition = asset.getDom() == null ? asset.getType().getDefaultDom() : asset.getDom();
-			if (assetPosition.equals(desiredPosition) && asset.getType().equals(AssetType.js)) {
-				filteredJsAsus.add(asset);
+			AssetDomPosition assetPosition = asu.getDom() == null ? asu.getType().getDefaultDom() : asu.getDom();
+			if (assetPosition.equals(desiredPosition) && asu.getType().equals(AssetType.js)) {
+				filteredJsAsus.add(asu);
 			}
-			else if (assetPosition.equals(desiredPosition) && !asset.getType().equals(AssetType.js)) {
-				filteredAsus.add(asset);
+			else if (assetPosition.equals(desiredPosition) && !asu.getType().equals(AssetType.js)) {
+				filteredAsus.add(asu);
 			}
 		}
 
@@ -189,7 +195,12 @@ public final class AssetUtils {
 
 		StringBuilder finalLocation = new StringBuilder();
 		finalLocation.append(UrlUtils.getProcessedUrl(context.getConfiguration().getAssetUrlPattern(), request, null));
+		if (finalLocation.charAt(finalLocation.length() - 1) != '/') {
+			finalLocation.append("/");
+		}
 		finalLocation.append(asset.getCacheKey());
+		finalLocation.append("/");
+		finalLocation.append(asset.getType().name());
 		finalLocation.append("/");
 		finalLocation.append(asset.getName());
 		finalLocation.append("-");
@@ -202,6 +213,63 @@ public final class AssetUtils {
 		finalLocation.append(asset.getType().name());
 
 		return finalLocation.toString();
+	}
+
+	/**
+	 * <p>
+	 * Extracts the asset cache key from the provided request using the
+	 * configured {@link DandelionConfig#ASSET_URL_PATTERN}.
+	 * </p>
+	 * <p>
+	 * <p>
+	 * For example, using {@code my-pattern} as a custom URL pattern and the
+	 * following request URL:
+	 * </p>
+	 * <p>
+	 * {@code /context/my-pattern/7c267aa805f44ef61a273afbe4d26f2a/css/application-1.0.css}
+	 * </p>
+	 * <p>
+	 * This method will extract {@code 7c267aa805f44ef61a273afbe4d26f2a}.
+	 * </p>
+	 * 
+	 * @param request
+	 *            The {@link HttpServletRequest} made against the server to load
+	 *            the asset.
+	 * @return the cache key present in the request URL.
+	 */
+	public static String extractCacheKeyFromRequest(HttpServletRequest request) {
+
+		Context context = (Context) request.getAttribute(WebConstants.DANDELION_CONTEXT_ATTRIBUTE);
+		String processedUrlPattern = context.getConfiguration().getAssetUrlPattern().startsWith("/") ? context
+				.getConfiguration().getAssetUrlPattern().substring(1) : context.getConfiguration().getAssetUrlPattern();
+		Pattern p = Pattern.compile(processedUrlPattern + "([a-f0-9]{32})/");
+		Matcher m = p.matcher(request.getRequestURL());
+
+		String cacheKey = null;
+		if (m.find()) {
+			cacheKey = m.group(1);
+		}
+
+		return cacheKey;
+	}
+
+	/**
+	 * <p>
+	 * Generates a MD5 hash using information of the provided {@link Asset}.
+	 * </p>
+	 * 
+	 * @param asset
+	 *            The asset holding information used to generate the hash.
+	 * @return a MD5 hash.
+	 */
+	public static String generateCacheKey(Asset asset) {
+
+		StringBuilder keyContext = new StringBuilder();
+		keyContext.append(asset.getBundle());
+		keyContext.append(asset.getName());
+		keyContext.append(asset.getType().name());
+
+		return DigestUtils.md5Digest(keyContext.toString());
 	}
 
 	/**

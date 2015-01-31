@@ -40,6 +40,7 @@ import org.springframework.mock.web.MockFilterConfig;
 import org.springframework.mock.web.MockHttpServletRequest;
 
 import com.github.dandelion.core.Context;
+import com.github.dandelion.core.asset.Asset;
 import com.github.dandelion.core.asset.generator.AssetContentGenerator;
 import com.github.dandelion.core.storage.AssetStorageUnit;
 import com.github.dandelion.core.web.AssetRequestContext;
@@ -51,44 +52,42 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class ApiLocatorTest {
 
-	private ApiLocator locator = new ApiLocator();
-	private MockHttpServletRequest request;
+   private ApiLocator locator = new ApiLocator();
+   private MockHttpServletRequest request;
 
-	@Rule
-	public ExpectedException exception = ExpectedException.none();
+   @Rule
+   public ExpectedException exception = ExpectedException.none();
 
-	@Before
-	public void setup() {
-		request = new MockHttpServletRequest();
-		request.setRequestURI("/context/page.html");
-		request.setContextPath("/context");
-		request.setAttribute(WebConstants.DANDELION_CONTEXT_ATTRIBUTE, new Context(new MockFilterConfig()));
-	}
+   @Before
+   public void setup() {
+      request = new MockHttpServletRequest();
+      request.setRequestURI("/context/page.html");
+      request.setContextPath("/context");
+      request.setAttribute(WebConstants.DANDELION_CONTEXT_ATTRIBUTE, new Context(new MockFilterConfig()));
+   }
 
-	@Test
-	public void should_return_the_same_absolute_url() {
-		AssetStorageUnit asu = new AssetStorageUnit("my-js", singletonMap("api", "my.js"));
-		String location = locator.getLocation(asu, request);
-		assertThat(location).isEqualTo("my.js");
-	}
+   @Test
+   public void should_return_the_same_absolute_url() {
+      AssetStorageUnit asu = new AssetStorageUnit("my-js", singletonMap("api", "my.js"));
+      String location = locator.getLocation(asu, request);
+      assertThat(location).isEqualTo("my.js");
+   }
 
-	@Test
-	public void should_return_the_content() {
+   @Test
+   public void should_return_the_asset_contents() {
 
-		AssetRequestContext.get(request).addParameter("my-js", ApiLocator.API_CONTENT_PARAM,
-				new AssetContentGenerator() {
+      AssetRequestContext.get(request).addParameter("my-js", ApiLocator.API_CONTENT_PARAM, new AssetContentGenerator() {
 
-					@Override
-					public String getAssetContent(HttpServletRequest request) {
-						return "/* delegated content */";
-					}
-				});
+         @Override
+         public String getAssetContent(HttpServletRequest request) {
+            return "/* delegated content */";
+         }
+      });
 
-		AssetStorageUnit asset = new AssetStorageUnit();
-		asset.setName("my-js");
-		asset.setVersion("1.0");
-		asset.setLocations(singletonMap(locator.getLocationKey(), "my.js"));
-		String content = locator.getContent(asset, request);
-		assertThat(content).isEqualTo("/* delegated content */");
-	}
+      Asset asset = new Asset();
+      asset.setName("my-js");
+      asset.setProcessedConfigLocation("");
+      String content = locator.getContent(asset, request);
+      assertThat(content).isEqualTo("/* delegated content */");
+   }
 }

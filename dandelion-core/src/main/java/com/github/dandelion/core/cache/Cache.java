@@ -27,24 +27,25 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.github.dandelion.core.asset.cache;
+package com.github.dandelion.core.cache;
 
 import java.util.HashMap;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicLong;
 
 import com.github.dandelion.core.Context;
 import com.github.dandelion.core.asset.Asset;
-import com.github.dandelion.core.asset.cache.impl.MemoryAssetCache;
+import com.github.dandelion.core.cache.impl.MemoryCache;
 import com.github.dandelion.core.web.DandelionFilter;
 
 /**
  * <p>
- * SPI for all implementation of {@link AssetCache}.
+ * SPI for all implementation of {@link Cache}.
  * 
  * <p>
  * Dandelion provides one out-of-the-box service provider:
  * <ul>
- * <li>{@link MemoryAssetCache} that uses a simple {@link HashMap} for in-memory
+ * <li>{@link MemoryCache} that uses a simple {@link HashMap} for in-memory
  * caching.</li>
  * </ul>
  * 
@@ -52,17 +53,18 @@ import com.github.dandelion.core.web.DandelionFilter;
  * @author Thibault Duchateau
  * @since 0.10.0
  */
-public interface AssetCache {
+public interface Cache {
 
 	public static final String DANDELION_CACHE_NAME = "dandelionCache";
 
 	/**
 	 * <p>
-	 * Initializes the configured service provider of the {@link AssetCache} SPI
-	 * by using the {@link Context}.
+	 * Initializes the configured service provider of the {@link Cache} SPI by
+	 * using the {@link Context}.
 	 * 
 	 * @param context
-	 *            The {@link Context} initialized in the {@link DandelionFilter}.
+	 *            The {@link Context} initialized in the {@link DandelionFilter}
+	 *            .
 	 */
 	void initCache(Context context);
 
@@ -70,16 +72,6 @@ public interface AssetCache {
 	 * @return the name of the asset cache.
 	 */
 	String getCacheName();
-
-	/**
-	 * Gets the content from the cache stored under the passed {@code cacheKey}.
-	 * 
-	 * @param cacheKey
-	 *            The cache key under which the asset content is stored in the
-	 *            cache.
-	 * @return the content associated with the cache key.
-	 */
-	String getAssetContent(String cacheKey);
 
 	/**
 	 * Gets the set of assets to be displayed for a request stored under the
@@ -90,17 +82,7 @@ public interface AssetCache {
 	 *            cache.
 	 * @return the assets associated with the cache key.
 	 */
-	Set<Asset> getRequestAssets(String cacheKey);
-
-	/**
-	 * Puts the passed {@code assetContent} to the cache.
-	 * 
-	 * @param cacheKey
-	 *            The key used to puts the content to the cache.
-	 * @param assetContent
-	 *            The content to store in the cache.
-	 */
-	void storeAssetContent(String cacheKey, String assetContent);
+	Set<Asset> get(String cacheKey);
 
 	/**
 	 * Puts the passed {@code assets} to the cache.
@@ -110,18 +92,18 @@ public interface AssetCache {
 	 * @param assets
 	 *            The assets to store in the cache.
 	 */
-	void storeRequestAssets(String cacheKey, Set<Asset> assets);
+	void put(String cacheKey, Set<Asset> assets);
 
-	/**
-	 * Removes the content stored under the passed {@code cacheKey}.
-	 * 
-	 * @param cacheKey
-	 *            The key under which the content will be removed.
-	 */
-	void remove(String cacheKey);
+	AtomicLong getGetCount();
+
+	AtomicLong getPutCount();
+
+	AtomicLong getHitCount();
+
+	AtomicLong getMissCount();
 
 	/**
 	 * Clear all objects stored in cache.
 	 */
-	void clearAll();
+	void clear();
 }

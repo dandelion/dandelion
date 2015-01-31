@@ -32,9 +32,7 @@ package com.github.dandelion.core.asset;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.regex.Pattern;
 
-import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -53,124 +51,195 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class AssetMapperTest {
 
-	private AssetMapper assetMapper;
-	private MockHttpServletRequest request;
-	private Context context;
+   private AssetMapper assetMapper;
+   private MockHttpServletRequest request;
+   private Context context;
 
-	@Before
-	public void setup() {
-		MockFilterConfig filterConfig = new MockFilterConfig();
-		filterConfig.addInitParameter(DandelionConfig.ASSET_VERSIONING_MODE.getName(), "auto");
-		context = new Context(filterConfig);
-		request = new MockHttpServletRequest();
-		request.setContextPath("/context");
-		request.setAttribute(WebConstants.DANDELION_CONTEXT_ATTRIBUTE, context);
-		assetMapper = new AssetMapper(request, context);
-	}
+   @Rule
+   public ExpectedException exception = ExpectedException.none();
 
-	@Rule
-	public ExpectedException exception = ExpectedException.none();
+   @Test
+   public void should_map_an_asu_to_a_vendor_asset() {
 
-	@Test
-	public void should_map_an_AssetStorageUnit_to_an_Asset() {
+      MockFilterConfig filterConfig = new MockFilterConfig();
+      context = new Context(filterConfig);
+      request = new MockHttpServletRequest();
+      request.setContextPath("/context");
+      request.setAttribute(WebConstants.DANDELION_CONTEXT_ATTRIBUTE, context);
+      assetMapper = new AssetMapper(context, request);
 
-		String assetUrlPattern = context.getConfiguration().getAssetUrlPattern();
-		Pattern versionPattern = Pattern.compile("^[a-f0-9]{32}$");
-		Pattern finalLocationPattern = Pattern
-				.compile("/context" + assetUrlPattern + "[a-f0-9]{32}/js/asset-name-[a-f0-9]{32}.js");
+      AssetStorageUnit asu = new AssetStorageUnit();
+      asu.setName("asset-name");
+      asu.setType(AssetType.js);
+      asu.setVersion("any-version");
+      asu.setLocations(singletonMap("classpath", "locator/asset-name.js"));
+      asu.setVendor(true);
 
-		AssetStorageUnit asu = new AssetStorageUnit();
-		asu.setName("asset-name");
-		asu.setType(AssetType.js);
-		asu.setLocations(singletonMap("webapp", "/assets/js/asset-name.js"));
-		Asset asset = assetMapper.mapToAsset(asu);
-		assertThat(asset.getName()).isEqualTo("asset-name");
-		assertThat(asset.getType()).isEqualTo(AssetType.js);
-		assertThat(asset.getVersion()).matches(versionPattern);
-		assertThat(asset.getConfigLocation()).isEqualTo("/assets/js/asset-name.js");
-		assertThat(asset.getConfigLocationKey()).isEqualTo("webapp");
-		assertThat(asset.getFinalLocation()).matches(finalLocationPattern);
-	}
+      Asset asset = assetMapper.mapToAsset(asu);
 
-	@Test
-	public void should_throw_an_exception_when_the_asset_has_no_location() {
-		exception.expect(DandelionException.class);
-		exception
-				.expectMessage("No location is configured for the asset 'asset-name' (js, v1.0.0). Please add at least one location in the corresponding JSON file.");
+      assertThat(asset.isVendor()).isTrue();
+      assertThat(asset.getName()).isEqualTo("asset-name");
+      assertThat(asset.getType()).isEqualTo(AssetType.js);
+      assertThat(asset.getVersion()).isEqualTo("any-version");
+      assertThat(asset.getConfigLocationKey()).isEqualTo("classpath");
+      assertThat(asset.getConfigLocation()).isEqualTo("locator/asset-name.js");
+      assertThat(asset.getProcessedConfigLocation()).isEqualTo("locator/asset-name.js");
+      assertThat(asset.getFinalLocation()).isEqualTo(asset.getProcessedConfigLocation());
+   }
 
-		AssetStorageUnit asu = new AssetStorageUnit();
-		asu.setName("asset-name");
-		asu.setType(AssetType.js);
-		asu.setVersion("1.0.0");
-		assetMapper.mapToAsset(asu);
-	}
+   @Test
+   public void should_map_an_asu_to_an_asset_when_minification_is_enabled() {
 
-	@Test
-	public void should_throw_an_exception_when_the_asset_has_empty_locations() {
-		exception.expect(DandelionException.class);
-		exception
-				.expectMessage("No location is configured for the asset 'asset-name' (js, v1.0.0). Please add at least one location in the corresponding JSON file.");
+      MockFilterConfig filterConfig = new MockFilterConfig();
+      filterConfig.addInitParameter(DandelionConfig.ASSET_MINIFICATION.getName(), "true");
+      context = new Context(filterConfig);
+      request = new MockHttpServletRequest();
+      request.setContextPath("/context");
+      request.setAttribute(WebConstants.DANDELION_CONTEXT_ATTRIBUTE, context);
+      assetMapper = new AssetMapper(context, request);
 
-		AssetStorageUnit asu = new AssetStorageUnit();
-		asu.setName("asset-name");
-		asu.setType(AssetType.js);
-		asu.setVersion("1.0.0");
-		asu.setLocations(Collections.<String, String>emptyMap());
-		assetMapper.mapToAsset(asu);
-	}
+      AssetStorageUnit asu = new AssetStorageUnit();
+      asu.setName("asset-name");
+      asu.setType(AssetType.js);
+      asu.setVersion("any-version");
+      asu.setLocations(singletonMap("classpath", "locator/asset.js"));
 
-	@Test
-	public void should_throw_an_exception_when_the_asset_has_an_unknown_location() {
-		exception.expect(DandelionException.class);
-		exception.expectMessage("The location key 'foo' is not valid. Please choose a valid one among "
-				+ context.getAssetLocatorsMap().keySet() + ".");
+      Asset asset = assetMapper.mapToAsset(asu);
 
-		AssetStorageUnit asu = new AssetStorageUnit();
-		asu.setName("asset-name");
-		asu.setType(AssetType.js);
-		asu.setVersion("1.0.0");
-		asu.setLocations(singletonMap("foo", "/assets/js/asset-name.js"));
-		assetMapper.mapToAsset(asu);
-	}
+      assertThat(asset.isVendor()).isFalse();
+      assertThat(asset.getName()).isEqualTo("asset-name");
+      assertThat(asset.getType()).isEqualTo(AssetType.js);
+      assertThat(asset.getVersion()).isEqualTo("any-version");
+      assertThat(asset.getConfigLocationKey()).isEqualTo("classpath");
+      assertThat(asset.getConfigLocation()).isEqualTo("locator/asset.js");
+      assertThat(asset.getProcessedConfigLocation()).isEqualTo("locator/asset.js");
+      assertThat(asset.getFinalLocation()).matches(
+            "/context/dandelion-assets/[a-f0-9]{32}/js/asset-name-any-version.js");
+   }
 
-	@Test
-	public void should_select_webapp_as_a_first_authorized_location() {
+   @Test
+   public void should_map_an_asu_to_an_asset_when_caching_is_forced() {
 
-		String assetUrlPattern = context.getConfiguration().getAssetUrlPattern();
+      MockFilterConfig filterConfig = new MockFilterConfig();
+      context = new Context(filterConfig);
+      request = new MockHttpServletRequest();
+      request.setContextPath("/context");
+      request.setAttribute(WebConstants.DANDELION_CONTEXT_ATTRIBUTE, context);
+      assetMapper = new AssetMapper(context, request);
 
-		Pattern finalLocationPattern = Pattern
-				.compile("/context" + assetUrlPattern + "[a-f0-9]{32}/js/asset-name-[a-f0-9]{32}.js");
+      AssetStorageUnit asu = new AssetStorageUnit();
+      asu.setName("asset-name");
+      asu.setType(AssetType.js);
+      asu.setVersion("any-version");
+      asu.setLocations(singletonMap("classpath", "locator/asset.js"));
 
-		AssetStorageUnit asu = new AssetStorageUnit();
-		asu.setName("asset-name");
-		asu.setType(AssetType.js);
+      Asset asset = assetMapper.mapToAsset(asu);
 
-		Map<String, String> locations = new HashMap<String, String>();
-		locations.put("cdn", "//asset-name.js");
-		locations.put("webapp", "/assets/js/asset-name.js");
-		locations.put("classpath", "/foo/bar/asset-name.js");
-		asu.setLocations(locations);
-		Asset asset = assetMapper.mapToAsset(asu);
-		assertThat(asset.getConfigLocation()).isEqualTo("/assets/js/asset-name.js");
-		assertThat(asset.getConfigLocationKey()).isEqualTo("webapp");
-		assertThat(asset.getFinalLocation()).matches(finalLocationPattern);
-	}
+      assertThat(asset.isVendor()).isFalse();
+      assertThat(asset.getName()).isEqualTo("asset-name");
+      assertThat(asset.getType()).isEqualTo(AssetType.js);
+      assertThat(asset.getVersion()).isEqualTo("any-version");
+      assertThat(asset.getConfigLocationKey()).isEqualTo("classpath");
+      assertThat(asset.getConfigLocation()).isEqualTo("locator/asset.js");
+      assertThat(asset.getProcessedConfigLocation()).isEqualTo("locator/asset.js");
+      assertThat(asset.getFinalLocation()).matches(
+            "/context/dandelion-assets/[a-f0-9]{32}/js/asset-name-any-version.js");
+   }
 
-//	@Test
-//	public void should_select_cdn_as_a_second_authorized_location() {
-//
-//		AssetStorageUnit asu = new AssetStorageUnit();
-//		asu.setName("asset-name");
-//		asu.setType(AssetType.js);
-//		asu.setVersion("1.0.0");
-//
-//		Map<String, String> locations = new HashMap<String, String>();
-//		locations.put("classpath", "foo/bar/asset-name.js");
-//		locations.put("cdn", "//my.domain/asset-name.js");
-//		asu.setLocations(locations);
-//		Asset asset = assetMapper.mapToAsset(asu);
-//		assertThat(asset.getConfigLocation()).isEqualTo("//my.domain/asset-name.js");
-//		assertThat(asset.getConfigLocationKey()).isEqualTo("cdn");
-//		assertThat(asset.getFinalLocation()).isEqualTo("//my.domain/asset-name.js");
-//	}
+   @Test
+   public void should_throw_an_exception_when_the_asset_has_no_location() {
+
+      MockFilterConfig filterConfig = new MockFilterConfig();
+      context = new Context(filterConfig);
+      request = new MockHttpServletRequest();
+      request.setContextPath("/context");
+      request.setAttribute(WebConstants.DANDELION_CONTEXT_ATTRIBUTE, context);
+      assetMapper = new AssetMapper(context, request);
+
+      exception.expect(DandelionException.class);
+      exception
+            .expectMessage("No location is configured for the asset 'asset-name' (js, v1.0.0). Please add at least one location in the corresponding JSON file.");
+
+      AssetStorageUnit asu = new AssetStorageUnit();
+      asu.setName("asset-name");
+      asu.setType(AssetType.js);
+      asu.setVersion("1.0.0");
+      assetMapper.mapToAsset(asu);
+   }
+
+   @Test
+   public void should_throw_an_exception_when_the_asset_has_empty_locations() {
+
+      MockFilterConfig filterConfig = new MockFilterConfig();
+      context = new Context(filterConfig);
+      request = new MockHttpServletRequest();
+      request.setContextPath("/context");
+      request.setAttribute(WebConstants.DANDELION_CONTEXT_ATTRIBUTE, context);
+      assetMapper = new AssetMapper(context, request);
+
+      exception.expect(DandelionException.class);
+      exception
+            .expectMessage("No location is configured for the asset 'asset-name' (js, v1.0.0). Please add at least one location in the corresponding JSON file.");
+
+      AssetStorageUnit asu = new AssetStorageUnit();
+      asu.setName("asset-name");
+      asu.setType(AssetType.js);
+      asu.setVersion("1.0.0");
+      asu.setLocations(Collections.<String, String> emptyMap());
+      assetMapper.mapToAsset(asu);
+   }
+
+   @Test
+   public void should_throw_an_exception_when_the_asset_has_an_unknown_location() {
+
+      MockFilterConfig filterConfig = new MockFilterConfig();
+      filterConfig.addInitParameter(DandelionConfig.ASSET_VERSIONING_MODE.getName(), "auto");
+      context = new Context(filterConfig);
+      request = new MockHttpServletRequest();
+      request.setContextPath("/context");
+      request.setAttribute(WebConstants.DANDELION_CONTEXT_ATTRIBUTE, context);
+      assetMapper = new AssetMapper(context, request);
+
+      exception.expect(DandelionException.class);
+      exception.expectMessage("The location key 'foo' is not valid. Please choose a valid one among "
+            + context.getAssetLocatorsMap().keySet() + ".");
+
+      AssetStorageUnit asu = new AssetStorageUnit();
+      asu.setName("asset-name");
+      asu.setType(AssetType.js);
+      asu.setVersion("1.0.0");
+      asu.setLocations(singletonMap("foo", "/assets/js/asset-name.js"));
+      assetMapper.mapToAsset(asu);
+   }
+
+   @Test
+   public void should_select_classpath_as_a_first_authorized_location() {
+
+      MockFilterConfig filterConfig = new MockFilterConfig();
+      filterConfig.addInitParameter(DandelionConfig.ASSET_LOCATIONS_RESOLUTION_STRATEGY.getName(),
+            DandelionConfig.ASSET_LOCATIONS_RESOLUTION_STRATEGY.defaultDevValue());
+      context = new Context(filterConfig);
+      request = new MockHttpServletRequest();
+      request.setContextPath("/context");
+      request.setAttribute(WebConstants.DANDELION_CONTEXT_ATTRIBUTE, context);
+      assetMapper = new AssetMapper(context, request);
+
+      AssetStorageUnit asu = new AssetStorageUnit();
+      asu.setName("asset-name");
+      asu.setBundle("any-bundle");
+      asu.setType(AssetType.js);
+
+      Map<String, String> locations = new HashMap<String, String>();
+      locations.put("remote", "//asset-name.js");
+      locations.put("classpath", "locator/asset.js");
+      asu.setLocations(locations);
+
+      Asset asset = assetMapper.mapToAsset(asu);
+
+      assertThat(asset.getConfigLocation()).isEqualTo("locator/asset.js");
+      assertThat(asset.getConfigLocationKey()).isEqualTo("classpath");
+      assertThat(asset.getProcessedConfigLocation()).isEqualTo("locator/asset.js");
+      assertThat(asset.getFinalLocation()).matches(
+            "/context/dandelion-assets/[a-f0-9]{32}/js/asset-name-[a-f0-9]{32}.js");
+   }
 }

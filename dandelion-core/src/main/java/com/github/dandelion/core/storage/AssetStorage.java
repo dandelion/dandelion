@@ -27,51 +27,66 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+package com.github.dandelion.core.storage;
 
-package com.github.dandelion.core.asset.locator.impl;
+/**
+ * <p>
+ * Interface for an asset storage.
+ * </p>
+ * <p>
+ * Custom implementations should extends {@link AbstractAssetStorage} instead of
+ * implementing this interface.
+ * </p>
+ * 
+ * @author Thibault Duchateau
+ * @since 0.11.0
+ */
+public interface AssetStorage {
 
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
-import org.springframework.mock.web.MockFilterConfig;
-import org.springframework.mock.web.MockHttpServletRequest;
+   /**
+    * @return the name of the implementation of {@link AssetStorage}.
+    */
+   String getName();
 
-import com.github.dandelion.core.Context;
-import com.github.dandelion.core.asset.Asset;
-import com.github.dandelion.core.storage.AssetStorageUnit;
-import com.github.dandelion.core.web.WebConstants;
+   /**
+    * <p>
+    * Gets the asset contents from the storage using the provided
+    * {@code cacheKey}.
+    * </p>
+    * 
+    * @param cacheKey
+    *           The cache key under which the asset contents is stored in the
+    *           storage.
+    * @return the contents associated with the cache key.
+    */
+   String get(String cacheKey);
 
-import static java.util.Collections.singletonMap;
+   /**
+    * <p>
+    * Puts the provided {@code contents} into the storage.
+    * </p>
+    * 
+    * @param cacheKey
+    *           The key used to puts the contents to the storage.
+    * @param contents
+    *           The asset contents to store in the storage.
+    */
+   void put(String cacheKey, String contents);
 
-import static org.assertj.core.api.Assertions.assertThat;
+   /**
+    * <p>
+    * Removes the entry in the storage corresponding to the provided cache key.
+    * </p>
+    * 
+    * @param cacheKey
+    *           The cache key to use to lookup the entry to remove.
+    */
+   void remove(String cacheKey);
 
-public class ClasspathLocatorTest {
-
-	private ClasspathLocator locator = new ClasspathLocator();
-	private MockHttpServletRequest request;
-
-	@Rule
-	public ExpectedException exception = ExpectedException.none();
-
-	@Before
-	public void setup() {
-		request = new MockHttpServletRequest();
-		request.setAttribute(WebConstants.DANDELION_CONTEXT_ATTRIBUTE, new Context(new MockFilterConfig()));
-	}
-
-	@Test
-	public void should_return_the_same_internal_url() {
-		AssetStorageUnit asu = new AssetStorageUnit("my.js", singletonMap("classpath", "sub/folder/my.js"));
-		String location = locator.getLocation(asu, null);
-		assertThat(location).isEqualTo("sub/folder/my.js");
-	}
-
-	@Test
-	public void should_return_the_asset_contents() {
-		Asset asset = new Asset();
-		asset.setProcessedConfigLocation("locator/asset.js");
-		String content = locator.getContent(asset, request);
-		assertThat(content).isEqualTo("/* content */");
-	}
+   /**
+    * <p>
+    * Clears the underlying store.
+    * </p>
+    */
+   void clear();
 }

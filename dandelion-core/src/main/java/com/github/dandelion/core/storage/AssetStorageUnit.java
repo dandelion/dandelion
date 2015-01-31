@@ -145,6 +145,13 @@ public class AssetStorageUnit {
 		this.type = type;
 	}
 
+	public AssetStorageUnit(String name, String version, AssetType type, AssetDomPosition domPosition) {
+      this.name = name;
+      this.version = version;
+      this.type = type;
+      this.dom = domPosition;
+   }
+	
 	/**
 	 * <p>
 	 * Testing only.
@@ -155,7 +162,7 @@ public class AssetStorageUnit {
 	public AssetStorageUnit(String name, Map<String, String> locations) {
 		this.name = name;
 		this.locations = locations;
-		this.type = AssetType.typeOf(locations.values().iterator().next());
+		this.type = AssetType.extractFromAssetLocation(locations.values().iterator().next());
 	}
 
 	// /**

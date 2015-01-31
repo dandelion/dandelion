@@ -36,6 +36,7 @@ import java.io.Writer;
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -73,55 +74,58 @@ public final class AssetProcessorManager {
 	}
 
 	public Set<Asset> process(Set<Asset> assets, HttpServletRequest request) {
+		Set<Asset> retval = new LinkedHashSet<Asset>();
+
+		if (context.getConfiguration().isAssetMinificationEnabled()) {
+
+			// Process only non-vendor assets
+			for (Asset a : AssetUtils.filtersNotVendor(assets)) {
+				retval.add(process(a, request));
+			}
+		}
+		else {
+			retval.addAll(assets);
+		}
+		return retval;
+	}
+
+	public Asset process(Asset asset, HttpServletRequest request) {
 
 		if (context.getActiveProcessors().isEmpty()) {
-			return assets;
+			return asset;
 		}
 
-		// Process only non-vendor assets
-		for (Asset asset : AssetUtils.filtersNotVendor(assets)) {
+		List<AssetProcessor> compatibleAssetProcessors = getCompatibleProcessorFor(asset);
 
-			List<AssetProcessor> compatibleAssetProcessors = getCompatibleProcessorFor(asset);
+		if (!compatibleAssetProcessors.isEmpty()) {
 
-			if (!compatibleAssetProcessors.isEmpty()) {
+			// Context to be passed in asset processors
+			ProcessingContext processingContext = new ProcessingContext(context, asset, request);
 
-				// Context to be passed in asset processors
-				ProcessingContext processingContext = new ProcessingContext(context, asset, request);
+			String contents = asset.getAssetLocator().getContent(asset, request);
 
-				String content = context.getCacheManager().getContent(asset.getCacheKey());
+			Reader assetReader = new StringReader(contents);
+			Writer assetWriter = new StringWriter();
 
-				Reader assetReader = new StringReader(content);
-				Writer assetWriter = new StringWriter();
-
-				for (AssetProcessor assetProcessor : compatibleAssetProcessors) {
-					LOG.trace("Applying processor {} on {}", assetProcessor.getProcessorKey(), asset.toLog());
-					assetWriter = new StringWriter();
-					assetProcessor.process(assetReader, assetWriter, processingContext);
-					assetReader = new StringReader(assetWriter.toString());
-				}
-
-				// The old asset is removed from the cache
-				// TODO: ideally, it should not have been put in even once
-				context.getCacheManager().remove(asset.getCacheKey());
-
-				String newCacheKey = this.context.getCacheManager().generateMinCacheKey(request, asset);
-				asset.setCacheKey(newCacheKey);
-
-				if (!asset.isVendor()
-						&& (this.context.getConfiguration().isAssetCachingEnabled() || this.context.getConfiguration()
-								.isAssetMinificationEnabled())) {
-					asset.setFinalLocation(AssetUtils.getAssetFinalLocation(request, asset, "min"));
-				}
-
-				// The cache system is updated with the new key/content pair
-				context.getCacheManager().storeContent(newCacheKey, assetWriter.toString());
+			for (AssetProcessor assetProcessor : compatibleAssetProcessors) {
+				LOG.trace("Applying processor {} on {}", assetProcessor.getProcessorKey(), asset.toLog());
+				assetWriter = new StringWriter();
+				assetProcessor.process(assetReader, assetWriter, processingContext);
+				assetReader = new StringReader(assetWriter.toString());
 			}
-			else {
-				LOG.trace("No compatible processor was found for the asset {}", asset.toLog());
+
+			if (asset.isNotVendor()) {
+				asset.setFinalLocation(AssetUtils.getAssetFinalLocation(request, asset, "min"));
 			}
+
+			// The cache system is updated with the new key/content pair
+			context.getAssetStorage().put(asset.getCacheKey(), assetWriter.toString());
+		}
+		else {
+			LOG.trace("No compatible processor was found for the asset {}", asset.toLog());
 		}
 
-		return assets;
+		return asset;
 	}
 
 	private List<AssetProcessor> getCompatibleProcessorFor(Asset asset) {

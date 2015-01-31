@@ -48,29 +48,17 @@ public class DandelionRuntime implements DandelionRuntimeMBean {
 		this.context = context;
 	}
 	
-	/**
-	 * Blabla
-	 */
 	@Override
 	public void reloadBundles() {
-		// TODO Auto-generated method stub
 		System.out.println("RELOADING!!!");
 		context.initBundleStorage();
 		System.out.println("Context reloaded");
 	}
 
 	@Override
-	public void clearAllCache() {
+	public void clearCache() {
 		System.out.println("Clearing all cache");
-		context.getAssetCache().clearAll();
+		context.getCache().clear();
 		System.out.println("All caches cleared");
 	}
-
-	@Override
-	public void clearAssetCache() {
-		// TODO Auto-generated method stub
-		
-	}
-	
-	
 }

@@ -32,6 +32,11 @@ package com.github.dandelion.core.asset;
 import static com.github.dandelion.core.asset.AssetDomPosition.body;
 import static com.github.dandelion.core.asset.AssetDomPosition.head;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import javax.servlet.http.HttpServletRequest;
+
 /**
  * <p>
  * Types of an asset. Currently, only stylesheets and scripts are supported.
@@ -60,16 +65,25 @@ public enum AssetType {
 		return defaultDom;
 	}
 
-	public static AssetType typeOfAsset(String cacheKey) {
+	public static AssetType extractFromRequest(HttpServletRequest request) {
+
+		Pattern p = Pattern.compile("/[a-f0-9]{32}/(.*)/");
+		Matcher m = p.matcher(request.getRequestURL());
+
+		String assetType = null;
+		if (m.find()) {
+			assetType = m.group(1);
+		}
+
 		for (AssetType type : values()) {
-			if (cacheKey.toLowerCase().endsWith(type.name())) {
+			if (assetType.toLowerCase().endsWith(type.name())) {
 				return type;
 			}
 		}
 		return null;
 	}
 
-	public static AssetType typeOf(String assetLocation) {
+	public static AssetType extractFromAssetLocation(String assetLocation) {
 		for (AssetType type : values()) {
 			if (assetLocation.toLowerCase().endsWith(type.name())) {
 				return type;

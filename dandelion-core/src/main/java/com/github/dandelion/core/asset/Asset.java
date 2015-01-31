@@ -82,6 +82,8 @@ public class Asset {
 	 */
 	private String configLocation;
 
+	private String processedConfigLocation;
+
 	/**
 	 * Computed location of the asset, using the right {@link AssetLocator}.
 	 */
@@ -113,6 +115,8 @@ public class Asset {
 	 * Whether the asset has been loaded by the {@link VendorBundleLoader}.
 	 */
 	private boolean vendor;
+
+	private AssetLocator assetLocator;
 
 	public Asset() {
 	}
@@ -164,6 +168,7 @@ public class Asset {
 		this.attributes = asu.getAttributes();
 		this.attributesOnlyName = asu.getAttributesOnlyName();
 		this.vendor = asu.isVendor();
+		this.bundle = asu.getBundle();
 	}
 
 	public Asset(String name, String version, AssetType type, AssetDomPosition position) {
@@ -205,6 +210,14 @@ public class Asset {
 		this.configLocation = configLocation;
 	}
 
+	public String getProcessedConfigLocation() {
+		return processedConfigLocation;
+	}
+
+	public void setProcessedConfigLocation(String processedConfigLocation) {
+		this.processedConfigLocation = processedConfigLocation;
+	}
+
 	public String getConfigLocationKey() {
 		return configLocationKey;
 	}
@@ -230,8 +243,6 @@ public class Asset {
 	}
 
 	public Map<String, String> getAttributes() {
-		// if (attributes == null)
-		// return Collections.emptyMap();
 		return attributes;
 	}
 
@@ -247,6 +258,14 @@ public class Asset {
 
 	public void setAttributesOnlyName(String[] attributesOnlyName) {
 		this.attributesOnlyName = attributesOnlyName;
+	}
+
+	public AssetLocator getAssetLocator() {
+		return assetLocator;
+	}
+
+	public void setAssetLocator(AssetLocator assetLocator) {
+		this.assetLocator = assetLocator;
 	}
 
 	/**

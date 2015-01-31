@@ -58,25 +58,11 @@ public abstract class AbstractAssetLocator implements AssetLocator {
 	protected boolean active = true;
 	protected Context context;
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public boolean isActive() {
-		return active;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public boolean isCachingForced() {
 		return false;
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@Override
 	public void initLocator(Context context) {
 		this.context = context;
@@ -115,40 +101,6 @@ public abstract class AbstractAssetLocator implements AssetLocator {
 
 	/**
 	 * <p>
-	 * Returns the content of the given {@link AssetStorageUnit}, using the
-	 * location returned by
-	 * {@link #getLocation(AssetStorageUnit, HttpServletRequest)}.
-	 * 
-	 * <p>
-	 * The content is processed with variables of the
-	 * {@link AssetRequestContext} if there is some, before being returned.
-	 * 
-	 * @param asu
-	 *            The asset storage unit from which the content should be
-	 *            extracted.
-	 * @param request
-	 *            The current HTTP request.
-	 * @return the content of location
-	 */
-	@Override
-	public String getContent(AssetStorageUnit asu, HttpServletRequest request) {
-		String location = getLocation(asu, request);
-
-		Map<String, Object> parameters = AssetRequestContext.get(request).getParameters(asu.getName());
-		String content = doGetContent(location, parameters, request);
-
-		// Apply variable replacement
-		if (!parameters.isEmpty()) {
-			for (Map.Entry<String, Object> entry : parameters.entrySet()) {
-				content = content.replace(entry.getKey(), entry.getValue().toString());
-			}
-		}
-
-		return content;
-	}
-
-	/**
-	 * <p>
 	 * Returns the content of the given {@link Asset}, using its
 	 * {@link Asset#getFinalLocation()} value.
 	 * 
@@ -165,7 +117,7 @@ public abstract class AbstractAssetLocator implements AssetLocator {
 	public String getContent(Asset asset, HttpServletRequest request) {
 
 		Map<String, Object> parameters = AssetRequestContext.get(request).getParameters(asset.getName());
-		String content = doGetContent(asset.getFinalLocation(), parameters, request);
+		String content = doGetContent(asset.getProcessedConfigLocation(), parameters, request);
 
 		// Apply variable replacement
 		if (!parameters.isEmpty()) {
@@ -177,5 +129,6 @@ public abstract class AbstractAssetLocator implements AssetLocator {
 		return content;
 	}
 
-	protected abstract String doGetContent(String location, Map<String, Object> parameters, HttpServletRequest request);
+	protected abstract String doGetContent(String finalLocation, Map<String, Object> parameters,
+			HttpServletRequest request);
 }

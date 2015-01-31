@@ -46,9 +46,6 @@ import javax.servlet.FilterConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.github.dandelion.core.asset.cache.AssetCache;
-import com.github.dandelion.core.asset.cache.AssetCacheManager;
-import com.github.dandelion.core.asset.cache.impl.MemoryAssetCache;
 import com.github.dandelion.core.asset.locator.AssetLocator;
 import com.github.dandelion.core.asset.processor.AssetProcessor;
 import com.github.dandelion.core.asset.processor.AssetProcessorManager;
@@ -56,13 +53,18 @@ import com.github.dandelion.core.asset.versioning.AssetVersioningStrategy;
 import com.github.dandelion.core.bundle.loader.BundleLoader;
 import com.github.dandelion.core.bundle.loader.impl.DandelionBundleLoader;
 import com.github.dandelion.core.bundle.loader.impl.VendorBundleLoader;
+import com.github.dandelion.core.cache.Cache;
+import com.github.dandelion.core.cache.CacheManager;
+import com.github.dandelion.core.cache.impl.MemoryCache;
 import com.github.dandelion.core.config.Configuration;
 import com.github.dandelion.core.config.ConfigurationLoader;
 import com.github.dandelion.core.config.Profile;
 import com.github.dandelion.core.config.StandardConfigurationLoader;
 import com.github.dandelion.core.jmx.DandelionRuntime;
+import com.github.dandelion.core.storage.AssetStorage;
 import com.github.dandelion.core.storage.BundleStorage;
 import com.github.dandelion.core.storage.BundleStorageUnit;
+import com.github.dandelion.core.storage.impl.MemoryAssetStorage;
 import com.github.dandelion.core.utils.ClassUtils;
 import com.github.dandelion.core.utils.ServiceLoaderUtils;
 import com.github.dandelion.core.utils.StringUtils;
@@ -77,8 +79,8 @@ import com.github.dandelion.core.web.handler.debug.DebugPage;
  * </p>
  * <p>
  * This class is in charge of discovering and storing several configuration
- * points, such as the configured {@link AssetCache} implementation or the
- * active {@link AssetProcessor}s.
+ * points, such as the configured {@link Cache} implementation or the active
+ * {@link AssetProcessor}s.
  * </p>
  * <p>
  * There should be only one instance of this class per JVM.
@@ -91,17 +93,18 @@ public class Context {
 
 	private static final Logger LOG = LoggerFactory.getLogger(Context.class);
 
-	private AssetCache assetCache;
+	private Cache assetCache;
 	private Map<String, AssetProcessor> processorsMap;
 	private Map<String, AssetVersioningStrategy> versioningStrategyMap;
 	private AssetVersioningStrategy activeVersioningStrategy;
 	private List<AssetProcessor> activeProcessors;
 	private List<BundleLoader> bundleLoaders;
 	private AssetProcessorManager assetProcessorManager;
-	private AssetCacheManager assetCacheManager;
+	private CacheManager assetCacheManager;
 
 	private Map<String, AssetLocator> assetLocatorsMap;
 	private BundleStorage bundleStorage;
+	private AssetStorage assetStorage;
 	private Configuration configuration;
 	private HandlerChain preHandlerChain;
 	private HandlerChain postHandlerChain;
@@ -109,7 +112,9 @@ public class Context {
 	private Map<String, DebugPage> debugPageMap;
 
 	/**
+	 * <p>
 	 * Public constructor.
+	 * </p>
 	 * 
 	 * @param filterConfig
 	 *            The servlet filter configuration.
@@ -136,9 +141,10 @@ public class Context {
 		initAssetVersioning();
 
 		assetProcessorManager = new AssetProcessorManager(this);
-		assetCacheManager = new AssetCacheManager(this);
+		assetCacheManager = new CacheManager(this);
 
 		initBundleStorage();
+		initAssetStorage();
 		initMBean(filterConfig);
 		initHandlers();
 		initDebugMenus();
@@ -265,17 +271,16 @@ public class Context {
 
 	/**
 	 * <p>
-	 * Initializes the service provider of {@link AssetCache} to use for
-	 * caching.
+	 * Initializes the service provider of {@link Cache} to use for caching.
 	 * </p>
 	 */
 	public void initAssetCache() {
 		LOG.info("Initializing asset caching system");
 
-		ServiceLoader<AssetCache> assetCacheServiceLoader = ServiceLoader.load(AssetCache.class);
+		ServiceLoader<Cache> assetCacheServiceLoader = ServiceLoader.load(Cache.class);
 
-		Map<String, AssetCache> caches = new HashMap<String, AssetCache>();
-		for (AssetCache ac : assetCacheServiceLoader) {
+		Map<String, Cache> caches = new HashMap<String, Cache>();
+		for (Cache ac : assetCacheServiceLoader) {
 			caches.put(ac.getCacheName().toLowerCase().trim(), ac);
 			LOG.info("Found asset caching system: {}", ac.getCacheName());
 		}
@@ -294,7 +299,7 @@ public class Context {
 
 		// If no caching system is detected, it defaults to memory caching
 		if (assetCache == null) {
-			assetCache = new MemoryAssetCache();
+			assetCache = new MemoryCache();
 		}
 
 		assetCache.initCache(this);
@@ -390,6 +395,32 @@ public class Context {
 		}
 
 		LOG.info("Bundle storage initialized with {} bundles", bundleStorage.getBundleDag().getVertexMap().size());
+	}
+
+	public void initAssetStorage() {
+		LOG.info("Initializing asset storage");
+
+		ServiceLoader<AssetStorage> asServiceLoader = ServiceLoader.load(AssetStorage.class);
+
+		String desiredAssetStorage = configuration.getAssetStorage();
+		if (StringUtils.isNotBlank(desiredAssetStorage)) {
+			for (AssetStorage assetStorage : asServiceLoader) {
+				LOG.info("Found asset storage: {}", assetStorage.getClass().getSimpleName());
+
+				if (assetStorage.getName().equalsIgnoreCase(desiredAssetStorage.trim())) {
+					this.assetStorage = assetStorage;
+				}
+			}
+		}
+
+		// If no caching system is detected, it defaults to memory caching
+		if (assetStorage == null) {
+			assetStorage = new MemoryAssetStorage();
+		}
+
+		assetCache.initCache(this);
+
+		LOG.info("Asset storage initialized with: {}", assetStorage.getName());
 	}
 
 	/**
@@ -515,7 +546,7 @@ public class Context {
 	/**
 	 * @return the selected asset caching system.
 	 */
-	public AssetCache getAssetCache() {
+	public Cache getCache() {
 		return assetCache;
 	}
 
@@ -545,11 +576,15 @@ public class Context {
 		return bundleStorage;
 	}
 
+	public AssetStorage getAssetStorage() {
+		return assetStorage;
+	}
+
 	public AssetProcessorManager getProcessorManager() {
 		return assetProcessorManager;
 	}
 
-	public AssetCacheManager getCacheManager() {
+	public CacheManager getCacheManager() {
 		return assetCacheManager;
 	}
 

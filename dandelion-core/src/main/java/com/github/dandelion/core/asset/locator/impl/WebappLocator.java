@@ -68,7 +68,7 @@ public class WebappLocator extends AbstractAssetLocator {
 	}
 
 	@Override
-	protected String doGetContent(String location, Map<String, Object> parameters, HttpServletRequest request) {
-		return ResourceUtils.getContentFromUrl(request, location, true);
+	protected String doGetContent(String finalLocation, Map<String, Object> parameters, HttpServletRequest request) {
+		return ResourceUtils.getContentFromUrl(request, finalLocation, true);
 	}
 }

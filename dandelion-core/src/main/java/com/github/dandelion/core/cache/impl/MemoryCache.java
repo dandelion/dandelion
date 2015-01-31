@@ -27,19 +27,23 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.github.dandelion.core.asset.cache.impl;
+package com.github.dandelion.core.cache.impl;
 
 import java.util.Map;
 import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.github.dandelion.core.Context;
 import com.github.dandelion.core.asset.Asset;
-import com.github.dandelion.core.asset.cache.AbstractAssetCache;
-import com.github.dandelion.core.asset.cache.AssetCache;
+import com.github.dandelion.core.cache.AbstractCache;
+import com.github.dandelion.core.cache.Cache;
+import com.github.dandelion.core.cache.support.ConcurrentLruCache;
 
 /**
  * <p>
- * Service provider for {@link AssetCache} that uses {@link ConcurrentLruCache}s as
+ * Service provider for {@link Cache} that uses {@link ConcurrentLruCache}s as
  * stores.
  * </p>
  * 
@@ -47,17 +51,21 @@ import com.github.dandelion.core.asset.cache.AssetCache;
  * @author Romain Lespinasse
  * @since 0.10.0
  */
-public class MemoryAssetCache extends AbstractAssetCache {
+public class MemoryCache extends AbstractCache {
 
-	private Map<String, String> mapAssetContent;
+	private static final Logger LOG = LoggerFactory.getLogger(MemoryCache.class);
+
 	private Map<String, Set<Asset>> mapRequestAssets;
+
+	@Override
+	protected Logger getLogger() {
+		return LOG;
+	}
 
 	@Override
 	public void initCache(Context context) {
 		super.initCache(context);
-		mapAssetContent = new ConcurrentLruCache<String, String>(context.getConfiguration().getCacheAssetMaxSize());
-		mapRequestAssets = new ConcurrentLruCache<String, Set<Asset>>(context.getConfiguration()
-				.getCacheRequestMaxSize());
+		mapRequestAssets = new ConcurrentLruCache<String, Set<Asset>>(context.getConfiguration().getCacheMaxSize());
 	}
 
 	@Override
@@ -66,42 +74,19 @@ public class MemoryAssetCache extends AbstractAssetCache {
 	}
 
 	@Override
-	public String getAssetContent(String cacheKey) {
-		return mapAssetContent.get(cacheKey);
-	}
-
-	@Override
-	public Set<Asset> getRequestAssets(String cacheKey) {
+	public Set<Asset> doGet(String cacheKey) {
 		return mapRequestAssets.get(cacheKey);
 	}
 
 	@Override
-	public void storeAssetContent(String cacheKey, String cacheContent) {
-		mapAssetContent.put(cacheKey, cacheContent);
-	}
-
-	@Override
-	public void storeRequestAssets(String cacheKey, Set<Asset> a) {
+	public int doPut(String cacheKey, Set<Asset> a) {
 		mapRequestAssets.put(cacheKey, a);
+		return this.mapRequestAssets.size();
 	}
 
 	@Override
-	public void remove(String cacheKey) {
-		mapAssetContent.remove(cacheKey);
-	}
-
-	public Map<String, String> getCache() {
-		return mapAssetContent;
-	}
-
-	@Override
-	public void clearAll() {
-		mapAssetContent.clear();
+	public void doClear() {
 		mapRequestAssets.clear();
-	}
-
-	public Map<String, String> getMapAssetContent() {
-		return this.mapAssetContent;
 	}
 
 	public Map<String, Set<Asset>> getMapRequestAssets() {

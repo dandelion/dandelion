@@ -66,7 +66,7 @@ public class StandardConfigurationLoaderTest {
 		Properties userProperties = loader.loadUserConfiguration();
 
 		assertThat(userProperties).hasSize(1);
-		assertThat(userProperties.getProperty("asset.locations.resolution.strategy")).isEqualTo("webapp,cdn");
+		assertThat(userProperties.getProperty("asset.locations.resolution.strategy")).isEqualTo("webapp,remote");
 	}
 
 	@Test

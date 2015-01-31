@@ -42,12 +42,13 @@ import org.slf4j.LoggerFactory;
 
 import com.github.dandelion.core.Context;
 import com.github.dandelion.core.asset.AssetType;
-import com.github.dandelion.core.asset.cache.AssetCache;
+import com.github.dandelion.core.cache.Cache;
+import com.github.dandelion.core.utils.AssetUtils;
 
 /**
  * <p>
  * Dandelion servlet in charge of serving the assets stored in the configured
- * {@link AssetCache}.
+ * {@link Cache}.
  * </p>
  * 
  * @author Thibault Duchateau
@@ -67,18 +68,18 @@ public class DandelionServlet extends HttpServlet {
 		getLogger().debug("Dandelion Asset servlet captured GET request {}", request.getRequestURI());
 
 		Context context = (Context) request.getAttribute(WebConstants.DANDELION_CONTEXT_ATTRIBUTE);
-		
+
 		// Get the asset content thanks to the cache key
-		String cacheKey = context.getCacheManager().extractCacheKeyFromRequest(request);
-		AssetType assetType = AssetType.typeOfAsset(cacheKey);
+		String cacheKey = AssetUtils.extractCacheKeyFromRequest(request);
+		AssetType assetType = AssetType.extractFromRequest(request);
 		LOG.debug("Retrieved asset type: {}, cache key: {}", assetType, cacheKey);
-		
+
 		response.setContentType(assetType.getContentType() == null ? "text/plain" : assetType.getContentType());
-		
+
 		// Write the asset content
 		PrintWriter writer = response.getWriter();
-		writer.write(context.getCacheManager().getContent(cacheKey));
-		
+		writer.write(context.getAssetStorage().get(cacheKey));
+
 		// The response is explicitely closed here instead of setting a
 		// Content-Length header
 		writer.close();

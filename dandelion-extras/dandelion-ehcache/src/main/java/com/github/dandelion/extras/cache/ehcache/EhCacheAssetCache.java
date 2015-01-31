@@ -42,18 +42,16 @@ import org.slf4j.LoggerFactory;
 
 import com.github.dandelion.core.Context;
 import com.github.dandelion.core.asset.Asset;
-import com.github.dandelion.core.asset.cache.AbstractAssetCache;
-import com.github.dandelion.core.asset.cache.AssetCache;
+import com.github.dandelion.core.cache.AbstractCache;
 import com.github.dandelion.core.utils.StringUtils;
 import com.github.dandelion.core.utils.scanner.ResourceScanner;
-import com.github.dandelion.core.web.DandelionServlet;
 
 /**
  * <p>
- * EhCache implementation of the {@link AssetCache}.
+ * EhCache implementation of {@link Cache}.
  * </p>
  * <p>
- * The initialization of this cache has two prerequisites: obtain a
+ * The initialization of this cache has two requirements: obtain a
  * {@link CacheManager} instance and a {@code ehcache.xml} configuration file.
  * </p>
  * <p>
@@ -81,19 +79,11 @@ import com.github.dandelion.core.web.DandelionServlet;
  * automatically add and use it.
  * </p>
  * <p>
- * Note finally that the same cache is used for two purposes:
- * </p>
- * <ul>
- * <li>Store the content of {@link Asset}s that are served by the
- * {@link DandelionServlet}</li>
- * <li>Store the set of {@link Asset}s to be displayed on a page, for a given
- * request, thus avoiding location resolution and processing</li>
- * </ul>
  * 
  * @author Thibault Duchateau
  * @since 0.10.0
  */
-public class EhCacheAssetCache extends AbstractAssetCache {
+public class EhCacheAssetCache extends AbstractCache {
 
 	private static final Logger LOG = LoggerFactory.getLogger(EhCacheAssetCache.class);
 
@@ -102,6 +92,11 @@ public class EhCacheAssetCache extends AbstractAssetCache {
 	@Override
 	public String getCacheName() {
 		return "ehcache";
+	}
+
+	@Override
+	protected Logger getLogger() {
+		return LOG;
 	}
 
 	@Override
@@ -145,35 +140,20 @@ public class EhCacheAssetCache extends AbstractAssetCache {
 	}
 
 	@Override
-	public String getAssetContent(String cacheKey) {
-		Element element = cache.get(cacheKey);
-		return element == null ? null : (String) element.getObjectValue();
-	}
-
-	@Override
-	public void storeAssetContent(String cacheKey, String cacheContent) {
-		cache.put(new Element(cacheKey, cacheContent));
-	}
-
-	@Override
-	public void remove(String cacheKey) {
-		cache.remove(cacheKey);
-	}
-
-	@Override
 	@SuppressWarnings("unchecked")
-	public Set<Asset> getRequestAssets(String cacheKey) {
+	public Set<Asset> doGet(String cacheKey) {
 		Element element = cache.get(cacheKey);
 		return element == null ? null : (Set<Asset>) element.getObjectValue();
 	}
 
 	@Override
-	public void storeRequestAssets(String cacheKey, Set<Asset> assets) {
+	public int doPut(String cacheKey, Set<Asset> assets) {
 		cache.put(new Element(cacheKey, assets));
+		return cache.getKeysNoDuplicateCheck().size();
 	}
 
 	@Override
-	public void clearAll() {
+	public void doClear() {
 		cache.removeAll();
 	}
 }

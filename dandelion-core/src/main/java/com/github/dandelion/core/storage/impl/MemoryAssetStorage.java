@@ -27,51 +27,66 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+package com.github.dandelion.core.storage.impl;
 
-package com.github.dandelion.core.asset.locator.impl;
+import java.util.concurrent.ConcurrentHashMap;
 
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
-import org.springframework.mock.web.MockFilterConfig;
-import org.springframework.mock.web.MockHttpServletRequest;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import com.github.dandelion.core.Context;
-import com.github.dandelion.core.asset.Asset;
-import com.github.dandelion.core.storage.AssetStorageUnit;
-import com.github.dandelion.core.web.WebConstants;
+import com.github.dandelion.core.storage.AbstractAssetStorage;
+import com.github.dandelion.core.storage.AssetStorage;
 
-import static java.util.Collections.singletonMap;
+/**
+ * <p>
+ * Standard implementation of {@link AssetStorage} that stores asset contents in
+ * memory.
+ * </p>
+ * 
+ * @author Thibault Duchateau
+ * @since 0.11.0
+ */
+public class MemoryAssetStorage extends AbstractAssetStorage {
 
-import static org.assertj.core.api.Assertions.assertThat;
+   private static final Logger LOG = LoggerFactory.getLogger(MemoryAssetStorage.class);
 
-public class ClasspathLocatorTest {
+   /**
+    * The actual store.
+    */
+   private ConcurrentHashMap<String, String> contentStore;
 
-	private ClasspathLocator locator = new ClasspathLocator();
-	private MockHttpServletRequest request;
+   public MemoryAssetStorage() {
+      this.contentStore = new ConcurrentHashMap<String, String>();
+   }
 
-	@Rule
-	public ExpectedException exception = ExpectedException.none();
+   @Override
+   protected Logger getLogger() {
+      return LOG;
+   }
 
-	@Before
-	public void setup() {
-		request = new MockHttpServletRequest();
-		request.setAttribute(WebConstants.DANDELION_CONTEXT_ATTRIBUTE, new Context(new MockFilterConfig()));
-	}
+   @Override
+   public String getName() {
+      return "memory";
+   }
 
-	@Test
-	public void should_return_the_same_internal_url() {
-		AssetStorageUnit asu = new AssetStorageUnit("my.js", singletonMap("classpath", "sub/folder/my.js"));
-		String location = locator.getLocation(asu, null);
-		assertThat(location).isEqualTo("sub/folder/my.js");
-	}
+   @Override
+   public String doGet(String cacheKey) {
+      return this.contentStore.get(cacheKey);
+   }
 
-	@Test
-	public void should_return_the_asset_contents() {
-		Asset asset = new Asset();
-		asset.setProcessedConfigLocation("locator/asset.js");
-		String content = locator.getContent(asset, request);
-		assertThat(content).isEqualTo("/* content */");
-	}
+   @Override
+   public int doPut(String cacheKey, String contents) {
+      this.contentStore.putIfAbsent(cacheKey, contents);
+      return this.contentStore.size();
+   }
+
+   @Override
+   public void doRemove(String cacheKey) {
+      this.contentStore.remove(cacheKey);
+   }
+
+   @Override
+   public void doClear() {
+      this.contentStore.clear();
+   }
 }

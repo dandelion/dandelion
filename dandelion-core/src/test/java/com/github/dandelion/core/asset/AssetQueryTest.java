@@ -69,16 +69,6 @@ public class AssetQueryTest {
 	}
 
 	@Test
-	public void should_return_1_processed_asset() {
-
-		AssetRequestContext.get(request).addBundles("bundle4");
-		Set<Asset> assets = new AssetQuery(request, context).perform();
-		assertThat(assets).hasSize(1);
-		Asset asset = assets.iterator().next();
-		assertThat(context.getCacheManager().getContent(asset.getCacheKey())).isEqualTo("\nvar v={};");
-	}
-
-	@Test
 	public void should_return_only_head_assets() {
 
 		AssetRequestContext.get(request).addBundles("bundle5");

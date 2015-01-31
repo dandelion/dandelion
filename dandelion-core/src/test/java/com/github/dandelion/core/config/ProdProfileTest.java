@@ -41,224 +41,211 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class ProdProfileTest {
 
-	@After
-	public void after() {
-		System.clearProperty(Profile.DANDELION_PROFILE_ACTIVE);
-		System.clearProperty(DandelionConfig.ASSET_LOCATIONS_RESOLUTION_STRATEGY.getName());
-		System.clearProperty(DandelionConfig.CACHE_ASSET_MAX_SIZE.getName());
-	}
+   @After
+   public void after() {
+      System.clearProperty(Profile.DANDELION_PROFILE_ACTIVE);
+      System.clearProperty(DandelionConfig.ASSET_LOCATIONS_RESOLUTION_STRATEGY.getName());
+      System.clearProperty(DandelionConfig.CACHE_MAX_SIZE.getName());
+   }
 
-	@Test
-	public void should_set_prod_profile() {
-		System.setProperty(Profile.DANDELION_PROFILE_ACTIVE, "prod");
-		Configuration config = new Configuration(new MockFilterConfig(), new Properties(), null);
-		assertThat(Profile.getActiveProfile()).isEqualTo(Profile.DEFAULT_PROD_PROFILE);
-		assertThat(config.getActiveRawProfile()).isEqualTo(Profile.getActiveRawProfile());
-	}
+   @Test
+   public void should_set_prod_profile() {
+      System.setProperty(Profile.DANDELION_PROFILE_ACTIVE, "prod");
+      Configuration config = new Configuration(new MockFilterConfig(), new Properties(), null);
+      assertThat(Profile.getActiveProfile()).isEqualTo(Profile.DEFAULT_PROD_PROFILE);
+      assertThat(config.getActiveRawProfile()).isEqualTo(Profile.getActiveRawProfile());
+   }
 
-	@Test
-	public void should_load_configuration_from_default_prod_profile() {
-		System.setProperty(Profile.DANDELION_PROFILE_ACTIVE, "prod");
-		Configuration config = new Configuration(new MockFilterConfig(), new Properties(), null);
+   @Test
+   public void should_load_configuration_from_default_prod_profile() {
+      System.setProperty(Profile.DANDELION_PROFILE_ACTIVE, "prod");
+      Configuration config = new Configuration(new MockFilterConfig(), new Properties(), null);
 
-		// Bundle-related configurations
-		assertThat(config.getBundleLocation()).isEmpty();
-		assertThat(config.getBundleIncludes()).isEqualTo(
-				PropertiesUtils.propertyAsList(DandelionConfig.BUNDLE_INCLUDES.defaultProdValue()));
-		assertThat(config.getBundleExcludes()).isEqualTo(
-				PropertiesUtils.propertyAsList(DandelionConfig.BUNDLE_EXCLUDES.defaultProdValue()));
+      // Bundle-related configurations
+      assertThat(config.getBundleLocation()).isEmpty();
+      assertThat(config.getBundleIncludes()).isEqualTo(
+            PropertiesUtils.propertyAsList(DandelionConfig.BUNDLE_INCLUDES.defaultProdValue()));
+      assertThat(config.getBundleExcludes()).isEqualTo(
+            PropertiesUtils.propertyAsList(DandelionConfig.BUNDLE_EXCLUDES.defaultProdValue()));
 
-		// Asset-related configurations
-		assertThat(config.isAssetMinificationEnabled()).isTrue();
-		assertThat(config.getAssetLocationsResolutionStrategy()).isEqualTo(
-				PropertiesUtils.propertyAsList(DandelionConfig.ASSET_LOCATIONS_RESOLUTION_STRATEGY.defaultProdValue()));
-		assertThat(config.getAssetProcessors()).isEqualTo(
-				PropertiesUtils.propertyAsList(DandelionConfig.ASSET_PROCESSORS.defaultProdValue()));
-		assertThat(config.getAssetCssExcludes()).isEqualTo(
-				PropertiesUtils.propertyAsList(DandelionConfig.ASSET_CSS_EXCLUDES.defaultProdValue()));
-		assertThat(config.getAssetJsExcludes()).isEqualTo(
-				PropertiesUtils.propertyAsList(DandelionConfig.ASSET_JS_EXCLUDES.defaultProdValue()));
+      // Asset-related configurations
+      assertThat(config.isAssetMinificationEnabled()).isTrue();
+      assertThat(config.getAssetLocationsResolutionStrategy()).isEqualTo(
+            PropertiesUtils.propertyAsList(DandelionConfig.ASSET_LOCATIONS_RESOLUTION_STRATEGY.defaultProdValue()));
+      assertThat(config.getAssetProcessors()).isEqualTo(
+            PropertiesUtils.propertyAsList(DandelionConfig.ASSET_PROCESSORS.defaultProdValue()));
+      assertThat(config.getAssetCssExcludes()).isEqualTo(
+            PropertiesUtils.propertyAsList(DandelionConfig.ASSET_CSS_EXCLUDES.defaultProdValue()));
+      assertThat(config.getAssetJsExcludes()).isEqualTo(
+            PropertiesUtils.propertyAsList(DandelionConfig.ASSET_JS_EXCLUDES.defaultProdValue()));
 
-		// Caching-related configurations
-		assertThat(config.isAssetCachingEnabled()).isEqualTo(
-				Boolean.parseBoolean(DandelionConfig.ASSET_CACHING.defaultProdValue()));
-		assertThat(config.getCacheName()).isEqualTo(DandelionConfig.CACHE_NAME.defaultProdValue());
-		assertThat(config.getCacheManagerName()).isEqualTo(DandelionConfig.CACHE_MANAGER_NAME.defaultProdValue());
-		assertThat(config.getCacheConfigurationLocation()).isEqualTo(
-				DandelionConfig.CACHE_CONFIGURATION_LOCATION.defaultProdValue());
-		assertThat(config.getCacheAssetMaxSize()).isEqualTo(
-				Integer.parseInt(DandelionConfig.CACHE_ASSET_MAX_SIZE.defaultProdValue()));
-		assertThat(config.getCacheRequestMaxSize()).isEqualTo(
-				Integer.parseInt(DandelionConfig.CACHE_REQUEST_MAX_SIZE.defaultProdValue()));
+      // Caching-related configurations
+      assertThat(config.isCachingEnabled()).isEqualTo(Boolean.parseBoolean(DandelionConfig.CACHE.defaultProdValue()));
+      assertThat(config.getCacheName()).isEqualTo(DandelionConfig.CACHE_NAME.defaultProdValue());
+      assertThat(config.getCacheManagerName()).isEqualTo(DandelionConfig.CACHE_MANAGER_NAME.defaultProdValue());
+      assertThat(config.getCacheConfigurationLocation()).isEqualTo(
+            DandelionConfig.CACHE_CONFIGURATION_LOCATION.defaultProdValue());
+      assertThat(config.getCacheMaxSize()).isEqualTo(
+            Integer.parseInt(DandelionConfig.CACHE_MAX_SIZE.defaultProdValue()));
 
-		// Tooling-related configurations
-		assertThat(config.isToolDebuggerEnabled()).isEqualTo(
-				Boolean.parseBoolean(DandelionConfig.TOOL_DEBUGGER.defaultProdValue()));
-		assertThat(config.isToolBundleReloadingEnabled()).isEqualTo(
-				Boolean.parseBoolean(DandelionConfig.TOOL_BUNDLE_RELOADING.defaultProdValue()));
+      // Tooling-related configurations
+      assertThat(config.isToolDebuggerEnabled()).isEqualTo(
+            Boolean.parseBoolean(DandelionConfig.TOOL_DEBUGGER.defaultProdValue()));
+      assertThat(config.isToolBundleReloadingEnabled()).isEqualTo(
+            Boolean.parseBoolean(DandelionConfig.TOOL_BUNDLE_RELOADING.defaultProdValue()));
 
-		// Misc configurations
-		assertThat(config.isMonitoringJmxEnabled()).isEqualTo(
-				Boolean.parseBoolean(DandelionConfig.MONITORING_JMX.defaultProdValue()));
-	}
+      // Misc configurations
+      assertThat(config.isMonitoringJmxEnabled()).isEqualTo(
+            Boolean.parseBoolean(DandelionConfig.MONITORING_JMX.defaultProdValue()));
+   }
 
-	@Test
-	public void should_load_configuration_from_properties_and_complete_with_default_prod_values() {
-		System.setProperty(Profile.DANDELION_PROFILE_ACTIVE, "prod");
+   @Test
+   public void should_load_configuration_from_properties_and_complete_with_default_prod_values() {
+      System.setProperty(Profile.DANDELION_PROFILE_ACTIVE, "prod");
 
-		Properties userProperties = new Properties();
-		userProperties.put(DandelionConfig.ASSET_LOCATIONS_RESOLUTION_STRATEGY.getName(), "foo,bar");
-		userProperties.put(DandelionConfig.CACHE_ASSET_MAX_SIZE.getName(), "40");
+      Properties userProperties = new Properties();
+      userProperties.put(DandelionConfig.ASSET_LOCATIONS_RESOLUTION_STRATEGY.getName(), "foo,bar");
+      userProperties.put(DandelionConfig.CACHE_MAX_SIZE.getName(), "40");
 
-		Configuration config = new Configuration(new MockFilterConfig(), userProperties, null);
+      Configuration config = new Configuration(new MockFilterConfig(), userProperties, null);
 
-		// Bundle-related configurations
-		assertThat(config.getBundleLocation()).isEmpty();
-		assertThat(config.getBundleIncludes()).isEqualTo(
-				PropertiesUtils.propertyAsList(DandelionConfig.BUNDLE_INCLUDES.defaultProdValue()));
-		assertThat(config.getBundleExcludes()).isEqualTo(
-				PropertiesUtils.propertyAsList(DandelionConfig.BUNDLE_EXCLUDES.defaultProdValue()));
+      // Bundle-related configurations
+      assertThat(config.getBundleLocation()).isEmpty();
+      assertThat(config.getBundleIncludes()).isEqualTo(
+            PropertiesUtils.propertyAsList(DandelionConfig.BUNDLE_INCLUDES.defaultProdValue()));
+      assertThat(config.getBundleExcludes()).isEqualTo(
+            PropertiesUtils.propertyAsList(DandelionConfig.BUNDLE_EXCLUDES.defaultProdValue()));
 
-		// Asset-related configurations
-		assertThat(config.isAssetMinificationEnabled()).isTrue();
-		assertThat(config.getAssetLocationsResolutionStrategy()).isEqualTo(PropertiesUtils.propertyAsList("foo,bar")); // OVERRIDEN
-		assertThat(config.getAssetProcessors()).isEqualTo(
-				PropertiesUtils.propertyAsList(DandelionConfig.ASSET_PROCESSORS.defaultProdValue()));
-		assertThat(config.getAssetCssExcludes()).isEqualTo(
-				PropertiesUtils.propertyAsList(DandelionConfig.ASSET_CSS_EXCLUDES.defaultProdValue()));
-		assertThat(config.getAssetJsExcludes()).isEqualTo(
-				PropertiesUtils.propertyAsList(DandelionConfig.ASSET_JS_EXCLUDES.defaultProdValue()));
+      // Asset-related configurations
+      assertThat(config.isAssetMinificationEnabled()).isTrue();
+      assertThat(config.getAssetLocationsResolutionStrategy()).isEqualTo(PropertiesUtils.propertyAsList("foo,bar")); // OVERRIDEN
+      assertThat(config.getAssetProcessors()).isEqualTo(
+            PropertiesUtils.propertyAsList(DandelionConfig.ASSET_PROCESSORS.defaultProdValue()));
+      assertThat(config.getAssetCssExcludes()).isEqualTo(
+            PropertiesUtils.propertyAsList(DandelionConfig.ASSET_CSS_EXCLUDES.defaultProdValue()));
+      assertThat(config.getAssetJsExcludes()).isEqualTo(
+            PropertiesUtils.propertyAsList(DandelionConfig.ASSET_JS_EXCLUDES.defaultProdValue()));
 
-		// Caching-related configurations
-		assertThat(config.isAssetCachingEnabled()).isEqualTo(
-				Boolean.parseBoolean(DandelionConfig.ASSET_CACHING.defaultProdValue()));
-		assertThat(config.getCacheName()).isEqualTo(DandelionConfig.CACHE_NAME.defaultProdValue());
-		assertThat(config.getCacheManagerName()).isEqualTo(DandelionConfig.CACHE_MANAGER_NAME.defaultProdValue());
-		assertThat(config.getCacheConfigurationLocation()).isEqualTo(
-				DandelionConfig.CACHE_CONFIGURATION_LOCATION.defaultProdValue());
-		assertThat(config.getCacheAssetMaxSize()).isEqualTo(40); // OVERRIDEN
-		assertThat(config.getCacheRequestMaxSize()).isEqualTo(
-				Integer.parseInt(DandelionConfig.CACHE_REQUEST_MAX_SIZE.defaultProdValue()));
+      // Caching-related configurations
+      assertThat(config.isCachingEnabled()).isEqualTo(Boolean.parseBoolean(DandelionConfig.CACHE.defaultProdValue()));
+      assertThat(config.getCacheName()).isEqualTo(DandelionConfig.CACHE_NAME.defaultProdValue());
+      assertThat(config.getCacheManagerName()).isEqualTo(DandelionConfig.CACHE_MANAGER_NAME.defaultProdValue());
+      assertThat(config.getCacheConfigurationLocation()).isEqualTo(
+            DandelionConfig.CACHE_CONFIGURATION_LOCATION.defaultProdValue());
+      assertThat(config.getCacheMaxSize()).isEqualTo(40); // OVERRIDEN
 
-		// Tooling-related configurations
-		assertThat(config.isToolDebuggerEnabled()).isEqualTo(
-				Boolean.parseBoolean(DandelionConfig.TOOL_DEBUGGER.defaultProdValue()));
-		assertThat(config.isToolBundleReloadingEnabled()).isEqualTo(
-				Boolean.parseBoolean(DandelionConfig.TOOL_BUNDLE_RELOADING.defaultProdValue()));
+      // Tooling-related configurations
+      assertThat(config.isToolDebuggerEnabled()).isEqualTo(
+            Boolean.parseBoolean(DandelionConfig.TOOL_DEBUGGER.defaultProdValue()));
+      assertThat(config.isToolBundleReloadingEnabled()).isEqualTo(
+            Boolean.parseBoolean(DandelionConfig.TOOL_BUNDLE_RELOADING.defaultProdValue()));
 
-		// Misc configurations
-		assertThat(config.isMonitoringJmxEnabled()).isEqualTo(
-				Boolean.parseBoolean(DandelionConfig.MONITORING_JMX.defaultProdValue()));
-	}
+      // Misc configurations
+      assertThat(config.isMonitoringJmxEnabled()).isEqualTo(
+            Boolean.parseBoolean(DandelionConfig.MONITORING_JMX.defaultProdValue()));
+   }
 
-	@Test
-	public void should_load_configuration_from_initparams_and_complete_with_default_prod_values() {
-		System.setProperty(Profile.DANDELION_PROFILE_ACTIVE, "prod");
+   @Test
+   public void should_load_configuration_from_initparams_and_complete_with_default_prod_values() {
+      System.setProperty(Profile.DANDELION_PROFILE_ACTIVE, "prod");
 
-		MockFilterConfig filterConfig = new MockFilterConfig();
-		filterConfig.addInitParameter(DandelionConfig.ASSET_LOCATIONS_RESOLUTION_STRATEGY.getName(), "  foo,bar , baz");
-		filterConfig.addInitParameter(DandelionConfig.CACHE_ASSET_MAX_SIZE.getName(), "30");
+      MockFilterConfig filterConfig = new MockFilterConfig();
+      filterConfig.addInitParameter(DandelionConfig.ASSET_LOCATIONS_RESOLUTION_STRATEGY.getName(), "  foo,bar , baz");
 
-		Configuration config = new Configuration(filterConfig, null, null);
+      Configuration config = new Configuration(filterConfig, null, null);
 
-		// Bundle-related configurations
-		assertThat(config.getBundleLocation()).isEmpty();
-		assertThat(config.getBundleIncludes()).isEqualTo(
-				PropertiesUtils.propertyAsList(DandelionConfig.BUNDLE_INCLUDES.defaultProdValue()));
-		assertThat(config.getBundleExcludes()).isEqualTo(
-				PropertiesUtils.propertyAsList(DandelionConfig.BUNDLE_EXCLUDES.defaultProdValue()));
+      // Bundle-related configurations
+      assertThat(config.getBundleLocation()).isEmpty();
+      assertThat(config.getBundleIncludes()).isEqualTo(
+            PropertiesUtils.propertyAsList(DandelionConfig.BUNDLE_INCLUDES.defaultProdValue()));
+      assertThat(config.getBundleExcludes()).isEqualTo(
+            PropertiesUtils.propertyAsList(DandelionConfig.BUNDLE_EXCLUDES.defaultProdValue()));
 
-		// Asset-related configurations
-		assertThat(config.isAssetMinificationEnabled()).isTrue();
-		assertThat(config.getAssetLocationsResolutionStrategy()).isEqualTo(
-				PropertiesUtils.propertyAsList("foo,bar,baz")); // OVERRIDEN
-		assertThat(config.getAssetProcessors()).isEqualTo(
-				PropertiesUtils.propertyAsList(DandelionConfig.ASSET_PROCESSORS.defaultProdValue()));
-		assertThat(config.getAssetCssExcludes()).isEqualTo(
-				PropertiesUtils.propertyAsList(DandelionConfig.ASSET_CSS_EXCLUDES.defaultProdValue()));
-		assertThat(config.getAssetJsExcludes()).isEqualTo(
-				PropertiesUtils.propertyAsList(DandelionConfig.ASSET_JS_EXCLUDES.defaultProdValue()));
+      // Asset-related configurations
+      assertThat(config.isAssetMinificationEnabled()).isTrue();
+      assertThat(config.getAssetLocationsResolutionStrategy()).isEqualTo(PropertiesUtils.propertyAsList("foo,bar,baz")); // OVERRIDEN
+      assertThat(config.getAssetProcessors()).isEqualTo(
+            PropertiesUtils.propertyAsList(DandelionConfig.ASSET_PROCESSORS.defaultProdValue()));
+      assertThat(config.getAssetCssExcludes()).isEqualTo(
+            PropertiesUtils.propertyAsList(DandelionConfig.ASSET_CSS_EXCLUDES.defaultProdValue()));
+      assertThat(config.getAssetJsExcludes()).isEqualTo(
+            PropertiesUtils.propertyAsList(DandelionConfig.ASSET_JS_EXCLUDES.defaultProdValue()));
 
-		// Caching-related configurations
-		assertThat(config.isAssetCachingEnabled()).isEqualTo(
-				Boolean.parseBoolean(DandelionConfig.ASSET_CACHING.defaultProdValue()));
-		assertThat(config.getCacheName()).isEqualTo(DandelionConfig.CACHE_NAME.defaultProdValue());
-		assertThat(config.getCacheManagerName()).isEqualTo(DandelionConfig.CACHE_MANAGER_NAME.defaultProdValue());
-		assertThat(config.getCacheConfigurationLocation()).isEqualTo(
-				DandelionConfig.CACHE_CONFIGURATION_LOCATION.defaultProdValue());
-		assertThat(config.getCacheAssetMaxSize()).isEqualTo(30); // OVERRIDEN
-		assertThat(config.getCacheRequestMaxSize()).isEqualTo(
-				Integer.parseInt(DandelionConfig.CACHE_REQUEST_MAX_SIZE.defaultProdValue()));
+      // Caching-related configurations
+      assertThat(config.isCachingEnabled()).isEqualTo(Boolean.parseBoolean(DandelionConfig.CACHE.defaultProdValue()));
+      assertThat(config.getCacheName()).isEqualTo(DandelionConfig.CACHE_NAME.defaultProdValue());
+      assertThat(config.getCacheManagerName()).isEqualTo(DandelionConfig.CACHE_MANAGER_NAME.defaultProdValue());
+      assertThat(config.getCacheConfigurationLocation()).isEqualTo(
+            DandelionConfig.CACHE_CONFIGURATION_LOCATION.defaultProdValue());
+      assertThat(config.getCacheMaxSize()).isEqualTo(
+            Integer.parseInt(DandelionConfig.CACHE_MAX_SIZE.defaultProdValue()));
 
-		// Tooling-related configurations
-		assertThat(config.isToolDebuggerEnabled()).isEqualTo(
-				Boolean.parseBoolean(DandelionConfig.TOOL_DEBUGGER.defaultProdValue()));
-		assertThat(config.isToolBundleReloadingEnabled()).isEqualTo(
-				Boolean.parseBoolean(DandelionConfig.TOOL_BUNDLE_RELOADING.defaultProdValue()));
+      // Tooling-related configurations
+      assertThat(config.isToolDebuggerEnabled()).isEqualTo(
+            Boolean.parseBoolean(DandelionConfig.TOOL_DEBUGGER.defaultProdValue()));
+      assertThat(config.isToolBundleReloadingEnabled()).isEqualTo(
+            Boolean.parseBoolean(DandelionConfig.TOOL_BUNDLE_RELOADING.defaultProdValue()));
 
-		// Misc configurations
-		assertThat(config.isMonitoringJmxEnabled()).isEqualTo(
-				Boolean.parseBoolean(DandelionConfig.MONITORING_JMX.defaultProdValue()));
-	}
+      // Misc configurations
+      assertThat(config.isMonitoringJmxEnabled()).isEqualTo(
+            Boolean.parseBoolean(DandelionConfig.MONITORING_JMX.defaultProdValue()));
+   }
 
-	@Test
-	public void should_load_configuration_from_system_properties_and_complete_with_default_dev_values() {
-		System.setProperty(Profile.DANDELION_PROFILE_ACTIVE, "prod");
-		System.setProperty(DandelionConfig.ASSET_LOCATIONS_RESOLUTION_STRATEGY.getName(), "bar ,foo  ,baz,qux  ");
-		System.setProperty(DandelionConfig.CACHE_ASSET_MAX_SIZE.getName(), "20");
+   @Test
+   public void should_load_configuration_from_system_properties_and_complete_with_default_dev_values() {
+      System.setProperty(Profile.DANDELION_PROFILE_ACTIVE, "prod");
+      System.setProperty(DandelionConfig.ASSET_LOCATIONS_RESOLUTION_STRATEGY.getName(), "bar ,foo  ,baz,qux  ");
+      System.setProperty(DandelionConfig.CACHE_MAX_SIZE.getName(), "20");
 
-		Configuration config = new Configuration(new MockFilterConfig(), null, null);
+      Configuration config = new Configuration(new MockFilterConfig(), null, null);
 
-		// Bundle-related configurations
-		assertThat(config.getBundleLocation()).isEmpty();
-		assertThat(config.getBundleIncludes()).isEqualTo(
-				PropertiesUtils.propertyAsList(DandelionConfig.BUNDLE_INCLUDES.defaultProdValue()));
-		assertThat(config.getBundleExcludes()).isEqualTo(
-				PropertiesUtils.propertyAsList(DandelionConfig.BUNDLE_EXCLUDES.defaultProdValue()));
+      // Bundle-related configurations
+      assertThat(config.getBundleLocation()).isEmpty();
+      assertThat(config.getBundleIncludes()).isEqualTo(
+            PropertiesUtils.propertyAsList(DandelionConfig.BUNDLE_INCLUDES.defaultProdValue()));
+      assertThat(config.getBundleExcludes()).isEqualTo(
+            PropertiesUtils.propertyAsList(DandelionConfig.BUNDLE_EXCLUDES.defaultProdValue()));
 
-		// Asset-related configurations
-		assertThat(config.isAssetMinificationEnabled()).isTrue();
-		assertThat(config.getAssetLocationsResolutionStrategy()).isEqualTo(
-				PropertiesUtils.propertyAsList("bar,foo,baz,qux")); // OVERRIDEN
-		assertThat(config.getAssetProcessors()).isEqualTo(
-				PropertiesUtils.propertyAsList(DandelionConfig.ASSET_PROCESSORS.defaultProdValue()));
-		assertThat(config.getAssetCssExcludes()).isEqualTo(
-				PropertiesUtils.propertyAsList(DandelionConfig.ASSET_CSS_EXCLUDES.defaultProdValue()));
-		assertThat(config.getAssetJsExcludes()).isEqualTo(
-				PropertiesUtils.propertyAsList(DandelionConfig.ASSET_JS_EXCLUDES.defaultProdValue()));
+      // Asset-related configurations
+      assertThat(config.isAssetMinificationEnabled()).isTrue();
+      assertThat(config.getAssetLocationsResolutionStrategy()).isEqualTo(
+            PropertiesUtils.propertyAsList("bar,foo,baz,qux")); // OVERRIDEN
+      assertThat(config.getAssetProcessors()).isEqualTo(
+            PropertiesUtils.propertyAsList(DandelionConfig.ASSET_PROCESSORS.defaultProdValue()));
+      assertThat(config.getAssetCssExcludes()).isEqualTo(
+            PropertiesUtils.propertyAsList(DandelionConfig.ASSET_CSS_EXCLUDES.defaultProdValue()));
+      assertThat(config.getAssetJsExcludes()).isEqualTo(
+            PropertiesUtils.propertyAsList(DandelionConfig.ASSET_JS_EXCLUDES.defaultProdValue()));
 
-		// Caching-related configurations
-		assertThat(config.isAssetCachingEnabled()).isEqualTo(
-				Boolean.parseBoolean(DandelionConfig.ASSET_CACHING.defaultProdValue()));
-		assertThat(config.getCacheName()).isEqualTo(DandelionConfig.CACHE_NAME.defaultProdValue());
-		assertThat(config.getCacheManagerName()).isEqualTo(DandelionConfig.CACHE_MANAGER_NAME.defaultProdValue());
-		assertThat(config.getCacheConfigurationLocation()).isEqualTo(
-				DandelionConfig.CACHE_CONFIGURATION_LOCATION.defaultProdValue());
-		assertThat(config.getCacheAssetMaxSize()).isEqualTo(20); // OVERRIDEN
-		assertThat(config.getCacheRequestMaxSize()).isEqualTo(
-				Integer.parseInt(DandelionConfig.CACHE_REQUEST_MAX_SIZE.defaultProdValue()));
+      // Caching-related configurations
+      assertThat(config.isCachingEnabled()).isEqualTo(Boolean.parseBoolean(DandelionConfig.CACHE.defaultProdValue()));
+      assertThat(config.getCacheName()).isEqualTo(DandelionConfig.CACHE_NAME.defaultProdValue());
+      assertThat(config.getCacheManagerName()).isEqualTo(DandelionConfig.CACHE_MANAGER_NAME.defaultProdValue());
+      assertThat(config.getCacheConfigurationLocation()).isEqualTo(
+            DandelionConfig.CACHE_CONFIGURATION_LOCATION.defaultProdValue());
+      assertThat(config.getCacheMaxSize()).isEqualTo(20); // OVERRIDEN
 
-		// Tooling-related configurations
-		assertThat(config.isToolDebuggerEnabled()).isEqualTo(
-				Boolean.parseBoolean(DandelionConfig.TOOL_DEBUGGER.defaultProdValue()));
-		assertThat(config.isToolBundleReloadingEnabled()).isEqualTo(
-				Boolean.parseBoolean(DandelionConfig.TOOL_BUNDLE_RELOADING.defaultProdValue()));
+      // Tooling-related configurations
+      assertThat(config.isToolDebuggerEnabled()).isEqualTo(
+            Boolean.parseBoolean(DandelionConfig.TOOL_DEBUGGER.defaultProdValue()));
+      assertThat(config.isToolBundleReloadingEnabled()).isEqualTo(
+            Boolean.parseBoolean(DandelionConfig.TOOL_BUNDLE_RELOADING.defaultProdValue()));
 
-		// Misc configurations
-		assertThat(config.isMonitoringJmxEnabled()).isEqualTo(
-				Boolean.parseBoolean(DandelionConfig.MONITORING_JMX.defaultProdValue()));
+      // Misc configurations
+      assertThat(config.isMonitoringJmxEnabled()).isEqualTo(
+            Boolean.parseBoolean(DandelionConfig.MONITORING_JMX.defaultProdValue()));
 
-		System.clearProperty(DandelionConfig.ASSET_LOCATIONS_RESOLUTION_STRATEGY.getName());
-		System.clearProperty(DandelionConfig.CACHE_ASSET_MAX_SIZE.getName());
-	}
+      System.clearProperty(DandelionConfig.ASSET_LOCATIONS_RESOLUTION_STRATEGY.getName());
+      System.clearProperty(DandelionConfig.CACHE_MAX_SIZE.getName());
+   }
 
-	@Test
-	public void should_override_default_prod_configuration() {
-		Properties userProperties = new Properties();
-		userProperties.put(DandelionConfig.ASSET_MINIFICATION.getName(), "false");
+   @Test
+   public void should_override_default_prod_configuration() {
+      Properties userProperties = new Properties();
+      userProperties.put(DandelionConfig.ASSET_MINIFICATION.getName(), "false");
 
-		Configuration config = new Configuration(new MockFilterConfig(), userProperties, null);
+      Configuration config = new Configuration(new MockFilterConfig(), userProperties, null);
 
-		assertThat(config.isAssetMinificationEnabled()).isFalse();
-	}
+      assertThat(config.isAssetMinificationEnabled()).isFalse();
+   }
 }

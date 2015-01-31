@@ -84,7 +84,7 @@ public class CacheHeaderPostHandler extends AbstractHandlerChain {
 
 		HttpServletResponse httpResponse = handlerContext.getResponse();
 
-		if (handlerContext.getContext().getConfiguration().isAssetCachingEnabled()) {
+		if (handlerContext.getContext().getConfiguration().isCachingEnabled()) {
 
 			httpResponse.setHeader(HttpHeader.CACHE_CONTROL.getName(), "public, max-age=" + ONE_YEAR_IN_SECONDS);
 
