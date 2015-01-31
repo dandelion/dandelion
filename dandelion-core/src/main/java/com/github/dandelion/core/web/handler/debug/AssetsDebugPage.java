@@ -101,7 +101,7 @@ public class AssetsDebugPage extends AbstractDebugPage {
 	@Override
 	protected Map<String, String> getCustomParameters(HandlerContext context) {
 		StringBuilder sbNodesRequest = new StringBuilder();
-		AssetMapper assetMapper = new AssetMapper(context.getRequest(), context.getContext());
+		AssetMapper assetMapper = new AssetMapper(context.getContext(), context.getRequest());
 		HttpServletRequest request = context.getRequest();
 
 		Map<String, String> params = new HashMap<String, String>();

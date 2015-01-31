@@ -89,6 +89,7 @@ public class OptionsDebugPage extends AbstractDebugPage {
 		table.append(tr(DandelionConfig.ASSET_JS_EXCLUDES, conf.getAssetJsExcludes()));
 		table.append(tr(DandelionConfig.ASSET_CSS_EXCLUDES, conf.getAssetCssExcludes()));
 		table.append(tr(DandelionConfig.ASSET_URL_PATTERN, conf.getAssetUrlPattern()));
+		table.append(tr(DandelionConfig.ASSET_STORAGE, conf.getAssetStorage()));
 
 		// Versioning-related options
 		table.append("<tr class='header-tr'><td colspan='3'>Versioning-related options</td></tr>");
@@ -101,10 +102,9 @@ public class OptionsDebugPage extends AbstractDebugPage {
 
 		// Caching-related options
 		table.append("<tr class='header-tr'><td colspan='3'>Caching-related options</td></tr>");
-		table.append(tr(DandelionConfig.ASSET_CACHING, conf.isAssetCachingEnabled()));
+		table.append(tr(DandelionConfig.CACHE, conf.isCachingEnabled()));
 		table.append(tr(DandelionConfig.CACHE_NAME, conf.getCacheName()));
-		table.append(tr(DandelionConfig.CACHE_ASSET_MAX_SIZE, conf.getCacheAssetMaxSize()));
-		table.append(tr(DandelionConfig.CACHE_REQUEST_MAX_SIZE, conf.getCacheRequestMaxSize()));
+		table.append(tr(DandelionConfig.CACHE_MAX_SIZE, conf.getCacheMaxSize()));
 		table.append(tr(DandelionConfig.CACHE_MANAGER_NAME, conf.getCacheManagerName()));
 		table.append(tr(DandelionConfig.CACHE_CONFIGURATION_LOCATION, conf.getCacheConfigurationLocation()));
 
