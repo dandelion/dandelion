@@ -34,6 +34,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.dandelion.core.config.DandelionConfig;
 import com.github.dandelion.core.utils.UrlUtils;
 import com.github.dandelion.core.web.WebConstants;
@@ -53,6 +55,15 @@ import com.github.dandelion.core.web.handler.HandlerContext;
 public abstract class AbstractDebugPage implements DebugPage {
 
 	protected HandlerContext context;
+	protected static ObjectMapper mapper;
+
+	static {
+		mapper = new ObjectMapper();
+		mapper.configure(JsonParser.Feature.ALLOW_COMMENTS, true);
+		mapper.configure(JsonParser.Feature.ALLOW_SINGLE_QUOTES, true);
+		mapper.configure(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES, true);
+		mapper.configure(JsonParser.Feature.ALLOW_BACKSLASH_ESCAPING_ANY_CHARACTER, true);
+	}
 
 	public void initWith(HandlerContext context) {
 		this.context = context;

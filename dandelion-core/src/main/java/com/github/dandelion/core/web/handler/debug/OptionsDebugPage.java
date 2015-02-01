@@ -30,9 +30,12 @@
 package com.github.dandelion.core.web.handler.debug;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.github.dandelion.core.config.Configuration;
 import com.github.dandelion.core.config.DandelionConfig;
 import com.github.dandelion.core.utils.ResourceUtils;
@@ -75,61 +78,71 @@ public class OptionsDebugPage extends AbstractDebugPage {
 	public Map<String, String> getCustomParameters(HandlerContext context) {
 
 		Configuration conf = context.getContext().getConfiguration();
-		Map<String, String> params = new HashMap<String, String>();
-		StringBuilder table = new StringBuilder("<table class='table table-striped table-hover table-bordered' style='margin-top:15px;'><thead>");
-		table.append("<tr><th>Option</th><th>Active value</th></tr></thead><tbody>");
-
-		table.append(tr("Active profile", conf.getActiveProfile()));
 		
+		Map<String, Object> ctx = new HashMap<String, Object>();
+
+		List<Map<String, Object>> options = new ArrayList<Map<String,Object>>();
+
+		options.add(option("Active profile", conf.getActiveProfile()));
+
 		// Asset-related options
-		table.append("<tr class='header-tr'><td colspan='3'>Asset-related options</td></tr>");
-		table.append(tr(DandelionConfig.ASSET_MINIFICATION, conf.isAssetMinificationEnabled()));
-		table.append(tr(DandelionConfig.ASSET_LOCATIONS_RESOLUTION_STRATEGY, conf.getAssetLocationsResolutionStrategy()));
-		table.append(tr(DandelionConfig.ASSET_PROCESSORS, conf.getAssetProcessors()));
-		table.append(tr(DandelionConfig.ASSET_JS_EXCLUDES, conf.getAssetJsExcludes()));
-		table.append(tr(DandelionConfig.ASSET_CSS_EXCLUDES, conf.getAssetCssExcludes()));
-		table.append(tr(DandelionConfig.ASSET_URL_PATTERN, conf.getAssetUrlPattern()));
-		table.append(tr(DandelionConfig.ASSET_STORAGE, conf.getAssetStorage()));
+		options.add(option(DandelionConfig.ASSET_MINIFICATION.getName(), conf.isAssetMinificationEnabled()));
+		options.add(option(DandelionConfig.ASSET_LOCATIONS_RESOLUTION_STRATEGY.getName(), conf.getAssetLocationsResolutionStrategy()));
+		options.add(option(DandelionConfig.ASSET_PROCESSORS.getName(), conf.getAssetProcessors()));
+		options.add(option(DandelionConfig.ASSET_JS_EXCLUDES.getName(), conf.getAssetJsExcludes()));
+		options.add(option(DandelionConfig.ASSET_CSS_EXCLUDES.getName(), conf.getAssetCssExcludes()));
+		options.add(option(DandelionConfig.ASSET_URL_PATTERN.getName(), conf.getAssetUrlPattern()));
+		options.add(option(DandelionConfig.ASSET_STORAGE.getName(), conf.getAssetStorage()));
 
 		// Versioning-related options
-		table.append("<tr class='header-tr'><td colspan='3'>Versioning-related options</td></tr>");
-		table.append(tr(DandelionConfig.ASSET_VERSIONING_MODE, conf.getAssetVersioningMode()));
-		table.append(tr(DandelionConfig.ASSET_VERSIONING_STRATEGY, conf.getAssetVersioningStrategy()));
-		table.append(tr(DandelionConfig.ASSET_FIXED_VERSION_TYPE, conf.getAssetFixedVersionType()));
-		table.append(tr(DandelionConfig.ASSET_FIXED_VERSION_VALUE, conf.getAssetFixedVersionValue()));
-		table.append(tr(DandelionConfig.ASSET_FIXED_VERSION_DATEPATTERN, conf.getAssetFixedVersionDatePattern()));
-		table.append(tr(DandelionConfig.ASSET_FIXED_VERSION_TYPE, conf.getAssetFixedVersionType()));
+		options.add(option(DandelionConfig.ASSET_VERSIONING_MODE.getName(), conf.getAssetVersioningMode()));
+		options.add(option(DandelionConfig.ASSET_VERSIONING_STRATEGY.getName(), conf.getAssetVersioningStrategy()));
+		options.add(option(DandelionConfig.ASSET_FIXED_VERSION_TYPE.getName(), conf.getAssetFixedVersionType()));
+		options.add(option(DandelionConfig.ASSET_FIXED_VERSION_VALUE.getName(), conf.getAssetFixedVersionValue()));
+		options.add(option(DandelionConfig.ASSET_FIXED_VERSION_DATEPATTERN.getName(), conf.getAssetFixedVersionDatePattern()));
+		options.add(option(DandelionConfig.ASSET_FIXED_VERSION_TYPE.getName(), conf.getAssetFixedVersionType()));
 
 		// Caching-related options
-		table.append("<tr class='header-tr'><td colspan='3'>Caching-related options</td></tr>");
-		table.append(tr(DandelionConfig.CACHE, conf.isCachingEnabled()));
-		table.append(tr(DandelionConfig.CACHE_NAME, conf.getCacheName()));
-		table.append(tr(DandelionConfig.CACHE_MAX_SIZE, conf.getCacheMaxSize()));
-		table.append(tr(DandelionConfig.CACHE_MANAGER_NAME, conf.getCacheManagerName()));
-		table.append(tr(DandelionConfig.CACHE_CONFIGURATION_LOCATION, conf.getCacheConfigurationLocation()));
+		options.add(option(DandelionConfig.CACHE.getName(), conf.isCachingEnabled()));
+		options.add(option(DandelionConfig.CACHE_NAME.getName(), conf.getCacheName()));
+		options.add(option(DandelionConfig.CACHE_MAX_SIZE.getName(), conf.getCacheMaxSize()));
+		options.add(option(DandelionConfig.CACHE_MANAGER_NAME.getName(), conf.getCacheManagerName()));
+		options.add(option(DandelionConfig.CACHE_CONFIGURATION_LOCATION.getName(), conf.getCacheConfigurationLocation()));
 
 		// Bundle-related options
-		table.append("<tr class='header-tr'><td colspan='3'>Bundle-related options</td></tr>");
-		table.append(tr(DandelionConfig.BUNDLE_LOCATION, conf.getBundleLocation()));
-		table.append(tr(DandelionConfig.BUNDLE_INCLUDES, conf.getBundleIncludes()));
-		table.append(tr(DandelionConfig.BUNDLE_EXCLUDES, conf.getBundleExcludes()));
+		options.add(option(DandelionConfig.BUNDLE_LOCATION.getName(), conf.getBundleLocation()));
+		options.add(option(DandelionConfig.BUNDLE_INCLUDES.getName(), conf.getBundleIncludes()));
+		options.add(option(DandelionConfig.BUNDLE_EXCLUDES.getName(), conf.getBundleExcludes()));
 
 		// Tooling-related options
-		table.append("<tr class='header-tr'><td colspan='3'>Tooling-related options</td></tr>");
-		table.append(tr(DandelionConfig.TOOL_GZIP, conf.isToolGzipEnabled()));
-		table.append(tr(DandelionConfig.TOOL_GZIP_MIME_TYPES, conf.getToolGzipMimeTypes()));
-		table.append(tr(DandelionConfig.TOOL_DEBUGGER, conf.isToolDebuggerEnabled()));
-		table.append(tr(DandelionConfig.TOOL_BUNDLE_RELOADING, conf.isToolBundleReloadingEnabled()));
+		options.add(option(DandelionConfig.TOOL_GZIP.getName(), conf.isToolGzipEnabled()));
+		options.add(option(DandelionConfig.TOOL_GZIP_MIME_TYPES.getName(), conf.getToolGzipMimeTypes()));
+		options.add(option(DandelionConfig.TOOL_DEBUGGER.getName(), conf.isToolDebuggerEnabled()));
+		options.add(option(DandelionConfig.TOOL_BUNDLE_RELOADING.getName(), conf.isToolBundleReloadingEnabled()));
 		
 		// Monitoring-related options
-		table.append(tr(DandelionConfig.MONITORING_JMX, conf.isMonitoringJmxEnabled()));
+		options.add(option(DandelionConfig.MONITORING_JMX.getName(), conf.isMonitoringJmxEnabled()));
 
 		// Misc options
-		table.append("<tr class='header-tr'><td colspan='3'>Misc options</td></tr>");
-		table.append(tr(DandelionConfig.ENCODING, conf.getEncoding()));
+		options.add(option(DandelionConfig.ENCODING.getName(), conf.getEncoding()));
 
-		table.append("</tbody></table>");
-		params.put("%TABLE_OPTIONS%", table.toString());
+		ctx.put("options", options);
+		ctx.put("page-header", PAGE_NAME);
+		
+		Map<String, String> params = new HashMap<String, String>();
+		try {
+			params.put("%MUSTACHE_CTX%", mapper.writeValueAsString(ctx));
+		}
+		catch (JsonProcessingException e) {
+			e.printStackTrace();
+		}
 		return params;
+	}
+	
+	private Map<String, Object> option(String name, Object value) {
+		Map<String, Object> option = new HashMap<String, Object>();
+		option.put("name", name);
+		option.put("value", value);
+		return option;
 	}
 }

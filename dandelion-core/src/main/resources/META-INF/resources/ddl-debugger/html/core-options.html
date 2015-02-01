@@ -7,13 +7,8 @@
 <meta name="description" content="Dandelion debugger">
 <meta name="author" content="Dandelion team">
 <title>Dandelion debugger</title>
-<link rel="stylesheet" href="%CONTEXT%/ddl-debugger/css/bootstrap.min.css"></link>
-<link href="%CONTEXT%/ddl-debugger/css/dashboard.css" rel="stylesheet">
-<style>
-.header-tr {
-   font-weight: bold;
-}
-</style>
+<link href="%CONTEXT%/ddl-debugger/css/bootstrap.min.css" rel="stylesheet"></link>
+<link href="%CONTEXT%/ddl-debugger/css/dashboard.css" rel="stylesheet"></link>
 </head>
 <body>
 
@@ -44,15 +39,20 @@
           %ACTION_LINKS%
         </ul>
       </div>
-      <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-        <h1 class="page-header">Current options</h1>
-        <p>Listed below are all core options currently enabled in the application.</p>
-        <div class="table-responsive">%TABLE_OPTIONS%</div>
-      </div>
+      <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main" id="ddl-options"></div>
     </div>
   </div>
 
   <script src="%CONTEXT%/ddl-debugger/js/jquery-1.11.1.min.js"></script>
   <script src="%CONTEXT%/ddl-debugger/js/bootstrap.min.js"></script>
+  <script src="%CONTEXT%/ddl-debugger/js/mustache.min.js"></script>
+  <script>
+    var context = %MUSTACHE_CTX%;
+    $(document).ready(function() {
+      $.get('%CONTEXT%/ddl-debugger/html/includes/ddl-options.mustache.html', function(template) {
+        $('#ddl-options').html(Mustache.render(template, context));
+      });
+    });
+  </script>
 </body>
 </html>

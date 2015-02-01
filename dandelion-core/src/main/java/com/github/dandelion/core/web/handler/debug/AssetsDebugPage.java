@@ -40,9 +40,7 @@ import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
-import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.dandelion.core.DandelionException;
 import com.github.dandelion.core.asset.Asset;
 import com.github.dandelion.core.asset.AssetDomPosition;
@@ -69,18 +67,9 @@ import com.github.dandelion.core.web.handler.HandlerContext;
  */
 public class AssetsDebugPage extends AbstractDebugPage {
 
-	private static ObjectMapper mapper;
 	public static final String PAGE_ID = "assets";
 	public static final String PAGE_NAME = "Bundles/assets";
 	private static final String PAGE_LOCATION = "META-INF/resources/ddl-debugger/html/core-assets.html";
-
-	static {
-		mapper = new ObjectMapper();
-		mapper.configure(JsonParser.Feature.ALLOW_COMMENTS, true);
-		mapper.configure(JsonParser.Feature.ALLOW_SINGLE_QUOTES, true);
-		mapper.configure(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES, true);
-		mapper.configure(JsonParser.Feature.ALLOW_BACKSLASH_ESCAPING_ANY_CHARACTER, true);
-	}
 
 	@Override
 	public String getId() {
