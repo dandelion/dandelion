@@ -42,7 +42,8 @@ public class AssetServletTest {
       asset.setBundle("a-bundle");
       asset.setVersion("1.0.0");
       asset.setType(AssetType.css);
-      asset.setCacheKey(AssetUtils.generateCacheKey(asset));
+      asset.setConfigLocationKey("any-location-key");
+      asset.setCacheKey(AssetUtils.generateCacheKey(asset, request));
       String content = "CONTENT" + Math.random();
 
       context.getAssetStorage().put(asset.getCacheKey(), content);

@@ -120,7 +120,8 @@ public class AssetMapper {
 
 		// Selecting location key
 		String locationKey = getLocationKey(asu);
-
+		asset.setConfigLocationKey(locationKey);
+		
 		Map<String, AssetLocator> locators = this.context.getAssetLocatorsMap();
 		if (!locators.containsKey(locationKey)) {
 			StringBuilder msg = new StringBuilder("The location key '");
@@ -141,7 +142,7 @@ public class AssetMapper {
 		asset.setAssetLocator(locator);
 		asset.setProcessedConfigLocation(location);
 
-		String cacheKey = AssetUtils.generateCacheKey(asset);
+		String cacheKey = AssetUtils.generateCacheKey(asset, request);
 		asset.setCacheKey(cacheKey);
 
 		// Vendor assets are served as-is, no need to store them
@@ -161,7 +162,6 @@ public class AssetMapper {
 
 		asset.setName(getName(asu, location));
 		asset.setType(getType(asu, location));
-		asset.setConfigLocationKey(locationKey);
 		asset.setConfigLocation(asu.getLocations().get(locationKey));
 		asset.setVersion(getVersion(asset));
 		asset.setFinalLocation(getFinalLocation(asset));

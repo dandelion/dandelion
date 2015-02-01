@@ -53,14 +53,15 @@ import com.github.dandelion.core.storage.AssetStorageUnit;
 public class ApiLocator extends AbstractAssetLocator {
 
 	public static final String API_CONTENT_PARAM = "API_CONTENT_PARAM";
-
+	public static final String LOCATION_KEY = "api";
+	
 	public ApiLocator() {
 		active = true;
 	}
 
 	@Override
 	public String getLocationKey() {
-		return "api";
+		return LOCATION_KEY;
 	}
 
 	@Override

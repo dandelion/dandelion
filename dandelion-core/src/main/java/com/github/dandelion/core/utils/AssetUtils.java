@@ -43,6 +43,7 @@ import com.github.dandelion.core.Context;
 import com.github.dandelion.core.asset.Asset;
 import com.github.dandelion.core.asset.AssetDomPosition;
 import com.github.dandelion.core.asset.AssetType;
+import com.github.dandelion.core.asset.locator.impl.ApiLocator;
 import com.github.dandelion.core.config.DandelionConfig;
 import com.github.dandelion.core.storage.AssetStorageUnit;
 import com.github.dandelion.core.web.WebConstants;
@@ -257,17 +258,30 @@ public final class AssetUtils {
 	 * <p>
 	 * Generates a MD5 hash using information of the provided {@link Asset}.
 	 * </p>
+	 * <p>
+	 * The set of information used to generate the hash depends on the location
+	 * key.
+	 * </p>
+	 * <ul>
+	 * <li>{@code webapp}, {@code jar}, {@code webjar}, {@code classpath} and
+	 * <li>{@code api}: bundle name + asset name + asset type + current URI</li>
+	 * {@code remote}: bundle name + asset name + asset type</li>
+	 * </ul>
 	 * 
 	 * @param asset
 	 *            The asset holding information used to generate the hash.
 	 * @return a MD5 hash.
 	 */
-	public static String generateCacheKey(Asset asset) {
+	public static String generateCacheKey(Asset asset, HttpServletRequest request) {
 
 		StringBuilder keyContext = new StringBuilder();
 		keyContext.append(asset.getBundle());
 		keyContext.append(asset.getName());
 		keyContext.append(asset.getType().name());
+
+		if (asset.getConfigLocationKey().equalsIgnoreCase(ApiLocator.LOCATION_KEY)) {
+			keyContext.append(UrlUtils.getCurrentUri(request));
+		}
 
 		return DigestUtils.md5Digest(keyContext.toString());
 	}
