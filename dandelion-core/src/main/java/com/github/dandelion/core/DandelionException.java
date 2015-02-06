@@ -42,63 +42,63 @@ import java.util.Map;
  */
 public class DandelionException extends RuntimeException {
 
-	private static final long serialVersionUID = -1854486123698434827L;
+   private static final long serialVersionUID = -1854486123698434827L;
 
-	/**
-	 * Parameters of this Exception
-	 */
-	private Map<String, Object> parameters = new LinkedHashMap<String, Object>();
+   /**
+    * Parameters of this Exception
+    */
+   private Map<String, Object> parameters = new LinkedHashMap<String, Object>();
 
-	public DandelionException(String message, Throwable cause) {
-		super(message, cause);
-		// TODO Auto-generated constructor stub
-	}
+   public DandelionException(String message, Throwable cause) {
+      super(message, cause);
+      // TODO Auto-generated constructor stub
+   }
 
-	public DandelionException(String message) {
-		super(message);
-		// TODO Auto-generated constructor stub
-	}
+   public DandelionException(String message) {
+      super(message);
+      // TODO Auto-generated constructor stub
+   }
 
-	public DandelionException(Throwable cause) {
-		super(cause);
-		// TODO Auto-generated constructor stub
-	}
+   public DandelionException(Throwable cause) {
+      super(cause);
+      // TODO Auto-generated constructor stub
+   }
 
-	/**
-	 * Add a relevant data (field/value) for this exception
-	 * 
-	 * @param field
-	 *            field of this relevant data
-	 * @param value
-	 *            value of this relevant data
-	 * @return this exception (for 'fluent interface' purpose)
-	 */
-	public DandelionException set(String field, Object value) {
-		parameters.put(field, value);
-		return this;
-	}
+   /**
+    * Add a relevant data (field/value) for this exception
+    * 
+    * @param field
+    *           field of this relevant data
+    * @param value
+    *           value of this relevant data
+    * @return this exception (for 'fluent interface' purpose)
+    */
+   public DandelionException set(String field, Object value) {
+      parameters.put(field, value);
+      return this;
+   }
 
-	/**
-	 * Get the value of stored data by his field
-	 * 
-	 * @param field
-	 *            field of stored data
-	 * @param <T>
-	 *            type of this value
-	 * @return the casted value
-	 */
-	@SuppressWarnings("unchecked")
-	public <T> T get(String field) {
-		return (T) parameters.get(field);
-	}
+   /**
+    * Get the value of stored data by his field
+    * 
+    * @param field
+    *           field of stored data
+    * @param <T>
+    *           type of this value
+    * @return the casted value
+    */
+   @SuppressWarnings("unchecked")
+   public <T> T get(String field) {
+      return (T) parameters.get(field);
+   }
 
-	public static DandelionException wrap(Throwable exception) {
-		if (exception instanceof DandelionException) {
-			DandelionException se = (DandelionException) exception;
-			return se;
-		}
-		else {
-			return new DandelionException(exception.getMessage(), exception);
-		}
-	}
+   public static DandelionException wrap(Throwable exception) {
+      if (exception instanceof DandelionException) {
+         DandelionException se = (DandelionException) exception;
+         return se;
+      }
+      else {
+         return new DandelionException(exception.getMessage(), exception);
+      }
+   }
 }

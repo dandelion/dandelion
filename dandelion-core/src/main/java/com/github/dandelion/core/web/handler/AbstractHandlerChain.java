@@ -45,84 +45,84 @@ import org.slf4j.Logger;
  */
 public abstract class AbstractHandlerChain implements HandlerChain {
 
-	/**
-	 * The next handler to be executed in the chain.
-	 */
-	private HandlerChain nextHandler;
+   /**
+    * The next handler to be executed in the chain.
+    */
+   private HandlerChain nextHandler;
 
-	@Override
-	public void setNext(HandlerChain nextHandler) {
-		this.nextHandler = nextHandler;
-	}
+   @Override
+   public void setNext(HandlerChain nextHandler) {
+      this.nextHandler = nextHandler;
+   }
 
-	@Override
-	public final void doHandle(HandlerContext context) {
+   @Override
+   public final void doHandle(HandlerContext context) {
 
-		boolean shouldContinue = true;
+      boolean shouldContinue = true;
 
-		getLogger().trace("Checking applicability of {}", this.getClass().getSimpleName());
-		boolean isApplicable = isApplicable(context);
-		getLogger().trace("Handler {} is applicable: {}", this.getClass().getSimpleName(), isApplicable);
+      getLogger().trace("Checking applicability of {}", this.getClass().getSimpleName());
+      boolean isApplicable = isApplicable(context);
+      getLogger().trace("Handler {} is applicable: {}", this.getClass().getSimpleName(), isApplicable);
 
-		if (isApplicable) {
-			shouldContinue = this.handle(context);
-			getLogger().trace("Handler chain continues: {}", shouldContinue);
-		}
+      if (isApplicable) {
+         shouldContinue = this.handle(context);
+         getLogger().trace("Handler chain continues: {}", shouldContinue);
+      }
 
-		if (nextHandler != null && shouldContinue) {
-			nextHandler.doHandle(context);
-		}
-	}
+      if (nextHandler != null && shouldContinue) {
+         nextHandler.doHandle(context);
+      }
+   }
 
-	/**
-	 * @return the actual logger of the handler.
-	 */
-	protected abstract Logger getLogger();
+   /**
+    * @return the actual logger of the handler.
+    */
+   protected abstract Logger getLogger();
 
-	/**
-	 * Called by start().
-	 * 
-	 * @param request
-	 *            the request parameter
-	 * @return a boolean that indicates whether the handler chain should
-	 *         continue handling request or not.
-	 */
-	protected abstract boolean handle(HandlerContext context);
+   /**
+    * Called by start().
+    * 
+    * @param request
+    *           the request parameter
+    * @return a boolean that indicates whether the handler chain should continue
+    *         handling request or not.
+    */
+   protected abstract boolean handle(HandlerContext context);
 
-	/**
-	 * <p>
-	 * Compare (and therefore order) handlers according to their rank.
-	 * </p>
-	 * <p>
-	 * Warning: this implementation of compareTo breaks
-	 * <tt>(o1.compareTo(o2) == 0) == (o1.equals(o2))</tt>, as two different
-	 * handlers can have the same precedence.
-	 * </p>
-	 * 
-	 * @param o
-	 *            the object to compare to.
-	 * @return the comparison result.
-	 */
-	@Override
-	public int compareTo(HandlerChain o) {
-		if (o == null) {
-			return 1;
-		}
-		if (!(o instanceof AbstractHandlerChain)) {
-			// The other object does not rely on rank, so we should delegate to
-			// the other object (and its comparison policy) and invert the
-			// result
-			final int result = o.compareTo(this);
-			return (-1) * result;
-		}
-		int thisRank = getRank();
-		int otherRank = ((AbstractHandlerChain) o).getRank();
-		if (thisRank > otherRank) {
-			return 1;
-		}
-		if (thisRank < otherRank) {
-			return -1;
-		}
-		return 0;
-	}
+   /**
+    * <p>
+    * Compare (and therefore order) handlers according to their rank.
+    * </p>
+    * <p>
+    * Warning: this implementation of compareTo breaks
+    * <tt>(o1.compareTo(o2) == 0) == (o1.equals(o2))</tt>, as two different
+    * handlers can have the same precedence.
+    * </p>
+    * 
+    * @param o
+    *           the object to compare to.
+    * @return the comparison result.
+    */
+   @Override
+   public int compareTo(HandlerChain o) {
+      if (o == null) {
+         return 1;
+      }
+      if (!(o instanceof AbstractHandlerChain)) {
+         // The other object does not rely on rank, so we should delegate to
+         // the other object (and its comparison policy) and invert the
+         // result
+         final int result = o.compareTo(this);
+         return (-1) * result;
+      }
+      int thisRank = getRank();
+      int otherRank = ((AbstractHandlerChain) o).getRank();
+      if (thisRank > otherRank) {
+         return 1;
+      }
+      if (thisRank < otherRank) {
+         return -1;
+      }
+      return 0;
+   }
 }

@@ -33,17 +33,13 @@ import com.github.dandelion.core.utils.ResourceUtils;
 
 public class ScriptingUtils {
 
-	public static String prettyPrintJs(String javascript) {
-		
-		String beautifySources = ResourceUtils.getFileContentFromClasspath("dandelion/internal/scripting/beautify.js");
-		
-		String prettyPrintedJavascript = new ScriptBuilder()
-			.addBinding("source", javascript)
-			.eval("var global = {};")
-			.eval(beautifySources)
-			.eval("prettyPrinted = global.js_beautify(source);")
-			.get("prettyPrinted");
-		
-		return prettyPrintedJavascript;
-	}
+   public static String prettyPrintJs(String javascript) {
+
+      String beautifySources = ResourceUtils.getFileContentFromClasspath("dandelion/internal/scripting/beautify.js");
+
+      String prettyPrintedJavascript = new ScriptBuilder().addBinding("source", javascript).eval("var global = {};")
+            .eval(beautifySources).eval("prettyPrinted = global.js_beautify(source);").get("prettyPrinted");
+
+      return prettyPrintedJavascript;
+   }
 }

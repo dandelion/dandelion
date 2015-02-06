@@ -38,22 +38,22 @@ package com.github.dandelion.core.web;
  */
 public class WebConstants {
 
-	/**
-	 * Request attributes
-	 */
-	public static final String DANDELION_CONTEXT_ATTRIBUTE = "dandelionContext";
+   /**
+    * Request attributes
+    */
+   public static final String DANDELION_CONTEXT_ATTRIBUTE = "dandelionContext";
 
-	/**
-	 * Request parameters
-	 */
-	public static final String DANDELION_DEBUGGER = "ddl-debug";
-	public static final String DANDELION_DEBUGGER_PAGE = "ddl-debug-page";
-	public static final String DANDELION_RELOAD_BUNDLES = "ddl-reload-bundles";
-	public static final String DANDELION_CLEAR_STORAGE = "ddl-clear-storage";
-	public static final String DANDELION_CLEAR_CACHE = "ddl-clear-cache";	
-	
-	/**
-	 * Request attributes/parameters
-	 */
-	public static final String DANDELION_ASSET_FILTER_STATE = "dandelionAssetFilterState";
+   /**
+    * Request parameters
+    */
+   public static final String DANDELION_DEBUGGER = "ddl-debug";
+   public static final String DANDELION_DEBUGGER_PAGE = "ddl-debug-page";
+   public static final String DANDELION_RELOAD_BUNDLES = "ddl-reload-bundles";
+   public static final String DANDELION_CLEAR_STORAGE = "ddl-clear-storage";
+   public static final String DANDELION_CLEAR_CACHE = "ddl-clear-cache";
+
+   /**
+    * Request attributes/parameters
+    */
+   public static final String DANDELION_ASSET_FILTER_STATE = "dandelionAssetFilterState";
 }

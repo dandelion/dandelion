@@ -46,21 +46,21 @@ import com.github.dandelion.core.utils.StringBuilderUtils;
  */
 public class JsContentGenerator extends AbstractJsContentGenerator {
 
-	private AssetContent content;
+   private AssetContent content;
 
-	/**
-	 * @param content
-	 *            content for the asset
-	 */
-	public JsContentGenerator(AssetContent content) {
-		this.content = content;
-	}
+   /**
+    * @param content
+    *           content for the asset
+    */
+   public JsContentGenerator(AssetContent content) {
+      this.content = content;
+   }
 
-	@Override
-	protected String getJavascriptContent(HttpServletRequest request) {
-		if (StringBuilderUtils.isNotBlank(content.getContent())) {
-			return content.getContent().toString();
-		}
-		return null;
-	}
+   @Override
+   protected String getJavascriptContent(HttpServletRequest request) {
+      if (StringBuilderUtils.isNotBlank(content.getContent())) {
+         return content.getContent().toString();
+      }
+      return null;
+   }
 }

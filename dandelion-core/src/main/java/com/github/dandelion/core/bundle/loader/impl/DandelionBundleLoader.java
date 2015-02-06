@@ -57,43 +57,43 @@ import com.github.dandelion.core.storage.BundleStorageUnit;
  */
 public class DandelionBundleLoader extends AbstractBundleLoader {
 
-	private static final Logger LOG = LoggerFactory.getLogger(DandelionBundleLoader.class);
+   private static final Logger LOG = LoggerFactory.getLogger(DandelionBundleLoader.class);
 
-	public static final String LOADER_NAME = "dandelion";
-	public static final String SCANNING_PATH = "dandelion";
+   public static final String LOADER_NAME = "dandelion";
+   public static final String SCANNING_PATH = "dandelion";
 
-	@Override
-	public String getName() {
-		return LOADER_NAME;
-	}
+   @Override
+   public String getName() {
+      return LOADER_NAME;
+   }
 
-	@Override
-	public String getPath() {
-		return SCANNING_PATH;
-	}
+   @Override
+   public String getPath() {
+      return SCANNING_PATH;
+   }
 
-	@Override
-	protected Logger getLogger() {
-		return LOG;
-	}
+   @Override
+   protected Logger getLogger() {
+      return LOG;
+   }
 
-	@Override
-	public Set<String> getExcludedPaths() {
-		Set<String> excludedPaths = new HashSet<String>();
-		excludedPaths.add(VendorBundleLoader.SCANNING_PATH);
-		for (BundleLoader loader : context.getBundleLoaders()) {
-			if (loader instanceof AbstractBundleLoader) {
-				String path = ((AbstractBundleLoader) loader).getPath();
-				if (!path.equalsIgnoreCase(getPath())) {
-					excludedPaths.add(path);
-				}
-			}
-		}
-		return excludedPaths;
-	}
+   @Override
+   public Set<String> getExcludedPaths() {
+      Set<String> excludedPaths = new HashSet<String>();
+      excludedPaths.add(VendorBundleLoader.SCANNING_PATH);
+      for (BundleLoader loader : context.getBundleLoaders()) {
+         if (loader instanceof AbstractBundleLoader) {
+            String path = ((AbstractBundleLoader) loader).getPath();
+            if (!path.equalsIgnoreCase(getPath())) {
+               excludedPaths.add(path);
+            }
+         }
+      }
+      return excludedPaths;
+   }
 
-	@Override
-	protected void doCustomBundlePostProcessing(List<BundleStorageUnit> bundles) {
-		// Do nothing
-	}
+   @Override
+   protected void doCustomBundlePostProcessing(List<BundleStorageUnit> bundles) {
+      // Do nothing
+   }
 }

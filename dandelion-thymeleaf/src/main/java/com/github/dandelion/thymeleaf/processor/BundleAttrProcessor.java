@@ -51,36 +51,36 @@ import com.github.dandelion.thymeleaf.util.AttributesUtil;
  */
 public class BundleAttrProcessor extends DandelionAttrProcessor {
 
-	public BundleAttrProcessor(String attributeName) {
-		super(attributeName);
-	}
+   public BundleAttrProcessor(String attributeName) {
+      super(attributeName);
+   }
 
-	@Override
-	public int getPrecedence() {
-		return DandelionDialect.HIGHEST_PRECEDENCE;
-	}
+   @Override
+   public int getPrecedence() {
+      return DandelionDialect.HIGHEST_PRECEDENCE;
+   }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected ProcessorResult doProcessAttribute(Arguments arguments, Element element, String attributeName) {
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   protected ProcessorResult doProcessAttribute(Arguments arguments, Element element, String attributeName) {
 
-		String strippedAttributeName = AttributesUtil.stripPrefix(attributeName, DandelionDialect.DIALECT_PREFIX);
-		BundleAttributeNames assetsAttributeName = (BundleAttributeNames) AttributesUtil.find(strippedAttributeName,
-				BundleAttributeNames.values());
+      String strippedAttributeName = AttributesUtil.stripPrefix(attributeName, DandelionDialect.DIALECT_PREFIX);
+      BundleAttributeNames assetsAttributeName = (BundleAttributeNames) AttributesUtil.find(strippedAttributeName,
+            BundleAttributeNames.values());
 
-		HttpServletRequest request = ArgumentsUtil.getWebContext(arguments).getHttpServletRequest();
-		AssetRequestContext context = AssetRequestContext.get(request);
-		switch (assetsAttributeName) {
-		case INCLUDES:
-			context.addBundles(element.getAttributeValue(attributeName));
-			break;
-		case EXCLUDES:
-			context.excludeBundles(element.getAttributeValue(attributeName));
-			break;
-		}
+      HttpServletRequest request = ArgumentsUtil.getWebContext(arguments).getHttpServletRequest();
+      AssetRequestContext context = AssetRequestContext.get(request);
+      switch (assetsAttributeName) {
+      case INCLUDES:
+         context.addBundles(element.getAttributeValue(attributeName));
+         break;
+      case EXCLUDES:
+         context.excludeBundles(element.getAttributeValue(attributeName));
+         break;
+      }
 
-		return ProcessorResult.ok();
-	}
+      return ProcessorResult.ok();
+   }
 }

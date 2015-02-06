@@ -44,16 +44,16 @@ import com.github.dandelion.core.utils.DigestUtils;
  */
 public class ContentAssetVersioningStrategy extends AbstractAssetVersioningStrategy {
 
-	@Override
-	public String getName() {
-		return "content";
-	}
+   @Override
+   public String getName() {
+      return "content";
+   }
 
-	@Override
-	public String getAssetVersion(Asset asset) {
-		String content = getContext().getAssetStorage().get(asset.getStorageKey()).getContents();
-		String version = DigestUtils.md5Digest(content);
-		return version;
-	}
+   @Override
+   public String getAssetVersion(Asset asset) {
+      String content = getContext().getAssetStorage().get(asset.getStorageKey()).getContents();
+      String version = DigestUtils.md5Digest(content);
+      return version;
+   }
 
 }

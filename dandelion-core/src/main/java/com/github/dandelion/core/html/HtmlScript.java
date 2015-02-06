@@ -36,32 +36,32 @@ package com.github.dandelion.core.html;
  */
 public class HtmlScript extends AbstractHtmlTag {
 
-	/**
-	 * Plain old HTML <code>src</code> attribute.
-	 */
-	private String src;
+   /**
+    * Plain old HTML <code>src</code> attribute.
+    */
+   private String src;
 
-	public HtmlScript() {
-		this.tag = "script";
-	}
+   public HtmlScript() {
+      this.tag = "script";
+   }
 
-	public HtmlScript(String src) {
-		this.tag = "script";
-		this.src = src;
-	}
+   public HtmlScript(String src) {
+      this.tag = "script";
+      this.src = src;
+   }
 
-	@Override
-	protected StringBuilder getHtmlAttributes() {
-		StringBuilder html = super.getHtmlAttributes();
-		html.append(writeAttribute("src", this.src));
-		return html;
-	}
-	
-	public String getSrc() {
-		return src;
-	}
+   @Override
+   protected StringBuilder getHtmlAttributes() {
+      StringBuilder html = super.getHtmlAttributes();
+      html.append(writeAttribute("src", this.src));
+      return html;
+   }
 
-	public void setSrc(String src) {
-		this.src = src;
-	}
+   public String getSrc() {
+      return src;
+   }
+
+   public void setSrc(String src) {
+      this.src = src;
+   }
 }

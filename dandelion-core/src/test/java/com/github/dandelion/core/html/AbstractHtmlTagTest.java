@@ -36,39 +36,39 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class AbstractHtmlTagTest {
 
-	static AbstractHtmlTag tag = new AbstractHtmlTag() {
-		@Override
-		public StringBuilder toHtml() {
-			return new StringBuilder("test");
-		}
-	};
+   static AbstractHtmlTag tag = new AbstractHtmlTag() {
+      @Override
+      public StringBuilder toHtml() {
+         return new StringBuilder("test");
+      }
+   };
 
-	@Test
-	public void should_have_correct_html_rendering() {
-		assertThat(tag.toHtml().toString()).isEqualTo("test");
-	}
+   @Test
+   public void should_have_correct_html_rendering() {
+      assertThat(tag.toHtml().toString()).isEqualTo("test");
+   }
 
-	@Test
-	public void should_have_full_access_to_the_tag() {
-		tag.setId("id");
-		assertThat(tag.getId()).isEqualTo("id");
+   @Test
+   public void should_have_full_access_to_the_tag() {
+      tag.setId("id");
+      assertThat(tag.getId()).isEqualTo("id");
 
-		tag.addCssClass("class1");
-		assertThat(tag.getCssClass().toString()).isEqualTo("class1");
+      tag.addCssClass("class1");
+      assertThat(tag.getCssClass().toString()).isEqualTo("class1");
 
-		tag.addCssStyle("style1");
-		assertThat(tag.getCssStyle().toString()).isEqualTo("style1");
+      tag.addCssStyle("style1");
+      assertThat(tag.getCssStyle().toString()).isEqualTo("style1");
 
-		tag.addCssClass("class2");
-		assertThat(tag.getCssClass().toString()).isEqualTo("class1 class2");
+      tag.addCssClass("class2");
+      assertThat(tag.getCssClass().toString()).isEqualTo("class1 class2");
 
-		tag.addCssStyle("style2");
-		assertThat(tag.getCssStyle().toString()).isEqualTo("style1;style2");
+      tag.addCssStyle("style2");
+      assertThat(tag.getCssStyle().toString()).isEqualTo("style1;style2");
 
-		tag.setCssClass(new StringBuilder("class1"));
-		assertThat(tag.getCssClass().toString()).isEqualTo("class1");
+      tag.setCssClass(new StringBuilder("class1"));
+      assertThat(tag.getCssClass().toString()).isEqualTo("class1");
 
-		tag.setCssStyle(new StringBuilder("style1"));
-		assertThat(tag.getCssStyle().toString()).isEqualTo("style1");
-	}
+      tag.setCssStyle(new StringBuilder("style1"));
+      assertThat(tag.getCssStyle().toString()).isEqualTo("style1");
+   }
 }

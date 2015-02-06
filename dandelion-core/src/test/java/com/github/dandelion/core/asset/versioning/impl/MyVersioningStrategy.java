@@ -34,15 +34,14 @@ import com.github.dandelion.core.asset.versioning.AbstractAssetVersioningStrateg
 
 public class MyVersioningStrategy extends AbstractAssetVersioningStrategy {
 
-	@Override
-	public String getName() {
-		return "my-strategy";
-	}
+   @Override
+   public String getName() {
+      return "my-strategy";
+   }
 
-	@Override
-	public String getAssetVersion(Asset asset) {
-		return "my-version";
-	}
-
+   @Override
+   public String getAssetVersion(Asset asset) {
+      return "my-version";
+   }
 
 }

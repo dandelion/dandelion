@@ -49,53 +49,53 @@ import com.github.dandelion.core.web.DandelionServlet;
  */
 public interface AssetLocator {
 
-	/**
-	 * <p>
-	 * Initializes the configured service provider of the {@link AssetLocator}
-	 * SPI by using the {@link Context}.
-	 * 
-	 * @param context
-	 *            The {@link Context} initialized in the {@link DandelionFilter}.
-	 */
-	void initLocator(Context context);
+   /**
+    * <p>
+    * Initializes the configured service provider of the {@link AssetLocator}
+    * SPI by using the {@link Context}.
+    * 
+    * @param context
+    *           The {@link Context} initialized in the {@link DandelionFilter}.
+    */
+   void initLocator(Context context);
 
-	/**
-	 * @return the location key associated to the locator.
-	 */
-	String getLocationKey();
+   /**
+    * @return the location key associated to the locator.
+    */
+   String getLocationKey();
 
-	/**
-	 * <p>
-	 * Computes and returns the location of the asset.
-	 * 
-	 * @param AssetStorageUnit
-	 *            The asset storage unit from which the location should be
-	 *            extracted.
-	 * @param request
-	 *            The current HTTP request.
-	 * @return the customized location
-	 */
-	String getLocation(AssetStorageUnit asu, HttpServletRequest request);
+   /**
+    * <p>
+    * Computes and returns the location of the asset.
+    * 
+    * @param AssetStorageUnit
+    *           The asset storage unit from which the location should be
+    *           extracted.
+    * @param request
+    *           The current HTTP request.
+    * @return the customized location
+    */
+   String getLocation(AssetStorageUnit asu, HttpServletRequest request);
 
-	/**
-	 * <p>
-	 * Returns the content of the given {@link Asset}.
-	 * <p>
-	 * Note that this method can be used to access the asset's content after the
-	 * {@link AssetProcessor}'s execution.
-	 * 
-	 * @param asset
-	 *            The asset from which the content should be extracted.
-	 * @param request
-	 *            The current HTTP request.
-	 * @return a String holding the content of the {@link Asset}.
-	 */
-	String getContent(Asset asset, HttpServletRequest request);
+   /**
+    * <p>
+    * Returns the content of the given {@link Asset}.
+    * <p>
+    * Note that this method can be used to access the asset's content after the
+    * {@link AssetProcessor}'s execution.
+    * 
+    * @param asset
+    *           The asset from which the content should be extracted.
+    * @param request
+    *           The current HTTP request.
+    * @return a String holding the content of the {@link Asset}.
+    */
+   String getContent(Asset asset, HttpServletRequest request);
 
-	/**
-	 * @return {@code true} if the asset has to be cached in order to be
-	 *         accessed by the {@link DandelionServlet}, otherwise {@code false} if
-	 *         it can be directly accessed.
-	 */
-	boolean isCachingForced();
+   /**
+    * @return {@code true} if the asset has to be cached in order to be accessed
+    *         by the {@link DandelionServlet}, otherwise {@code false} if it can
+    *         be directly accessed.
+    */
+   boolean isCachingForced();
 }

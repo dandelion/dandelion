@@ -42,41 +42,41 @@ import com.github.dandelion.core.web.handler.cache.HttpHeaderUtils;
 
 public class ETagPostHandler extends AbstractHandlerChain {
 
-	private static final Logger LOG = LoggerFactory.getLogger(ETagPostHandler.class);
+   private static final Logger LOG = LoggerFactory.getLogger(ETagPostHandler.class);
 
-	@Override
-	protected Logger getLogger() {
-		return LOG;
-	}
+   @Override
+   protected Logger getLogger() {
+      return LOG;
+   }
 
-	@Override
-	public boolean isAfterChaining() {
-		return true;
-	}
+   @Override
+   public boolean isAfterChaining() {
+      return true;
+   }
 
-	@Override
-	public int getRank() {
-		return 10;
-	}
+   @Override
+   public int getRank() {
+      return 10;
+   }
 
-	@Override
-	public boolean isApplicable(HandlerContext handlerContext) {
-		return handlerContext.getResponse().getContentType() != null
-				&& !handlerContext.getResponse().getContentType().contains("text/html");
-	}
+   @Override
+   public boolean isApplicable(HandlerContext handlerContext) {
+      return handlerContext.getResponse().getContentType() != null
+            && !handlerContext.getResponse().getContentType().contains("text/html");
+   }
 
-	@Override
-	public boolean handle(HandlerContext handlerContext) {
+   @Override
+   public boolean handle(HandlerContext handlerContext) {
 
-		String ifNoneMatchValue = handlerContext.getRequest().getHeader(HttpHeader.IFNONEMATCH.getName());
-		String etagValue = HttpHeaderUtils.computeETag(handlerContext.getResponseAsBytes(), handlerContext);
+      String ifNoneMatchValue = handlerContext.getRequest().getHeader(HttpHeader.IFNONEMATCH.getName());
+      String etagValue = HttpHeaderUtils.computeETag(handlerContext.getResponseAsBytes(), handlerContext);
 
-		if (StringUtils.isNotBlank(ifNoneMatchValue) && ifNoneMatchValue.equals(etagValue)) {
-			handlerContext.getResponse().setStatus(HttpServletResponse.SC_NOT_MODIFIED);
-			return false;
-		}
-		else {
-			return true;
-		}
-	}
+      if (StringUtils.isNotBlank(ifNoneMatchValue) && ifNoneMatchValue.equals(etagValue)) {
+         handlerContext.getResponse().setStatus(HttpServletResponse.SC_NOT_MODIFIED);
+         return false;
+      }
+      else {
+         return true;
+      }
+   }
 }

@@ -36,50 +36,50 @@ package com.github.dandelion.core.html;
  */
 public class HtmlLink extends AbstractHtmlTag {
 
-	/**
-	 * Plain old HTML <code>href</code> attribute.
-	 */
-	private String href;
-	/**
-	 * Plain old HTML <code>rel</code> attribute (by default 'stylesheet').
-	 */
-	private String rel = "stylesheet";
+   /**
+    * Plain old HTML <code>href</code> attribute.
+    */
+   private String href;
+   /**
+    * Plain old HTML <code>rel</code> attribute (by default 'stylesheet').
+    */
+   private String rel = "stylesheet";
 
-	public HtmlLink() {
-		this.tag = "link";
-	}
+   public HtmlLink() {
+      this.tag = "link";
+   }
 
-	public HtmlLink(String href) {
-		this.tag = "link";
-		this.href = href;
-	}
+   public HtmlLink(String href) {
+      this.tag = "link";
+      this.href = href;
+   }
 
-	public HtmlLink(String href, String rel) {
-		this(href);
-		this.rel = rel;
-	}
+   public HtmlLink(String href, String rel) {
+      this(href);
+      this.rel = rel;
+   }
 
-	@Override
-	protected StringBuilder getHtmlAttributes() {
-		StringBuilder html = super.getHtmlAttributes();
-		html.append(writeAttribute("rel", "stylesheet"));
-		html.append(writeAttribute("href", this.href));
-		return html;
-	}
-	
-	public String getHref() {
-		return href;
-	}
+   @Override
+   protected StringBuilder getHtmlAttributes() {
+      StringBuilder html = super.getHtmlAttributes();
+      html.append(writeAttribute("rel", "stylesheet"));
+      html.append(writeAttribute("href", this.href));
+      return html;
+   }
 
-	public void setHref(String href) {
-		this.href = href;
-	}
+   public String getHref() {
+      return href;
+   }
 
-	public String getRel() {
-		return rel;
-	}
+   public void setHref(String href) {
+      this.href = href;
+   }
 
-	public void setRel(String rel) {
-		this.rel = rel;
-	}
+   public String getRel() {
+      return rel;
+   }
+
+   public void setRel(String rel) {
+      this.rel = rel;
+   }
 }

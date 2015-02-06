@@ -55,127 +55,127 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class BundleUtilsTest {
 
-	@Rule
-	public ExpectedException exception = ExpectedException.none();
+   @Rule
+   public ExpectedException exception = ExpectedException.none();
 
-	@Test
-	public void should_finish_initializarion_of_the_bundle() {
+   @Test
+   public void should_finish_initializarion_of_the_bundle() {
 
-		BundleStorageUnit bsu = new BundleStorageUnit();
-		bsu.setRelativePath("some-relative-path/until/the/fileName.json");
-		Context context = mock(Context.class, Mockito.RETURNS_DEEP_STUBS);
+      BundleStorageUnit bsu = new BundleStorageUnit();
+      bsu.setRelativePath("some-relative-path/until/the/fileName.json");
+      Context context = mock(Context.class, Mockito.RETURNS_DEEP_STUBS);
 
-		BundleUtils.finalizeBundleConfiguration(bsu, context);
+      BundleUtils.finalizeBundleConfiguration(bsu, context);
 
-		assertThat(bsu.getName()).isEqualTo("filename");
-	}
+      assertThat(bsu.getName()).isEqualTo("filename");
+   }
 
-	@Test
-	public void should_finish_initialization_of_assets_using_the_location() {
+   @Test
+   public void should_finish_initialization_of_assets_using_the_location() {
 
-		Set<AssetStorageUnit> assets = new HashSet<AssetStorageUnit>();
-		AssetStorageUnit asu1 = new AssetStorageUnit();
-		Map<String, String> locations = new HashMap<String, String>();
-		locations.put("locationKey", "/assets/js/some-asset.js");
-		asu1.setLocations(locations);
-		assets.add(asu1);
+      Set<AssetStorageUnit> assets = new HashSet<AssetStorageUnit>();
+      AssetStorageUnit asu1 = new AssetStorageUnit();
+      Map<String, String> locations = new HashMap<String, String>();
+      locations.put("locationKey", "/assets/js/some-asset.js");
+      asu1.setLocations(locations);
+      assets.add(asu1);
 
-		BundleStorageUnit bsu = new BundleStorageUnit("bundle-name");
-		bsu.setAssetStorageUnits(assets);
+      BundleStorageUnit bsu = new BundleStorageUnit("bundle-name");
+      bsu.setAssetStorageUnits(assets);
 
-		Context context = mock(Context.class, Mockito.RETURNS_DEEP_STUBS);
+      Context context = mock(Context.class, Mockito.RETURNS_DEEP_STUBS);
 
-		BundleUtils.finalizeBundleConfiguration(bsu, context);
+      BundleUtils.finalizeBundleConfiguration(bsu, context);
 
-		assertThat(asu1.getName()).isEqualTo("some-asset");
-		assertThat(asu1.getType()).isEqualTo(AssetType.js);
-	}
+      assertThat(asu1.getName()).isEqualTo("some-asset");
+      assertThat(asu1.getType()).isEqualTo(AssetType.js);
+   }
 
-	@Test
-	public void should_finish_initialization_of_assets_using_the_first_location() {
+   @Test
+   public void should_finish_initialization_of_assets_using_the_first_location() {
 
-		Set<AssetStorageUnit> assets = new HashSet<AssetStorageUnit>();
-		AssetStorageUnit asu1 = new AssetStorageUnit();
-		Map<String, String> locations = new HashMap<String, String>();
-		locations.put("locationKey", "/assets/js/some-asset.css");
-		locations.put("anotherLocationKey", "//cdn.com/assets/js/some-asset.css");
-		asu1.setLocations(locations);
-		assets.add(asu1);
+      Set<AssetStorageUnit> assets = new HashSet<AssetStorageUnit>();
+      AssetStorageUnit asu1 = new AssetStorageUnit();
+      Map<String, String> locations = new HashMap<String, String>();
+      locations.put("locationKey", "/assets/js/some-asset.css");
+      locations.put("anotherLocationKey", "//cdn.com/assets/js/some-asset.css");
+      asu1.setLocations(locations);
+      assets.add(asu1);
 
-		BundleStorageUnit bsu = new BundleStorageUnit("bundle-name");
-		bsu.setAssetStorageUnits(assets);
+      BundleStorageUnit bsu = new BundleStorageUnit("bundle-name");
+      bsu.setAssetStorageUnits(assets);
 
-		Context context = mock(Context.class, Mockito.RETURNS_DEEP_STUBS);
+      Context context = mock(Context.class, Mockito.RETURNS_DEEP_STUBS);
 
-		BundleUtils.finalizeBundleConfiguration(bsu, context);
+      BundleUtils.finalizeBundleConfiguration(bsu, context);
 
-		assertThat(asu1.getName()).isEqualTo("some-asset");
-		assertThat(asu1.getType()).isEqualTo(AssetType.css);
-	}
+      assertThat(asu1.getName()).isEqualTo("some-asset");
+      assertThat(asu1.getType()).isEqualTo(AssetType.css);
+   }
 
-	@Test
-	public void should_perform_variable_substitution_inside_locations() {
+   @Test
+   public void should_perform_variable_substitution_inside_locations() {
 
-		Set<AssetStorageUnit> assets = new HashSet<AssetStorageUnit>();
-		AssetStorageUnit asu1 = new AssetStorageUnit();
-		Map<String, String> locations = new HashMap<String, String>();
-		locations.put("locationKey", "http://%SERVER%/assets/js/some-asset.css");
-		asu1.setLocations(locations);
-		assets.add(asu1);
+      Set<AssetStorageUnit> assets = new HashSet<AssetStorageUnit>();
+      AssetStorageUnit asu1 = new AssetStorageUnit();
+      Map<String, String> locations = new HashMap<String, String>();
+      locations.put("locationKey", "http://%SERVER%/assets/js/some-asset.css");
+      asu1.setLocations(locations);
+      assets.add(asu1);
 
-		BundleStorageUnit bsu = new BundleStorageUnit("bundle-name");
-		bsu.setAssetStorageUnits(assets);
+      BundleStorageUnit bsu = new BundleStorageUnit("bundle-name");
+      bsu.setAssetStorageUnits(assets);
 
-		Properties properties = new Properties();
-		properties.put("SERVER", "my-server");
+      Properties properties = new Properties();
+      properties.put("SERVER", "my-server");
 
-		Context context = mock(Context.class, Mockito.RETURNS_DEEP_STUBS);
-		when(context.getConfiguration().getProperties()).thenReturn(properties);
+      Context context = mock(Context.class, Mockito.RETURNS_DEEP_STUBS);
+      when(context.getConfiguration().getProperties()).thenReturn(properties);
 
-		BundleUtils.finalizeBundleConfiguration(bsu, context);
+      BundleUtils.finalizeBundleConfiguration(bsu, context);
 
-		assertThat(asu1.getLocations().get("locationKey")).isEqualTo("http://my-server/assets/js/some-asset.css");
-	}
+      assertThat(asu1.getLocations().get("locationKey")).isEqualTo("http://my-server/assets/js/some-asset.css");
+   }
 
-	@Test
-	public void should_not_perform_variable_substitution_inside_locations_if_no_property_exist() {
+   @Test
+   public void should_not_perform_variable_substitution_inside_locations_if_no_property_exist() {
 
-		Set<AssetStorageUnit> assets = new HashSet<AssetStorageUnit>();
-		AssetStorageUnit asu1 = new AssetStorageUnit();
-		Map<String, String> locations = new HashMap<String, String>();
-		locations.put("locationKey", "http://%SERVER%/assets/js/some-asset.css");
-		asu1.setLocations(locations);
-		assets.add(asu1);
+      Set<AssetStorageUnit> assets = new HashSet<AssetStorageUnit>();
+      AssetStorageUnit asu1 = new AssetStorageUnit();
+      Map<String, String> locations = new HashMap<String, String>();
+      locations.put("locationKey", "http://%SERVER%/assets/js/some-asset.css");
+      asu1.setLocations(locations);
+      assets.add(asu1);
 
-		BundleStorageUnit bsu = new BundleStorageUnit("bundle-name");
-		bsu.setAssetStorageUnits(assets);
+      BundleStorageUnit bsu = new BundleStorageUnit("bundle-name");
+      bsu.setAssetStorageUnits(assets);
 
-		Context context = mock(Context.class, Mockito.RETURNS_DEEP_STUBS);
-		when(context.getConfiguration().getProperties()).thenReturn(null);
+      Context context = mock(Context.class, Mockito.RETURNS_DEEP_STUBS);
+      when(context.getConfiguration().getProperties()).thenReturn(null);
 
-		BundleUtils.finalizeBundleConfiguration(bsu, context);
+      BundleUtils.finalizeBundleConfiguration(bsu, context);
 
-		assertThat(asu1.getLocations().get("locationKey")).isEqualTo("http://%SERVER%/assets/js/some-asset.css");
-	}
+      assertThat(asu1.getLocations().get("locationKey")).isEqualTo("http://%SERVER%/assets/js/some-asset.css");
+   }
 
-	@Test
-	public void should_throw_an_exception_if_the_variable_does_not_exist() {
+   @Test
+   public void should_throw_an_exception_if_the_variable_does_not_exist() {
 
-		Set<AssetStorageUnit> assets = new HashSet<AssetStorageUnit>();
-		AssetStorageUnit asu1 = new AssetStorageUnit();
-		Map<String, String> locations = new HashMap<String, String>();
-		locations.put("locationKey", "http://%SERVER%/assets/js/some-asset.css");
-		asu1.setLocations(locations);
-		assets.add(asu1);
+      Set<AssetStorageUnit> assets = new HashSet<AssetStorageUnit>();
+      AssetStorageUnit asu1 = new AssetStorageUnit();
+      Map<String, String> locations = new HashMap<String, String>();
+      locations.put("locationKey", "http://%SERVER%/assets/js/some-asset.css");
+      asu1.setLocations(locations);
+      assets.add(asu1);
 
-		BundleStorageUnit bsu = new BundleStorageUnit("bundle-name");
-		bsu.setAssetStorageUnits(assets);
+      BundleStorageUnit bsu = new BundleStorageUnit("bundle-name");
+      bsu.setAssetStorageUnits(assets);
 
-		Context context = mock(Context.class, Mockito.RETURNS_DEEP_STUBS);
-		when(context.getConfiguration().getProperties()).thenReturn(new Properties());
+      Context context = mock(Context.class, Mockito.RETURNS_DEEP_STUBS);
+      when(context.getConfiguration().getProperties()).thenReturn(new Properties());
 
-		exception.expect(IllegalArgumentException.class);
-		exception.expectMessage("The supplied set of variables doesn't contain a variable named \"SERVER\"");
-		BundleUtils.finalizeBundleConfiguration(bsu, context);
-	}
+      exception.expect(IllegalArgumentException.class);
+      exception.expectMessage("The supplied set of variables doesn't contain a variable named \"SERVER\"");
+      BundleUtils.finalizeBundleConfiguration(bsu, context);
+   }
 }

@@ -38,58 +38,58 @@ package com.github.dandelion.core.utils;
  */
 public class EnumUtils {
 
-	/**
-	 * Build a String containing all the possible values of the supplied
-	 * {@code enumClass}.
-	 * 
-	 * @param enumClass
-	 *            The enum from which the possible values must be displayed.
-	 * @return a String containing all the possible values separated by a comma.
-	 */
-	public static <E extends Enum<E>> String printPossibleValuesOf(Class<E> enumClass) {
+   /**
+    * Build a String containing all the possible values of the supplied
+    * {@code enumClass}.
+    * 
+    * @param enumClass
+    *           The enum from which the possible values must be displayed.
+    * @return a String containing all the possible values separated by a comma.
+    */
+   public static <E extends Enum<E>> String printPossibleValuesOf(Class<E> enumClass) {
 
-		StringBuilder possibleValues = new StringBuilder();
-		E[] enumConstants = enumClass.getEnumConstants();
+      StringBuilder possibleValues = new StringBuilder();
+      E[] enumConstants = enumClass.getEnumConstants();
 
-		for (int i = 0; i < enumConstants.length; i++) {
-			possibleValues.append("'").append(enumConstants[i].name().toLowerCase()).append("'");
-			if (i < enumConstants.length - 2) {
-				possibleValues.append(", ");
-			}
-			else if (i == (enumConstants.length - 2)) {
-				possibleValues.append(" and ");
-			}
-		}
-		possibleValues.append(".");
-		return possibleValues.toString();
-	}
+      for (int i = 0; i < enumConstants.length; i++) {
+         possibleValues.append("'").append(enumConstants[i].name().toLowerCase()).append("'");
+         if (i < enumConstants.length - 2) {
+            possibleValues.append(", ");
+         }
+         else if (i == (enumConstants.length - 2)) {
+            possibleValues.append(" and ");
+         }
+      }
+      possibleValues.append(".");
+      return possibleValues.toString();
+   }
 
-	/**
-	 * <p>
-	 * Gets the enum for the class, returning {@code null} if not found.
-	 * </p>
-	 * 
-	 * <p>
-	 * This method differs from {@link Enum#valueOf} in that it does not throw
-	 * an exception for an invalid enum name.
-	 * </p>
-	 * 
-	 * @param enumClass
-	 *            the class of the enum to query, not null.
-	 * @param enumName
-	 *            the enum name, null returns null.
-	 * @return the enum, null if not found.
-	 */
-	public static <E extends Enum<E>> E getEnum(String enumName, Class<E> enumType) {
-		if (enumName == null) {
-			return null;
-		}
+   /**
+    * <p>
+    * Gets the enum for the class, returning {@code null} if not found.
+    * </p>
+    * 
+    * <p>
+    * This method differs from {@link Enum#valueOf} in that it does not throw an
+    * exception for an invalid enum name.
+    * </p>
+    * 
+    * @param enumClass
+    *           the class of the enum to query, not null.
+    * @param enumName
+    *           the enum name, null returns null.
+    * @return the enum, null if not found.
+    */
+   public static <E extends Enum<E>> E getEnum(String enumName, Class<E> enumType) {
+      if (enumName == null) {
+         return null;
+      }
 
-		try {
-			return Enum.valueOf(enumType, enumName.toUpperCase().trim());
-		}
-		catch (IllegalArgumentException ex) {
-			return null;
-		}
-	}
+      try {
+         return Enum.valueOf(enumType, enumName.toUpperCase().trim());
+      }
+      catch (IllegalArgumentException ex) {
+         return null;
+      }
+   }
 }

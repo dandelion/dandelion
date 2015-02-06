@@ -48,12 +48,12 @@ import javax.servlet.http.HttpServletRequest;
  */
 public interface LocaleResolver {
 
-	/**
-	 * Resolve the current locale with the given request.
-	 * 
-	 * @param request
-	 *            The request used to resolve the locale.
-	 * @return the current Locale.
-	 */
-	public Locale resolveLocale(HttpServletRequest request);
+   /**
+    * Resolve the current locale with the given request.
+    * 
+    * @param request
+    *           The request used to resolve the locale.
+    * @return the current Locale.
+    */
+   public Locale resolveLocale(HttpServletRequest request);
 }

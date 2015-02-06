@@ -77,9 +77,9 @@ import com.github.dandelion.core.utils.StringBuilderUtils;
  * </pre>
  * 
  * @param content
- *            The content of the asset to process.
+ *           The content of the asset to process.
  * @param url
- *            The original URL that will be used to build the absolute path.
+ *           The original URL that will be used to build the absolute path.
  * @return the processed content that should contain only absolute paths.
  * 
  * @author Thibault Duchateau
@@ -89,49 +89,49 @@ import com.github.dandelion.core.utils.StringBuilderUtils;
 @CompatibleAssetType(types = AssetType.css)
 public class CssUrlRewritingProcessor extends AbstractAssetProcessor {
 
-	private static final Logger LOG = LoggerFactory.getLogger(CssUrlRewritingProcessor.class);
-	private CssUrlRewriter urlRewriter = new CssUrlRewriter();
+   private static final Logger LOG = LoggerFactory.getLogger(CssUrlRewritingProcessor.class);
+   private CssUrlRewriter urlRewriter = new CssUrlRewriter();
 
-	@Override
-	public String getProcessorKey() {
-		return "cssurlrewriting";
-	}
+   @Override
+   public String getProcessorKey() {
+      return "cssurlrewriting";
+   }
 
-	@Override
-	protected void doProcess(Reader reader, Writer writer, ProcessingContext processingContext) throws Exception {
-		Asset asset = processingContext.getAsset();
-		String contextPath = processingContext.getRequest().getContextPath();
-		LOG.debug("Processing {}", asset.toLog());
-		urlRewriter.setContextPath(contextPath);
+   @Override
+   protected void doProcess(Reader reader, Writer writer, ProcessingContext processingContext) throws Exception {
+      Asset asset = processingContext.getAsset();
+      String contextPath = processingContext.getRequest().getContextPath();
+      LOG.debug("Processing {}", asset.toLog());
+      urlRewriter.setContextPath(contextPath);
 
-		StringBuilder assetContent = StringBuilderUtils.toStringBuilder(reader);
+      StringBuilder assetContent = StringBuilderUtils.toStringBuilder(reader);
 
-		BufferedWriter bufferedWriter = null;
-		try {
-			LOG.debug("  Old location: \"{}\"", asset.getConfigLocation());
-			LOG.debug("  New location: \"{}\"", asset.getFinalLocation());
+      BufferedWriter bufferedWriter = null;
+      try {
+         LOG.debug("  Old location: \"{}\"", asset.getConfigLocation());
+         LOG.debug("  New location: \"{}\"", asset.getFinalLocation());
 
-			bufferedWriter = new BufferedWriter(writer);
-			bufferedWriter.write(urlRewriter.rewriteUrl("/" + contextPath + asset.getConfigLocation(),
-					asset.getFinalLocation(), assetContent.toString()).toString());
-		}
-		catch (IOException e) {
-			LOG.error("An error occurred when processing relative paths inside the asset " + asset.toLog());
-			throw DandelionException.wrap(e);
-		}
-		finally {
-			try {
-				if (reader != null)
-					reader.close();
-			}
-			catch (IOException e) {
-				// Should never happen
-				LOG.error("An error occurred when processing relative paths inside the asset " + asset.toLog());
-				throw DandelionException.wrap(e);
-			}
+         bufferedWriter = new BufferedWriter(writer);
+         bufferedWriter.write(urlRewriter.rewriteUrl("/" + contextPath + asset.getConfigLocation(),
+               asset.getFinalLocation(), assetContent.toString()).toString());
+      }
+      catch (IOException e) {
+         LOG.error("An error occurred when processing relative paths inside the asset " + asset.toLog());
+         throw DandelionException.wrap(e);
+      }
+      finally {
+         try {
+            if (reader != null)
+               reader.close();
+         }
+         catch (IOException e) {
+            // Should never happen
+            LOG.error("An error occurred when processing relative paths inside the asset " + asset.toLog());
+            throw DandelionException.wrap(e);
+         }
 
-			// Flush and closes the stream
-			bufferedWriter.close();
-		}
-	}
+         // Flush and closes the stream
+         bufferedWriter.close();
+      }
+   }
 }

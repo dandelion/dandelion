@@ -42,23 +42,23 @@ import com.github.dandelion.core.Context;
 @Beta
 public class DandelionRuntime implements DandelionRuntimeMBean {
 
-	private Context context;
-	
-	public DandelionRuntime(Context context, FilterConfig filterConfig){
-		this.context = context;
-	}
-	
-	@Override
-	public void reloadBundles() {
-		System.out.println("RELOADING!!!");
-		context.initBundleStorage();
-		System.out.println("Context reloaded");
-	}
+   private Context context;
 
-	@Override
-	public void clearCache() {
-		System.out.println("Clearing all cache");
-		context.getCache().clear();
-		System.out.println("All caches cleared");
-	}
+   public DandelionRuntime(Context context, FilterConfig filterConfig) {
+      this.context = context;
+   }
+
+   @Override
+   public void reloadBundles() {
+      System.out.println("RELOADING!!!");
+      context.initBundleStorage();
+      System.out.println("Context reloaded");
+   }
+
+   @Override
+   public void clearCache() {
+      System.out.println("Clearing all cache");
+      context.getCache().clear();
+      System.out.println("All caches cleared");
+   }
 }

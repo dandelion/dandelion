@@ -44,46 +44,46 @@ package com.github.dandelion.core.asset.generator.js;
  */
 public class JsSnippet {
 
-	private String javascript;
+   private String javascript;
 
-	public JsSnippet(String javascript) {
-		this.javascript = javascript;
-	}
+   public JsSnippet(String javascript) {
+      this.javascript = javascript;
+   }
 
-	@Override
-	public String toString() {
-		return javascript;
-	}
+   @Override
+   public String toString() {
+      return javascript;
+   }
 
-	public String getJavascript() {
-		return this.javascript;
-	}
+   public String getJavascript() {
+      return this.javascript;
+   }
 
-	public void append(String javascript) {
-		if (this.javascript == null) {
-			this.javascript = javascript;
-		}
-		else {
-			this.javascript += javascript;
-		}
-	}
+   public void append(String javascript) {
+      if (this.javascript == null) {
+         this.javascript = javascript;
+      }
+      else {
+         this.javascript += javascript;
+      }
+   }
 
-	public void setJavascript(String javascript) {
-		this.javascript = javascript;
-	}
+   public void setJavascript(String javascript) {
+      this.javascript = javascript;
+   }
 
-	@Override
-	public boolean equals(Object javascriptSnippet) {
-		if (javascriptSnippet != null && javascriptSnippet instanceof JsSnippet) {
-			return this.javascript.equals(((JsSnippet) javascriptSnippet).getJavascript());
-		}
-		else {
-			return false;
-		}
-	}
+   @Override
+   public boolean equals(Object javascriptSnippet) {
+      if (javascriptSnippet != null && javascriptSnippet instanceof JsSnippet) {
+         return this.javascript.equals(((JsSnippet) javascriptSnippet).getJavascript());
+      }
+      else {
+         return false;
+      }
+   }
 
-	@Override
-	public int hashCode() {
-		return this.javascript.hashCode();
-	}
+   @Override
+   public int hashCode() {
+      return this.javascript.hashCode();
+   }
 }

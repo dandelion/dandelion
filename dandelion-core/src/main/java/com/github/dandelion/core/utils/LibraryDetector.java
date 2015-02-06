@@ -39,65 +39,65 @@ package com.github.dandelion.core.utils;
  */
 public final class LibraryDetector {
 
-	private static Boolean jstlAvailable;
-	private static Boolean thymeleafAvailable;
-	private static Boolean jbossVFSv2Available;
-	private static Boolean jbossVFSv3Available;
+   private static Boolean jstlAvailable;
+   private static Boolean thymeleafAvailable;
+   private static Boolean jbossVFSv2Available;
+   private static Boolean jbossVFSv3Available;
 
-	/**
-	 * @return {@code true} if the JSTL is present in the classpath, otherwise
-	 *         {@code false}.
-	 */
-	public static boolean isJstlAvailable() {
-		if (jstlAvailable == null) {
-			jstlAvailable = ClassUtils.isPresent("javax.servlet.jsp.jstl.core.Config");
-		}
+   /**
+    * @return {@code true} if the JSTL is present in the classpath, otherwise
+    *         {@code false}.
+    */
+   public static boolean isJstlAvailable() {
+      if (jstlAvailable == null) {
+         jstlAvailable = ClassUtils.isPresent("javax.servlet.jsp.jstl.core.Config");
+      }
 
-		return jstlAvailable;
-	}
+      return jstlAvailable;
+   }
 
-	/**
-	 * @return {@code true} if Thymeleaf is present in the classpath, otherwise
-	 *         {@code false}.
-	 */
-	public static boolean isThymeleafAvailable() {
-		if (thymeleafAvailable == null) {
-			thymeleafAvailable = ClassUtils.isPresent("org.thymeleaf.TemplateEngine");
-		}
+   /**
+    * @return {@code true} if Thymeleaf is present in the classpath, otherwise
+    *         {@code false}.
+    */
+   public static boolean isThymeleafAvailable() {
+      if (thymeleafAvailable == null) {
+         thymeleafAvailable = ClassUtils.isPresent("org.thymeleaf.TemplateEngine");
+      }
 
-		return thymeleafAvailable;
-	}
+      return thymeleafAvailable;
+   }
 
-	/**
-	 * @return {@code true} if the JBoss VFS2 infrastructure is present in the
-	 *         classpath, otherwise {@code false}.
-	 */
-	public static boolean isJBossVFS2Available() {
-		if (jbossVFSv2Available == null) {
-			jbossVFSv2Available = ClassUtils.isPresent("org.jboss.virtual.VFS");
-		}
+   /**
+    * @return {@code true} if the JBoss VFS2 infrastructure is present in the
+    *         classpath, otherwise {@code false}.
+    */
+   public static boolean isJBossVFS2Available() {
+      if (jbossVFSv2Available == null) {
+         jbossVFSv2Available = ClassUtils.isPresent("org.jboss.virtual.VFS");
+      }
 
-		return jbossVFSv2Available;
-	}
+      return jbossVFSv2Available;
+   }
 
-	/**
-	 * @return {@code true} if the JBoss VFS3 infrastructure is present in the
-	 *         classpath, otherwise {@code false}.
-	 */
-	public static boolean isJBossVFS3Available() {
-		if (jbossVFSv3Available == null) {
-			jbossVFSv3Available = ClassUtils.isPresent("org.jboss.vfs.VFS");
-		}
+   /**
+    * @return {@code true} if the JBoss VFS3 infrastructure is present in the
+    *         classpath, otherwise {@code false}.
+    */
+   public static boolean isJBossVFS3Available() {
+      if (jbossVFSv3Available == null) {
+         jbossVFSv3Available = ClassUtils.isPresent("org.jboss.vfs.VFS");
+      }
 
-		return jbossVFSv3Available;
-	}
+      return jbossVFSv3Available;
+   }
 
-	/**
-	 * <p>
-	 * Suppress default constructor for noninstantiability.
-	 * </p>
-	 */
-	private LibraryDetector() {
-		throw new AssertionError();
-	}
+   /**
+    * <p>
+    * Suppress default constructor for noninstantiability.
+    * </p>
+    */
+   private LibraryDetector() {
+      throw new AssertionError();
+   }
 }

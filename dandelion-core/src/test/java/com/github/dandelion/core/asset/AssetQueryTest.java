@@ -47,97 +47,97 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class AssetQueryTest {
 
-	private MockHttpServletRequest request;
-	private Context context;
+   private MockHttpServletRequest request;
+   private Context context;
 
-	@Before
-	public void setup() {
-		System.clearProperty(StandardConfigurationLoader.DANDELION_CONFIGURATION);
-		String path = new File("src/test/resources/asset-query/json/dandelion/".replace("/", File.separator))
-				.getAbsolutePath();
-		System.setProperty(StandardConfigurationLoader.DANDELION_CONFIGURATION, path);
+   @Before
+   public void setup() {
+      System.clearProperty(StandardConfigurationLoader.DANDELION_CONFIGURATION);
+      String path = new File("src/test/resources/asset-query/json/dandelion/".replace("/", File.separator))
+            .getAbsolutePath();
+      System.setProperty(StandardConfigurationLoader.DANDELION_CONFIGURATION, path);
 
-		context = new Context(new MockFilterConfig());
-		request = new MockHttpServletRequest();
-		request.setContextPath("/context");
-		request.setAttribute(WebConstants.DANDELION_CONTEXT_ATTRIBUTE, context);
-	}
+      context = new Context(new MockFilterConfig());
+      request = new MockHttpServletRequest();
+      request.setContextPath("/context");
+      request.setAttribute(WebConstants.DANDELION_CONTEXT_ATTRIBUTE, context);
+   }
 
-	@After
-	public void teardown() {
-		System.clearProperty(StandardConfigurationLoader.DANDELION_CONFIGURATION);
-	}
+   @After
+   public void teardown() {
+      System.clearProperty(StandardConfigurationLoader.DANDELION_CONFIGURATION);
+   }
 
-	@Test
-	public void should_return_only_head_assets() {
+   @Test
+   public void should_return_only_head_assets() {
 
-		AssetRequestContext.get(request).addBundles("bundle5");
-		Set<Asset> assets = new AssetQuery(request, context).atPosition(AssetDomPosition.head).perform();
-		assertThat(assets).extracting("name").containsExactly("a5_4", "a5_5");
-	}
+      AssetRequestContext.get(request).addBundles("bundle5");
+      Set<Asset> assets = new AssetQuery(request, context).atPosition(AssetDomPosition.head).perform();
+      assertThat(assets).extracting("name").containsExactly("a5_4", "a5_5");
+   }
 
-	@Test
-	public void should_return_only_head_assets_with_js_in_last() {
+   @Test
+   public void should_return_only_head_assets_with_js_in_last() {
 
-		AssetRequestContext.get(request).addBundles("bundle5,bundle6");
-		Set<Asset> assets = new AssetQuery(request, context).atPosition(AssetDomPosition.head).perform();
-		assertThat(assets).extracting("name").containsExactly("a5_4", "a5_5", "a6_2", "a6_1");
-	}
+      AssetRequestContext.get(request).addBundles("bundle5,bundle6");
+      Set<Asset> assets = new AssetQuery(request, context).atPosition(AssetDomPosition.head).perform();
+      assertThat(assets).extracting("name").containsExactly("a5_4", "a5_5", "a6_2", "a6_1");
+   }
 
-	@Test
-	public void should_return_only_body_assets() {
+   @Test
+   public void should_return_only_body_assets() {
 
-		AssetRequestContext.get(request).addBundles("bundle5");
-		Set<Asset> assets = new AssetQuery(request, context).atPosition(AssetDomPosition.body).perform();
-		assertThat(assets).extracting("name").containsExactly("a5_1", "a5_2", "a5_3");
-	}
+      AssetRequestContext.get(request).addBundles("bundle5");
+      Set<Asset> assets = new AssetQuery(request, context).atPosition(AssetDomPosition.body).perform();
+      assertThat(assets).extracting("name").containsExactly("a5_1", "a5_2", "a5_3");
+   }
 
-	@Test
-	public void should_return_only_body_assets_with_1_js_excluded() {
+   @Test
+   public void should_return_only_body_assets_with_1_js_excluded() {
 
-		AssetRequestContext.get(request).addBundles("bundle5").excludeJs("a5_1");
-		Set<Asset> assets = new AssetQuery(request, context).atPosition(AssetDomPosition.body).perform();
-		assertThat(assets).extracting("name").containsExactly("a5_2", "a5_3");
-	}
+      AssetRequestContext.get(request).addBundles("bundle5").excludeJs("a5_1");
+      Set<Asset> assets = new AssetQuery(request, context).atPosition(AssetDomPosition.body).perform();
+      assertThat(assets).extracting("name").containsExactly("a5_2", "a5_3");
+   }
 
-	@Test
-	public void should_return_all_assets_with_1_js_and_1_css_excluded() {
+   @Test
+   public void should_return_all_assets_with_1_js_and_1_css_excluded() {
 
-		AssetRequestContext.get(request).addBundles("bundle5").excludeJs("a5_1").excludeCss("a5_5");
-		Set<Asset> assets = new AssetQuery(request, context).perform();
-		assertThat(assets).extracting("name").containsExactly("a5_2", "a5_3", "a5_4");
-	}
+      AssetRequestContext.get(request).addBundles("bundle5").excludeJs("a5_1").excludeCss("a5_5");
+      Set<Asset> assets = new AssetQuery(request, context).perform();
+      assertThat(assets).extracting("name").containsExactly("a5_2", "a5_3", "a5_4");
+   }
 
-	@Test
-	public void should_return_all_assets_with_1_css_excluded() {
+   @Test
+   public void should_return_all_assets_with_1_css_excluded() {
 
-		AssetRequestContext.get(request).addBundles("bundle5").excludeCss("a5_5");
-		Set<Asset> assets = new AssetQuery(request, context).perform();
-		assertThat(assets).extracting("name").containsExactly("a5_1", "a5_2", "a5_3", "a5_4");
-	}
+      AssetRequestContext.get(request).addBundles("bundle5").excludeCss("a5_5");
+      Set<Asset> assets = new AssetQuery(request, context).perform();
+      assertThat(assets).extracting("name").containsExactly("a5_1", "a5_2", "a5_3", "a5_4");
+   }
 
-	@Test
-	public void should_return_all_assets_with_1_css_with_malformatted_name_excluded() {
+   @Test
+   public void should_return_all_assets_with_1_css_with_malformatted_name_excluded() {
 
-		AssetRequestContext.get(request).addBundles("bundle5").excludeCss("  a5_5 ");
-		Set<Asset> assets = new AssetQuery(request, context).perform();
-		assertThat(assets).extracting("name").containsExactly("a5_1", "a5_2", "a5_3", "a5_4");
-	}
+      AssetRequestContext.get(request).addBundles("bundle5").excludeCss("  a5_5 ");
+      Set<Asset> assets = new AssetQuery(request, context).perform();
+      assertThat(assets).extracting("name").containsExactly("a5_1", "a5_2", "a5_3", "a5_4");
+   }
 
-	@Test
-	public void should_return_all_assets() {
+   @Test
+   public void should_return_all_assets() {
 
-		AssetRequestContext.get(request).addBundles("bundle5").excludeCss("unknown_css");
-		Set<Asset> assets = new AssetQuery(request, context).perform();
-		assertThat(assets).extracting("name").containsExactly("a5_1", "a5_2", "a5_3", "a5_4", "a5_5");
-	}
+      AssetRequestContext.get(request).addBundles("bundle5").excludeCss("unknown_css");
+      Set<Asset> assets = new AssetQuery(request, context).perform();
+      assertThat(assets).extracting("name").containsExactly("a5_1", "a5_2", "a5_3", "a5_4", "a5_5");
+   }
 
-	@Test
-	public void should_return_all_assets_with_name_and_type() {
+   @Test
+   public void should_return_all_assets_with_name_and_type() {
 
-		AssetRequestContext.get(request).addBundles("bundle7");
-		Set<Asset> assets = new AssetQuery(request, context).perform();
-		assertThat(assets).extracting("name").containsExactly("a7_1", "a7_2", "a7_3");
-		assertThat(assets).extracting("type").containsExactly(AssetType.js, AssetType.css, AssetType.js);
-	}
+      AssetRequestContext.get(request).addBundles("bundle7");
+      Set<Asset> assets = new AssetQuery(request, context).perform();
+      assertThat(assets).extracting("name").containsExactly("a7_1", "a7_2", "a7_3");
+      assertThat(assets).extracting("type").containsExactly(AssetType.js, AssetType.css, AssetType.js);
+   }
 }

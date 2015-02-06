@@ -33,8 +33,8 @@ import javax.servlet.http.HttpServletRequest;
 
 public class FakeJavascriptContentGenerator extends AbstractJsContentGenerator {
 
-	@Override
-	protected String getJavascriptContent(HttpServletRequest request) {
-		return "function(){var o = new Object();}";
-	}
+   @Override
+   protected String getJavascriptContent(HttpServletRequest request) {
+      return "function(){var o = new Object();}";
+   }
 }

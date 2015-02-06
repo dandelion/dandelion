@@ -49,34 +49,34 @@ import com.github.dandelion.core.web.handler.HandlerContext;
  */
 public class ReloadBundlePreHandler extends AbstractHandlerChain {
 
-	private static final Logger LOG = LoggerFactory.getLogger(ReloadBundlePreHandler.class);
+   private static final Logger LOG = LoggerFactory.getLogger(ReloadBundlePreHandler.class);
 
-	@Override
-	protected Logger getLogger() {
-		return LOG;
-	}
+   @Override
+   protected Logger getLogger() {
+      return LOG;
+   }
 
-	@Override
-	public boolean isAfterChaining() {
-		return false;
-	}
+   @Override
+   public boolean isAfterChaining() {
+      return false;
+   }
 
-	@Override
-	public int getRank() {
-		return 0;
-	}
+   @Override
+   public int getRank() {
+      return 0;
+   }
 
-	@Override
-	public boolean isApplicable(HandlerContext handlerContext) {
-		return handlerContext.getContext().getConfiguration().isToolBundleReloadingEnabled()
-				&& handlerContext.getRequest().getParameter(WebConstants.DANDELION_RELOAD_BUNDLES) != null;
-	}
+   @Override
+   public boolean isApplicable(HandlerContext handlerContext) {
+      return handlerContext.getContext().getConfiguration().isToolBundleReloadingEnabled()
+            && handlerContext.getRequest().getParameter(WebConstants.DANDELION_RELOAD_BUNDLES) != null;
+   }
 
-	@Override
-	public boolean handle(HandlerContext handlerContext) {
-		LOG.info("Requested bundle reloading via request parameter");
-		handlerContext.getContext().initBundleStorage();
-		LOG.info("Reloaded bundles");
-		return true;
-	}
+   @Override
+   public boolean handle(HandlerContext handlerContext) {
+      LOG.info("Requested bundle reloading via request parameter");
+      handlerContext.getContext().initBundleStorage();
+      LOG.info("Reloaded bundles");
+      return true;
+   }
 }

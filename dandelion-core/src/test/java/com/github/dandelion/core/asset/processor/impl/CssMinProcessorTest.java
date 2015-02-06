@@ -42,12 +42,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class CssMinProcessorTest extends AbstractProcessorTest {
 
-	private AssetProcessor assetProcessor = new CssMinProcessor();
+   private AssetProcessor assetProcessor = new CssMinProcessor();
 
-	@Test
-	public void should_minifiy_css() throws IOException{
-		Writer writer = new StringWriter();
-		assetProcessor.process(new StringReader("body {\n	padding-top: 60px;\n padding-bottom: 40px; \n}"), writer, processingContext);
-		assertThat(writer.toString()).isEqualTo("body{padding-top:60px;padding-bottom:40px}");
-	}
+   @Test
+   public void should_minifiy_css() throws IOException {
+      Writer writer = new StringWriter();
+      assetProcessor.process(new StringReader("body {\n	padding-top: 60px;\n padding-bottom: 40px; \n}"), writer,
+            processingContext);
+      assertThat(writer.toString()).isEqualTo("body{padding-top:60px;padding-bottom:40px}");
+   }
 }

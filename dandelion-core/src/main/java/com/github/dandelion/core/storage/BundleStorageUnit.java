@@ -55,211 +55,211 @@ import com.github.dandelion.core.utils.StringUtils;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class BundleStorageUnit {
 
-	// Exposed attributes
-	private String name;
+   // Exposed attributes
+   private String name;
 
-	private List<String> dependencies;
+   private List<String> dependencies;
 
-	private Set<AssetStorageUnit> assetStorageUnits = new LinkedHashSet<AssetStorageUnit>();
+   private Set<AssetStorageUnit> assetStorageUnits = new LinkedHashSet<AssetStorageUnit>();
 
-	// Internal attributes
-	private List<BundleStorageUnit> children = new LinkedList<BundleStorageUnit>();
+   // Internal attributes
+   private List<BundleStorageUnit> children = new LinkedList<BundleStorageUnit>();
 
-	private List<BundleStorageUnit> parents = new LinkedList<BundleStorageUnit>();
+   private List<BundleStorageUnit> parents = new LinkedList<BundleStorageUnit>();
 
-	private String relativePath;
+   private String relativePath;
 
-	private String origin;
+   private String origin;
 
-	public BundleStorageUnit() {
-	}
+   public BundleStorageUnit() {
+   }
 
-	public BundleStorageUnit(String name) {
-		this.name = name;
-	}
+   public BundleStorageUnit(String name) {
+      this.name = name;
+   }
 
-	public BundleStorageUnit(String name, Set<AssetStorageUnit> assetStorageUnits) {
-		this.name = name;
-		this.assetStorageUnits = assetStorageUnits;
-	}
+   public BundleStorageUnit(String name, Set<AssetStorageUnit> assetStorageUnits) {
+      this.name = name;
+      this.assetStorageUnits = assetStorageUnits;
+   }
 
-	@JsonProperty(value = "bundle")
-	public String getName() {
-		return name;
-	}
+   @JsonProperty(value = "bundle")
+   public String getName() {
+      return name;
+   }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+   public void setName(String name) {
+      this.name = name;
+   }
 
-	public void addDependency(String dep) {
-		if (this.dependencies == null) {
-			this.dependencies = new ArrayList<String>();
-		}
-		this.dependencies.add(dep);
-	}
+   public void addDependency(String dep) {
+      if (this.dependencies == null) {
+         this.dependencies = new ArrayList<String>();
+      }
+      this.dependencies.add(dep);
+   }
 
-	public List<String> getDependencies() {
-		return dependencies;
-	}
+   public List<String> getDependencies() {
+      return dependencies;
+   }
 
-	public void setDependencies(List<String> dependencies) {
-		this.dependencies = dependencies;
-	}
+   public void setDependencies(List<String> dependencies) {
+      this.dependencies = dependencies;
+   }
 
-	@JsonProperty(value = "assets")
-	@JsonDeserialize(as = LinkedHashSet.class)
-	public Set<AssetStorageUnit> getAssetStorageUnits() {
-		return assetStorageUnits;
-	}
+   @JsonProperty(value = "assets")
+   @JsonDeserialize(as = LinkedHashSet.class)
+   public Set<AssetStorageUnit> getAssetStorageUnits() {
+      return assetStorageUnits;
+   }
 
-	public Set<String> getAssetStorageUnitNames() {
-		Set<String> asus = new HashSet<String>();
-		if (assetStorageUnits != null) {
-			for (AssetStorageUnit asu : assetStorageUnits) {
-				if (StringUtils.isNotBlank(asu.getName())) {
-					asus.add(asu.getName().toLowerCase());
-				}
-			}
-		}
-		return asus;
-	}
+   public Set<String> getAssetStorageUnitNames() {
+      Set<String> asus = new HashSet<String>();
+      if (assetStorageUnits != null) {
+         for (AssetStorageUnit asu : assetStorageUnits) {
+            if (StringUtils.isNotBlank(asu.getName())) {
+               asus.add(asu.getName().toLowerCase());
+            }
+         }
+      }
+      return asus;
+   }
 
-	public Set<String> getJsAssetStorageUnitNames() {
-		Set<String> asus = new HashSet<String>();
-		if (assetStorageUnits != null) {
-			for (AssetStorageUnit asu : assetStorageUnits) {
-				if (asu.getType().equals(AssetType.js)) {
-					asus.add(asu.getName().toLowerCase());
-				}
-			}
-		}
-		return asus;
-	}
+   public Set<String> getJsAssetStorageUnitNames() {
+      Set<String> asus = new HashSet<String>();
+      if (assetStorageUnits != null) {
+         for (AssetStorageUnit asu : assetStorageUnits) {
+            if (asu.getType().equals(AssetType.js)) {
+               asus.add(asu.getName().toLowerCase());
+            }
+         }
+      }
+      return asus;
+   }
 
-	public Set<String> getCssAssetStorageUnitNames() {
-		Set<String> asus = new HashSet<String>();
-		if (assetStorageUnits != null) {
-			for (AssetStorageUnit asu : assetStorageUnits) {
-				if (asu.getType().equals(AssetType.css)) {
-					asus.add(asu.getName().toLowerCase());
-				}
-			}
-		}
-		return asus;
-	}
+   public Set<String> getCssAssetStorageUnitNames() {
+      Set<String> asus = new HashSet<String>();
+      if (assetStorageUnits != null) {
+         for (AssetStorageUnit asu : assetStorageUnits) {
+            if (asu.getType().equals(AssetType.css)) {
+               asus.add(asu.getName().toLowerCase());
+            }
+         }
+      }
+      return asus;
+   }
 
-	public void setAssetStorageUnits(Set<AssetStorageUnit> assetStorageUnits) {
-		this.assetStorageUnits = assetStorageUnits;
-	}
+   public void setAssetStorageUnits(Set<AssetStorageUnit> assetStorageUnits) {
+      this.assetStorageUnits = assetStorageUnits;
+   }
 
-	public void addEdgeTo(BundleStorageUnit vertex) {
-		children.add(vertex);
-	}
+   public void addEdgeTo(BundleStorageUnit vertex) {
+      children.add(vertex);
+   }
 
-	public void removeEdgeTo(BundleStorageUnit vertex) {
-		children.remove(vertex);
-	}
+   public void removeEdgeTo(BundleStorageUnit vertex) {
+      children.remove(vertex);
+   }
 
-	public void addEdgeFrom(BundleStorageUnit vertex) {
-		parents.add(vertex);
-	}
+   public void addEdgeFrom(BundleStorageUnit vertex) {
+      parents.add(vertex);
+   }
 
-	public void removeEdgeFrom(BundleStorageUnit vertex) {
-		parents.remove(vertex);
-	}
+   public void removeEdgeFrom(BundleStorageUnit vertex) {
+      parents.remove(vertex);
+   }
 
-	public List<BundleStorageUnit> getChildren() {
-		return children;
-	}
+   public List<BundleStorageUnit> getChildren() {
+      return children;
+   }
 
-	public List<String> getChildNames() {
-		List<String> retValue = new ArrayList<String>(children.size());
+   public List<String> getChildNames() {
+      List<String> retValue = new ArrayList<String>(children.size());
 
-		for (BundleStorageUnit vertex : children) {
-			retValue.add(vertex.getName());
-		}
-		return retValue;
-	}
+      for (BundleStorageUnit vertex : children) {
+         retValue.add(vertex.getName());
+      }
+      return retValue;
+   }
 
-	public List<BundleStorageUnit> getParents() {
-		return parents;
-	}
+   public List<BundleStorageUnit> getParents() {
+      return parents;
+   }
 
-	public List<String> getParentBundleNames() {
-		List<String> retValue = new ArrayList<String>(parents.size());
+   public List<String> getParentBundleNames() {
+      List<String> retValue = new ArrayList<String>(parents.size());
 
-		for (BundleStorageUnit vertex : parents) {
-			retValue.add(vertex.getName());
-		}
-		return retValue;
-	}
+      for (BundleStorageUnit vertex : parents) {
+         retValue.add(vertex.getName());
+      }
+      return retValue;
+   }
 
-	public String getRelativePath() {
-		return relativePath;
-	}
+   public String getRelativePath() {
+      return relativePath;
+   }
 
-	public void setRelativePath(String bundleRelativePath) {
-		this.relativePath = bundleRelativePath;
-	}
+   public void setRelativePath(String bundleRelativePath) {
+      this.relativePath = bundleRelativePath;
+   }
 
-	public boolean isLeaf() {
-		return children.size() == 0;
-	}
+   public boolean isLeaf() {
+      return children.size() == 0;
+   }
 
-	public boolean isRoot() {
-		return parents.size() == 0;
-	}
+   public boolean isRoot() {
+      return parents.size() == 0;
+   }
 
-	/**
-	 * <p>
-	 * Indicates if there is at least one edge leading to or from the current
-	 * vertex.
-	 * 
-	 * @return {@code true} if this vertex is connected with another vertex,
-	 *         {@code false} otherwise.
-	 */
-	public boolean isConnected() {
-		return isRoot() || isLeaf();
-	}
+   /**
+    * <p>
+    * Indicates if there is at least one edge leading to or from the current
+    * vertex.
+    * 
+    * @return {@code true} if this vertex is connected with another vertex,
+    *         {@code false} otherwise.
+    */
+   public boolean isConnected() {
+      return isRoot() || isLeaf();
+   }
 
-	public String getOrigin() {
-		return origin;
-	}
+   public String getOrigin() {
+      return origin;
+   }
 
-	public void setOrigin(String origin) {
-		this.origin = origin;
-	}
+   public void setOrigin(String origin) {
+      this.origin = origin;
+   }
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((name == null) ? 0 : name.hashCode());
-		return result;
-	}
+   @Override
+   public int hashCode() {
+      final int prime = 31;
+      int result = 1;
+      result = prime * result + ((name == null) ? 0 : name.hashCode());
+      return result;
+   }
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		BundleStorageUnit other = (BundleStorageUnit) obj;
-		if (name == null) {
-			if (other.name != null)
-				return false;
-		}
-		else if (!name.equals(other.name))
-			return false;
-		return true;
-	}
+   @Override
+   public boolean equals(Object obj) {
+      if (this == obj)
+         return true;
+      if (obj == null)
+         return false;
+      if (getClass() != obj.getClass())
+         return false;
+      BundleStorageUnit other = (BundleStorageUnit) obj;
+      if (name == null) {
+         if (other.name != null)
+            return false;
+      }
+      else if (!name.equals(other.name))
+         return false;
+      return true;
+   }
 
-	@Override
-	public String toString() {
-		return "BundleStorageUnit [name=" + name + ", dependencies=" + dependencies + ", assetStorageUnits="
-				+ assetStorageUnits + ", relativePath=" + relativePath + "]";
-	}
+   @Override
+   public String toString() {
+      return "BundleStorageUnit [name=" + name + ", dependencies=" + dependencies + ", assetStorageUnits="
+            + assetStorageUnits + ", relativePath=" + relativePath + "]";
+   }
 }

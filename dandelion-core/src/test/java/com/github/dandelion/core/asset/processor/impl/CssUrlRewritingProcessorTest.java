@@ -42,14 +42,15 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class CssUrlRewritingProcessorTest extends AbstractProcessorTest {
 
-	private AssetProcessor assetProcessor = new CssUrlRewritingProcessor();
+   private AssetProcessor assetProcessor = new CssUrlRewritingProcessor();
 
-	@Test
-	public void should_rewrite_image_url_in_css() {
-		Writer writer = new StringWriter();
-		String oldCss = ResourceUtils.getFileContentFromClasspath("processor/css-url-rewriter/source.css");
-		String newCss = ResourceUtils.getFileContentFromClasspath("processor/css-url-rewriter/result.css");
-		assetProcessor.process(new StringReader(oldCss), writer, processingContext);
-		assertThat(writer.toString().replaceAll("\n", "").replaceAll("\r", "")).isEqualTo(newCss.replaceAll("\n", "").replaceAll("\r", ""));
-	}
+   @Test
+   public void should_rewrite_image_url_in_css() {
+      Writer writer = new StringWriter();
+      String oldCss = ResourceUtils.getFileContentFromClasspath("processor/css-url-rewriter/source.css");
+      String newCss = ResourceUtils.getFileContentFromClasspath("processor/css-url-rewriter/result.css");
+      assetProcessor.process(new StringReader(oldCss), writer, processingContext);
+      assertThat(writer.toString().replaceAll("\n", "").replaceAll("\r", "")).isEqualTo(
+            newCss.replaceAll("\n", "").replaceAll("\r", ""));
+   }
 }

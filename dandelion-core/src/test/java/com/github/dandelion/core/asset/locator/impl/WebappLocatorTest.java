@@ -47,32 +47,32 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class WebappLocatorTest {
 
-	private WebappLocator locator = new WebappLocator();
-	private MockHttpServletRequest request;
-	private String CONTEXT_RELATIVE_URL = "/assets/js/my.js";
-	private String CONTEXT_ABSOLUTE_URL = "http://my-domain.com/context/assets/js/my.js";
+   private WebappLocator locator = new WebappLocator();
+   private MockHttpServletRequest request;
+   private String CONTEXT_RELATIVE_URL = "/assets/js/my.js";
+   private String CONTEXT_ABSOLUTE_URL = "http://my-domain.com/context/assets/js/my.js";
 
-	@Rule
-	public ExpectedException exception = ExpectedException.none();
+   @Rule
+   public ExpectedException exception = ExpectedException.none();
 
-	@Before
-	public void setup() {
-		request = new MockHttpServletRequest();
-		request.setContextPath("/context");
-		request.setAttribute(WebConstants.DANDELION_CONTEXT_ATTRIBUTE, new Context(new MockFilterConfig()));
-	}
+   @Before
+   public void setup() {
+      request = new MockHttpServletRequest();
+      request.setContextPath("/context");
+      request.setAttribute(WebConstants.DANDELION_CONTEXT_ATTRIBUTE, new Context(new MockFilterConfig()));
+   }
 
-	@Test
-	public void should_return_the_processed_context_absolute_url() {
-		AssetStorageUnit asu = new AssetStorageUnit("my.js", singletonMap("webapp", CONTEXT_RELATIVE_URL));
-		String location = locator.getLocation(asu, request);
-		assertThat(location).isEqualTo("/context" + CONTEXT_RELATIVE_URL);
-	}
+   @Test
+   public void should_return_the_processed_context_absolute_url() {
+      AssetStorageUnit asu = new AssetStorageUnit("my.js", singletonMap("webapp", CONTEXT_RELATIVE_URL));
+      String location = locator.getLocation(asu, request);
+      assertThat(location).isEqualTo("/context" + CONTEXT_RELATIVE_URL);
+   }
 
-	@Test
-	public void should_return_the_processed_context_relative_url() {
-		AssetStorageUnit asu = new AssetStorageUnit("my.js", singletonMap("webapp", CONTEXT_ABSOLUTE_URL));
-		String location = locator.getLocation(asu, request);
-		assertThat(location).isEqualTo(CONTEXT_ABSOLUTE_URL);
-	}
+   @Test
+   public void should_return_the_processed_context_relative_url() {
+      AssetStorageUnit asu = new AssetStorageUnit("my.js", singletonMap("webapp", CONTEXT_ABSOLUTE_URL));
+      String location = locator.getLocation(asu, request);
+      assertThat(location).isEqualTo(CONTEXT_ABSOLUTE_URL);
+   }
 }

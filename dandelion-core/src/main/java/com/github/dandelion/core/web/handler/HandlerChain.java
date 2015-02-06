@@ -65,53 +65,53 @@ import javax.servlet.http.HttpServletResponse;
  */
 public interface HandlerChain extends Comparable<HandlerChain> {
 
-	/**
-	 * @return {@code true} if the handler should be executed after the call of
-	 *         the
-	 *         {@link FilterChain#doFilter(javax.servlet.ServletRequest, javax.servlet.ServletResponse)}
-	 *         method, {@code false} otherwise.
-	 */
-	boolean isAfterChaining();
+   /**
+    * @return {@code true} if the handler should be executed after the call of
+    *         the
+    *         {@link FilterChain#doFilter(javax.servlet.ServletRequest, javax.servlet.ServletResponse)}
+    *         method, {@code false} otherwise.
+    */
+   boolean isAfterChaining();
 
-	/**
-	 * @return the rank of the handler in a chain. A low rank indicates that the
-	 *         handler will be executed first.
-	 */
-	int getRank();
+   /**
+    * @return the rank of the handler in a chain. A low rank indicates that the
+    *         handler will be executed first.
+    */
+   int getRank();
 
-	/**
-	 * <p>
-	 * Whether the handler is applicable in the provided context or not.
-	 * </p>
-	 * 
-	 * @param context
-	 *            The wrapper object holding the context in which a
-	 *            {@link HttpServletRequest} is preprocessed or a
-	 *            {@link HttpServletResponse} is postprocessed.
-	 * @return {@code true} if the handler can be executed in the context,
-	 *         otherwise {@code false}.
-	 */
-	boolean isApplicable(HandlerContext context);
+   /**
+    * <p>
+    * Whether the handler is applicable in the provided context or not.
+    * </p>
+    * 
+    * @param context
+    *           The wrapper object holding the context in which a
+    *           {@link HttpServletRequest} is preprocessed or a
+    *           {@link HttpServletResponse} is postprocessed.
+    * @return {@code true} if the handler can be executed in the context,
+    *         otherwise {@code false}.
+    */
+   boolean isApplicable(HandlerContext context);
 
-	/**
-	 * <p>
-	 * Sets the next handler to be executed in the chain of responsibility.
-	 * </p>
-	 * 
-	 * @param nextHandler
-	 *            The next handler to be executed.
-	 */
-	void setNext(HandlerChain nextHandler);
+   /**
+    * <p>
+    * Sets the next handler to be executed in the chain of responsibility.
+    * </p>
+    * 
+    * @param nextHandler
+    *           The next handler to be executed.
+    */
+   void setNext(HandlerChain nextHandler);
 
-	/**
-	 * <p>
-	 * Start point of the chain. Handlers are executed depending on the
-	 * {@link #isApplicable(HandlerContext)} method and can decide
-	 * whether the next handler can be executed or not.
-	 * </p>
-	 * 
-	 * @param context
-	 *            The context in which the handler is executed.
-	 */
-	void doHandle(HandlerContext context);
+   /**
+    * <p>
+    * Start point of the chain. Handlers are executed depending on the
+    * {@link #isApplicable(HandlerContext)} method and can decide whether the
+    * next handler can be executed or not.
+    * </p>
+    * 
+    * @param context
+    *           The context in which the handler is executed.
+    */
+   void doHandle(HandlerContext context);
 }

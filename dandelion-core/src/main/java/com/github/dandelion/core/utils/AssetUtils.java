@@ -60,258 +60,258 @@ import com.github.dandelion.core.web.WebConstants;
  */
 public final class AssetUtils {
 
-	/**
-	 * <p>
-	 * Filters the given set of {@link Asset}s using the given array of
-	 * {@link AssetType}.
-	 * </p>
-	 * 
-	 * @param assets
-	 *            The set of {@link Asset}s to filter.
-	 * @param filters
-	 *            Types of asset used to filter.
-	 * @return a filtered collection of {@link Asset}s.
-	 */
-	public static Set<Asset> filtersByType(Set<Asset> assets, AssetType... filters) {
-		Set<Asset> retval = new LinkedHashSet<Asset>();
-		List<AssetType> types = new ArrayList<AssetType>(Arrays.asList(filters));
-		for (Asset asset : assets) {
-			if (types.contains(asset.getType())) {
-				retval.add(asset);
-			}
-		}
-		return retval;
-	}
+   /**
+    * <p>
+    * Filters the given set of {@link Asset}s using the given array of
+    * {@link AssetType}.
+    * </p>
+    * 
+    * @param assets
+    *           The set of {@link Asset}s to filter.
+    * @param filters
+    *           Types of asset used to filter.
+    * @return a filtered collection of {@link Asset}s.
+    */
+   public static Set<Asset> filtersByType(Set<Asset> assets, AssetType... filters) {
+      Set<Asset> retval = new LinkedHashSet<Asset>();
+      List<AssetType> types = new ArrayList<AssetType>(Arrays.asList(filters));
+      for (Asset asset : assets) {
+         if (types.contains(asset.getType())) {
+            retval.add(asset);
+         }
+      }
+      return retval;
+   }
 
-	/**
-	 * <p>
-	 * Filters the given set of {@link Asset}s by removing all elements whose
-	 * name is present in the given array of excluded asset names.
-	 * </p>
-	 * 
-	 * @param assets
-	 *            The collection of {@link Asset}s to filter.
-	 * @param excludedAssetNames
-	 *            The collection of asset names to exclude from the collection.
-	 * @return a filtered collection of {@link Asset}s.
-	 */
-	public static Set<Asset> filtersByName(Set<Asset> assets, String[] excludedAssetNames) {
+   /**
+    * <p>
+    * Filters the given set of {@link Asset}s by removing all elements whose
+    * name is present in the given array of excluded asset names.
+    * </p>
+    * 
+    * @param assets
+    *           The collection of {@link Asset}s to filter.
+    * @param excludedAssetNames
+    *           The collection of asset names to exclude from the collection.
+    * @return a filtered collection of {@link Asset}s.
+    */
+   public static Set<Asset> filtersByName(Set<Asset> assets, String[] excludedAssetNames) {
 
-		List<String> excludedAssetNameList = Arrays.asList(excludedAssetNames);
+      List<String> excludedAssetNameList = Arrays.asList(excludedAssetNames);
 
-		Set<Asset> filteredAsus = new LinkedHashSet<Asset>();
-		for (Asset asset : assets) {
+      Set<Asset> filteredAsus = new LinkedHashSet<Asset>();
+      for (Asset asset : assets) {
 
-			if (!excludedAssetNameList.contains(asset.getName().trim().toLowerCase())) {
-				filteredAsus.add(asset);
-			}
-		}
+         if (!excludedAssetNameList.contains(asset.getName().trim().toLowerCase())) {
+            filteredAsus.add(asset);
+         }
+      }
 
-		return filteredAsus;
-	}
+      return filteredAsus;
+   }
 
-	/**
-	 * <p>
-	 * Filters the given set of {@link Asset}s by removing all elements whose
-	 * name is present in the given array of excluded asset names and whose type
-	 * if given as parameter.
-	 * </p>
-	 * 
-	 * @param assets
-	 *            The collection of {@link Asset}s to filter.
-	 * @param excludedAssetNames
-	 *            The collection of asset names to exclude from the collection.
-	 * @param type
-	 *            The type of asset to exclude.
-	 * @return a filtered collection of {@link Asset}s.
-	 */
-	public static Set<Asset> filtersByNameAndType(Set<Asset> assets, Set<String> excludedAssetNames, AssetType type) {
+   /**
+    * <p>
+    * Filters the given set of {@link Asset}s by removing all elements whose
+    * name is present in the given array of excluded asset names and whose type
+    * if given as parameter.
+    * </p>
+    * 
+    * @param assets
+    *           The collection of {@link Asset}s to filter.
+    * @param excludedAssetNames
+    *           The collection of asset names to exclude from the collection.
+    * @param type
+    *           The type of asset to exclude.
+    * @return a filtered collection of {@link Asset}s.
+    */
+   public static Set<Asset> filtersByNameAndType(Set<Asset> assets, Set<String> excludedAssetNames, AssetType type) {
 
-		List<String> excludedAssetNameList = new ArrayList<String>(excludedAssetNames);
+      List<String> excludedAssetNameList = new ArrayList<String>(excludedAssetNames);
 
-		Set<Asset> filteredAsus = new LinkedHashSet<Asset>();
-		for (Asset asu : assets) {
+      Set<Asset> filteredAsus = new LinkedHashSet<Asset>();
+      for (Asset asu : assets) {
 
-			if (!asu.getType().equals(type) || !excludedAssetNameList.contains(asu.getName().trim().toLowerCase())) {
-				filteredAsus.add(asu);
-			}
-		}
+         if (!asu.getType().equals(type) || !excludedAssetNameList.contains(asu.getName().trim().toLowerCase())) {
+            filteredAsus.add(asu);
+         }
+      }
 
-		return filteredAsus;
-	}
+      return filteredAsus;
+   }
 
-	/**
-	 * <p>
-	 * Filters the given set of {@link Asset}s using the given
-	 * {@link AssetDomPosition}.
-	 * </p>
-	 * 
-	 * @param assets
-	 *            The set of {@link Asset}s to filter.
-	 * @param desiredPosition
-	 *            The DOM position used to filter.
-	 * @return a filtered collection of {@link Asset}s.
-	 */
-	public static Set<Asset> filtersByDomPosition(Set<Asset> assets, AssetDomPosition desiredPosition) {
-		Set<Asset> filteredAsus = new LinkedHashSet<Asset>();
-		Set<Asset> filteredJsAsus = new LinkedHashSet<Asset>();
-		for (Asset asu : assets) {
+   /**
+    * <p>
+    * Filters the given set of {@link Asset}s using the given
+    * {@link AssetDomPosition}.
+    * </p>
+    * 
+    * @param assets
+    *           The set of {@link Asset}s to filter.
+    * @param desiredPosition
+    *           The DOM position used to filter.
+    * @return a filtered collection of {@link Asset}s.
+    */
+   public static Set<Asset> filtersByDomPosition(Set<Asset> assets, AssetDomPosition desiredPosition) {
+      Set<Asset> filteredAsus = new LinkedHashSet<Asset>();
+      Set<Asset> filteredJsAsus = new LinkedHashSet<Asset>();
+      for (Asset asu : assets) {
 
-			AssetDomPosition assetPosition = asu.getDom() == null ? asu.getType().getDefaultDom() : asu.getDom();
-			if (assetPosition.equals(desiredPosition) && asu.getType().equals(AssetType.js)) {
-				filteredJsAsus.add(asu);
-			}
-			else if (assetPosition.equals(desiredPosition) && !asu.getType().equals(AssetType.js)) {
-				filteredAsus.add(asu);
-			}
-		}
+         AssetDomPosition assetPosition = asu.getDom() == null ? asu.getType().getDefaultDom() : asu.getDom();
+         if (assetPosition.equals(desiredPosition) && asu.getType().equals(AssetType.js)) {
+            filteredJsAsus.add(asu);
+         }
+         else if (assetPosition.equals(desiredPosition) && !asu.getType().equals(AssetType.js)) {
+            filteredAsus.add(asu);
+         }
+      }
 
-		filteredAsus.addAll(filteredJsAsus);
+      filteredAsus.addAll(filteredJsAsus);
 
-		return filteredAsus;
-	}
+      return filteredAsus;
+   }
 
-	/**
-	 * <p>
-	 * Filters the given set of {@link Asset}s by removing all vendor assets.
-	 * </p>
-	 * 
-	 * @param assets
-	 *            The set of {@link Asset}s to filter.
-	 * @return a filtered collection of {@link Asset}s.
-	 */
-	public static Set<Asset> filtersNotVendor(Set<Asset> assets) {
-		Set<Asset> retval = new LinkedHashSet<Asset>();
-		for (Asset asset : assets) {
-			if (asset.isNotVendor()) {
-				retval.add(asset);
-			}
-		}
-		return retval;
-	}
+   /**
+    * <p>
+    * Filters the given set of {@link Asset}s by removing all vendor assets.
+    * </p>
+    * 
+    * @param assets
+    *           The set of {@link Asset}s to filter.
+    * @return a filtered collection of {@link Asset}s.
+    */
+   public static Set<Asset> filtersNotVendor(Set<Asset> assets) {
+      Set<Asset> retval = new LinkedHashSet<Asset>();
+      for (Asset asset : assets) {
+         if (asset.isNotVendor()) {
+            retval.add(asset);
+         }
+      }
+      return retval;
+   }
 
-	public static String getAssetFinalLocation(HttpServletRequest request, Asset asset, String suffix) {
+   public static String getAssetFinalLocation(HttpServletRequest request, Asset asset, String suffix) {
 
-		Context context = (Context) request.getAttribute(WebConstants.DANDELION_CONTEXT_ATTRIBUTE);
+      Context context = (Context) request.getAttribute(WebConstants.DANDELION_CONTEXT_ATTRIBUTE);
 
-		StringBuilder finalLocation = new StringBuilder();
-		finalLocation.append(UrlUtils.getProcessedUrl(context.getConfiguration().getAssetUrlPattern(), request, null));
-		if (finalLocation.charAt(finalLocation.length() - 1) != '/') {
-			finalLocation.append("/");
-		}
-		finalLocation.append(asset.getStorageKey());
-		finalLocation.append("/");
-		finalLocation.append(asset.getType().name());
-		finalLocation.append("/");
-		finalLocation.append(asset.getName());
-		finalLocation.append("-");
-		finalLocation.append(asset.getVersion());
-		if (StringUtils.isNotBlank(suffix)) {
-			finalLocation.append(".");
-			finalLocation.append(suffix);
-		}
-		finalLocation.append(".");
-		finalLocation.append(asset.getType().name());
+      StringBuilder finalLocation = new StringBuilder();
+      finalLocation.append(UrlUtils.getProcessedUrl(context.getConfiguration().getAssetUrlPattern(), request, null));
+      if (finalLocation.charAt(finalLocation.length() - 1) != '/') {
+         finalLocation.append("/");
+      }
+      finalLocation.append(asset.getStorageKey());
+      finalLocation.append("/");
+      finalLocation.append(asset.getType().name());
+      finalLocation.append("/");
+      finalLocation.append(asset.getName());
+      finalLocation.append("-");
+      finalLocation.append(asset.getVersion());
+      if (StringUtils.isNotBlank(suffix)) {
+         finalLocation.append(".");
+         finalLocation.append(suffix);
+      }
+      finalLocation.append(".");
+      finalLocation.append(asset.getType().name());
 
-		return finalLocation.toString();
-	}
+      return finalLocation.toString();
+   }
 
-	/**
-	 * <p>
-	 * Extracts the asset cache key from the provided request using the
-	 * configured {@link DandelionConfig#ASSET_URL_PATTERN}.
-	 * </p>
-	 * <p>
-	 * <p>
-	 * For example, using {@code my-pattern} as a custom URL pattern and the
-	 * following request URL:
-	 * </p>
-	 * <p>
-	 * {@code /context/my-pattern/7c267aa805f44ef61a273afbe4d26f2a/css/application-1.0.css}
-	 * </p>
-	 * <p>
-	 * This method will extract {@code 7c267aa805f44ef61a273afbe4d26f2a}.
-	 * </p>
-	 * 
-	 * @param request
-	 *            The {@link HttpServletRequest} made against the server to load
-	 *            the asset.
-	 * @return the cache key present in the request URL.
-	 */
-	public static String extractCacheKeyFromRequest(HttpServletRequest request) {
+   /**
+    * <p>
+    * Extracts the asset cache key from the provided request using the
+    * configured {@link DandelionConfig#ASSET_URL_PATTERN}.
+    * </p>
+    * <p>
+    * <p>
+    * For example, using {@code my-pattern} as a custom URL pattern and the
+    * following request URL:
+    * </p>
+    * <p>
+    * {@code /context/my-pattern/7c267aa805f44ef61a273afbe4d26f2a/css/application-1.0.css}
+    * </p>
+    * <p>
+    * This method will extract {@code 7c267aa805f44ef61a273afbe4d26f2a}.
+    * </p>
+    * 
+    * @param request
+    *           The {@link HttpServletRequest} made against the server to load
+    *           the asset.
+    * @return the cache key present in the request URL.
+    */
+   public static String extractCacheKeyFromRequest(HttpServletRequest request) {
 
-		Context context = (Context) request.getAttribute(WebConstants.DANDELION_CONTEXT_ATTRIBUTE);
-		String processedUrlPattern = context.getConfiguration().getAssetUrlPattern().startsWith("/") ? context
-				.getConfiguration().getAssetUrlPattern().substring(1) : context.getConfiguration().getAssetUrlPattern();
-		Pattern p = Pattern.compile(processedUrlPattern + "([a-f0-9]{32})/");
-		Matcher m = p.matcher(request.getRequestURL());
+      Context context = (Context) request.getAttribute(WebConstants.DANDELION_CONTEXT_ATTRIBUTE);
+      String processedUrlPattern = context.getConfiguration().getAssetUrlPattern().startsWith("/") ? context
+            .getConfiguration().getAssetUrlPattern().substring(1) : context.getConfiguration().getAssetUrlPattern();
+      Pattern p = Pattern.compile(processedUrlPattern + "([a-f0-9]{32})/");
+      Matcher m = p.matcher(request.getRequestURL());
 
-		String cacheKey = null;
-		if (m.find()) {
-			cacheKey = m.group(1);
-		}
+      String cacheKey = null;
+      if (m.find()) {
+         cacheKey = m.group(1);
+      }
 
-		return cacheKey;
-	}
+      return cacheKey;
+   }
 
-	/**
-	 * <p>
-	 * Generates a MD5 hash using information of the provided {@link Asset}.
-	 * </p>
-	 * <p>
-	 * The set of information used to generate the hash depends on the location
-	 * key.
-	 * </p>
-	 * <ul>
-	 * <li>{@code webapp}, {@code jar}, {@code webjar}, {@code classpath} and
-	 * {@code remote}: bundle name + asset name + asset type</li>
-	 * <li>{@code api}: bundle name + asset name + asset type + current URI</li>
-	 * </ul>
-	 * 
-	 * @param asset
-	 *            The asset holding information used to generate the hash.
-	 * @return a MD5 hash.
-	 */
-	public static String generateStorageKey(Asset asset, HttpServletRequest request) {
+   /**
+    * <p>
+    * Generates a MD5 hash using information of the provided {@link Asset}.
+    * </p>
+    * <p>
+    * The set of information used to generate the hash depends on the location
+    * key.
+    * </p>
+    * <ul>
+    * <li>{@code webapp}, {@code jar}, {@code webjar}, {@code classpath} and
+    * {@code remote}: bundle name + asset name + asset type</li>
+    * <li>{@code api}: bundle name + asset name + asset type + current URI</li>
+    * </ul>
+    * 
+    * @param asset
+    *           The asset holding information used to generate the hash.
+    * @return a MD5 hash.
+    */
+   public static String generateStorageKey(Asset asset, HttpServletRequest request) {
 
-		Validate.notNull(asset.getConfigLocationKey(), "The location key of the provided asset cannot be null");
+      Validate.notNull(asset.getConfigLocationKey(), "The location key of the provided asset cannot be null");
 
-		StringBuilder keyContext = new StringBuilder();
-		keyContext.append(asset.getBundle());
-		keyContext.append(asset.getName());
-		keyContext.append(asset.getType().name());
+      StringBuilder keyContext = new StringBuilder();
+      keyContext.append(asset.getBundle());
+      keyContext.append(asset.getName());
+      keyContext.append(asset.getType().name());
 
-		if (asset.getConfigLocationKey().equalsIgnoreCase(ApiLocator.LOCATION_KEY)) {
-			keyContext.append(UrlUtils.getCurrentUri(request));
-		}
+      if (asset.getConfigLocationKey().equalsIgnoreCase(ApiLocator.LOCATION_KEY)) {
+         keyContext.append(UrlUtils.getCurrentUri(request));
+      }
 
-		return DigestUtils.md5Digest(keyContext.toString());
-	}
+      return DigestUtils.md5Digest(keyContext.toString());
+   }
 
-	public static AssetLocator getAssetLocator(Asset asset, Context context) {
+   public static AssetLocator getAssetLocator(Asset asset, Context context) {
 
-		String locationKey = asset.getConfigLocationKey();
+      String locationKey = asset.getConfigLocationKey();
 
-		Map<String, AssetLocator> locators = context.getAssetLocatorsMap();
-		if (!locators.containsKey(locationKey)) {
-			StringBuilder msg = new StringBuilder("The location key '");
-			msg.append(locationKey);
-			msg.append("' is not valid. Please choose a valid one among ");
-			msg.append(locators.keySet());
-			msg.append(".");
-			throw new DandelionException(msg.toString());
-		}
+      Map<String, AssetLocator> locators = context.getAssetLocatorsMap();
+      if (!locators.containsKey(locationKey)) {
+         StringBuilder msg = new StringBuilder("The location key '");
+         msg.append(locationKey);
+         msg.append("' is not valid. Please choose a valid one among ");
+         msg.append(locators.keySet());
+         msg.append(".");
+         throw new DandelionException(msg.toString());
+      }
 
-		AssetLocator locator = locators.get(locationKey);
-		return locator;
-	}
+      AssetLocator locator = locators.get(locationKey);
+      return locator;
+   }
 
-	/**
-	 * <p>
-	 * Suppress default constructor for noninstantiability.
-	 * </p>
-	 */
-	private AssetUtils() {
-		throw new AssertionError();
-	}
+   /**
+    * <p>
+    * Suppress default constructor for noninstantiability.
+    * </p>
+    */
+   private AssetUtils() {
+      throw new AssertionError();
+   }
 }

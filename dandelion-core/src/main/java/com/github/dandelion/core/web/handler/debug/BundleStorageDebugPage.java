@@ -55,87 +55,88 @@ import com.github.dandelion.core.web.handler.HandlerContext;
  */
 public class BundleStorageDebugPage extends AbstractDebugPage {
 
-	public static final String PAGE_ID = "bundle-storage";
-	public static final String PAGE_NAME = "Bundle storage";
-	private static final String PAGE_LOCATION = "META-INF/resources/ddl-debugger/html/core-bundle-storage.html";
+   public static final String PAGE_ID = "bundle-storage";
+   public static final String PAGE_NAME = "Bundle storage";
+   private static final String PAGE_LOCATION = "META-INF/resources/ddl-debugger/html/core-bundle-storage.html";
 
-	@Override
-	public String getId() {
-		return PAGE_ID;
-	}
+   @Override
+   public String getId() {
+      return PAGE_ID;
+   }
 
-	@Override
-	public String getName() {
-		return PAGE_NAME;
-	}
+   @Override
+   public String getName() {
+      return PAGE_NAME;
+   }
 
-	@Override
-	public String getTemplate(HandlerContext context) throws IOException {
-		return ResourceUtils.getContentFromInputStream(Thread.currentThread().getContextClassLoader()
-				.getResourceAsStream(PAGE_LOCATION));
-	}
+   @Override
+   public String getTemplate(HandlerContext context) throws IOException {
+      return ResourceUtils.getContentFromInputStream(Thread.currentThread().getContextClassLoader()
+            .getResourceAsStream(PAGE_LOCATION));
+   }
 
-	@Override
-	protected Map<String, Object> getPageContext() {
-		Map<String, Object> pageContext = new HashMap<String, Object>();
+   @Override
+   protected Map<String, Object> getPageContext() {
+      Map<String, Object> pageContext = new HashMap<String, Object>();
 
-		BundleStorage bundleStorage = context.getContext().getBundleStorage();
+      BundleStorage bundleStorage = context.getContext().getBundleStorage();
 
-		List<Map<String, Object>> bundles = new ArrayList<Map<String, Object>>();
+      List<Map<String, Object>> bundles = new ArrayList<Map<String, Object>>();
 
-		for (BundleStorageUnit bsu : bundleStorage.getBundleDag().getVerticies()) {
-			bundles.add(new MapBuilder<String, Object>()
-					.entry("name", bsu.getName())
-					.entry("dependencies", bsu.getDependencies())
-					.entry("relativePath", bsu.getRelativePath())
-					.entry("type", bsu.getOrigin().equals(DandelionBundleLoader.LOADER_NAME) ? "user" : bsu.getOrigin())
-					.entry("labelType",
-							bsu.getOrigin().equals(DandelionBundleLoader.LOADER_NAME) ? "success" : bsu.getOrigin()
-									.equalsIgnoreCase(VendorBundleLoader.LOADER_NAME) ? "primary" : "default").create());
-		}
+      for (BundleStorageUnit bsu : bundleStorage.getBundleDag().getVerticies()) {
+         bundles.add(new MapBuilder<String, Object>()
+               .entry("name", bsu.getName())
+               .entry("dependencies", bsu.getDependencies())
+               .entry("relativePath", bsu.getRelativePath())
+               .entry("type", bsu.getOrigin().equals(DandelionBundleLoader.LOADER_NAME) ? "user" : bsu.getOrigin())
+               .entry(
+                     "labelType",
+                     bsu.getOrigin().equals(DandelionBundleLoader.LOADER_NAME) ? "success" : bsu.getOrigin()
+                           .equalsIgnoreCase(VendorBundleLoader.LOADER_NAME) ? "primary" : "default").create());
+      }
 
-		pageContext.put("number", context.getContext().getBundleStorage().getBundleDag().getVerticies().size());
-		pageContext.put("bundles", bundles);
+      pageContext.put("number", context.getContext().getBundleStorage().getBundleDag().getVerticies().size());
+      pageContext.put("bundles", bundles);
 
-		return pageContext;
-	}
+      return pageContext;
+   }
 
-	@Override
-	public Map<String, String> getExtraParams() {
-		StringBuilder sbNodesRequest = new StringBuilder();
-		List<BundleStorageUnit> bsuRequest = context.getContext().getBundleStorage().getBundleDag().getVerticies();
+   @Override
+   public Map<String, String> getExtraParams() {
+      StringBuilder sbNodesRequest = new StringBuilder();
+      List<BundleStorageUnit> bsuRequest = context.getContext().getBundleStorage().getBundleDag().getVerticies();
 
-		for (BundleStorageUnit bsu : bsuRequest) {
-			Map<String, Object> map = new HashMap<String, Object>();
-			map.put("label", bsu.getName());
-			// map.put("assets",
-			// convertToD3Assets(bsu.getAssetStorageUnits(),
-			// new AssetMapper(context.getContext(), context.getRequest())));
-			map.put("shape", "ellipse");
-			String bundle = null;
-			try {
-				bundle = mapper.writeValueAsString(map);
-			}
-			catch (JsonProcessingException e) {
-				e.printStackTrace();
-			}
+      for (BundleStorageUnit bsu : bsuRequest) {
+         Map<String, Object> map = new HashMap<String, Object>();
+         map.put("label", bsu.getName());
+         // map.put("assets",
+         // convertToD3Assets(bsu.getAssetStorageUnits(),
+         // new AssetMapper(context.getContext(), context.getRequest())));
+         map.put("shape", "ellipse");
+         String bundle = null;
+         try {
+            bundle = mapper.writeValueAsString(map);
+         }
+         catch (JsonProcessingException e) {
+            e.printStackTrace();
+         }
 
-			sbNodesRequest.append("requestGraph.setNode(\"" + bsu.getName() + "\"," + bundle + ");").append('\n');
-		}
+         sbNodesRequest.append("requestGraph.setNode(\"" + bsu.getName() + "\"," + bundle + ");").append('\n');
+      }
 
-		Set<String> edgesRequest = new HashSet<String>();
-		for (BundleStorageUnit bsu : bsuRequest) {
-			if (bsu.getChildren() != null && !bsu.getChildren().isEmpty()) {
-				for (BundleStorageUnit childBsu : bsu.getChildren()) {
-					edgesRequest.add("requestGraph.setEdge(\"" + bsu.getName() + "\", \"" + childBsu.getName()
-							+ "\", { label: \"depends on\", lineInterpolate: \"basis\" });");
-				}
-			}
-		}
-		for (String edge : edgesRequest) {
-			sbNodesRequest.append(edge).append('\n');
-		}
+      Set<String> edgesRequest = new HashSet<String>();
+      for (BundleStorageUnit bsu : bsuRequest) {
+         if (bsu.getChildren() != null && !bsu.getChildren().isEmpty()) {
+            for (BundleStorageUnit childBsu : bsu.getChildren()) {
+               edgesRequest.add("requestGraph.setEdge(\"" + bsu.getName() + "\", \"" + childBsu.getName()
+                     + "\", { label: \"depends on\", lineInterpolate: \"basis\" });");
+            }
+         }
+      }
+      for (String edge : edgesRequest) {
+         sbNodesRequest.append(edge).append('\n');
+      }
 
-		return new MapBuilder<String, String>().entry("%EXTRA%", sbNodesRequest.toString()).create();
-	}
+      return new MapBuilder<String, String>().entry("%EXTRA%", sbNodesRequest.toString()).create();
+   }
 }

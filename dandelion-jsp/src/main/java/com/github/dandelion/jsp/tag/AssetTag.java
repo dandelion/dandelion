@@ -54,26 +54,26 @@ import com.github.dandelion.core.web.AssetRequestContext;
  */
 public class AssetTag extends TagSupport {
 
-	private static final long serialVersionUID = -417156851675582892L;
+   private static final long serialVersionUID = -417156851675582892L;
 
-	/**
-	 * Tag attributes
-	 */
-	// Assets to exclude from the current request
-	private String jsExcludes;
-	private String cssExcludes;
+   /**
+    * Tag attributes
+    */
+   // Assets to exclude from the current request
+   private String jsExcludes;
+   private String cssExcludes;
 
-	public int doEndTag() throws JspException {
-		AssetRequestContext.get(pageContext.getRequest()).excludeJs(jsExcludes);
-		AssetRequestContext.get(pageContext.getRequest()).excludeCss(cssExcludes);
-		return EVAL_PAGE;
-	}
+   public int doEndTag() throws JspException {
+      AssetRequestContext.get(pageContext.getRequest()).excludeJs(jsExcludes);
+      AssetRequestContext.get(pageContext.getRequest()).excludeCss(cssExcludes);
+      return EVAL_PAGE;
+   }
 
-	public void setJsExcludes(String jsExcludes) {
-		this.jsExcludes = jsExcludes;
-	}
-	
-	public void setCssExcludes(String cssExcludes) {
-		this.cssExcludes = cssExcludes;
-	}
+   public void setJsExcludes(String jsExcludes) {
+      this.jsExcludes = jsExcludes;
+   }
+
+   public void setCssExcludes(String cssExcludes) {
+      this.cssExcludes = cssExcludes;
+   }
 }

@@ -56,91 +56,91 @@ import com.github.dandelion.core.storage.BundleStorageUnit;
  */
 public class BundleDag {
 
-	private Map<String, BundleStorageUnit> vertexMap = new HashMap<String, BundleStorageUnit>();
-	private List<BundleStorageUnit> vertexList = new ArrayList<BundleStorageUnit>();
+   private Map<String, BundleStorageUnit> vertexMap = new HashMap<String, BundleStorageUnit>();
+   private List<BundleStorageUnit> vertexList = new ArrayList<BundleStorageUnit>();
 
-	public List<BundleStorageUnit> getVerticies() {
-		return vertexList;
-	}
+   public List<BundleStorageUnit> getVerticies() {
+      return vertexList;
+   }
 
-	public Set<String> getBundleNames() {
-		return vertexMap.keySet();
-	}
+   public Set<String> getBundleNames() {
+      return vertexMap.keySet();
+   }
 
-	public BundleStorageUnit addVertexIfNeeded(BundleStorageUnit bsu) {
-		return addVertexIfNeeded(bsu.getName());
-	}
+   public BundleStorageUnit addVertexIfNeeded(BundleStorageUnit bsu) {
+      return addVertexIfNeeded(bsu.getName());
+   }
 
-	public BundleStorageUnit addVertexIfNeeded(String bundleName) {
-		BundleStorageUnit retValue = null;
+   public BundleStorageUnit addVertexIfNeeded(String bundleName) {
+      BundleStorageUnit retValue = null;
 
-		// Check if vertex is already in the DAG
-		if (vertexMap.containsKey(bundleName)) {
-			retValue = vertexMap.get(bundleName);
-		}
-		else {
-			retValue = new BundleStorageUnit(bundleName);
-			vertexMap.put(bundleName, retValue);
-			vertexList.add(retValue);
-		}
+      // Check if vertex is already in the DAG
+      if (vertexMap.containsKey(bundleName)) {
+         retValue = vertexMap.get(bundleName);
+      }
+      else {
+         retValue = new BundleStorageUnit(bundleName);
+         vertexMap.put(bundleName, retValue);
+         vertexList.add(retValue);
+      }
 
-		return retValue;
-	}
+      return retValue;
+   }
 
-	public void addEdge(BundleStorageUnit from, BundleStorageUnit to) {
+   public void addEdge(BundleStorageUnit from, BundleStorageUnit to) {
 
-		from.addEdgeTo(to);
-		to.addEdgeFrom(from);
+      from.addEdgeTo(to);
+      to.addEdgeFrom(from);
 
-		List<BundleStorageUnit> cycle = BundleCycleDetector.introducesCycle(to);
+      List<BundleStorageUnit> cycle = BundleCycleDetector.introducesCycle(to);
 
-		if (cycle != null) {
-			StringBuilder sb = new StringBuilder("A cycle has been detected in the asset graph for the bundle ");
-			sb.append(from.getName());
-			sb.append(".");
-			throw new DandelionException(sb.toString());
-		}
-	}
+      if (cycle != null) {
+         StringBuilder sb = new StringBuilder("A cycle has been detected in the asset graph for the bundle ");
+         sb.append(from.getName());
+         sb.append(".");
+         throw new DandelionException(sb.toString());
+      }
+   }
 
-	public void removeEdge(BundleStorageUnit from, BundleStorageUnit to) {
-		from.removeEdgeTo(to);
-		to.removeEdgeFrom(from);
-	}
+   public void removeEdge(BundleStorageUnit from, BundleStorageUnit to) {
+      from.removeEdgeTo(to);
+      to.removeEdgeFrom(from);
+   }
 
-	public Map<String, BundleStorageUnit> getVertexMap() {
-		return this.vertexMap;
-	}
+   public Map<String, BundleStorageUnit> getVertexMap() {
+      return this.vertexMap;
+   }
 
-	public BundleStorageUnit getVertex(String bundleName) {
-		BundleStorageUnit retValue = vertexMap.get(bundleName);
-		return retValue;
-	}
+   public BundleStorageUnit getVertex(String bundleName) {
+      BundleStorageUnit retValue = vertexMap.get(bundleName);
+      return retValue;
+   }
 
-	public boolean hasEdge(String bundleName1, String bundleName2) {
-		BundleStorageUnit b1 = getVertex(bundleName1);
-		BundleStorageUnit b2 = getVertex(bundleName2);
-		return b1.getChildren().contains(b2);
-	}
+   public boolean hasEdge(String bundleName1, String bundleName2) {
+      BundleStorageUnit b1 = getVertex(bundleName1);
+      BundleStorageUnit b2 = getVertex(bundleName2);
+      return b1.getChildren().contains(b2);
+   }
 
-	/**
-	 * @param bundleName
-	 * @return
-	 */
-	public List<String> getChildLabels(String bundleName) {
-		BundleStorageUnit vertex = getVertex(bundleName);
-		return vertex.getChildNames();
-	}
+   /**
+    * @param bundleName
+    * @return
+    */
+   public List<String> getChildLabels(String bundleName) {
+      BundleStorageUnit vertex = getVertex(bundleName);
+      return vertex.getChildNames();
+   }
 
-	/**
-	 * Indicates if there is at least one edge leading to or from vertex of
-	 * given label
-	 * 
-	 * @return <code>true</true> if this vertex is connected with other vertex,<code>false</code>
-	 *         otherwise
-	 */
-	public boolean isConnected(String bundleName) {
-		BundleStorageUnit vertex = getVertex(bundleName);
-		return vertex.isConnected();
+   /**
+    * Indicates if there is at least one edge leading to or from vertex of given
+    * label
+    * 
+    * @return <code>true</true> if this vertex is connected with other vertex,<code>false</code>
+    *         otherwise
+    */
+   public boolean isConnected(String bundleName) {
+      BundleStorageUnit vertex = getVertex(bundleName);
+      return vertex.isConnected();
 
-	}
+   }
 }

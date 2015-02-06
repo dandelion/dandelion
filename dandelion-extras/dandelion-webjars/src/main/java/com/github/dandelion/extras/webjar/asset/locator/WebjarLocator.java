@@ -56,30 +56,30 @@ import com.github.dandelion.core.utils.UrlUtils;
  */
 public class WebjarLocator extends AbstractAssetLocator {
 
-	private static WebJarAssetLocator locator = new WebJarAssetLocator();
+   private static WebJarAssetLocator locator = new WebJarAssetLocator();
 
-	public WebjarLocator() {
-		this.active = true;
-	}
+   public WebjarLocator() {
+      this.active = true;
+   }
 
-	@Override
-	public String getLocationKey() {
-		return "webjar";
-	}
+   @Override
+   public String getLocationKey() {
+      return "webjar";
+   }
 
-	@Override
-	public boolean isCachingForced() {
-		return false;
-	}
+   @Override
+   public boolean isCachingForced() {
+      return false;
+   }
 
-	@Override
-	public String doGetLocation(AssetStorageUnit asu, HttpServletRequest request) {
-		String location = asu.getLocations().get(getLocationKey());
-		return UrlUtils.getProcessedUrl(locator.getFullPath(location).substring(18), request, null);
-	}
+   @Override
+   public String doGetLocation(AssetStorageUnit asu, HttpServletRequest request) {
+      String location = asu.getLocations().get(getLocationKey());
+      return UrlUtils.getProcessedUrl(locator.getFullPath(location).substring(18), request, null);
+   }
 
-	@Override
-	protected String doGetContent(String location, Map<String, Object> parameters, HttpServletRequest request) {
-		return ResourceUtils.getContentFromUrl(request, location, true);
-	}
+   @Override
+   protected String doGetContent(String location, Map<String, Object> parameters, HttpServletRequest request) {
+      return ResourceUtils.getContentFromUrl(request, location, true);
+   }
 }

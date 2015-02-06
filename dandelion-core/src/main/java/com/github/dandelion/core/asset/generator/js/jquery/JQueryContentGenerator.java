@@ -90,57 +90,57 @@ import static com.github.dandelion.core.asset.generator.js.jquery.JQueryContentP
  * @since 0.11.0
  */
 public class JQueryContentGenerator extends
-		AbstractJsPlaceholderContentGenerator<JQueryContentPlaceholder, JQueryContent> {
+      AbstractJsPlaceholderContentGenerator<JQueryContentPlaceholder, JQueryContent> {
 
-	public JQueryContentGenerator(JQueryContent content) {
-		super(content);
-	}
+   public JQueryContentGenerator(JQueryContent content) {
+      super(content);
+   }
 
-	// TODO http://api.jquery.com/jquery.noconflict/
-	@Override
-	protected String getPlaceholderJavascriptContent(HttpServletRequest request,
-			Map<JQueryContentPlaceholder, StringBuilder> contents) {
-		StringBuilder javascriptContent = new StringBuilder();
+   // TODO http://api.jquery.com/jquery.noconflict/
+   @Override
+   protected String getPlaceholderJavascriptContent(HttpServletRequest request,
+         Map<JQueryContentPlaceholder, StringBuilder> contents) {
+      StringBuilder javascriptContent = new StringBuilder();
 
-		if (contents.containsKey(BEFORE_ALL)) {
-			javascriptContent.append(contents.get(BEFORE_ALL));
-		}
+      if (contents.containsKey(BEFORE_ALL)) {
+         javascriptContent.append(contents.get(BEFORE_ALL));
+      }
 
-		if (contents.containsKey(BEFORE_START_DOCUMENT_READY)) {
-			javascriptContent.append(contents.get(BEFORE_START_DOCUMENT_READY));
-		}
+      if (contents.containsKey(BEFORE_START_DOCUMENT_READY)) {
+         javascriptContent.append(contents.get(BEFORE_START_DOCUMENT_READY));
+      }
 
-		javascriptContent.append("$(document).ready(function(){");
+      javascriptContent.append("$(document).ready(function(){");
 
-		if (contents.containsKey(AFTER_START_DOCUMENT_READY)) {
-			javascriptContent.append(contents.get(AFTER_START_DOCUMENT_READY));
-		}
+      if (contents.containsKey(AFTER_START_DOCUMENT_READY)) {
+         javascriptContent.append(contents.get(AFTER_START_DOCUMENT_READY));
+      }
 
-		if (contents.containsKey(COMPONENT_CONFIGURATION)) {
-			javascriptContent.append(contents.get(COMPONENT_CONFIGURATION));
-		}
+      if (contents.containsKey(COMPONENT_CONFIGURATION)) {
+         javascriptContent.append(contents.get(COMPONENT_CONFIGURATION));
+      }
 
-		if (contents.containsKey(BEFORE_END_DOCUMENT_READY)) {
-			javascriptContent.append(contents.get(BEFORE_END_DOCUMENT_READY));
-		}
+      if (contents.containsKey(BEFORE_END_DOCUMENT_READY)) {
+         javascriptContent.append(contents.get(BEFORE_END_DOCUMENT_READY));
+      }
 
-		javascriptContent.append("});");
+      javascriptContent.append("});");
 
-		if (contents.containsKey(AFTER_END_DOCUMENT_READY)) {
-			javascriptContent.append(contents.get(AFTER_END_DOCUMENT_READY));
-		}
+      if (contents.containsKey(AFTER_END_DOCUMENT_READY)) {
+         javascriptContent.append(contents.get(AFTER_END_DOCUMENT_READY));
+      }
 
-		if (contents.containsKey(AFTER_ALL)) {
-			javascriptContent.append(contents.get(AFTER_ALL));
-		}
+      if (contents.containsKey(AFTER_ALL)) {
+         javascriptContent.append(contents.get(AFTER_ALL));
+      }
 
-		return javascriptContent.toString();
-	}
+      return javascriptContent.toString();
+   }
 
-	public void appendContent(JQueryContent contentToMerge) {
+   public void appendContent(JQueryContent contentToMerge) {
 
-		for (JQueryContentPlaceholder placeholder : contentToMerge.getPlaceholderContent().keySet()) {
-			getAssetContent().appendToPlaceholder(placeholder, contentToMerge.getPlaceholderContent().get(placeholder));
-		}
-	}
+      for (JQueryContentPlaceholder placeholder : contentToMerge.getPlaceholderContent().keySet()) {
+         getAssetContent().appendToPlaceholder(placeholder, contentToMerge.getPlaceholderContent().get(placeholder));
+      }
+   }
 }

@@ -41,12 +41,12 @@ import javax.servlet.http.HttpServletRequest;
  */
 public abstract class AbstractMessageResolver implements MessageResolver {
 
-	protected HttpServletRequest request;
+   protected HttpServletRequest request;
 
-	public AbstractMessageResolver() {
-	}
+   public AbstractMessageResolver() {
+   }
 
-	public AbstractMessageResolver(HttpServletRequest request) {
-		this.request = request;
-	}
+   public AbstractMessageResolver(HttpServletRequest request) {
+      this.request = request;
+   }
 }

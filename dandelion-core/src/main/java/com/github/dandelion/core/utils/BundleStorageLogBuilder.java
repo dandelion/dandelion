@@ -47,60 +47,60 @@ import com.github.dandelion.core.storage.BundleStorage;
  */
 public class BundleStorageLogBuilder extends LogBuilder {
 
-	private Map<String, Set<String>> errorMap;
+   private Map<String, Set<String>> errorMap;
 
-	public BundleStorageLogBuilder() {
-		super();
-		this.errorMap = new HashMap<String, Set<String>>();
-	}
+   public BundleStorageLogBuilder() {
+      super();
+      this.errorMap = new HashMap<String, Set<String>>();
+   }
 
-	public void error(String errorType, String errorMessage) {
-		if (errorMap.containsKey(errorType)) {
-			errorMap.get(errorType).add(errorMessage);
-		}
-		else {
-			Set<String> errorMessages = new HashSet<String>();
-			errorMessages.add(errorMessage);
-			errorMap.put(errorType, errorMessages);
-		}
-	}
+   public void error(String errorType, String errorMessage) {
+      if (errorMap.containsKey(errorType)) {
+         errorMap.get(errorType).add(errorMessage);
+      }
+      else {
+         Set<String> errorMessages = new HashSet<String>();
+         errorMessages.add(errorMessage);
+         errorMap.put(errorType, errorMessages);
+      }
+   }
 
-	public void error(String errorType, String bundleName, String errorMessage) {
-		StringBuilder error = new StringBuilder("   [");
-		error.append(bundleName);
-		error.append("] ");
-		error.append(errorMessage);
+   public void error(String errorType, String bundleName, String errorMessage) {
+      StringBuilder error = new StringBuilder("   [");
+      error.append(bundleName);
+      error.append("] ");
+      error.append(errorMessage);
 
-		if (errorMap.containsKey(errorType)) {
-			errorMap.get(errorType).add(error.toString());
-		}
-		else {
-			Set<String> errorMessages = new HashSet<String>();
-			errorMessages.add(error.toString());
-			errorMap.put(errorType, errorMessages);
-		}
-	}
+      if (errorMap.containsKey(errorType)) {
+         errorMap.get(errorType).add(error.toString());
+      }
+      else {
+         Set<String> errorMessages = new HashSet<String>();
+         errorMessages.add(error.toString());
+         errorMap.put(errorType, errorMessages);
+      }
+   }
 
-	@Override
-	public String toString() {
+   @Override
+   public String toString() {
 
-		line("The bundle graph is not consistent for the following reasons:");
+      line("The bundle graph is not consistent for the following reasons:");
 
-		for (String errorType : errorMap.keySet()) {
-			line(errorType);
-			for (String error : errorMap.get(errorType)) {
-				line("   " + error);
-			}
-		}
+      for (String errorType : errorMap.keySet()) {
+         line(errorType);
+         for (String error : errorMap.get(errorType)) {
+            line("   " + error);
+         }
+      }
 
-		return this.logBuilder.toString();
-	}
+      return this.logBuilder.toString();
+   }
 
-	public Map<String, Set<String>> getErrorMap() {
-		return errorMap;
-	}
+   public Map<String, Set<String>> getErrorMap() {
+      return errorMap;
+   }
 
-	public boolean hasError() {
-		return !this.errorMap.isEmpty();
-	}
+   public boolean hasError() {
+      return !this.errorMap.isEmpty();
+   }
 }

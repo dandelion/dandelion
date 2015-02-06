@@ -52,58 +52,51 @@ import com.github.dandelion.core.web.handler.HandlerContext;
  */
 public class AssetStorageDebugPage extends AbstractDebugPage {
 
-	public static final String PAGE_ID = "asset-storage";
-	public static final String PAGE_NAME = "Asset storage";
-	private static final String PAGE_LOCATION = "META-INF/resources/ddl-debugger/html/core-asset-storage.html";
+   public static final String PAGE_ID = "asset-storage";
+   public static final String PAGE_NAME = "Asset storage";
+   private static final String PAGE_LOCATION = "META-INF/resources/ddl-debugger/html/core-asset-storage.html";
 
-	@Override
-	public String getId() {
-		return PAGE_ID;
-	}
+   @Override
+   public String getId() {
+      return PAGE_ID;
+   }
 
-	@Override
-	public String getName() {
-		return PAGE_NAME;
-	}
+   @Override
+   public String getName() {
+      return PAGE_NAME;
+   }
 
-	@Override
-	public String getTemplate(HandlerContext context) throws IOException {
-		return ResourceUtils.getContentFromInputStream(Thread.currentThread().getContextClassLoader()
-				.getResourceAsStream(PAGE_LOCATION));
-	}
+   @Override
+   public String getTemplate(HandlerContext context) throws IOException {
+      return ResourceUtils.getContentFromInputStream(Thread.currentThread().getContextClassLoader()
+            .getResourceAsStream(PAGE_LOCATION));
+   }
 
-	@Override
-	protected Map<String, Object> getPageContext() {
-		Map<String, Object> pageContext = new HashMap<String, Object>();
+   @Override
+   protected Map<String, Object> getPageContext() {
+      Map<String, Object> pageContext = new HashMap<String, Object>();
 
-		AssetStorage storage = context.getContext().getAssetStorage();
+      AssetStorage storage = context.getContext().getAssetStorage();
 
-		Collection<StorageEntry> storageElements = storage.getAll();
+      Collection<StorageEntry> storageElements = storage.getAll();
 
-		List<Map<String, Object>> options = new ArrayList<Map<String, Object>>();
+      List<Map<String, Object>> options = new ArrayList<Map<String, Object>>();
 
-		for (StorageEntry storageElement : storageElements) {
-			Asset asset = storageElement.getAsset();
-			String storageKey = asset.getStorageKey();
-			options.add(new MapBuilder<String, Object>()
-					.entry("name", asset.getName())
-					.entry("type", asset.getType())
-					.entry("version", asset.getVersion())
-					.entry("bundle", asset.getBundle())
-					.entry("locationKey", asset.getConfigLocationKey())
-					.entry("rawLocation", asset.getConfigLocation())
-					.entry("finalLocation", asset.getFinalLocation())
-					.entry("storageKey", asset.getStorageKey())
-					.entry("contents",
-							storage.contains(storageKey) ? storage.get(storageKey).getContents() : "Not fetched")
-					.entry("presentInStorage", storage.contains(storageKey)).entry("version", asset.getVersion())
-					.create());
-		}
+      for (StorageEntry storageElement : storageElements) {
+         Asset asset = storageElement.getAsset();
+         String storageKey = asset.getStorageKey();
+         options.add(new MapBuilder<String, Object>().entry("name", asset.getName()).entry("type", asset.getType())
+               .entry("version", asset.getVersion()).entry("bundle", asset.getBundle())
+               .entry("locationKey", asset.getConfigLocationKey()).entry("rawLocation", asset.getConfigLocation())
+               .entry("finalLocation", asset.getFinalLocation()).entry("storageKey", asset.getStorageKey())
+               .entry("contents", storage.contains(storageKey) ? storage.get(storageKey).getContents() : "Not fetched")
+               .entry("presentInStorage", storage.contains(storageKey)).entry("version", asset.getVersion()).create());
+      }
 
-		pageContext.put("impl", storage.getClass().getName());
-		pageContext.put("number", storage.size());
-		pageContext.put("assets", options);
+      pageContext.put("impl", storage.getClass().getName());
+      pageContext.put("number", storage.size());
+      pageContext.put("assets", options);
 
-		return pageContext;
-	}
+      return pageContext;
+   }
 }

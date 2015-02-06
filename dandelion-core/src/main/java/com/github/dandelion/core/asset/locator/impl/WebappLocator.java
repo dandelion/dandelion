@@ -52,23 +52,23 @@ import com.github.dandelion.core.utils.UrlUtils;
  */
 public class WebappLocator extends AbstractAssetLocator {
 
-	public WebappLocator() {
-		active = true;
-	}
+   public WebappLocator() {
+      active = true;
+   }
 
-	@Override
-	public String getLocationKey() {
-		return "webapp";
-	}
+   @Override
+   public String getLocationKey() {
+      return "webapp";
+   }
 
-	@Override
-	public String doGetLocation(AssetStorageUnit asu, HttpServletRequest request) {
-		String location = asu.getLocations().get(getLocationKey());
-		return UrlUtils.getProcessedUrl(location, request, null);
-	}
+   @Override
+   public String doGetLocation(AssetStorageUnit asu, HttpServletRequest request) {
+      String location = asu.getLocations().get(getLocationKey());
+      return UrlUtils.getProcessedUrl(location, request, null);
+   }
 
-	@Override
-	protected String doGetContent(String finalLocation, Map<String, Object> parameters, HttpServletRequest request) {
-		return ResourceUtils.getContentFromUrl(request, finalLocation, true);
-	}
+   @Override
+   protected String doGetContent(String finalLocation, Map<String, Object> parameters, HttpServletRequest request) {
+      return ResourceUtils.getContentFromUrl(request, finalLocation, true);
+   }
 }

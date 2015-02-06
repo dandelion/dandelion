@@ -92,432 +92,429 @@ import com.github.dandelion.core.utils.StringUtils;
  */
 public class AssetRequestContext {
 
-	/**
-	 * List of bundle to activate for the current request
-	 */
-	private List<String> bundles;
+   /**
+    * List of bundle to activate for the current request
+    */
+   private List<String> bundles;
 
-	/**
-	 * List of bundle to exclude from the current request
-	 */
-	private List<String> excludedBundles;
+   /**
+    * List of bundle to exclude from the current request
+    */
+   private List<String> excludedBundles;
 
-	/**
-	 * List of assets to exclude from the current request
-	 */
-	private List<String> excludedJs;
-	private List<String> excludedCss;
+   /**
+    * List of assets to exclude from the current request
+    */
+   private List<String> excludedJs;
+   private List<String> excludedCss;
 
-	/**
-	 * List of asset parameters
-	 */
-	private Map<String, Map<String, Object>> parameters;
+   /**
+    * List of asset parameters
+    */
+   private Map<String, Map<String, Object>> parameters;
 
-	/**
-	 * Private constructor.
-	 */
-	private AssetRequestContext() {
-		this.bundles = new ArrayList<String>();
-		this.excludedBundles = new ArrayList<String>();
-		this.excludedJs = new ArrayList<String>();
-		this.excludedCss = new ArrayList<String>();
-		this.parameters = new HashMap<String, Map<String, Object>>();
-	}
+   /**
+    * Private constructor.
+    */
+   private AssetRequestContext() {
+      this.bundles = new ArrayList<String>();
+      this.excludedBundles = new ArrayList<String>();
+      this.excludedJs = new ArrayList<String>();
+      this.excludedCss = new ArrayList<String>();
+      this.parameters = new HashMap<String, Map<String, Object>>();
+   }
 
-	/**
-	 * <p>
-	 * Returns the {@link AssetRequestContext} associated to the passed
-	 * {@link ServletRequest}.
-	 * 
-	 * <p>
-	 * If it doesn't exist, a new instance is created and stored as a request
-	 * attribute.
-	 * 
-	 * @param servletRequest
-	 *            The servlet request in which is stored the
-	 *            {@link AssetRequestContext}.
-	 * @return the instance of {@link AssetRequestContext} associated with the
-	 *         current servlet request.
-	 */
-	public static AssetRequestContext get(ServletRequest servletRequest) {
-		Object attribute = servletRequest.getAttribute(AssetRequestContext.class.getCanonicalName());
-		Context context = (Context) servletRequest.getAttribute(WebConstants.DANDELION_CONTEXT_ATTRIBUTE);
-		if (attribute == null || !(attribute instanceof AssetRequestContext)) {
-			attribute = new AssetRequestContext();
-			((AssetRequestContext) attribute).addBundles(context.getConfiguration().getBundleIncludes());
-			((AssetRequestContext) attribute).excludeBundles(context.getConfiguration().getBundleExcludes());
-			((AssetRequestContext) attribute).excludeJs(context.getConfiguration().getAssetJsExcludes());
-			((AssetRequestContext) attribute).excludeCss(context.getConfiguration().getAssetCssExcludes());
-			servletRequest.setAttribute(AssetRequestContext.class.getCanonicalName(), attribute);
-		}
-		return AssetRequestContext.class.cast(attribute);
-	}
+   /**
+    * <p>
+    * Returns the {@link AssetRequestContext} associated to the passed
+    * {@link ServletRequest}.
+    * 
+    * <p>
+    * If it doesn't exist, a new instance is created and stored as a request
+    * attribute.
+    * 
+    * @param servletRequest
+    *           The servlet request in which is stored the
+    *           {@link AssetRequestContext}.
+    * @return the instance of {@link AssetRequestContext} associated with the
+    *         current servlet request.
+    */
+   public static AssetRequestContext get(ServletRequest servletRequest) {
+      Object attribute = servletRequest.getAttribute(AssetRequestContext.class.getCanonicalName());
+      Context context = (Context) servletRequest.getAttribute(WebConstants.DANDELION_CONTEXT_ATTRIBUTE);
+      if (attribute == null || !(attribute instanceof AssetRequestContext)) {
+         attribute = new AssetRequestContext();
+         ((AssetRequestContext) attribute).addBundles(context.getConfiguration().getBundleIncludes());
+         ((AssetRequestContext) attribute).excludeBundles(context.getConfiguration().getBundleExcludes());
+         ((AssetRequestContext) attribute).excludeJs(context.getConfiguration().getAssetJsExcludes());
+         ((AssetRequestContext) attribute).excludeCss(context.getConfiguration().getAssetCssExcludes());
+         servletRequest.setAttribute(AssetRequestContext.class.getCanonicalName(), attribute);
+      }
+      return AssetRequestContext.class.cast(attribute);
+   }
 
-	/**
-	 * <p>
-	 * Adds the given comma-separated list of bundle to the current
-	 * {@link AssetRequestContext}.
-	 * 
-	 * @param bundles
-	 *            A comma-separated list of bundles.
-	 * @return the current {@link AssetRequestContext} updated with the active
-	 *         bundle.
-	 */
-	public AssetRequestContext addBundles(String bundles) {
-		if (bundles == null || bundles.isEmpty()) {
-			return this;
-		}
-		return addBundles(bundles.split(","));
-	}
+   /**
+    * <p>
+    * Adds the given comma-separated list of bundle to the current
+    * {@link AssetRequestContext}.
+    * 
+    * @param bundles
+    *           A comma-separated list of bundles.
+    * @return the current {@link AssetRequestContext} updated with the active
+    *         bundle.
+    */
+   public AssetRequestContext addBundles(String bundles) {
+      if (bundles == null || bundles.isEmpty()) {
+         return this;
+      }
+      return addBundles(bundles.split(","));
+   }
 
-	/**
-	 * <p>
-	 * Adds the given bundle array to the current {@link AssetRequestContext}.
-	 * 
-	 * @param bundles
-	 *            An array containing the bundle names.
-	 * @return the current {@link AssetRequestContext}.
-	 */
-	public AssetRequestContext addBundles(String... bundles) {
-		this.bundles.addAll(Arrays.asList(bundles));
-		return this;
-	}
+   /**
+    * <p>
+    * Adds the given bundle array to the current {@link AssetRequestContext}.
+    * 
+    * @param bundles
+    *           An array containing the bundle names.
+    * @return the current {@link AssetRequestContext}.
+    */
+   public AssetRequestContext addBundles(String... bundles) {
+      this.bundles.addAll(Arrays.asList(bundles));
+      return this;
+   }
 
-	/**
-	 * <p>
-	 * Adds the given collection of bundles to the current
-	 * {@link AssetRequestContext}.
-	 * 
-	 * @param bundles
-	 *            A collection of bundle names.
-	 * @return the current {@link AssetRequestContext}.
-	 */
-	public AssetRequestContext addBundles(Collection<String> bundles) {
-		for (String bundle : bundles) {
-			addBundle(bundle);
-		}
-		return this;
-	}
+   /**
+    * <p>
+    * Adds the given collection of bundles to the current
+    * {@link AssetRequestContext}.
+    * 
+    * @param bundles
+    *           A collection of bundle names.
+    * @return the current {@link AssetRequestContext}.
+    */
+   public AssetRequestContext addBundles(Collection<String> bundles) {
+      for (String bundle : bundles) {
+         addBundle(bundle);
+      }
+      return this;
+   }
 
-	/**
-	 * <p>
-	 * Adds the given array of enum to the current {@link AssetRequestContext}.
-	 * <p>
-	 * All enums are first processed by replacing "_" by "-" and by lowercasing
-	 * its value.
-	 * 
-	 * @param bundles
-	 *            An array containing the enums.
-	 * @return the current {@link AssetRequestContext}.
-	 */
-	public AssetRequestContext addBundles(Enum<?>... bundles) {
-		for (Enum<?> bundle : bundles) {
-			addBundle(bundle);
-		}
-		return this;
-	}
+   /**
+    * <p>
+    * Adds the given array of enum to the current {@link AssetRequestContext}.
+    * <p>
+    * All enums are first processed by replacing "_" by "-" and by lowercasing
+    * its value.
+    * 
+    * @param bundles
+    *           An array containing the enums.
+    * @return the current {@link AssetRequestContext}.
+    */
+   public AssetRequestContext addBundles(Enum<?>... bundles) {
+      for (Enum<?> bundle : bundles) {
+         addBundle(bundle);
+      }
+      return this;
+   }
 
-	/**
-	 * <p>
-	 * Adds the given bundle name to the current {@link AssetRequestContext}.
-	 * 
-	 * @param bundle
-	 *            The bundle name to add.
-	 * @return the current {@link AssetRequestContext#}
-	 */
-	public AssetRequestContext addBundle(String bundle) {
-		this.bundles.add(bundle.trim());
-		return this;
-	}
+   /**
+    * <p>
+    * Adds the given bundle name to the current {@link AssetRequestContext}.
+    * 
+    * @param bundle
+    *           The bundle name to add.
+    * @return the current {@link AssetRequestContext#}
+    */
+   public AssetRequestContext addBundle(String bundle) {
+      this.bundles.add(bundle.trim());
+      return this;
+   }
 
-	/**
-	 * <p>
-	 * Adds the given enum (representing a bundle name) to the current
-	 * {@link AssetRequestContext}.
-	 * 
-	 * @param bundle
-	 *            The enum to add.
-	 * @return the current {@link AssetRequestContext}.
-	 */
-	public AssetRequestContext addBundle(Enum<?> bundle) {
-		addBundle(bundle.toString().toLowerCase().replace("_", "-"));
-		return this;
-	}
+   /**
+    * <p>
+    * Adds the given enum (representing a bundle name) to the current
+    * {@link AssetRequestContext}.
+    * 
+    * @param bundle
+    *           The enum to add.
+    * @return the current {@link AssetRequestContext}.
+    */
+   public AssetRequestContext addBundle(Enum<?> bundle) {
+      addBundle(bundle.toString().toLowerCase().replace("_", "-"));
+      return this;
+   }
 
-	/**
-	 * @return all bundle names stored in the current
-	 *         {@link AssetRequestContext}.
-	 */
-	public String[] getBundles(boolean withoutExcludedBundles) {
-		List<String> bundles = new ArrayList<String>(this.bundles);
-		if (withoutExcludedBundles) {
-			bundles.removeAll(excludedBundles);
-		}
-		return bundles.toArray(new String[bundles.size()]);
-	}
+   /**
+    * @return all bundle names stored in the current {@link AssetRequestContext}
+    *         .
+    */
+   public String[] getBundles(boolean withoutExcludedBundles) {
+      List<String> bundles = new ArrayList<String>(this.bundles);
+      if (withoutExcludedBundles) {
+         bundles.removeAll(excludedBundles);
+      }
+      return bundles.toArray(new String[bundles.size()]);
+   }
 
-	/**
-	 * <p>
-	 * Excludes a comma-separated list of bundle names from the current
-	 * {@link AssetRequestContext}.
-	 * 
-	 * @param bundles
-	 *            A comma-separated list of bundle names to exclude.
-	 * @return the current {@link AssetRequestContext}.
-	 */
-	public AssetRequestContext excludeBundles(String bundles) {
-		if (bundles == null || bundles.isEmpty()) {
-			return this;
-		}
-		return excludeBundles(bundles.split(","));
-	}
+   /**
+    * <p>
+    * Excludes a comma-separated list of bundle names from the current
+    * {@link AssetRequestContext}.
+    * 
+    * @param bundles
+    *           A comma-separated list of bundle names to exclude.
+    * @return the current {@link AssetRequestContext}.
+    */
+   public AssetRequestContext excludeBundles(String bundles) {
+      if (bundles == null || bundles.isEmpty()) {
+         return this;
+      }
+      return excludeBundles(bundles.split(","));
+   }
 
-	/**
-	 * <p>
-	 * Adds the given collection of bundles to the current
-	 * {@link AssetRequestContext}.
-	 * 
-	 * @param bundles
-	 *            A collection of bundle names.
-	 * @return the current {@link AssetRequestContext}.
-	 */
-	public AssetRequestContext excludeBundles(Collection<String> bundles) {
-		for (String bundle : bundles) {
-			excludeBundles(bundle);
-		}
-		return this;
-	}
+   /**
+    * <p>
+    * Adds the given collection of bundles to the current
+    * {@link AssetRequestContext}.
+    * 
+    * @param bundles
+    *           A collection of bundle names.
+    * @return the current {@link AssetRequestContext}.
+    */
+   public AssetRequestContext excludeBundles(Collection<String> bundles) {
+      for (String bundle : bundles) {
+         excludeBundles(bundle);
+      }
+      return this;
+   }
 
-	/**
-	 * Fluent exclude for bundles.
-	 * 
-	 * @param bundles
-	 *            bundles
-	 * @return this context
-	 */
-	private AssetRequestContext excludeBundles(String... bundles) {
-		this.excludedBundles.addAll(Arrays.asList(bundles));
-		return this;
-	}
+   /**
+    * Fluent exclude for bundles.
+    * 
+    * @param bundles
+    *           bundles
+    * @return this context
+    */
+   private AssetRequestContext excludeBundles(String... bundles) {
+      this.excludedBundles.addAll(Arrays.asList(bundles));
+      return this;
+   }
 
-	/**
-	 * Fluent exclude for asset names
-	 * 
-	 * @param jsNames
-	 *            asset names (separated by comma)
-	 * @return this context
-	 */
-	public AssetRequestContext excludeJs(String jsNames) {
-		if (StringUtils.isNotBlank(jsNames)) {
-			return excludeJs(jsNames.split(","));
-		}
-		else {
-			return this;
-		}
-	}
+   /**
+    * Fluent exclude for asset names
+    * 
+    * @param jsNames
+    *           asset names (separated by comma)
+    * @return this context
+    */
+   public AssetRequestContext excludeJs(String jsNames) {
+      if (StringUtils.isNotBlank(jsNames)) {
+         return excludeJs(jsNames.split(","));
+      }
+      else {
+         return this;
+      }
+   }
 
-	public AssetRequestContext excludeJs(Collection<String> jsToExclude) {
-		for (String js : jsToExclude) {
-			excludeJs(js);
-		}
-		return this;
-	}
-	
-	public AssetRequestContext excludeCss(String cssNames) {
-		if (StringUtils.isNotBlank(cssNames)) {
-			return excludeCss(cssNames.split(","));
-		}
-		else {
-			return this;
-		}
-	}
+   public AssetRequestContext excludeJs(Collection<String> jsToExclude) {
+      for (String js : jsToExclude) {
+         excludeJs(js);
+      }
+      return this;
+   }
 
-	public AssetRequestContext excludeCss(Collection<String> cssToExclude) {
-		for (String css : cssToExclude) {
-			excludeCss(css);
-		}
-		return this;
-	}
-	
-	/**
-	 * Fluent exclude for asset names
-	 * 
-	 * @param jsNames
-	 *            asset names
-	 * @return this context
-	 */
-	private AssetRequestContext excludeJs(String... jsNames) {
-		for (String jsName : jsNames) {
-			this.excludedJs.add(jsName.trim().toLowerCase());
-		}
-		return this;
-	}
+   public AssetRequestContext excludeCss(String cssNames) {
+      if (StringUtils.isNotBlank(cssNames)) {
+         return excludeCss(cssNames.split(","));
+      }
+      else {
+         return this;
+      }
+   }
 
-	private AssetRequestContext excludeCss(String... cssNames) {
-		for (String cssName : cssNames) {
-			this.excludedCss.add(cssName.trim().toLowerCase());
-		}
-		return this;
-	}
+   public AssetRequestContext excludeCss(Collection<String> cssToExclude) {
+      for (String css : cssToExclude) {
+         excludeCss(css);
+      }
+      return this;
+   }
 
-	/**
-	 * @return all {@link BundleStorageUnit} to exclude from the current
-	 *         request.
-	 */
-	public String[] getExcludedBundles() {
-		return excludedBundles.toArray(new String[excludedBundles.size()]);
-	}
+   /**
+    * Fluent exclude for asset names
+    * 
+    * @param jsNames
+    *           asset names
+    * @return this context
+    */
+   private AssetRequestContext excludeJs(String... jsNames) {
+      for (String jsName : jsNames) {
+         this.excludedJs.add(jsName.trim().toLowerCase());
+      }
+      return this;
+   }
 
-	/**
-	 * @return all Javascript to exclude from the current request.
-	 */
-	public String[] getExcludedJs() {
-		return excludedJs.toArray(new String[excludedJs.size()]);
-	}
+   private AssetRequestContext excludeCss(String... cssNames) {
+      for (String cssName : cssNames) {
+         this.excludedCss.add(cssName.trim().toLowerCase());
+      }
+      return this;
+   }
 
-	/**
-	 * @return all Stylesheets to exclude from the current request.
-	 */
-	public String[] getExcludedCss() {
-		return excludedCss.toArray(new String[excludedCss.size()]);
-	}
+   /**
+    * @return all {@link BundleStorageUnit} to exclude from the current request.
+    */
+   public String[] getExcludedBundles() {
+      return excludedBundles.toArray(new String[excludedBundles.size()]);
+   }
 
-	/**
-	 * Add a parameter value on a specific asset name
-	 * 
-	 * @param assetName
-	 *            asset name
-	 * @param parameter
-	 *            parameter
-	 * @param value
-	 *            value
-	 * @return this context
-	 */
-	public AssetRequestContext addParameter(String assetName, String parameter, Object value) {
-		return addParameter(assetName, parameter, value, false);
-	}
+   /**
+    * @return all Javascript to exclude from the current request.
+    */
+   public String[] getExcludedJs() {
+      return excludedJs.toArray(new String[excludedJs.size()]);
+   }
 
-	/**
-	 * Add a parameter value on a specific asset name (as Object with
-	 * toString())
-	 * 
-	 * @param assetName
-	 *            asset name
-	 * @param parameter
-	 *            parameter
-	 * @param value
-	 *            value
-	 * @return this context
-	 */
-	public AssetRequestContext addParameter(Object assetName, String parameter, Object value) {
-		return addParameter(assetName.toString(), parameter, value, false);
-	}
+   /**
+    * @return all Stylesheets to exclude from the current request.
+    */
+   public String[] getExcludedCss() {
+      return excludedCss.toArray(new String[excludedCss.size()]);
+   }
 
-	/**
-	 * Add a parameter value on a specific asset name
-	 * 
-	 * @param assetName
-	 *            asset name
-	 * @param parameter
-	 *            parameter
-	 * @param value
-	 *            value
-	 * @param replaceIfExists
-	 *            replace the parameter if he exists already
-	 * @return this context
-	 */
-	public AssetRequestContext addParameter(String assetName, String parameter, Object value, boolean replaceIfExists) {
-		if (!parameters.containsKey(assetName)) {
-			parameters.put(assetName, new HashMap<String, Object>());
-		}
+   /**
+    * Add a parameter value on a specific asset name
+    * 
+    * @param assetName
+    *           asset name
+    * @param parameter
+    *           parameter
+    * @param value
+    *           value
+    * @return this context
+    */
+   public AssetRequestContext addParameter(String assetName, String parameter, Object value) {
+      return addParameter(assetName, parameter, value, false);
+   }
 
-		if (!parameters.get(assetName).containsKey(parameter)) {
-			parameters.get(assetName).put(parameter, value);
-		}
-		else if (replaceIfExists) {
-			parameters.get(assetName).put(parameter, value);
-		}
-		return this;
-	}
+   /**
+    * Add a parameter value on a specific asset name (as Object with toString())
+    * 
+    * @param assetName
+    *           asset name
+    * @param parameter
+    *           parameter
+    * @param value
+    *           value
+    * @return this context
+    */
+   public AssetRequestContext addParameter(Object assetName, String parameter, Object value) {
+      return addParameter(assetName.toString(), parameter, value, false);
+   }
 
-	/**
-	 * Add a parameter value on a specific asset name (as Object with
-	 * toString())
-	 * 
-	 * @param assetName
-	 *            asset name
-	 * @param parameter
-	 *            parameter
-	 * @param value
-	 *            value
-	 * @param replaceIfExists
-	 *            replace the parameter if he exists already
-	 * @return this context
-	 */
-	public AssetRequestContext addParameter(Object assetName, String parameter, Object value, boolean replaceIfExists) {
-		return addParameter(assetName.toString(), parameter, value, replaceIfExists);
-	}
+   /**
+    * Add a parameter value on a specific asset name
+    * 
+    * @param assetName
+    *           asset name
+    * @param parameter
+    *           parameter
+    * @param value
+    *           value
+    * @param replaceIfExists
+    *           replace the parameter if he exists already
+    * @return this context
+    */
+   public AssetRequestContext addParameter(String assetName, String parameter, Object value, boolean replaceIfExists) {
+      if (!parameters.containsKey(assetName)) {
+         parameters.put(assetName, new HashMap<String, Object>());
+      }
 
-	/**
-	 * Get the parameters for a asset name
-	 * 
-	 * @param assetName
-	 *            asset name
-	 * @return the parameter of the asset name, or empty map
-	 */
-	public Map<String, Object> getParameters(String assetName) {
-		if (!parameters.containsKey(assetName)) {
-			return Collections.emptyMap();
-		}
-		return parameters.get(assetName);
-	}
+      if (!parameters.get(assetName).containsKey(parameter)) {
+         parameters.get(assetName).put(parameter, value);
+      }
+      else if (replaceIfExists) {
+         parameters.get(assetName).put(parameter, value);
+      }
+      return this;
+   }
 
-	/**
-	 * Get the parameters for a asset name (as Object with toString())
-	 * 
-	 * @param assetName
-	 *            asset name
-	 * @return the parameter of the asset name, or empty map
-	 */
-	public Map<String, Object> getParameters(Object assetName) {
-		return getParameters(assetName.toString());
-	}
+   /**
+    * Add a parameter value on a specific asset name (as Object with toString())
+    * 
+    * @param assetName
+    *           asset name
+    * @param parameter
+    *           parameter
+    * @param value
+    *           value
+    * @param replaceIfExists
+    *           replace the parameter if he exists already
+    * @return this context
+    */
+   public AssetRequestContext addParameter(Object assetName, String parameter, Object value, boolean replaceIfExists) {
+      return addParameter(assetName.toString(), parameter, value, replaceIfExists);
+   }
 
-	/**
-	 * Get the value of the parameter for the asset name
-	 * 
-	 * @param assetName
-	 *            asset name
-	 * @param parameter
-	 *            parameter
-	 * @param <T>
-	 *            type of the value (aka TypeOfValue value =
-	 *            context.getParameterValue(...) )
-	 * @return the value of the parameter, or <code>null</code> value
-	 */
-	@SuppressWarnings("unchecked")
-	public <T> T getParameterValue(String assetName, String parameter) {
-		Map<String, Object> values = getParameters(assetName);
-		if (!values.containsKey(parameter)) {
-			return null;
-		}
-		return (T) values.get(parameter);
-	}
+   /**
+    * Get the parameters for a asset name
+    * 
+    * @param assetName
+    *           asset name
+    * @return the parameter of the asset name, or empty map
+    */
+   public Map<String, Object> getParameters(String assetName) {
+      if (!parameters.containsKey(assetName)) {
+         return Collections.emptyMap();
+      }
+      return parameters.get(assetName);
+   }
 
-	/**
-	 * Get the value of the parameter for the asset name (as Object with
-	 * toString())
-	 * 
-	 * @param assetName
-	 *            asset name
-	 * @param parameter
-	 *            parameter
-	 * @param <T>
-	 *            type of the value (aka TypeOfValue value =
-	 *            context.getParameterValue(...) )
-	 * @return the value of the parameter, or <code>null</code> value
-	 */
-	public <T> T getParameterValue(Object assetName, String parameter) {
-		return getParameterValue(assetName.toString(), parameter);
-	}
+   /**
+    * Get the parameters for a asset name (as Object with toString())
+    * 
+    * @param assetName
+    *           asset name
+    * @return the parameter of the asset name, or empty map
+    */
+   public Map<String, Object> getParameters(Object assetName) {
+      return getParameters(assetName.toString());
+   }
+
+   /**
+    * Get the value of the parameter for the asset name
+    * 
+    * @param assetName
+    *           asset name
+    * @param parameter
+    *           parameter
+    * @param <T>
+    *           type of the value (aka TypeOfValue value =
+    *           context.getParameterValue(...) )
+    * @return the value of the parameter, or <code>null</code> value
+    */
+   @SuppressWarnings("unchecked")
+   public <T> T getParameterValue(String assetName, String parameter) {
+      Map<String, Object> values = getParameters(assetName);
+      if (!values.containsKey(parameter)) {
+         return null;
+      }
+      return (T) values.get(parameter);
+   }
+
+   /**
+    * Get the value of the parameter for the asset name (as Object with
+    * toString())
+    * 
+    * @param assetName
+    *           asset name
+    * @param parameter
+    *           parameter
+    * @param <T>
+    *           type of the value (aka TypeOfValue value =
+    *           context.getParameterValue(...) )
+    * @return the value of the parameter, or <code>null</code> value
+    */
+   public <T> T getParameterValue(Object assetName, String parameter) {
+      return getParameterValue(assetName.toString(), parameter);
+   }
 }

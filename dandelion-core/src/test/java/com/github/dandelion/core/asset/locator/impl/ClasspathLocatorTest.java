@@ -48,30 +48,30 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class ClasspathLocatorTest {
 
-	private ClasspathLocator locator = new ClasspathLocator();
-	private MockHttpServletRequest request;
+   private ClasspathLocator locator = new ClasspathLocator();
+   private MockHttpServletRequest request;
 
-	@Rule
-	public ExpectedException exception = ExpectedException.none();
+   @Rule
+   public ExpectedException exception = ExpectedException.none();
 
-	@Before
-	public void setup() {
-		request = new MockHttpServletRequest();
-		request.setAttribute(WebConstants.DANDELION_CONTEXT_ATTRIBUTE, new Context(new MockFilterConfig()));
-	}
+   @Before
+   public void setup() {
+      request = new MockHttpServletRequest();
+      request.setAttribute(WebConstants.DANDELION_CONTEXT_ATTRIBUTE, new Context(new MockFilterConfig()));
+   }
 
-	@Test
-	public void should_return_the_same_internal_url() {
-		AssetStorageUnit asu = new AssetStorageUnit("my.js", singletonMap("classpath", "sub/folder/my.js"));
-		String location = locator.getLocation(asu, null);
-		assertThat(location).isEqualTo("sub/folder/my.js");
-	}
+   @Test
+   public void should_return_the_same_internal_url() {
+      AssetStorageUnit asu = new AssetStorageUnit("my.js", singletonMap("classpath", "sub/folder/my.js"));
+      String location = locator.getLocation(asu, null);
+      assertThat(location).isEqualTo("sub/folder/my.js");
+   }
 
-	@Test
-	public void should_return_the_asset_contents() {
-		Asset asset = new Asset();
-		asset.setProcessedConfigLocation("locator/asset.js");
-		String content = locator.getContent(asset, request);
-		assertThat(content).isEqualTo("/* content */");
-	}
+   @Test
+   public void should_return_the_asset_contents() {
+      Asset asset = new Asset();
+      asset.setProcessedConfigLocation("locator/asset.js");
+      String content = locator.getContent(asset, request);
+      assertThat(content).isEqualTo("/* content */");
+   }
 }

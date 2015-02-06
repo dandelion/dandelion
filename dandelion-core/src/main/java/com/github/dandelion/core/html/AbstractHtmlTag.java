@@ -40,212 +40,213 @@ import java.util.Map;
  */
 public abstract class AbstractHtmlTag {
 
-	/**
-	 * Plain old HTML <code>id</code> attribute.
-	 */
-	protected String id;
+   /**
+    * Plain old HTML <code>id</code> attribute.
+    */
+   protected String id;
 
-	/**
-	 * Plain old HTML <code>class</code> attribute.
-	 */
-	protected StringBuilder cssClass;
+   /**
+    * Plain old HTML <code>class</code> attribute.
+    */
+   protected StringBuilder cssClass;
 
-	/**
-	 * Plain old HTML <code>style</code> attribute.
-	 */
-	protected StringBuilder cssStyle;
+   /**
+    * Plain old HTML <code>style</code> attribute.
+    */
+   protected StringBuilder cssStyle;
 
+   /**
+    * Dynamic native HTML attributes.
+    */
+   protected Map<String, String> dynamicAttributes;
 
-	/**
-	 * Dynamic native HTML attributes.
-	 */
-	protected Map<String, String> dynamicAttributes;
-	
-	protected Map<String, String> attributes;
-	private String[] attributesOnlyName;
+   protected Map<String, String> attributes;
+   private String[] attributesOnlyName;
 
-	public static final char CLASS_SEPARATOR = ' ';
-	public static final char STYLE_SEPARATOR = ';';
-	
-	/**
-	 * Tag label.
-	 */
-	protected String tag;
+   public static final char CLASS_SEPARATOR = ' ';
+   public static final char STYLE_SEPARATOR = ';';
 
-        /**
-	 * Render the tag in HTML code.
-	 * 
-	 * @return the HTML code corresponding to the tag.
-	 */
-	public StringBuilder toHtml() {
-		StringBuilder html = new StringBuilder();
-		html.append(getHtmlOpeningTag());
-		html.append(getHtmlClosingTag());
-		return html;
-	}
+   /**
+    * Tag label.
+    */
+   protected String tag;
 
-	protected StringBuilder getHtmlOpeningTag() {
-		StringBuilder html = new StringBuilder();
-		html.append('<');
-		html.append(this.tag);
-		html.append(getHtmlAttributes());
-		html.append(getDynamicHtmlAttributes());
-		html.append('>');
-		return html;
-	}
+   /**
+    * Render the tag in HTML code.
+    * 
+    * @return the HTML code corresponding to the tag.
+    */
+   public StringBuilder toHtml() {
+      StringBuilder html = new StringBuilder();
+      html.append(getHtmlOpeningTag());
+      html.append(getHtmlClosingTag());
+      return html;
+   }
 
-	protected StringBuilder getHtmlAttributes() {
-		StringBuilder html = new StringBuilder();
-		html.append(writeAttribute("id", this.id));
-		html.append(writeAttribute("class", this.cssClass));
-		html.append(writeAttribute("style", this.cssStyle));
-		return html;
-	}
+   protected StringBuilder getHtmlOpeningTag() {
+      StringBuilder html = new StringBuilder();
+      html.append('<');
+      html.append(this.tag);
+      html.append(getHtmlAttributes());
+      html.append(getDynamicHtmlAttributes());
+      html.append('>');
+      return html;
+   }
 
-	protected StringBuilder getDynamicHtmlAttributes() {
+   protected StringBuilder getHtmlAttributes() {
+      StringBuilder html = new StringBuilder();
+      html.append(writeAttribute("id", this.id));
+      html.append(writeAttribute("class", this.cssClass));
+      html.append(writeAttribute("style", this.cssStyle));
+      return html;
+   }
 
-		// If no dynamicAttributes set, return empty StringBuilder
-		if(dynamicAttributes == null) {
-			return new StringBuilder();
-		}
-		StringBuilder html = new StringBuilder();
-		for(Map.Entry<String, String> attribute : dynamicAttributes.entrySet()) {
-			html.append(writeAttribute(attribute.getKey(), attribute.getValue()));
-		}
-		return html;
-	}
-	
-	protected static StringBuilder writeAttribute(String name, Object data) {
-		StringBuilder html = new StringBuilder();
-		if(data != null) {
-			html.append(' ');
-			html.append(name);
-			html.append("=\"");
-			html.append(data.toString());
-			html.append('"');
-		}
-		return html;
-	}
+   protected StringBuilder getDynamicHtmlAttributes() {
 
-	protected StringBuilder getHtmlClosingTag() {
-		StringBuilder html = new StringBuilder();
-		html.append("</");
-		html.append(this.tag);
-		html.append('>');
-		return html;
-	}
+      // If no dynamicAttributes set, return empty StringBuilder
+      if (dynamicAttributes == null) {
+         return new StringBuilder();
+      }
+      StringBuilder html = new StringBuilder();
+      for (Map.Entry<String, String> attribute : dynamicAttributes.entrySet()) {
+         html.append(writeAttribute(attribute.getKey(), attribute.getValue()));
+      }
+      return html;
+   }
 
-	public String getTag() {
-		return tag;
-	}
+   protected static StringBuilder writeAttribute(String name, Object data) {
+      StringBuilder html = new StringBuilder();
+      if (data != null) {
+         html.append(' ');
+         html.append(name);
+         html.append("=\"");
+         html.append(data.toString());
+         html.append('"');
+      }
+      return html;
+   }
 
-	public String getId() {
-		return id;
-	}
+   protected StringBuilder getHtmlClosingTag() {
+      StringBuilder html = new StringBuilder();
+      html.append("</");
+      html.append(this.tag);
+      html.append('>');
+      return html;
+   }
 
-	public void setId(String id) {
-		this.id = id;
-	}
+   public String getTag() {
+      return tag;
+   }
 
-	public StringBuilder getCssClass() {
-		return cssClass;
-	}
+   public String getId() {
+      return id;
+   }
 
-	public void setCssClass(StringBuilder cssClass) {
-		this.cssClass = cssClass;
-	}
+   public void setId(String id) {
+      this.id = id;
+   }
 
-	public StringBuilder getCssStyle() {
-		return cssStyle;
-	}
+   public StringBuilder getCssClass() {
+      return cssClass;
+   }
 
-	public void setCssStyle(StringBuilder cssStyle) {
-		this.cssStyle = cssStyle;
-	}
+   public void setCssClass(StringBuilder cssClass) {
+      this.cssClass = cssClass;
+   }
 
-	public Map<String, String> getDynamicAttributes() {
-		return dynamicAttributes;
-	}
+   public StringBuilder getCssStyle() {
+      return cssStyle;
+   }
 
-	public String getDynamicAttributeValue(String attributeName) {
-		if (this.dynamicAttributes != null) {
-			return this.dynamicAttributes.get(attributeName);
-		}
-		return null;
-	}
-	
-	public void setDynamicAttributes(Map<String, String> dynamicAttributes) {
-		this.dynamicAttributes = dynamicAttributes;
-	}
+   public void setCssStyle(StringBuilder cssStyle) {
+      this.cssStyle = cssStyle;
+   }
 
-	public void addDynamicAttribute(String name, String value) {
-		if (this.dynamicAttributes == null) {
-			this.dynamicAttributes = new HashMap<String, String>();
-		}
-		this.dynamicAttributes.put(name, value);
-	}
+   public Map<String, String> getDynamicAttributes() {
+      return dynamicAttributes;
+   }
 
-	public void removeDynamicAttribute(String attributeName) {
-		if (this.dynamicAttributes != null) {
-			this.dynamicAttributes.remove(attributeName);
-		}
-	}
-	
-	public void addCssClass(String cssClass) {
-		if(this.cssClass == null) {
-			this.cssClass = new StringBuilder();
-		} else {
-			this.cssClass.append(CLASS_SEPARATOR);
-		}
-		this.cssClass.append(cssClass);
-	}
+   public String getDynamicAttributeValue(String attributeName) {
+      if (this.dynamicAttributes != null) {
+         return this.dynamicAttributes.get(attributeName);
+      }
+      return null;
+   }
 
-	public void addCssStyle(String cssStyle) {
-		if(this.cssStyle == null) {
-			this.cssStyle = new StringBuilder();
-		} else {
-			this.cssStyle.append(STYLE_SEPARATOR);
-		}
-		this.cssStyle.append(cssStyle);
-	}
-	
-	/**
-	 * Render the tag in HTML code.
-	 * 
-	 * @return the HTML code corresponding to the tag.
-	 */
-//	public abstract String toHtml();
+   public void setDynamicAttributes(Map<String, String> dynamicAttributes) {
+      this.dynamicAttributes = dynamicAttributes;
+   }
 
-	public void addAttributes(Map<String, String> attributes) {
-		this.attributes = attributes;
-	}
+   public void addDynamicAttribute(String name, String value) {
+      if (this.dynamicAttributes == null) {
+         this.dynamicAttributes = new HashMap<String, String>();
+      }
+      this.dynamicAttributes.put(name, value);
+   }
 
-	public void addAttributesOnlyName(String... attributesOnlyName) {
-		this.attributesOnlyName = attributesOnlyName;
-	}
+   public void removeDynamicAttribute(String attributeName) {
+      if (this.dynamicAttributes != null) {
+         this.dynamicAttributes.remove(attributeName);
+      }
+   }
 
-	protected String attributesToHtml() {
-		StringBuilder html = new StringBuilder();
-		if (attributes != null) {
-			for (Map.Entry<String, String> attribute : attributes.entrySet()) {
-				html.append(" ");
-				html.append(attribute.getKey());
-				html.append("=\"");
-				html.append(attribute.getValue());
-				html.append("\"");
-			}
-		}
-		return html.toString();
-	}
+   public void addCssClass(String cssClass) {
+      if (this.cssClass == null) {
+         this.cssClass = new StringBuilder();
+      }
+      else {
+         this.cssClass.append(CLASS_SEPARATOR);
+      }
+      this.cssClass.append(cssClass);
+   }
 
-	public String attributesOnlyNameToHtml() {
-		StringBuilder html = new StringBuilder();
-		if (attributesOnlyName != null) {
-			for (String attribute : attributesOnlyName) {
-				html.append(" ");
-				html.append(attribute);
-			}
-		}
-		return html.toString();
-	}
+   public void addCssStyle(String cssStyle) {
+      if (this.cssStyle == null) {
+         this.cssStyle = new StringBuilder();
+      }
+      else {
+         this.cssStyle.append(STYLE_SEPARATOR);
+      }
+      this.cssStyle.append(cssStyle);
+   }
+
+   /**
+    * Render the tag in HTML code.
+    * 
+    * @return the HTML code corresponding to the tag.
+    */
+   // public abstract String toHtml();
+
+   public void addAttributes(Map<String, String> attributes) {
+      this.attributes = attributes;
+   }
+
+   public void addAttributesOnlyName(String... attributesOnlyName) {
+      this.attributesOnlyName = attributesOnlyName;
+   }
+
+   protected String attributesToHtml() {
+      StringBuilder html = new StringBuilder();
+      if (attributes != null) {
+         for (Map.Entry<String, String> attribute : attributes.entrySet()) {
+            html.append(" ");
+            html.append(attribute.getKey());
+            html.append("=\"");
+            html.append(attribute.getValue());
+            html.append("\"");
+         }
+      }
+      return html.toString();
+   }
+
+   public String attributesOnlyNameToHtml() {
+      StringBuilder html = new StringBuilder();
+      if (attributesOnlyName != null) {
+         for (String attribute : attributesOnlyName) {
+            html.append(" ");
+            html.append(attribute);
+         }
+      }
+      return html.toString();
+   }
 }

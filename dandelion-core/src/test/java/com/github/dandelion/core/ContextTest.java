@@ -36,21 +36,21 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class ContextTest {
 
-	@Test
-	public void should_load_the_context(){
-		Context context = new Context(new MockFilterConfig());
-		
-		// SPI
-		assertThat(context.getBundleLoaders()).isNotEmpty();
-		assertThat(context.getActiveProcessors()).isEmpty();
-		assertThat(context.getAssetLocatorsMap()).isNotEmpty();
-		
-		// Configuration should be initialized
-		assertThat(context.getConfiguration()).isNotNull();
-		assertThat(context.getConfiguration().getProperties()).isNotEmpty();
-		
-		// Manager should be initialized
-		assertThat(context.getProcessorManager()).isNotNull();
-		assertThat(context.getCacheManager()).isNotNull();
-	}
+   @Test
+   public void should_load_the_context() {
+      Context context = new Context(new MockFilterConfig());
+
+      // SPI
+      assertThat(context.getBundleLoaders()).isNotEmpty();
+      assertThat(context.getActiveProcessors()).isEmpty();
+      assertThat(context.getAssetLocatorsMap()).isNotEmpty();
+
+      // Configuration should be initialized
+      assertThat(context.getConfiguration()).isNotNull();
+      assertThat(context.getConfiguration().getProperties()).isNotEmpty();
+
+      // Manager should be initialized
+      assertThat(context.getProcessorManager()).isNotNull();
+      assertThat(context.getCacheManager()).isNotNull();
+   }
 }

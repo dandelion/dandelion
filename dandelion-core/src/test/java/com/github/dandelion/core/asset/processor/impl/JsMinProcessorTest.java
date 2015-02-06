@@ -40,14 +40,15 @@ import com.github.dandelion.core.asset.processor.AssetProcessor;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class JsMinProcessorTest extends AbstractProcessorTest  {
+public class JsMinProcessorTest extends AbstractProcessorTest {
 
-	private AssetProcessor assetProcessor = new JsMinProcessor();
+   private AssetProcessor assetProcessor = new JsMinProcessor();
 
-	@Test
-	public void should_minifiy_js() throws IOException{
-		Writer writer = new StringWriter();
-		assetProcessor.process(new StringReader("var b = new Array()//commentaire\nfunction v(){}"), writer, processingContext);
-		assertThat(writer.toString()).isEqualTo("\nvar b=new Array()\nfunction v(){}");
-	}
+   @Test
+   public void should_minifiy_js() throws IOException {
+      Writer writer = new StringWriter();
+      assetProcessor.process(new StringReader("var b = new Array()//commentaire\nfunction v(){}"), writer,
+            processingContext);
+      assertThat(writer.toString()).isEqualTo("\nvar b=new Array()\nfunction v(){}");
+   }
 }

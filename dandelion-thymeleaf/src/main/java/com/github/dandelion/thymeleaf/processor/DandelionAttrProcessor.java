@@ -42,30 +42,30 @@ import org.thymeleaf.processor.attr.AbstractAttrProcessor;
  */
 public abstract class DandelionAttrProcessor extends AbstractAttrProcessor {
 
-	public DandelionAttrProcessor(String attributeName) {
-		super(attributeName);
-	}
+   public DandelionAttrProcessor(String attributeName) {
+      super(attributeName);
+   }
 
-	@Override
-	protected ProcessorResult processAttribute(Arguments arguments, Element element, String attributeName) {
-		ProcessorResult processorResult = doProcessAttribute(arguments, element, attributeName);
-		element.removeAttribute(attributeName);
-		return processorResult;
-	}
+   @Override
+   protected ProcessorResult processAttribute(Arguments arguments, Element element, String attributeName) {
+      ProcessorResult processorResult = doProcessAttribute(arguments, element, attributeName);
+      element.removeAttribute(attributeName);
+      return processorResult;
+   }
 
-	@Override
-	public abstract int getPrecedence();
+   @Override
+   public abstract int getPrecedence();
 
-	/**
-	 * Process the Attribute
-	 * 
-	 * @param arguments
-	 *            Thymeleaf arguments
-	 * @param element
-	 *            Element of the attribute
-	 * @param attributeName
-	 *            attribute name
-	 * @return result of process
-	 */
-	protected abstract ProcessorResult doProcessAttribute(Arguments arguments, Element element, String attributeName);
+   /**
+    * Process the Attribute
+    * 
+    * @param arguments
+    *           Thymeleaf arguments
+    * @param element
+    *           Element of the attribute
+    * @param attributeName
+    *           attribute name
+    * @return result of process
+    */
+   protected abstract ProcessorResult doProcessAttribute(Arguments arguments, Element element, String attributeName);
 }

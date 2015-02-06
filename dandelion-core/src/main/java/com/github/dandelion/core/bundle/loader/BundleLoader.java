@@ -45,39 +45,39 @@ import com.github.dandelion.core.storage.BundleStorageUnit;
  */
 public interface BundleLoader {
 
-	/**
-	 * <p>
-	 * Initializes the loader by injecting the Dandelion {@link Context}.
-	 * </p>
-	 * 
-	 * @param context
-	 *            The Dandelion context.
-	 */
-	void initLoader(Context context);
+   /**
+    * <p>
+    * Initializes the loader by injecting the Dandelion {@link Context}.
+    * </p>
+    * 
+    * @param context
+    *           The Dandelion context.
+    */
+   void initLoader(Context context);
 
-	/**
-	 * @return the name of the loader, mainly used for logging.
-	 */
-	String getName();
+   /**
+    * @return the name of the loader, mainly used for logging.
+    */
+   String getName();
 
-	/**
-	 * <p>
-	 * Load bundles by scanning the classpath starting from the configured
-	 * folder.
-	 * </p>
-	 * 
-	 * @return a list of {@link BundleStorageUnit} deserialized from the JSON
-	 *         files.
-	 */
-	List<BundleStorageUnit> loadBundles();
+   /**
+    * <p>
+    * Load bundles by scanning the classpath starting from the configured
+    * folder.
+    * </p>
+    * 
+    * @return a list of {@link BundleStorageUnit} deserialized from the JSON
+    *         files.
+    */
+   List<BundleStorageUnit> loadBundles();
 
-	/**
-	 * <p>
-	 * Allows to post-process the bundles once they have been loaded and parsed.
-	 * </p>
-	 * 
-	 * @param bundles
-	 *            The loaded and parsed bundles.
-	 */
-	void postProcessBundles(List<BundleStorageUnit> bundles);
+   /**
+    * <p>
+    * Allows to post-process the bundles once they have been loaded and parsed.
+    * </p>
+    * 
+    * @param bundles
+    *           The loaded and parsed bundles.
+    */
+   void postProcessBundles(List<BundleStorageUnit> bundles);
 }

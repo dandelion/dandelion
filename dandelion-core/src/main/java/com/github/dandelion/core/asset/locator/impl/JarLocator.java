@@ -49,24 +49,24 @@ import com.github.dandelion.core.utils.ResourceUtils;
  */
 public class JarLocator extends AbstractAssetLocator {
 
-	@Override
-	public String getLocationKey() {
-		return "jar";
-	}
+   @Override
+   public String getLocationKey() {
+      return "jar";
+   }
 
-	@Override
-	public boolean isCachingForced() {
-		return false;
-	}
+   @Override
+   public boolean isCachingForced() {
+      return false;
+   }
 
-	@Override
-	public String doGetLocation(AssetStorageUnit asu, HttpServletRequest request) {
-		String location = asu.getLocations().get(getLocationKey());
-		return request.getContextPath() + "/" + (location.startsWith("/") ? location.substring(1) : location);
-	}
+   @Override
+   public String doGetLocation(AssetStorageUnit asu, HttpServletRequest request) {
+      String location = asu.getLocations().get(getLocationKey());
+      return request.getContextPath() + "/" + (location.startsWith("/") ? location.substring(1) : location);
+   }
 
-	@Override
-	protected String doGetContent(String location, Map<String, Object> parameters, HttpServletRequest request) {
-		return ResourceUtils.getContentFromUrl(request, location, true);
-	}
+   @Override
+   protected String doGetContent(String location, Map<String, Object> parameters, HttpServletRequest request) {
+      return ResourceUtils.getContentFromUrl(request, location, true);
+   }
 }

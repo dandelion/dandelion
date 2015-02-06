@@ -44,109 +44,109 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class FixedAssetVersioningStrategyTest {
 
-	@Rule
-	public ExpectedException expectedEx = ExpectedException.none();
+   @Rule
+   public ExpectedException expectedEx = ExpectedException.none();
 
-	@Test
-	public void should_throw_an_exception_if_a_wrong_versioning_strategy_is_requested() {
+   @Test
+   public void should_throw_an_exception_if_a_wrong_versioning_strategy_is_requested() {
 
-		String desiredVersioningStrategy = "unknown-strategy";
+      String desiredVersioningStrategy = "unknown-strategy";
 
-		expectedEx.expect(DandelionException.class);
+      expectedEx.expect(DandelionException.class);
 
-		MockFilterConfig filterConfig = new MockFilterConfig();
-		filterConfig.addInitParameter(DandelionConfig.ASSET_VERSIONING_MODE.getName(), "auto");
-		filterConfig.addInitParameter(DandelionConfig.ASSET_VERSIONING_STRATEGY.getName(), desiredVersioningStrategy);
-		Context dandelionContext = new Context(filterConfig);
+      MockFilterConfig filterConfig = new MockFilterConfig();
+      filterConfig.addInitParameter(DandelionConfig.ASSET_VERSIONING_MODE.getName(), "auto");
+      filterConfig.addInitParameter(DandelionConfig.ASSET_VERSIONING_STRATEGY.getName(), desiredVersioningStrategy);
+      Context dandelionContext = new Context(filterConfig);
 
-		AssetVersioningStrategy strategy = new FixedAssetVersioningStrategy();
-		strategy.init(dandelionContext);
-	}
+      AssetVersioningStrategy strategy = new FixedAssetVersioningStrategy();
+      strategy.init(dandelionContext);
+   }
 
-	@Test
-	public void should_throw_an_exception_if_a_wrong_fixedVersionType_is_requested() {
+   @Test
+   public void should_throw_an_exception_if_a_wrong_fixedVersionType_is_requested() {
 
-		String desiredFixedVersionType = "unknown-type";
+      String desiredFixedVersionType = "unknown-type";
 
-		expectedEx.expect(DandelionException.class);
-		expectedEx.expectMessage("'" + desiredFixedVersionType
-				+ "' is not a valid versioning type. Possible values are: "
-				+ EnumUtils.printPossibleValuesOf(FixedVersionType.class));
+      expectedEx.expect(DandelionException.class);
+      expectedEx.expectMessage("'" + desiredFixedVersionType
+            + "' is not a valid versioning type. Possible values are: "
+            + EnumUtils.printPossibleValuesOf(FixedVersionType.class));
 
-		MockFilterConfig filterConfig = new MockFilterConfig();
-		filterConfig.addInitParameter(DandelionConfig.ASSET_VERSIONING_MODE.getName(), "auto");
-		filterConfig.addInitParameter(DandelionConfig.ASSET_VERSIONING_STRATEGY.getName(), "fixed");
-		filterConfig.addInitParameter(DandelionConfig.ASSET_FIXED_VERSION_TYPE.getName(), desiredFixedVersionType);
-		Context dandelionContext = new Context(filterConfig);
+      MockFilterConfig filterConfig = new MockFilterConfig();
+      filterConfig.addInitParameter(DandelionConfig.ASSET_VERSIONING_MODE.getName(), "auto");
+      filterConfig.addInitParameter(DandelionConfig.ASSET_VERSIONING_STRATEGY.getName(), "fixed");
+      filterConfig.addInitParameter(DandelionConfig.ASSET_FIXED_VERSION_TYPE.getName(), desiredFixedVersionType);
+      Context dandelionContext = new Context(filterConfig);
 
-		AssetVersioningStrategy strategy = new FixedAssetVersioningStrategy();
-		strategy.init(dandelionContext);
-	}
+      AssetVersioningStrategy strategy = new FixedAssetVersioningStrategy();
+      strategy.init(dandelionContext);
+   }
 
-	@Test
-	public void should_return_a_fixed_version_based_on_a_string() {
+   @Test
+   public void should_return_a_fixed_version_based_on_a_string() {
 
-		MockFilterConfig filterConfig = new MockFilterConfig();
-		filterConfig.addInitParameter(DandelionConfig.ASSET_VERSIONING_MODE.getName(), "auto");
-		filterConfig.addInitParameter(DandelionConfig.ASSET_VERSIONING_STRATEGY.getName(), "fixed");
-		filterConfig.addInitParameter(DandelionConfig.ASSET_FIXED_VERSION_TYPE.getName(), "string");
-		filterConfig.addInitParameter(DandelionConfig.ASSET_FIXED_VERSION_VALUE.getName(), "42");
-		Context dandelionContext = new Context(filterConfig);
+      MockFilterConfig filterConfig = new MockFilterConfig();
+      filterConfig.addInitParameter(DandelionConfig.ASSET_VERSIONING_MODE.getName(), "auto");
+      filterConfig.addInitParameter(DandelionConfig.ASSET_VERSIONING_STRATEGY.getName(), "fixed");
+      filterConfig.addInitParameter(DandelionConfig.ASSET_FIXED_VERSION_TYPE.getName(), "string");
+      filterConfig.addInitParameter(DandelionConfig.ASSET_FIXED_VERSION_VALUE.getName(), "42");
+      Context dandelionContext = new Context(filterConfig);
 
-		AssetVersioningStrategy strategy = new FixedAssetVersioningStrategy();
-		strategy.init(dandelionContext);
+      AssetVersioningStrategy strategy = new FixedAssetVersioningStrategy();
+      strategy.init(dandelionContext);
 
-		assertThat(strategy.getAssetVersion(null)).isEqualTo("42");
-	}
+      assertThat(strategy.getAssetVersion(null)).isEqualTo("42");
+   }
 
-	@Test
-	public void should_return_a_fixed_version_based_on_a_date_and_default_format() {
+   @Test
+   public void should_return_a_fixed_version_based_on_a_date_and_default_format() {
 
-		MockFilterConfig filterConfig = new MockFilterConfig();
-		filterConfig.addInitParameter(DandelionConfig.ASSET_VERSIONING_MODE.getName(), "auto");
-		filterConfig.addInitParameter(DandelionConfig.ASSET_VERSIONING_STRATEGY.getName(), "fixed");
-		filterConfig.addInitParameter(DandelionConfig.ASSET_FIXED_VERSION_TYPE.getName(), "date");
-		filterConfig.addInitParameter(DandelionConfig.ASSET_FIXED_VERSION_VALUE.getName(), "20141124");
-		Context dandelionContext = new Context(filterConfig);
+      MockFilterConfig filterConfig = new MockFilterConfig();
+      filterConfig.addInitParameter(DandelionConfig.ASSET_VERSIONING_MODE.getName(), "auto");
+      filterConfig.addInitParameter(DandelionConfig.ASSET_VERSIONING_STRATEGY.getName(), "fixed");
+      filterConfig.addInitParameter(DandelionConfig.ASSET_FIXED_VERSION_TYPE.getName(), "date");
+      filterConfig.addInitParameter(DandelionConfig.ASSET_FIXED_VERSION_VALUE.getName(), "20141124");
+      Context dandelionContext = new Context(filterConfig);
 
-		AssetVersioningStrategy strategy = new FixedAssetVersioningStrategy();
-		strategy.init(dandelionContext);
+      AssetVersioningStrategy strategy = new FixedAssetVersioningStrategy();
+      strategy.init(dandelionContext);
 
-		assertThat(strategy.getAssetVersion(null)).isEqualTo("20141124");
-	}
+      assertThat(strategy.getAssetVersion(null)).isEqualTo("20141124");
+   }
 
-	@Test
-	public void should_return_a_fixed_version_based_on_a_date_and_custom_format() {
+   @Test
+   public void should_return_a_fixed_version_based_on_a_date_and_custom_format() {
 
-		MockFilterConfig filterConfig = new MockFilterConfig();
-		filterConfig.addInitParameter(DandelionConfig.ASSET_VERSIONING_MODE.getName(), "auto");
-		filterConfig.addInitParameter(DandelionConfig.ASSET_VERSIONING_STRATEGY.getName(), "fixed");
-		filterConfig.addInitParameter(DandelionConfig.ASSET_FIXED_VERSION_TYPE.getName(), "date");
-		filterConfig.addInitParameter(DandelionConfig.ASSET_FIXED_VERSION_DATEPATTERN.getName(), "yyyy");
-		filterConfig.addInitParameter(DandelionConfig.ASSET_FIXED_VERSION_VALUE.getName(), "2015");
-		Context dandelionContext = new Context(filterConfig);
+      MockFilterConfig filterConfig = new MockFilterConfig();
+      filterConfig.addInitParameter(DandelionConfig.ASSET_VERSIONING_MODE.getName(), "auto");
+      filterConfig.addInitParameter(DandelionConfig.ASSET_VERSIONING_STRATEGY.getName(), "fixed");
+      filterConfig.addInitParameter(DandelionConfig.ASSET_FIXED_VERSION_TYPE.getName(), "date");
+      filterConfig.addInitParameter(DandelionConfig.ASSET_FIXED_VERSION_DATEPATTERN.getName(), "yyyy");
+      filterConfig.addInitParameter(DandelionConfig.ASSET_FIXED_VERSION_VALUE.getName(), "2015");
+      Context dandelionContext = new Context(filterConfig);
 
-		AssetVersioningStrategy strategy = new FixedAssetVersioningStrategy();
-		strategy.init(dandelionContext);
+      AssetVersioningStrategy strategy = new FixedAssetVersioningStrategy();
+      strategy.init(dandelionContext);
 
-		assertThat(strategy.getAssetVersion(null)).isEqualTo("2015");
-	}
+      assertThat(strategy.getAssetVersion(null)).isEqualTo("2015");
+   }
 
-	@Test
-	public void should_throw_an_exception_if_a_wrong_date_format_is_used() {
+   @Test
+   public void should_throw_an_exception_if_a_wrong_date_format_is_used() {
 
-		String desiredDate = "2015";
-		String desiredDateFormat = "wrong-format";
+      String desiredDate = "2015";
+      String desiredDateFormat = "wrong-format";
 
-		expectedEx.expect(DandelionException.class);
-		expectedEx.expectMessage("Wrong date pattern configured : " + desiredDateFormat);
+      expectedEx.expect(DandelionException.class);
+      expectedEx.expectMessage("Wrong date pattern configured : " + desiredDateFormat);
 
-		MockFilterConfig filterConfig = new MockFilterConfig();
-		filterConfig.addInitParameter(DandelionConfig.ASSET_VERSIONING_MODE.getName(), "auto");
-		filterConfig.addInitParameter(DandelionConfig.ASSET_VERSIONING_STRATEGY.getName(), "fixed");
-		filterConfig.addInitParameter(DandelionConfig.ASSET_FIXED_VERSION_TYPE.getName(), "date");
-		filterConfig.addInitParameter(DandelionConfig.ASSET_FIXED_VERSION_DATEPATTERN.getName(), desiredDateFormat);
-		filterConfig.addInitParameter(DandelionConfig.ASSET_FIXED_VERSION_VALUE.getName(), desiredDate);
-		new Context(filterConfig);
-	}
+      MockFilterConfig filterConfig = new MockFilterConfig();
+      filterConfig.addInitParameter(DandelionConfig.ASSET_VERSIONING_MODE.getName(), "auto");
+      filterConfig.addInitParameter(DandelionConfig.ASSET_VERSIONING_STRATEGY.getName(), "fixed");
+      filterConfig.addInitParameter(DandelionConfig.ASSET_FIXED_VERSION_TYPE.getName(), "date");
+      filterConfig.addInitParameter(DandelionConfig.ASSET_FIXED_VERSION_DATEPATTERN.getName(), desiredDateFormat);
+      filterConfig.addInitParameter(DandelionConfig.ASSET_FIXED_VERSION_VALUE.getName(), desiredDate);
+      new Context(filterConfig);
+   }
 }

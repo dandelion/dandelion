@@ -48,69 +48,69 @@ import com.github.dandelion.core.DandelionException;
  */
 public final class ResourceUtils {
 
-	private static final int DEFAULT_BUFFER_SIZE = 1024 * 4;
+   private static final int DEFAULT_BUFFER_SIZE = 1024 * 4;
 
-	public static InputStream getFileFromClasspath(String pathToFile) {
-		return Thread.currentThread().getContextClassLoader().getResourceAsStream(pathToFile);
-	}
+   public static InputStream getFileFromClasspath(String pathToFile) {
+      return Thread.currentThread().getContextClassLoader().getResourceAsStream(pathToFile);
+   }
 
-	public static String getFileContentFromClasspath(String pathToFile) {
-		return getFileContentFromClasspath(pathToFile, true);
-	}
-	
-	public static String getFileContentFromClasspath(String pathToFile, boolean neverFail) {
-		try {
-			InputStream in = getFileFromClasspath(pathToFile);
-			return getContentFromInputStream(in);
-		}
-		catch (IOException e) {
-			StringBuilder sb = new StringBuilder("The content pointed by the path ");
-			sb.append(pathToFile);
-			sb.append(" can't be read from an inputStream.");
-			throw new DandelionException(sb.toString(), e);
-		}
-	}
+   public static String getFileContentFromClasspath(String pathToFile) {
+      return getFileContentFromClasspath(pathToFile, true);
+   }
 
-	public static String getContentFromInputStream(InputStream input) throws IOException {
-		StringWriter sw = new StringWriter();
-		InputStreamReader in = new InputStreamReader(input);
+   public static String getFileContentFromClasspath(String pathToFile, boolean neverFail) {
+      try {
+         InputStream in = getFileFromClasspath(pathToFile);
+         return getContentFromInputStream(in);
+      }
+      catch (IOException e) {
+         StringBuilder sb = new StringBuilder("The content pointed by the path ");
+         sb.append(pathToFile);
+         sb.append(" can't be read from an inputStream.");
+         throw new DandelionException(sb.toString(), e);
+      }
+   }
 
-		char[] buffer = new char[DEFAULT_BUFFER_SIZE];
-		int n;
-		while (-1 != (n = in.read(buffer))) {
-			sw.write(buffer, 0, n);
-		}
+   public static String getContentFromInputStream(InputStream input) throws IOException {
+      StringWriter sw = new StringWriter();
+      InputStreamReader in = new InputStreamReader(input);
 
-		return sw.toString();
-	}
+      char[] buffer = new char[DEFAULT_BUFFER_SIZE];
+      int n;
+      while (-1 != (n = in.read(buffer))) {
+         sw.write(buffer, 0, n);
+      }
 
-	public static String getContentFromUrl(HttpServletRequest request, String url, boolean neverFail) {
-		try {
-			if (UrlUtils.isProtocolRelative(url)) {
-				url = request.isSecure() ? "https:" : "http:" + url;
-			}
-			if (UrlUtils.isContextRelative(url, request)) {
-				url = UrlUtils.getBaseUrl(request, false) + url;
-			}
+      return sw.toString();
+   }
 
-			URL urlLocation = new URL(url);
-			return ResourceUtils.getContentFromInputStream(urlLocation.openStream());
-		}
-		catch (IOException e) {
-			if(neverFail) {
-				return "";
-			}
-			
-			StringBuilder sb = new StringBuilder("The content pointed by the url ");
-			sb.append(url);
-			sb.append(" can't be read.");
-			throw new DandelionException(sb.toString(), e);
-		}
-	}
+   public static String getContentFromUrl(HttpServletRequest request, String url, boolean neverFail) {
+      try {
+         if (UrlUtils.isProtocolRelative(url)) {
+            url = request.isSecure() ? "https:" : "http:" + url;
+         }
+         if (UrlUtils.isContextRelative(url, request)) {
+            url = UrlUtils.getBaseUrl(request, false) + url;
+         }
 
-	/**
-	 * Prevents instantiation.
-	 */
-	private ResourceUtils() {
-	}
+         URL urlLocation = new URL(url);
+         return ResourceUtils.getContentFromInputStream(urlLocation.openStream());
+      }
+      catch (IOException e) {
+         if (neverFail) {
+            return "";
+         }
+
+         StringBuilder sb = new StringBuilder("The content pointed by the url ");
+         sb.append(url);
+         sb.append(" can't be read.");
+         throw new DandelionException(sb.toString(), e);
+      }
+   }
+
+   /**
+    * Prevents instantiation.
+    */
+   private ResourceUtils() {
+   }
 }

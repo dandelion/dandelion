@@ -37,19 +37,19 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class ResourceUtilsTest {
 
-	@Test
-	public void should_get_content_from_url() {
-		MockHttpServletRequest request = new MockHttpServletRequest();
+   @Test
+   public void should_get_content_from_url() {
+      MockHttpServletRequest request = new MockHttpServletRequest();
 
-		String content = ResourceUtils.getContentFromUrl(request, "http://dandelion.github.io", true);
-		assertThat(content).isNotEqualTo("");
-	}
+      String content = ResourceUtils.getContentFromUrl(request, "http://dandelion.github.io", true);
+      assertThat(content).isNotEqualTo("");
+   }
 
-	@Test
-	public void should_get_content_from_url_with_protocol_relative() {
-		MockHttpServletRequest request = new MockHttpServletRequest();
+   @Test
+   public void should_get_content_from_url_with_protocol_relative() {
+      MockHttpServletRequest request = new MockHttpServletRequest();
 
-		String content = ResourceUtils.getContentFromUrl(request, "//dandelion.github.io", true);
-		assertThat(content).isNotEqualTo("");
-	}
+      String content = ResourceUtils.getContentFromUrl(request, "//dandelion.github.io", true);
+      assertThat(content).isNotEqualTo("");
+   }
 }

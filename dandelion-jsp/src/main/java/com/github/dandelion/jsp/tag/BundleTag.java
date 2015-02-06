@@ -49,27 +49,27 @@ import com.github.dandelion.core.web.AssetRequestContext;
  */
 public class BundleTag extends TagSupport {
 
-	private static final long serialVersionUID = -417156851675582892L;
+   private static final long serialVersionUID = -417156851675582892L;
 
-	/**
-	 * Tag attributes
-	 */
-	// Bundles to include in the current request
-	private String includes;
+   /**
+    * Tag attributes
+    */
+   // Bundles to include in the current request
+   private String includes;
 
-	// Bundles to exclude from the current request
-	private String excludes;
+   // Bundles to exclude from the current request
+   private String excludes;
 
-	public int doEndTag() throws JspException {
-		AssetRequestContext.get(pageContext.getRequest()).addBundles(includes).excludeBundles(excludes);
-		return EVAL_PAGE;
-	}
+   public int doEndTag() throws JspException {
+      AssetRequestContext.get(pageContext.getRequest()).addBundles(includes).excludeBundles(excludes);
+      return EVAL_PAGE;
+   }
 
-	public void setIncludes(String includes) {
-		this.includes = includes;
-	}
+   public void setIncludes(String includes) {
+      this.includes = includes;
+   }
 
-	public void setExcludes(String excludes) {
-		this.excludes = excludes;
-	}
+   public void setExcludes(String excludes) {
+      this.excludes = excludes;
+   }
 }

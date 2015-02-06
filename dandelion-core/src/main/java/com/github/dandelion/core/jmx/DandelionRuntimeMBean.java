@@ -39,6 +39,7 @@ import com.github.dandelion.core.Beta;
 @Beta
 public interface DandelionRuntimeMBean {
 
-	public void reloadBundles();
-	public void clearCache();
+   public void reloadBundles();
+
+   public void clearCache();
 }

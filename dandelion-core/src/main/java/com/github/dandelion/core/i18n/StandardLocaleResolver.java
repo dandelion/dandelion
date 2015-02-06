@@ -47,8 +47,8 @@ import javax.servlet.http.HttpServletRequest;
  */
 public class StandardLocaleResolver implements LocaleResolver {
 
-	@Override
-	public Locale resolveLocale(HttpServletRequest request) {
-		return request.getLocale();
-	}
+   @Override
+   public Locale resolveLocale(HttpServletRequest request) {
+      return request.getLocale();
+   }
 }

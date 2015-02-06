@@ -46,45 +46,45 @@ import com.github.dandelion.core.asset.Asset;
  */
 public abstract class AbstractAssetProcessor implements AssetProcessor {
 
-	/**
-	 * <p>
-	 * Wrapper method for the actual
-	 * {@link #doProcess(Reader, Writer, ProcessingContext)} method which handle
-	 * exceptions.
-	 * </p>
-	 */
-	@Override
-	public void process(Reader reader, Writer writer, ProcessingContext processingContext) throws DandelionException {
+   /**
+    * <p>
+    * Wrapper method for the actual
+    * {@link #doProcess(Reader, Writer, ProcessingContext)} method which handle
+    * exceptions.
+    * </p>
+    */
+   @Override
+   public void process(Reader reader, Writer writer, ProcessingContext processingContext) throws DandelionException {
 
-		try {
-			doProcess(reader, writer, processingContext);
-		}
-		catch (Exception e) {
-			StringBuilder sb = new StringBuilder("An exception occurred while applying the processor ");
-			sb.append(getProcessorKey());
-			sb.append(" on the asset ");
-			sb.append(processingContext.getAsset().toLog());
-			throw new DandelionException(sb.toString(), e);
-		}
-	}
+      try {
+         doProcess(reader, writer, processingContext);
+      }
+      catch (Exception e) {
+         StringBuilder sb = new StringBuilder("An exception occurred while applying the processor ");
+         sb.append(getProcessorKey());
+         sb.append(" on the asset ");
+         sb.append(processingContext.getAsset().toLog());
+         throw new DandelionException(sb.toString(), e);
+      }
+   }
 
-	/**
-	 * <p>
-	 * Performs the processing of the {@link Asset} stored in the given
-	 * {@link ProcessingContext} by reading its content from the given
-	 * {@link Reader} and writing the new content to the {@link Writer}.
-	 * </p>
-	 * 
-	 * @param reader
-	 *            The reader containig the content to process.
-	 * @param writer
-	 *            The destination writer.
-	 * @param processingContext
-	 *            The processing context that includes the {@link Asset} to be
-	 *            processed.
-	 * @throws Exception
-	 *             if something goes wrong during the processing of the asset.
-	 */
-	protected abstract void doProcess(Reader reader, Writer writer, ProcessingContext processingContext)
-			throws Exception;
+   /**
+    * <p>
+    * Performs the processing of the {@link Asset} stored in the given
+    * {@link ProcessingContext} by reading its content from the given
+    * {@link Reader} and writing the new content to the {@link Writer}.
+    * </p>
+    * 
+    * @param reader
+    *           The reader containig the content to process.
+    * @param writer
+    *           The destination writer.
+    * @param processingContext
+    *           The processing context that includes the {@link Asset} to be
+    *           processed.
+    * @throws Exception
+    *            if something goes wrong during the processing of the asset.
+    */
+   protected abstract void doProcess(Reader reader, Writer writer, ProcessingContext processingContext)
+         throws Exception;
 }

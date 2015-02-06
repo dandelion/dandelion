@@ -42,31 +42,31 @@ import com.github.dandelion.core.storage.BundleStorageUnit;
 
 public class ModuleWithSubmoduleAssetJsonLoader extends AbstractBundleLoader {
 
-	private static final Logger LOG = LoggerFactory.getLogger(ModuleWithSubmoduleAssetJsonLoader.class);
+   private static final Logger LOG = LoggerFactory.getLogger(ModuleWithSubmoduleAssetJsonLoader.class);
 
-	@Override
-	protected Logger getLogger() {
-		return LOG;
-	}
+   @Override
+   protected Logger getLogger() {
+      return LOG;
+   }
 
-	@Override
-	public String getPath() {
-		return "module_with_submodule";
-	}
+   @Override
+   public String getPath() {
+      return "module_with_submodule";
+   }
 
-	@Override
-	public String getName() {
-		return "module_with_submodule";
-	}
+   @Override
+   public String getName() {
+      return "module_with_submodule";
+   }
 
-	@Override
-	public Set<String> getExcludedPaths() {
-		Set<String> excludedPaths = new HashSet<String>();
-		excludedPaths.add("module_with_submodule/submodule");
-		return excludedPaths;
-	}
+   @Override
+   public Set<String> getExcludedPaths() {
+      Set<String> excludedPaths = new HashSet<String>();
+      excludedPaths.add("module_with_submodule/submodule");
+      return excludedPaths;
+   }
 
-	@Override
-	protected void doCustomBundlePostProcessing(List<BundleStorageUnit> bundles) {
-	}
+   @Override
+   protected void doCustomBundlePostProcessing(List<BundleStorageUnit> bundles) {
+   }
 }

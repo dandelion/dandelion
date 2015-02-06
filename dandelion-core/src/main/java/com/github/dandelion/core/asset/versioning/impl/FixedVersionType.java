@@ -39,5 +39,5 @@ package com.github.dandelion.core.asset.versioning.impl;
  */
 public enum FixedVersionType {
 
-	STRING, DATE;
+   STRING, DATE;
 }

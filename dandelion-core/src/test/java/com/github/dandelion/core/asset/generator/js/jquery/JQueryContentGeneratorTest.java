@@ -50,144 +50,142 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class JQueryContentGeneratorTest {
 
-	private JQueryContentGenerator jQueryContentGenerator;
-	private JQueryContent jQueryContent;
-	private MockHttpServletRequest request;
-	private Context context;
+   private JQueryContentGenerator jQueryContentGenerator;
+   private JQueryContent jQueryContent;
+   private MockHttpServletRequest request;
+   private Context context;
 
-	@Before
-	public void setup() {
-		jQueryContent = new JQueryContent();
-		jQueryContentGenerator = new JQueryContentGenerator(jQueryContent);
-		context = new Context(new MockFilterConfig());
-		request = new MockHttpServletRequest();
-		request.setContextPath("/context");
-		request.setAttribute(WebConstants.DANDELION_CONTEXT_ATTRIBUTE, context);
-		request.setAttribute(WebConstants.DANDELION_CONTEXT_ATTRIBUTE, context);
-	}
+   @Before
+   public void setup() {
+      jQueryContent = new JQueryContent();
+      jQueryContentGenerator = new JQueryContentGenerator(jQueryContent);
+      context = new Context(new MockFilterConfig());
+      request = new MockHttpServletRequest();
+      request.setContextPath("/context");
+      request.setAttribute(WebConstants.DANDELION_CONTEXT_ATTRIBUTE, context);
+      request.setAttribute(WebConstants.DANDELION_CONTEXT_ATTRIBUTE, context);
+   }
 
-	@Test
-	public void should_not_fill_anything_if_empty() {
-		jQueryContent.appendToBeforeAll("");
-		assertThat(jQueryContent.getPlaceholderContent().get(BEFORE_ALL)).isNull();
-	}
+   @Test
+   public void should_not_fill_anything_if_empty() {
+      jQueryContent.appendToBeforeAll("");
+      assertThat(jQueryContent.getPlaceholderContent().get(BEFORE_ALL)).isNull();
+   }
 
-	@Test
-	public void should_not_fill_anything_if_null() {
-		jQueryContent.appendToBeforeAll(null);
-		assertThat(jQueryContent.getPlaceholderContent().get(BEFORE_ALL)).isNull();
-	}
+   @Test
+   public void should_not_fill_anything_if_null() {
+      jQueryContent.appendToBeforeAll(null);
+      assertThat(jQueryContent.getPlaceholderContent().get(BEFORE_ALL)).isNull();
+   }
 
-	@Test
-	public void should_fill_the_beforeAll_placeholder() {
-		jQueryContent.appendToBeforeAll("js code");
-		assertThat(jQueryContent.getPlaceholderContent().get(BEFORE_ALL).toString()).isEqualTo("js code");
-		assertThat(jQueryContent.getPlaceholderContent().get(AFTER_ALL)).isNull();
+   @Test
+   public void should_fill_the_beforeAll_placeholder() {
+      jQueryContent.appendToBeforeAll("js code");
+      assertThat(jQueryContent.getPlaceholderContent().get(BEFORE_ALL).toString()).isEqualTo("js code");
+      assertThat(jQueryContent.getPlaceholderContent().get(AFTER_ALL)).isNull();
 
-		jQueryContent.appendToBeforeAll("js code");
-		assertThat(jQueryContent.getPlaceholderContent().get(BEFORE_ALL).toString()).isEqualTo("js codejs code");
-		assertThat(jQueryContent.getPlaceholderContent().get(AFTER_ALL)).isNull();
+      jQueryContent.appendToBeforeAll("js code");
+      assertThat(jQueryContent.getPlaceholderContent().get(BEFORE_ALL).toString()).isEqualTo("js codejs code");
+      assertThat(jQueryContent.getPlaceholderContent().get(AFTER_ALL)).isNull();
 
-		assertThat(jQueryContentGenerator.getAssetContent(request)).isEqualTo(
-				"js codejs code$(document).ready(function() {});");
-	}
+      assertThat(jQueryContentGenerator.getAssetContent(request)).isEqualTo(
+            "js codejs code$(document).ready(function() {});");
+   }
 
-	@Test
-	public void should_fill_the_beforeStartDocumentReady_placeholder() {
-		jQueryContent.appendToBeforeStartDocumentReady("js code");
+   @Test
+   public void should_fill_the_beforeStartDocumentReady_placeholder() {
+      jQueryContent.appendToBeforeStartDocumentReady("js code");
 
-		assertThat(jQueryContent.getPlaceholderContent().get(BEFORE_START_DOCUMENT_READY).toString()).isEqualTo(
-				"js code");
-		assertThat(jQueryContent.getPlaceholderContent().get(AFTER_ALL)).isNull();
+      assertThat(jQueryContent.getPlaceholderContent().get(BEFORE_START_DOCUMENT_READY).toString())
+            .isEqualTo("js code");
+      assertThat(jQueryContent.getPlaceholderContent().get(AFTER_ALL)).isNull();
 
-		jQueryContent.appendToBeforeStartDocumentReady("js code");
-		assertThat(jQueryContent.getPlaceholderContent().get(BEFORE_START_DOCUMENT_READY).toString()).isEqualTo(
-				"js codejs code");
-		assertThat(jQueryContent.getPlaceholderContent().get(AFTER_ALL)).isNull();
+      jQueryContent.appendToBeforeStartDocumentReady("js code");
+      assertThat(jQueryContent.getPlaceholderContent().get(BEFORE_START_DOCUMENT_READY).toString()).isEqualTo(
+            "js codejs code");
+      assertThat(jQueryContent.getPlaceholderContent().get(AFTER_ALL)).isNull();
 
-		assertThat(jQueryContentGenerator.getAssetContent(request)).isEqualTo(
-				"js codejs code$(document).ready(function() {});");
-	}
+      assertThat(jQueryContentGenerator.getAssetContent(request)).isEqualTo(
+            "js codejs code$(document).ready(function() {});");
+   }
 
-	@Test
-	public void should_fill_the_afterStartDocumentReady_placeholder() {
-		jQueryContent.appendToAfterStartDocumentReady("js code");
+   @Test
+   public void should_fill_the_afterStartDocumentReady_placeholder() {
+      jQueryContent.appendToAfterStartDocumentReady("js code");
 
-		assertThat(jQueryContent.getPlaceholderContent().get(AFTER_START_DOCUMENT_READY).toString()).isEqualTo(
-				"js code");
-		assertThat(jQueryContent.getPlaceholderContent().get(AFTER_ALL)).isNull();
+      assertThat(jQueryContent.getPlaceholderContent().get(AFTER_START_DOCUMENT_READY).toString()).isEqualTo("js code");
+      assertThat(jQueryContent.getPlaceholderContent().get(AFTER_ALL)).isNull();
 
-		jQueryContent.appendToAfterStartDocumentReady("js code");
-		assertThat(jQueryContent.getPlaceholderContent().get(AFTER_START_DOCUMENT_READY).toString()).isEqualTo(
-				"js codejs code");
-		assertThat(jQueryContent.getPlaceholderContent().get(AFTER_ALL)).isNull();
+      jQueryContent.appendToAfterStartDocumentReady("js code");
+      assertThat(jQueryContent.getPlaceholderContent().get(AFTER_START_DOCUMENT_READY).toString()).isEqualTo(
+            "js codejs code");
+      assertThat(jQueryContent.getPlaceholderContent().get(AFTER_ALL)).isNull();
 
-		assertThat(StringUtils.getTestString(jQueryContentGenerator.getAssetContent(request))).isEqualTo(
-				"$(document).ready(function(){jscodejscode});");
-	}
+      assertThat(StringUtils.getTestString(jQueryContentGenerator.getAssetContent(request))).isEqualTo(
+            "$(document).ready(function(){jscodejscode});");
+   }
 
-	@Test
-	public void should_fill_the_componentConf_placeholder() {
-		jQueryContent.appendToComponentConfiguration("js code");
+   @Test
+   public void should_fill_the_componentConf_placeholder() {
+      jQueryContent.appendToComponentConfiguration("js code");
 
-		assertThat(jQueryContent.getPlaceholderContent().get(COMPONENT_CONFIGURATION).toString()).isEqualTo("js code");
-		assertThat(jQueryContent.getPlaceholderContent().get(AFTER_ALL)).isNull();
+      assertThat(jQueryContent.getPlaceholderContent().get(COMPONENT_CONFIGURATION).toString()).isEqualTo("js code");
+      assertThat(jQueryContent.getPlaceholderContent().get(AFTER_ALL)).isNull();
 
-		jQueryContent.appendToComponentConfiguration("js code");
-		assertThat(jQueryContent.getPlaceholderContent().get(COMPONENT_CONFIGURATION).toString()).isEqualTo(
-				"js codejs code");
-		assertThat(jQueryContent.getPlaceholderContent().get(AFTER_ALL)).isNull();
+      jQueryContent.appendToComponentConfiguration("js code");
+      assertThat(jQueryContent.getPlaceholderContent().get(COMPONENT_CONFIGURATION).toString()).isEqualTo(
+            "js codejs code");
+      assertThat(jQueryContent.getPlaceholderContent().get(AFTER_ALL)).isNull();
 
-		assertThat(StringUtils.getTestString(jQueryContentGenerator.getAssetContent(request))).isEqualTo(
-				"$(document).ready(function(){jscodejscode});");
-	}
+      assertThat(StringUtils.getTestString(jQueryContentGenerator.getAssetContent(request))).isEqualTo(
+            "$(document).ready(function(){jscodejscode});");
+   }
 
-	@Test
-	public void should_fill_the_beforeEndDocumentReady_placeholder() {
-		jQueryContent.appendToBeforeEndDocumentReady("js code");
+   @Test
+   public void should_fill_the_beforeEndDocumentReady_placeholder() {
+      jQueryContent.appendToBeforeEndDocumentReady("js code");
 
-		assertThat(jQueryContent.getPlaceholderContent().get(BEFORE_END_DOCUMENT_READY).toString())
-				.isEqualTo("js code");
-		assertThat(jQueryContent.getPlaceholderContent().get(AFTER_ALL)).isNull();
+      assertThat(jQueryContent.getPlaceholderContent().get(BEFORE_END_DOCUMENT_READY).toString()).isEqualTo("js code");
+      assertThat(jQueryContent.getPlaceholderContent().get(AFTER_ALL)).isNull();
 
-		jQueryContent.appendToBeforeEndDocumentReady("js code");
-		assertThat(jQueryContent.getPlaceholderContent().get(BEFORE_END_DOCUMENT_READY).toString()).isEqualTo(
-				"js codejs code");
-		assertThat(jQueryContent.getPlaceholderContent().get(AFTER_ALL)).isNull();
+      jQueryContent.appendToBeforeEndDocumentReady("js code");
+      assertThat(jQueryContent.getPlaceholderContent().get(BEFORE_END_DOCUMENT_READY).toString()).isEqualTo(
+            "js codejs code");
+      assertThat(jQueryContent.getPlaceholderContent().get(AFTER_ALL)).isNull();
 
-		assertThat(StringUtils.getTestString(jQueryContentGenerator.getAssetContent(request))).isEqualTo(
-				"$(document).ready(function(){jscodejscode});");
-	}
+      assertThat(StringUtils.getTestString(jQueryContentGenerator.getAssetContent(request))).isEqualTo(
+            "$(document).ready(function(){jscodejscode});");
+   }
 
-	@Test
-	public void should_fill_the_afterEndDocumentReady_placeholder() {
-		jQueryContent.appendToAfterEndDocumentReady("js code");
+   @Test
+   public void should_fill_the_afterEndDocumentReady_placeholder() {
+      jQueryContent.appendToAfterEndDocumentReady("js code");
 
-		assertThat(jQueryContent.getPlaceholderContent().get(AFTER_END_DOCUMENT_READY).toString()).isEqualTo("js code");
-		assertThat(jQueryContent.getPlaceholderContent().get(AFTER_ALL)).isNull();
+      assertThat(jQueryContent.getPlaceholderContent().get(AFTER_END_DOCUMENT_READY).toString()).isEqualTo("js code");
+      assertThat(jQueryContent.getPlaceholderContent().get(AFTER_ALL)).isNull();
 
-		jQueryContent.appendToAfterEndDocumentReady("js code");
-		assertThat(jQueryContent.getPlaceholderContent().get(AFTER_END_DOCUMENT_READY).toString()).isEqualTo(
-				"js codejs code");
-		assertThat(jQueryContent.getPlaceholderContent().get(AFTER_ALL)).isNull();
+      jQueryContent.appendToAfterEndDocumentReady("js code");
+      assertThat(jQueryContent.getPlaceholderContent().get(AFTER_END_DOCUMENT_READY).toString()).isEqualTo(
+            "js codejs code");
+      assertThat(jQueryContent.getPlaceholderContent().get(AFTER_ALL)).isNull();
 
-		assertThat(StringUtils.getTestString(jQueryContentGenerator.getAssetContent(request))).isEqualTo(
-				"$(document).ready(function(){});jscodejscode");
+      assertThat(StringUtils.getTestString(jQueryContentGenerator.getAssetContent(request))).isEqualTo(
+            "$(document).ready(function(){});jscodejscode");
 
-	}
+   }
 
-	@Test
-	public void should_fill_the_afterAll_placeholder() {
-		jQueryContent.appendToAfterAll("js code");
+   @Test
+   public void should_fill_the_afterAll_placeholder() {
+      jQueryContent.appendToAfterAll("js code");
 
-		assertThat(jQueryContent.getPlaceholderContent().get(AFTER_ALL).toString()).isEqualTo("js code");
-		assertThat(jQueryContent.getPlaceholderContent().get(BEFORE_ALL)).isNull();
+      assertThat(jQueryContent.getPlaceholderContent().get(AFTER_ALL).toString()).isEqualTo("js code");
+      assertThat(jQueryContent.getPlaceholderContent().get(BEFORE_ALL)).isNull();
 
-		jQueryContent.appendToAfterAll("js code");
-		assertThat(jQueryContent.getPlaceholderContent().get(AFTER_ALL).toString()).isEqualTo("js codejs code");
-		assertThat(jQueryContent.getPlaceholderContent().get(BEFORE_ALL)).isNull();
+      jQueryContent.appendToAfterAll("js code");
+      assertThat(jQueryContent.getPlaceholderContent().get(AFTER_ALL).toString()).isEqualTo("js codejs code");
+      assertThat(jQueryContent.getPlaceholderContent().get(BEFORE_ALL)).isNull();
 
-		assertThat(StringUtils.getTestString(jQueryContentGenerator.getAssetContent(request))).isEqualTo(
-				"$(document).ready(function(){});jscodejscode");
-	}
+      assertThat(StringUtils.getTestString(jQueryContentGenerator.getAssetContent(request))).isEqualTo(
+            "$(document).ready(function(){});jscodejscode");
+   }
 }

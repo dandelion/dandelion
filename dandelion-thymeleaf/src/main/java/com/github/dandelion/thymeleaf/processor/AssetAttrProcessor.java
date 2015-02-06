@@ -51,36 +51,36 @@ import com.github.dandelion.thymeleaf.util.AttributesUtil;
  */
 public class AssetAttrProcessor extends DandelionAttrProcessor {
 
-	public AssetAttrProcessor(String attributeName) {
-		super(attributeName);
-	}
+   public AssetAttrProcessor(String attributeName) {
+      super(attributeName);
+   }
 
-	@Override
-	public int getPrecedence() {
-		return DandelionDialect.HIGHEST_PRECEDENCE + 1;
-	}
+   @Override
+   public int getPrecedence() {
+      return DandelionDialect.HIGHEST_PRECEDENCE + 1;
+   }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	protected ProcessorResult doProcessAttribute(Arguments arguments, Element element, String attributeName) {
+   /**
+    * {@inheritDoc}
+    */
+   @Override
+   protected ProcessorResult doProcessAttribute(Arguments arguments, Element element, String attributeName) {
 
-		String strippedAttributeName = AttributesUtil.stripPrefix(attributeName, DandelionDialect.DIALECT_PREFIX);
-		AssetAttributeNames assetsAttributeName = (AssetAttributeNames) AttributesUtil.find(strippedAttributeName,
-				AssetAttributeNames.values());
+      String strippedAttributeName = AttributesUtil.stripPrefix(attributeName, DandelionDialect.DIALECT_PREFIX);
+      AssetAttributeNames assetsAttributeName = (AssetAttributeNames) AttributesUtil.find(strippedAttributeName,
+            AssetAttributeNames.values());
 
-		HttpServletRequest request = ArgumentsUtil.getWebContext(arguments).getHttpServletRequest();
-		AssetRequestContext context = AssetRequestContext.get(request);
-		switch (assetsAttributeName) {
-		case JS_EXCLUDES:
-			context.excludeJs(element.getAttributeValue(attributeName));
-			break;
-		case CSS_EXCLUDES:
-			context.excludeCss(element.getAttributeValue(attributeName));
-			break;
-		}
+      HttpServletRequest request = ArgumentsUtil.getWebContext(arguments).getHttpServletRequest();
+      AssetRequestContext context = AssetRequestContext.get(request);
+      switch (assetsAttributeName) {
+      case JS_EXCLUDES:
+         context.excludeJs(element.getAttributeValue(attributeName));
+         break;
+      case CSS_EXCLUDES:
+         context.excludeCss(element.getAttributeValue(attributeName));
+         break;
+      }
 
-		return ProcessorResult.ok();
-	}
+      return ProcessorResult.ok();
+   }
 }

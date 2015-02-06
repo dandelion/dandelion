@@ -45,76 +45,76 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class StandardConfigurationLoaderTest {
 
-	private static StandardConfigurationLoader loader;
+   private static StandardConfigurationLoader loader;
 
-	@Rule
-	public ExpectedException exception = ExpectedException.none();
+   @Rule
+   public ExpectedException exception = ExpectedException.none();
 
-	@BeforeClass
-	public static void setup() {
-		loader = new StandardConfigurationLoader();
-	}
+   @BeforeClass
+   public static void setup() {
+      loader = new StandardConfigurationLoader();
+   }
 
-	@Before
-	public void before() throws Exception {
-		System.clearProperty(StandardConfigurationLoader.DANDELION_CONFIGURATION);
-		System.clearProperty(Profile.DANDELION_PROFILE_ACTIVE);
-	}
+   @Before
+   public void before() throws Exception {
+      System.clearProperty(StandardConfigurationLoader.DANDELION_CONFIGURATION);
+      System.clearProperty(Profile.DANDELION_PROFILE_ACTIVE);
+   }
 
-	@Test
-	public void should_load_properties_from_classpath() throws Exception {
-		Properties userProperties = loader.loadUserConfiguration();
+   @Test
+   public void should_load_properties_from_classpath() throws Exception {
+      Properties userProperties = loader.loadUserConfiguration();
 
-		assertThat(userProperties).hasSize(1);
-		assertThat(userProperties.getProperty("asset.locations.resolution.strategy")).isEqualTo("webapp,remote");
-	}
+      assertThat(userProperties).hasSize(1);
+      assertThat(userProperties.getProperty("asset.locations.resolution.strategy")).isEqualTo("webapp,remote");
+   }
 
-	@Test
-	public void should_load_user_properties_from_system_property_with_the_default_profile() throws Exception {
-		String path = new File("src/test/resources/configuration-loader/default-mode".replace("/", File.separator))
-				.getAbsolutePath();
-		System.setProperty(StandardConfigurationLoader.DANDELION_CONFIGURATION, path);
+   @Test
+   public void should_load_user_properties_from_system_property_with_the_default_profile() throws Exception {
+      String path = new File("src/test/resources/configuration-loader/default-mode".replace("/", File.separator))
+            .getAbsolutePath();
+      System.setProperty(StandardConfigurationLoader.DANDELION_CONFIGURATION, path);
 
-		Properties userProperties = loader.loadUserConfiguration();
+      Properties userProperties = loader.loadUserConfiguration();
 
-		assertThat(userProperties).hasSize(2);
-		assertThat(userProperties.getProperty("defaultKey1")).isEqualTo("defaultVal1");
-		assertThat(userProperties.getProperty("defaultKey2")).isEqualTo("defaultVal2");
+      assertThat(userProperties).hasSize(2);
+      assertThat(userProperties.getProperty("defaultKey1")).isEqualTo("defaultVal1");
+      assertThat(userProperties.getProperty("defaultKey2")).isEqualTo("defaultVal2");
 
-	}
+   }
 
-	@Test
-	public void should_throw_an_exception_if_the_configuration_file_does_not_exist_for_the_active_profile()
-			throws Exception {
-		String path = new File("src/test/resources/configuration-loader/default-mode".replace("/", File.separator))
-				.getAbsolutePath();
-		System.setProperty(StandardConfigurationLoader.DANDELION_CONFIGURATION, path);
-		System.setProperty(Profile.DANDELION_PROFILE_ACTIVE, "missing");
+   @Test
+   public void should_throw_an_exception_if_the_configuration_file_does_not_exist_for_the_active_profile()
+         throws Exception {
+      String path = new File("src/test/resources/configuration-loader/default-mode".replace("/", File.separator))
+            .getAbsolutePath();
+      System.setProperty(StandardConfigurationLoader.DANDELION_CONFIGURATION, path);
+      System.setProperty(Profile.DANDELION_PROFILE_ACTIVE, "missing");
 
-		exception.expect(DandelionException.class);
-		exception.expectMessage("No file \"dandelion_missing.properties\" was found in");
+      exception.expect(DandelionException.class);
+      exception.expectMessage("No file \"dandelion_missing.properties\" was found in");
 
-		loader.loadUserConfiguration();
-	}
+      loader.loadUserConfiguration();
+   }
 
-	@Test
-	public void should_load_user_properties_from_system_property_with_the_dev_profile() throws Exception {
-		String path = new File("src/test/resources/configuration-loader/default-mode".replace("/", File.separator))
-				.getAbsolutePath();
-		System.setProperty(StandardConfigurationLoader.DANDELION_CONFIGURATION, path);
-		System.setProperty(Profile.DANDELION_PROFILE_ACTIVE, "dev");
+   @Test
+   public void should_load_user_properties_from_system_property_with_the_dev_profile() throws Exception {
+      String path = new File("src/test/resources/configuration-loader/default-mode".replace("/", File.separator))
+            .getAbsolutePath();
+      System.setProperty(StandardConfigurationLoader.DANDELION_CONFIGURATION, path);
+      System.setProperty(Profile.DANDELION_PROFILE_ACTIVE, "dev");
 
-		Properties userProperties = loader.loadUserConfiguration();
+      Properties userProperties = loader.loadUserConfiguration();
 
-		assertThat(userProperties).hasSize(2);
-		assertThat(userProperties.getProperty("devKey1")).isEqualTo("devVal1");
-		assertThat(userProperties.getProperty("devKey2")).isEqualTo("devVal2");
+      assertThat(userProperties).hasSize(2);
+      assertThat(userProperties.getProperty("devKey1")).isEqualTo("devVal1");
+      assertThat(userProperties.getProperty("devKey2")).isEqualTo("devVal2");
 
-	}
+   }
 
-	@AfterClass
-	public static void teardown() {
-		System.clearProperty(StandardConfigurationLoader.DANDELION_CONFIGURATION);
-		System.clearProperty(Profile.DANDELION_PROFILE_ACTIVE);
-	}
+   @AfterClass
+   public static void teardown() {
+      System.clearProperty(StandardConfigurationLoader.DANDELION_CONFIGURATION);
+      System.clearProperty(Profile.DANDELION_PROFILE_ACTIVE);
+   }
 }

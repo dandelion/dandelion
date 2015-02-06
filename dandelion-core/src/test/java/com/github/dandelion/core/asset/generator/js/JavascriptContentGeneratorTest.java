@@ -38,31 +38,31 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class JavascriptContentGeneratorTest {
 
-	private JsContentGenerator javascriptContentGenerator;
-	private AssetContent content;
+   private JsContentGenerator javascriptContentGenerator;
+   private AssetContent content;
 
-	@Before
-	public void setup() {
-		content = new AssetContent();
-		javascriptContentGenerator = new JsContentGenerator(content);
-	}
+   @Before
+   public void setup() {
+      content = new AssetContent();
+      javascriptContentGenerator = new JsContentGenerator(content);
+   }
 
-	@Test
-	public void should_not_fill_anything_if_empty() {
-		content.appendTo("");
-		assertThat(javascriptContentGenerator.getJavascriptContent(null)).isNull();
-	}
+   @Test
+   public void should_not_fill_anything_if_empty() {
+      content.appendTo("");
+      assertThat(javascriptContentGenerator.getJavascriptContent(null)).isNull();
+   }
 
-	@Test
-	public void should_not_fill_anything_if_null() {
-		content.appendTo(null);
-		assertThat(javascriptContentGenerator.getJavascriptContent(null)).isNull();
-	}
+   @Test
+   public void should_not_fill_anything_if_null() {
+      content.appendTo(null);
+      assertThat(javascriptContentGenerator.getJavascriptContent(null)).isNull();
+   }
 
-	@Test
-	public void should_fill_the_buffer() {
-		content.appendTo("js code");
-		assertThat(javascriptContentGenerator.getJavascriptContent(null)).isEqualTo("js code");
-	}
+   @Test
+   public void should_fill_the_buffer() {
+      content.appendTo("js code");
+      assertThat(javascriptContentGenerator.getJavascriptContent(null)).isEqualTo("js code");
+   }
 
 }

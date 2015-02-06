@@ -39,45 +39,45 @@ import com.github.dandelion.core.web.handler.HandlerContext;
 
 public class CacheDebugPage extends AbstractDebugPage {
 
-	private static final String PAGE_ID = "cache";
-	private static final String PAGE_NAME = "Cache store";
-	private static final String PAGE_LOCATION = "META-INF/resources/ddl-debugger/html/core-cache.html";
+   private static final String PAGE_ID = "cache";
+   private static final String PAGE_NAME = "Cache store";
+   private static final String PAGE_LOCATION = "META-INF/resources/ddl-debugger/html/core-cache.html";
 
-	@Override
-	public String getId() {
-		return PAGE_ID;
-	}
+   @Override
+   public String getId() {
+      return PAGE_ID;
+   }
 
-	@Override
-	public String getName() {
-		return PAGE_NAME;
-	}
+   @Override
+   public String getName() {
+      return PAGE_NAME;
+   }
 
-	@Override
-	public String getTemplate(HandlerContext context) throws IOException {
-		return ResourceUtils.getContentFromInputStream(Thread.currentThread().getContextClassLoader()
-				.getResourceAsStream(PAGE_LOCATION));
-	}
+   @Override
+   public String getTemplate(HandlerContext context) throws IOException {
+      return ResourceUtils.getContentFromInputStream(Thread.currentThread().getContextClassLoader()
+            .getResourceAsStream(PAGE_LOCATION));
+   }
 
-	protected Map<String, String> getCustomParameters(HandlerContext context) {
-		return Collections.emptyMap();
-	}
+   protected Map<String, String> getCustomParameters(HandlerContext context) {
+      return Collections.emptyMap();
+   }
 
-	@Override
-	protected Map<String, Object> getPageContext() {
-		Map<String, Object> pageContext = new HashMap<String, Object>();
+   @Override
+   protected Map<String, Object> getPageContext() {
+      Map<String, Object> pageContext = new HashMap<String, Object>();
 
-		boolean cachingEnabled = context.getContext().getConfiguration().isCachingEnabled();
-		pageContext.put("cacheEnabled", cachingEnabled);
+      boolean cachingEnabled = context.getContext().getConfiguration().isCachingEnabled();
+      pageContext.put("cacheEnabled", cachingEnabled);
 
-		if (cachingEnabled) {
-			pageContext.put("implementation", context.getContext().getCache().getClass());
-			pageContext.put("cacheElements", context.getContext().getCache().getAll());
-			pageContext.put("getCount", context.getContext().getCache().getGetCount());
-			pageContext.put("hitCount", context.getContext().getCache().getHitCount());
-			pageContext.put("missCount", context.getContext().getCache().getMissCount());
-			pageContext.put("putCount", context.getContext().getCache().getPutCount());
-		}
-		return pageContext;
-	}
+      if (cachingEnabled) {
+         pageContext.put("implementation", context.getContext().getCache().getClass());
+         pageContext.put("cacheElements", context.getContext().getCache().getAll());
+         pageContext.put("getCount", context.getContext().getCache().getGetCount());
+         pageContext.put("hitCount", context.getContext().getCache().getHitCount());
+         pageContext.put("missCount", context.getContext().getCache().getMissCount());
+         pageContext.put("putCount", context.getContext().getCache().getPutCount());
+      }
+      return pageContext;
+   }
 }

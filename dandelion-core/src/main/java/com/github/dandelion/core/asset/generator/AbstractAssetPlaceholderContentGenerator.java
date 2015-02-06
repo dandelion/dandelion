@@ -50,32 +50,32 @@ import org.slf4j.LoggerFactory;
  * @author Thibault Duchateau
  * 
  * @param <P>
- *            the type of the placeholder.
+ *           the type of the placeholder.
  * @param <C>
- *            the type of content associated with a placeholder.
+ *           the type of content associated with a placeholder.
  */
 public abstract class AbstractAssetPlaceholderContentGenerator<P extends AssetPlaceholder, C extends AbstractAssetPlaceholderContent<P>>
-		implements AssetContentGenerator {
+      implements AssetContentGenerator {
 
-	private static final Logger logger = LoggerFactory.getLogger(AbstractAssetPlaceholderContentGenerator.class);
+   private static final Logger logger = LoggerFactory.getLogger(AbstractAssetPlaceholderContentGenerator.class);
 
-	private final C content;
+   private final C content;
 
-	protected AbstractAssetPlaceholderContentGenerator(C content) {
-		this.content = content;
-	}
+   protected AbstractAssetPlaceholderContentGenerator(C content) {
+      this.content = content;
+   }
 
-	@Override
-	public String getAssetContent(HttpServletRequest request) {
-		logger.debug("Generating asset...");
-		String generatedContent = getPlaceholderContent(request, content.getPlaceholderContent());
-		logger.debug("Asset generated successfully");
-		return generatedContent;
-	}
+   @Override
+   public String getAssetContent(HttpServletRequest request) {
+      logger.debug("Generating asset...");
+      String generatedContent = getPlaceholderContent(request, content.getPlaceholderContent());
+      logger.debug("Asset generated successfully");
+      return generatedContent;
+   }
 
-	protected C getAssetContent(){
-		return content;
-	}
-	
-	protected abstract String getPlaceholderContent(HttpServletRequest request, Map<P, StringBuilder> contents);
+   protected C getAssetContent() {
+      return content;
+   }
+
+   protected abstract String getPlaceholderContent(HttpServletRequest request, Map<P, StringBuilder> contents);
 }

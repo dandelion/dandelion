@@ -55,80 +55,80 @@ import com.github.dandelion.core.web.AssetRequestContext;
  */
 public abstract class AbstractAssetLocator implements AssetLocator {
 
-	protected boolean active = true;
-	protected Context context;
+   protected boolean active = true;
+   protected Context context;
 
-	@Override
-	public boolean isCachingForced() {
-		return false;
-	}
+   @Override
+   public boolean isCachingForced() {
+      return false;
+   }
 
-	@Override
-	public void initLocator(Context context) {
-		this.context = context;
-	}
+   @Override
+   public void initLocator(Context context) {
+      this.context = context;
+   }
 
-	/**
-	 * <p>
-	 * Checks that the asset if properly configured before computing its
-	 * location.
-	 * 
-	 * @param AssetStorageUnit
-	 *            The asset storage unit from which the location should be
-	 *            extracted.
-	 * @param request
-	 *            The current HTTP request.
-	 * @throws DandelionException
-	 *             if the location associated with the selected location key is
-	 *             null or empty.
-	 */
-	@Override
-	public String getLocation(AssetStorageUnit asu, HttpServletRequest request) {
-		String location = asu.getLocations().get(getLocationKey());
-		if (StringUtils.isBlank(location)) {
-			StringBuilder sb = new StringBuilder("The asset ");
-			sb.append(asu.toLog());
-			sb.append(" configured with a '");
-			sb.append(getLocationKey());
-			sb.append("' location key has a blank location. Please correct this location in the corresponding JSON file.");
-			throw new DandelionException(sb.toString());
-		}
+   /**
+    * <p>
+    * Checks that the asset if properly configured before computing its
+    * location.
+    * 
+    * @param AssetStorageUnit
+    *           The asset storage unit from which the location should be
+    *           extracted.
+    * @param request
+    *           The current HTTP request.
+    * @throws DandelionException
+    *            if the location associated with the selected location key is
+    *            null or empty.
+    */
+   @Override
+   public String getLocation(AssetStorageUnit asu, HttpServletRequest request) {
+      String location = asu.getLocations().get(getLocationKey());
+      if (StringUtils.isBlank(location)) {
+         StringBuilder sb = new StringBuilder("The asset ");
+         sb.append(asu.toLog());
+         sb.append(" configured with a '");
+         sb.append(getLocationKey());
+         sb.append("' location key has a blank location. Please correct this location in the corresponding JSON file.");
+         throw new DandelionException(sb.toString());
+      }
 
-		return doGetLocation(asu, request);
-	}
+      return doGetLocation(asu, request);
+   }
 
-	public abstract String doGetLocation(AssetStorageUnit asu, HttpServletRequest request);
+   public abstract String doGetLocation(AssetStorageUnit asu, HttpServletRequest request);
 
-	/**
-	 * <p>
-	 * Returns the content of the given {@link Asset}, using its
-	 * {@link Asset#getFinalLocation()} value.
-	 * 
-	 * <p>
-	 * Note that this method can be used to access the asset's content after the
-	 * {@link AssetProcessor}'s execution.
-	 * 
-	 * @param asset
-	 *            The asset from which the content should be extracted.
-	 * @param request
-	 *            The current HTTP request.
-	 * @return the raw content (unprocessed) of the passed {@link Asset}.
-	 */
-	public String getContent(Asset asset, HttpServletRequest request) {
+   /**
+    * <p>
+    * Returns the content of the given {@link Asset}, using its
+    * {@link Asset#getFinalLocation()} value.
+    * 
+    * <p>
+    * Note that this method can be used to access the asset's content after the
+    * {@link AssetProcessor}'s execution.
+    * 
+    * @param asset
+    *           The asset from which the content should be extracted.
+    * @param request
+    *           The current HTTP request.
+    * @return the raw content (unprocessed) of the passed {@link Asset}.
+    */
+   public String getContent(Asset asset, HttpServletRequest request) {
 
-		Map<String, Object> parameters = AssetRequestContext.get(request).getParameters(asset.getName());
-		String content = doGetContent(asset.getProcessedConfigLocation(), parameters, request);
+      Map<String, Object> parameters = AssetRequestContext.get(request).getParameters(asset.getName());
+      String content = doGetContent(asset.getProcessedConfigLocation(), parameters, request);
 
-		// Apply variable replacement
-		if (!parameters.isEmpty()) {
-			for (Map.Entry<String, Object> entry : parameters.entrySet()) {
-				content = content.replace(entry.getKey(), entry.getValue().toString());
-			}
-		}
+      // Apply variable replacement
+      if (!parameters.isEmpty()) {
+         for (Map.Entry<String, Object> entry : parameters.entrySet()) {
+            content = content.replace(entry.getKey(), entry.getValue().toString());
+         }
+      }
 
-		return content;
-	}
+      return content;
+   }
 
-	protected abstract String doGetContent(String finalLocation, Map<String, Object> parameters,
-			HttpServletRequest request);
+   protected abstract String doGetContent(String finalLocation, Map<String, Object> parameters,
+         HttpServletRequest request);
 }

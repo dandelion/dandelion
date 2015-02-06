@@ -37,40 +37,43 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class HtmlScriptTest {
 
-//	@Test
-//	public void should_have_correct_html_rendering() {
-//		assertThat(new HtmlScript().toHtml().toString()).isEqualTo("<script></script>");
-//		assertThat(new HtmlScript("url").toHtml().toString()).isEqualTo("<script src=\"url\"></script>");
-//	}
-//
-//	@Test
-//	public void should_have_full_access_to_the_tag() {
-//		HtmlScript tag = new HtmlScript("url");
-//		assertThat(tag.getSrc()).isEqualTo("url");
-//
-//		tag.setSrc("anotherUrl");
-//		assertThat(tag.getSrc()).isEqualTo("anotherUrl");
-//	}
-	
-	private HtmlScript script;
+   // @Test
+   // public void should_have_correct_html_rendering() {
+   // assertThat(new
+   // HtmlScript().toHtml().toString()).isEqualTo("<script></script>");
+   // assertThat(new
+   // HtmlScript("url").toHtml().toString()).isEqualTo("<script src=\"url\"></script>");
+   // }
+   //
+   // @Test
+   // public void should_have_full_access_to_the_tag() {
+   // HtmlScript tag = new HtmlScript("url");
+   // assertThat(tag.getSrc()).isEqualTo("url");
+   //
+   // tag.setSrc("anotherUrl");
+   // assertThat(tag.getSrc()).isEqualTo("anotherUrl");
+   // }
 
-	@Before
-	public void createHtmlTag() {
-		script = new HtmlScript();
-	}
+   private HtmlScript script;
 
-	@Test
-	public void should_generate_link_tag_with_href() {
-		script = new HtmlScript("mySrc");
-		assertThat(script.toHtml().toString()).isEqualTo("<script src=\"mySrc\"></script>");
-	}
+   @Before
+   public void createHtmlTag() {
+      script = new HtmlScript();
+   }
 
-	@Test
-	public void should_generate_full_ops_div_tag() {
-		script.setId("fullId");
-		script.addCssClass("classy");
-		script.addCssStyle("styly");
-		script.setSrc("fullySrc");
-		assertThat(script.toHtml().toString()).isEqualTo("<script id=\"fullId\" class=\"classy\" style=\"styly\" src=\"fullySrc\"></script>");
-	}
+   @Test
+   public void should_generate_link_tag_with_href() {
+      script = new HtmlScript("mySrc");
+      assertThat(script.toHtml().toString()).isEqualTo("<script src=\"mySrc\"></script>");
+   }
+
+   @Test
+   public void should_generate_full_ops_div_tag() {
+      script.setId("fullId");
+      script.addCssClass("classy");
+      script.addCssStyle("styly");
+      script.setSrc("fullySrc");
+      assertThat(script.toHtml().toString()).isEqualTo(
+            "<script id=\"fullId\" class=\"classy\" style=\"styly\" src=\"fullySrc\"></script>");
+   }
 }

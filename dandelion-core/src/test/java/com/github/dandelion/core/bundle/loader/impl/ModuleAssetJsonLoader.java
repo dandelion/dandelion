@@ -39,25 +39,25 @@ import com.github.dandelion.core.bundle.loader.AbstractBundleLoader;
 import com.github.dandelion.core.storage.BundleStorageUnit;
 
 public class ModuleAssetJsonLoader extends AbstractBundleLoader {
-	
-	private static final Logger LOG = LoggerFactory.getLogger(ModuleAssetJsonLoader.class);
 
-	@Override
-	protected Logger getLogger() {
-		return LOG;
-	}
+   private static final Logger LOG = LoggerFactory.getLogger(ModuleAssetJsonLoader.class);
 
-	@Override
-	public String getPath() {
-		return "module";
-	}
+   @Override
+   protected Logger getLogger() {
+      return LOG;
+   }
 
-	@Override
-	public String getName() {
-		return "module";
-	}
+   @Override
+   public String getPath() {
+      return "module";
+   }
 
-	@Override
-	protected void doCustomBundlePostProcessing(List<BundleStorageUnit> bundles) {
-	}
+   @Override
+   public String getName() {
+      return "module";
+   }
+
+   @Override
+   protected void doCustomBundlePostProcessing(List<BundleStorageUnit> bundles) {
+   }
 }

@@ -52,57 +52,56 @@ import com.github.dandelion.core.web.DandelionFilter;
  */
 public interface RequestCache {
 
-	public static final String DANDELION_CACHE_NAME = "dandelionCache";
+   public static final String DANDELION_CACHE_NAME = "dandelionCache";
 
-	/**
-	 * <p>
-	 * Initializes the configured service provider of the {@link RequestCache} SPI by
-	 * using the {@link Context}.
-	 * 
-	 * @param context
-	 *            The {@link Context} initialized in the {@link DandelionFilter}
-	 *            .
-	 */
-	void initCache(Context context);
+   /**
+    * <p>
+    * Initializes the configured service provider of the {@link RequestCache}
+    * SPI by using the {@link Context}.
+    * 
+    * @param context
+    *           The {@link Context} initialized in the {@link DandelionFilter} .
+    */
+   void initCache(Context context);
 
-	/**
-	 * @return the name of the asset cache.
-	 */
-	String getCacheName();
+   /**
+    * @return the name of the asset cache.
+    */
+   String getCacheName();
 
-	/**
-	 * Gets the set of assets to be displayed for a request stored under the
-	 * passed {@code cacheKey}.
-	 * 
-	 * @param cacheKey
-	 *            The cache key under which the set of assets is stored in the
-	 *            cache.
-	 * @return the assets associated with the cache key.
-	 */
-	CacheEntry get(String cacheKey);
+   /**
+    * Gets the set of assets to be displayed for a request stored under the
+    * passed {@code cacheKey}.
+    * 
+    * @param cacheKey
+    *           The cache key under which the set of assets is stored in the
+    *           cache.
+    * @return the assets associated with the cache key.
+    */
+   CacheEntry get(String cacheKey);
 
-	Collection<CacheEntry> getAll();
+   Collection<CacheEntry> getAll();
 
-	/**
-	 * Puts the passed {@code assets} to the cache.
-	 * 
-	 * @param cacheKey
-	 *            The key used to puts the assets to the cache.
-	 * @param cacheElement
-	 *            The assets to store in the cache.
-	 */
-	void put(String cacheKey, CacheEntry cacheElement);
+   /**
+    * Puts the passed {@code assets} to the cache.
+    * 
+    * @param cacheKey
+    *           The key used to puts the assets to the cache.
+    * @param cacheElement
+    *           The assets to store in the cache.
+    */
+   void put(String cacheKey, CacheEntry cacheElement);
 
-	AtomicLong getGetCount();
+   AtomicLong getGetCount();
 
-	AtomicLong getPutCount();
+   AtomicLong getPutCount();
 
-	AtomicLong getHitCount();
+   AtomicLong getHitCount();
 
-	AtomicLong getMissCount();
+   AtomicLong getMissCount();
 
-	/**
-	 * Clear all objects stored in cache.
-	 */
-	void clear();
+   /**
+    * Clear all objects stored in cache.
+    */
+   void clear();
 }

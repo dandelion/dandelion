@@ -42,31 +42,31 @@ import java.util.ServiceLoader;
  */
 public final class ServiceLoaderUtils {
 
-	/**
-	 * <p>
-	 * Loads all available providers for the passed SPI (Service Provider
-	 * Interface) and returns them as an {@link ArrayList}.
-	 * 
-	 * @param spi
-	 *            The service provider interface used to load existing
-	 *            implementations.
-	 * @return a list of providers.
-	 */
-	public static <S> List<S> getProvidersAsList(Class<S> spi) {
+   /**
+    * <p>
+    * Loads all available providers for the passed SPI (Service Provider
+    * Interface) and returns them as an {@link ArrayList}.
+    * 
+    * @param spi
+    *           The service provider interface used to load existing
+    *           implementations.
+    * @return a list of providers.
+    */
+   public static <S> List<S> getProvidersAsList(Class<S> spi) {
 
-		Validate.notNull(spi, "The SPI (Service Provider Interface) must be specified");
+      Validate.notNull(spi, "The SPI (Service Provider Interface) must be specified");
 
-		ServiceLoader<S> services = ServiceLoader.load(spi);
-		List<S> retval = new ArrayList<S>();
-		for (S service : services) {
-			retval.add(service);
-		}
-		return retval;
-	}
+      ServiceLoader<S> services = ServiceLoader.load(spi);
+      List<S> retval = new ArrayList<S>();
+      for (S service : services) {
+         retval.add(service);
+      }
+      return retval;
+   }
 
-	/**
-	 * Prevents instantiation.
-	 */
-	private ServiceLoaderUtils() {
-	}
+   /**
+    * Prevents instantiation.
+    */
+   private ServiceLoaderUtils() {
+   }
 }

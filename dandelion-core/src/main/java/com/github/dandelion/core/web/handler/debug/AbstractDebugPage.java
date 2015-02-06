@@ -56,135 +56,134 @@ import com.github.dandelion.core.web.handler.HandlerContext;
  */
 public abstract class AbstractDebugPage implements DebugPage {
 
-	protected HandlerContext context;
-	protected static ObjectMapper mapper;
+   protected HandlerContext context;
+   protected static ObjectMapper mapper;
 
-	static {
-		mapper = new ObjectMapper();
-		mapper.configure(JsonParser.Feature.ALLOW_COMMENTS, true);
-		mapper.configure(JsonParser.Feature.ALLOW_SINGLE_QUOTES, true);
-		mapper.configure(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES, true);
-		mapper.configure(JsonParser.Feature.ALLOW_BACKSLASH_ESCAPING_ANY_CHARACTER, true);
-		mapper.configure(JsonParser.Feature.STRICT_DUPLICATE_DETECTION, true);
-		mapper.configure(SerializationFeature.USE_EQUALITY_FOR_OBJECT_ID, true);
-	}
+   static {
+      mapper = new ObjectMapper();
+      mapper.configure(JsonParser.Feature.ALLOW_COMMENTS, true);
+      mapper.configure(JsonParser.Feature.ALLOW_SINGLE_QUOTES, true);
+      mapper.configure(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES, true);
+      mapper.configure(JsonParser.Feature.ALLOW_BACKSLASH_ESCAPING_ANY_CHARACTER, true);
+      mapper.configure(JsonParser.Feature.STRICT_DUPLICATE_DETECTION, true);
+      mapper.configure(SerializationFeature.USE_EQUALITY_FOR_OBJECT_ID, true);
+   }
 
-	public void initWith(HandlerContext context) {
-		this.context = context;
-	}
+   public void initWith(HandlerContext context) {
+      this.context = context;
+   }
 
-	@Override
-	public String getContext() {
-		String mustacheContext = null;
-		Map<String, Object> ctx = new HashMap<String, Object>();
-		ctx.putAll(getCommonPageContext());
-		ctx.putAll(getPageContext());
-		try {
-			mustacheContext = mapper.writeValueAsString(ctx);
-		}
-		catch (JsonProcessingException e) {
-			e.printStackTrace();
-		}
+   @Override
+   public String getContext() {
+      String mustacheContext = null;
+      Map<String, Object> ctx = new HashMap<String, Object>();
+      ctx.putAll(getCommonPageContext());
+      ctx.putAll(getPageContext());
+      try {
+         mustacheContext = mapper.writeValueAsString(ctx);
+      }
+      catch (JsonProcessingException e) {
+         e.printStackTrace();
+      }
 
-		return mustacheContext;
-	}
+      return mustacheContext;
+   }
 
-	private Map<String, Object> getCommonPageContext() {
-		Map<String, Object> commonCtx = new HashMap<String, Object>();
+   private Map<String, Object> getCommonPageContext() {
+      Map<String, Object> commonCtx = new HashMap<String, Object>();
 
-		StringBuilder currentUrlWithParams = UrlUtils.getCurrentUrl(context.getRequest(), true);
+      StringBuilder currentUrlWithParams = UrlUtils.getCurrentUrl(context.getRequest(), true);
 
-		commonCtx.put("currentContextPath", UrlUtils.getContext(context.getRequest()).toString());
+      commonCtx.put("currentContextPath", UrlUtils.getContext(context.getRequest()).toString());
 
-		commonCtx.put("pageHeader", getName());
+      commonCtx.put("pageHeader", getName());
 
-		String currentUri = UrlUtils.getCurrentUri(context.getRequest()).toString();
-		String appUri = currentUri.substring(0, currentUri.indexOf(WebConstants.DANDELION_DEBUGGER) - 1);
-		commonCtx.put("currentUri", appUri);
+      String currentUri = UrlUtils.getCurrentUri(context.getRequest()).toString();
+      String appUri = currentUri.substring(0, currentUri.indexOf(WebConstants.DANDELION_DEBUGGER) - 1);
+      commonCtx.put("currentUri", appUri);
 
-		StringBuilder debuggerUrl = new StringBuilder(UrlUtils.getContext(context.getRequest()));
-		UrlUtils.addParameter(debuggerUrl, WebConstants.DANDELION_DEBUGGER);
-		commonCtx.put("debuggerUrl", debuggerUrl);
+      StringBuilder debuggerUrl = new StringBuilder(UrlUtils.getContext(context.getRequest()));
+      UrlUtils.addParameter(debuggerUrl, WebConstants.DANDELION_DEBUGGER);
+      commonCtx.put("debuggerUrl", debuggerUrl);
 
-		StringBuilder debuggerUrlWithParam = new StringBuilder(currentUrlWithParams);
-		UrlUtils.addParameter(debuggerUrlWithParam, WebConstants.DANDELION_DEBUGGER);
-		commonCtx.put("debuggerUrlWithParam", debuggerUrlWithParam);
+      StringBuilder debuggerUrlWithParam = new StringBuilder(currentUrlWithParams);
+      UrlUtils.addParameter(debuggerUrlWithParam, WebConstants.DANDELION_DEBUGGER);
+      commonCtx.put("debuggerUrlWithParam", debuggerUrlWithParam);
 
-		StringBuilder clearStorageUrl = new StringBuilder(currentUrlWithParams);
-		UrlUtils.addParameter(clearStorageUrl, WebConstants.DANDELION_CLEAR_STORAGE);
-		commonCtx.put("clearStorageUrl", clearStorageUrl);
+      StringBuilder clearStorageUrl = new StringBuilder(currentUrlWithParams);
+      UrlUtils.addParameter(clearStorageUrl, WebConstants.DANDELION_CLEAR_STORAGE);
+      commonCtx.put("clearStorageUrl", clearStorageUrl);
 
-		StringBuilder clearCacheUrl = new StringBuilder(currentUrlWithParams);
-		UrlUtils.addParameter(clearCacheUrl, WebConstants.DANDELION_CLEAR_CACHE);
-		commonCtx.put("clearCacheUrl", clearCacheUrl);
+      StringBuilder clearCacheUrl = new StringBuilder(currentUrlWithParams);
+      UrlUtils.addParameter(clearCacheUrl, WebConstants.DANDELION_CLEAR_CACHE);
+      commonCtx.put("clearCacheUrl", clearCacheUrl);
 
-		StringBuilder reloadBundleUrl = new StringBuilder(currentUrlWithParams);
-		UrlUtils.addParameter(reloadBundleUrl, WebConstants.DANDELION_RELOAD_BUNDLES);
-		commonCtx.put("reloadBundleUrl", reloadBundleUrl);
+      StringBuilder reloadBundleUrl = new StringBuilder(currentUrlWithParams);
+      UrlUtils.addParameter(reloadBundleUrl, WebConstants.DANDELION_RELOAD_BUNDLES);
+      commonCtx.put("reloadBundleUrl", reloadBundleUrl);
 
-		List<Map<String, Object>> menusMap = new ArrayList<Map<String, Object>>();
-		for (DebugMenu debugMenu : context.getContext().getDebugMenuMap().values()) {
+      List<Map<String, Object>> menusMap = new ArrayList<Map<String, Object>>();
+      for (DebugMenu debugMenu : context.getContext().getDebugMenuMap().values()) {
 
-			List<Map<String, String>> pagesMap = new ArrayList<Map<String, String>>();
-			for (DebugPage page : debugMenu.getPages()) {
-				pagesMap.add(new MapBuilder<String, String>()
-						.entry("pageName", page.getName())
-						.entry("pageUri", getComponentDebugPageUrl(appUri, page))
-						.entry("pageActive",
-								this.getClass().getSimpleName().equals(page.getClass().getSimpleName()) ? "active" : "")
-						.create());
-			}
+         List<Map<String, String>> pagesMap = new ArrayList<Map<String, String>>();
+         for (DebugPage page : debugMenu.getPages()) {
+            pagesMap.add(new MapBuilder<String, String>()
+                  .entry("pageName", page.getName())
+                  .entry("pageUri", getComponentDebugPageUrl(appUri, page))
+                  .entry("pageActive",
+                        this.getClass().getSimpleName().equals(page.getClass().getSimpleName()) ? "active" : "")
+                  .create());
+         }
 
-			menusMap.add(new MapBuilder<String, Object>()
-					.entry("menuPages", pagesMap)
-					.entry("menuName", debugMenu.getDisplayName()).create());
-		}
-		commonCtx.put("menus", menusMap);
+         menusMap.add(new MapBuilder<String, Object>().entry("menuPages", pagesMap)
+               .entry("menuName", debugMenu.getDisplayName()).create());
+      }
+      commonCtx.put("menus", menusMap);
 
-		return commonCtx;
-	}
+      return commonCtx;
+   }
 
-	@Override
-	public Map<String, String> getExtraParams() {
-		return Collections.emptyMap();
-	}
+   @Override
+   public Map<String, String> getExtraParams() {
+      return Collections.emptyMap();
+   }
 
-	protected abstract Map<String, Object> getPageContext();
+   protected abstract Map<String, Object> getPageContext();
 
-	private String getComponentDebugPageUrl(String appUri, DebugPage debugPage) {
-		StringBuilder componentPage = new StringBuilder(appUri);
-		if (componentPage.indexOf("?") == -1) {
-			componentPage.append("?");
-		}
-		else {
-			componentPage.append("&");
-		}
-		componentPage.append(WebConstants.DANDELION_DEBUGGER);
-		componentPage.append("&ddl-debug-page=");
-		componentPage.append(debugPage.getId());
-		return componentPage.toString();
-	}
+   private String getComponentDebugPageUrl(String appUri, DebugPage debugPage) {
+      StringBuilder componentPage = new StringBuilder(appUri);
+      if (componentPage.indexOf("?") == -1) {
+         componentPage.append("?");
+      }
+      else {
+         componentPage.append("&");
+      }
+      componentPage.append(WebConstants.DANDELION_DEBUGGER);
+      componentPage.append("&ddl-debug-page=");
+      componentPage.append(debugPage.getId());
+      return componentPage.toString();
+   }
 
-	public class MapBuilder<K, V> {
+   public class MapBuilder<K, V> {
 
-		private Map<K, V> map = null;
+      private Map<K, V> map = null;
 
-		public MapBuilder() {
-			map = new HashMap<K, V>();
-		}
+      public MapBuilder() {
+         map = new HashMap<K, V>();
+      }
 
-		public MapBuilder<K, V> entry(K key, V value) {
-			map.put(key, value);
-			return this;
-		}
+      public MapBuilder<K, V> entry(K key, V value) {
+         map.put(key, value);
+         return this;
+      }
 
-		public Map<K, V> create() {
-			return map;
-		}
+      public Map<K, V> create() {
+         return map;
+      }
 
-		public MapBuilder<K, V> addTo(List<Map<K, V>> dest) {
-			dest.add(map);
-			return this;
-		}
-	}
+      public MapBuilder<K, V> addTo(List<Map<K, V>> dest) {
+         dest.add(map);
+         return this;
+      }
+   }
 }

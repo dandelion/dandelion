@@ -63,91 +63,91 @@ import com.github.dandelion.core.web.handler.debug.DebugPage;
  */
 public class DebuggerPostHandler extends AbstractHandlerChain {
 
-	private static final Logger LOG = LoggerFactory.getLogger(DebuggerPostHandler.class);
+   private static final Logger LOG = LoggerFactory.getLogger(DebuggerPostHandler.class);
 
-	@Override
-	protected Logger getLogger() {
-		return LOG;
-	}
+   @Override
+   protected Logger getLogger() {
+      return LOG;
+   }
 
-	@Override
-	public boolean isAfterChaining() {
-		return true;
-	}
+   @Override
+   public boolean isAfterChaining() {
+      return true;
+   }
 
-	@Override
-	public int getRank() {
-		return 50;
-	}
+   @Override
+   public int getRank() {
+      return 50;
+   }
 
-	/**
-	 * The debugger is only accessible from a HTML page.
-	 */
-	@Override
-	public boolean isApplicable(HandlerContext handlerContext) {
-		return handlerContext.getContext().getConfiguration().isToolDebuggerEnabled()
-				&& handlerContext.getResponse().getContentType() != null
-				&& handlerContext.getResponse().getContentType().contains("text/html")
-				&& handlerContext.getRequest().getParameter(WebConstants.DANDELION_DEBUGGER) != null;
-	}
+   /**
+    * The debugger is only accessible from a HTML page.
+    */
+   @Override
+   public boolean isApplicable(HandlerContext handlerContext) {
+      return handlerContext.getContext().getConfiguration().isToolDebuggerEnabled()
+            && handlerContext.getResponse().getContentType() != null
+            && handlerContext.getResponse().getContentType().contains("text/html")
+            && handlerContext.getRequest().getParameter(WebConstants.DANDELION_DEBUGGER) != null;
+   }
 
-	@Override
-	public boolean handle(HandlerContext handlerContext) {
+   @Override
+   public boolean handle(HandlerContext handlerContext) {
 
-		byte[] newResponse;
+      byte[] newResponse;
 
-		String debugPage = handlerContext.getRequest().getParameter(WebConstants.DANDELION_DEBUGGER_PAGE);
+      String debugPage = handlerContext.getRequest().getParameter(WebConstants.DANDELION_DEBUGGER_PAGE);
 
-		try {
-			String responseAsString = getView(debugPage, handlerContext);
-			newResponse = responseAsString.getBytes(handlerContext.getContext().getConfiguration().getEncoding());
-		}
-		catch (Exception e) {
-			throw new DandelionException("An error occured when generating the \"" + debugPage + "\"debug page.", e);
-		}
+      try {
+         String responseAsString = getView(debugPage, handlerContext);
+         newResponse = responseAsString.getBytes(handlerContext.getContext().getConfiguration().getEncoding());
+      }
+      catch (Exception e) {
+         throw new DandelionException("An error occured when generating the \"" + debugPage + "\"debug page.", e);
+      }
 
-		// The response is overriden with a new one containing the debug page
-		handlerContext.setResponseAsBytes(newResponse);
+      // The response is overriden with a new one containing the debug page
+      handlerContext.setResponseAsBytes(newResponse);
 
-		return false;
-	}
+      return false;
+   }
 
-	private String getView(String pageName, HandlerContext context) throws IOException {
+   private String getView(String pageName, HandlerContext context) throws IOException {
 
-		DebugPage page;
+      DebugPage page;
 
-		// If no page is specified or if the page does not exist, let's redirect
-		// to the "assets" page by default
-		if (StringUtils.isBlank(pageName)
-				|| !context.getContext().getDebugPageMap().containsKey(pageName.trim().toLowerCase())) {
-			page = context.getContext().getDebugPageMap().get(AssetsDebugPage.PAGE_ID);
-		}
-		else {
-			page = context.getContext().getDebugPageMap().get(pageName.trim().toLowerCase());
-		}
+      // If no page is specified or if the page does not exist, let's redirect
+      // to the "assets" page by default
+      if (StringUtils.isBlank(pageName)
+            || !context.getContext().getDebugPageMap().containsKey(pageName.trim().toLowerCase())) {
+         page = context.getContext().getDebugPageMap().get(AssetsDebugPage.PAGE_ID);
+      }
+      else {
+         page = context.getContext().getDebugPageMap().get(pageName.trim().toLowerCase());
+      }
 
-		return getPage(page, context);
-	}
+      return getPage(page, context);
+   }
 
-	private String getPage(DebugPage page, HandlerContext context) throws IOException {
+   private String getPage(DebugPage page, HandlerContext context) throws IOException {
 
-		page.initWith(context);
+      page.initWith(context);
 
-		// Get the template
-		String template = page.getTemplate(context);
+      // Get the template
+      String template = page.getTemplate(context);
 
-		// Inject Mustache context
-		template = template.replace("%CONTEXT%", UrlUtils.getContext(context.getRequest()).toString());
-		
-		Map<String, String> variables = page.getExtraParams();
-		if (variables != null) {
-			for (Entry<String, String> variable : variables.entrySet()) {
-				template = template.replace(variable.getKey(), variable.getValue());
-			}
-		}
-		
-		template = template.replace("%MUSTACHE_CTX%", page.getContext());
+      // Inject Mustache context
+      template = template.replace("%CONTEXT%", UrlUtils.getContext(context.getRequest()).toString());
 
-		return template;
-	}
+      Map<String, String> variables = page.getExtraParams();
+      if (variables != null) {
+         for (Entry<String, String> variable : variables.entrySet()) {
+            template = template.replace(variable.getKey(), variable.getValue());
+         }
+      }
+
+      template = template.replace("%MUSTACHE_CTX%", page.getContext());
+
+      return template;
+   }
 }

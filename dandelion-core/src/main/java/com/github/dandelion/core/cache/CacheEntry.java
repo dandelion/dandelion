@@ -48,29 +48,29 @@ import com.github.dandelion.core.asset.Asset;
  */
 public class CacheEntry implements Serializable {
 
-	private static final long serialVersionUID = 5199806370887972590L;
+   private static final long serialVersionUID = 5199806370887972590L;
 
-	/**
-	 * The raw request URI.
-	 */
-	private final String requestUri;
+   /**
+    * The raw request URI.
+    */
+   private final String requestUri;
 
-	/**
-	 * The associated assets.
-	 */
-	private final Set<Asset> asset;
+   /**
+    * The associated assets.
+    */
+   private final Set<Asset> asset;
 
-	public CacheEntry(String requestUri, Set<Asset> asset) {
-		super();
-		this.requestUri = requestUri;
-		this.asset = asset;
-	}
+   public CacheEntry(String requestUri, Set<Asset> asset) {
+      super();
+      this.requestUri = requestUri;
+      this.asset = asset;
+   }
 
-	public String getRequestUri() {
-		return requestUri;
-	}
+   public String getRequestUri() {
+      return requestUri;
+   }
 
-	public Set<Asset> getAssets() {
-		return asset;
-	}
+   public Set<Asset> getAssets() {
+      return asset;
+   }
 }

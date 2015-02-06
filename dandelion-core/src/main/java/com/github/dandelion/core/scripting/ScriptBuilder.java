@@ -37,35 +37,35 @@ import javax.script.ScriptException;
 
 public class ScriptBuilder {
 
-	private ScriptEngineManager scriptEngineManager;
-	private ScriptEngine scriptEngine;
-	private Bindings bindings;
-	
-	public ScriptBuilder(){
-		this.scriptEngineManager = new ScriptEngineManager();
-		this.scriptEngine = scriptEngineManager.getEngineByExtension("js");
-		this.bindings = scriptEngine.getBindings(ScriptContext.ENGINE_SCOPE);
-		bindings.clear();
-	}
-	
-	public ScriptBuilder addBinding(String name, Object value) {
-		this.bindings.put(name, value);
-		return this;
-	}
-	
-	public ScriptBuilder eval(String javascript) {
-		try {
-			this.scriptEngine.eval(javascript, this.bindings);
-		}
-		catch (ScriptException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return this;
-	}
-	
-	public String get(String name) {
-		String result = (String) this.bindings.get(name);
-		return result;
-	}
+   private ScriptEngineManager scriptEngineManager;
+   private ScriptEngine scriptEngine;
+   private Bindings bindings;
+
+   public ScriptBuilder() {
+      this.scriptEngineManager = new ScriptEngineManager();
+      this.scriptEngine = scriptEngineManager.getEngineByExtension("js");
+      this.bindings = scriptEngine.getBindings(ScriptContext.ENGINE_SCOPE);
+      bindings.clear();
+   }
+
+   public ScriptBuilder addBinding(String name, Object value) {
+      this.bindings.put(name, value);
+      return this;
+   }
+
+   public ScriptBuilder eval(String javascript) {
+      try {
+         this.scriptEngine.eval(javascript, this.bindings);
+      }
+      catch (ScriptException e) {
+         // TODO Auto-generated catch block
+         e.printStackTrace();
+      }
+      return this;
+   }
+
+   public String get(String name) {
+      String result = (String) this.bindings.get(name);
+      return result;
+   }
 }

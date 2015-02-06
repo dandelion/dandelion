@@ -64,86 +64,86 @@ import com.github.dandelion.core.utils.AssetUtils;
  */
 public final class AssetProcessorManager {
 
-	private static final Logger LOG = LoggerFactory.getLogger(AssetProcessorManager.class);
+   private static final Logger LOG = LoggerFactory.getLogger(AssetProcessorManager.class);
 
-	/**
-	 * The Dandelion context.
-	 */
-	private final Context context;
+   /**
+    * The Dandelion context.
+    */
+   private final Context context;
 
-	public AssetProcessorManager(Context context) {
-		this.context = context;
-	}
+   public AssetProcessorManager(Context context) {
+      this.context = context;
+   }
 
-	public Set<Asset> process(Set<Asset> assets, HttpServletRequest request) {
-		Set<Asset> retval = new LinkedHashSet<Asset>();
+   public Set<Asset> process(Set<Asset> assets, HttpServletRequest request) {
+      Set<Asset> retval = new LinkedHashSet<Asset>();
 
-		if (context.getConfiguration().isAssetMinificationEnabled()) {
+      if (context.getConfiguration().isAssetMinificationEnabled()) {
 
-			// Process only non-vendor assets
-			for (Asset a : AssetUtils.filtersNotVendor(assets)) {
-				retval.add(process(a, request));
-			}
-		}
-		else {
-			retval.addAll(assets);
-		}
-		return retval;
-	}
+         // Process only non-vendor assets
+         for (Asset a : AssetUtils.filtersNotVendor(assets)) {
+            retval.add(process(a, request));
+         }
+      }
+      else {
+         retval.addAll(assets);
+      }
+      return retval;
+   }
 
-	public Asset process(Asset asset, HttpServletRequest request) {
+   public Asset process(Asset asset, HttpServletRequest request) {
 
-		if (context.getActiveProcessors().isEmpty()) {
-			return asset;
-		}
+      if (context.getActiveProcessors().isEmpty()) {
+         return asset;
+      }
 
-		List<AssetProcessor> compatibleAssetProcessors = getCompatibleProcessorFor(asset);
+      List<AssetProcessor> compatibleAssetProcessors = getCompatibleProcessorFor(asset);
 
-		if (!compatibleAssetProcessors.isEmpty()) {
+      if (!compatibleAssetProcessors.isEmpty()) {
 
-			// Context to be passed in asset processors
-			ProcessingContext processingContext = new ProcessingContext(context, asset, request);
+         // Context to be passed in asset processors
+         ProcessingContext processingContext = new ProcessingContext(context, asset, request);
 
-			AssetLocator locator = AssetUtils.getAssetLocator(asset, context);
-			String contents = locator.getContent(asset, request);
+         AssetLocator locator = AssetUtils.getAssetLocator(asset, context);
+         String contents = locator.getContent(asset, request);
 
-			Reader assetReader = new StringReader(contents);
-			Writer assetWriter = new StringWriter();
+         Reader assetReader = new StringReader(contents);
+         Writer assetWriter = new StringWriter();
 
-			for (AssetProcessor assetProcessor : compatibleAssetProcessors) {
-				LOG.trace("Applying processor {} on {}", assetProcessor.getProcessorKey(), asset.toLog());
-				assetWriter = new StringWriter();
-				assetProcessor.process(assetReader, assetWriter, processingContext);
-				assetReader = new StringReader(assetWriter.toString());
-			}
+         for (AssetProcessor assetProcessor : compatibleAssetProcessors) {
+            LOG.trace("Applying processor {} on {}", assetProcessor.getProcessorKey(), asset.toLog());
+            assetWriter = new StringWriter();
+            assetProcessor.process(assetReader, assetWriter, processingContext);
+            assetReader = new StringReader(assetWriter.toString());
+         }
 
-			if (asset.isNotVendor()) {
-				asset.setFinalLocation(AssetUtils.getAssetFinalLocation(request, asset, "min"));
-			}
+         if (asset.isNotVendor()) {
+            asset.setFinalLocation(AssetUtils.getAssetFinalLocation(request, asset, "min"));
+         }
 
-			// The cache system is updated with the new key/content pair
-			context.getAssetStorage().put(asset.getStorageKey(), new StorageEntry(asset, assetWriter.toString()));
-		}
-		else {
-			LOG.trace("No compatible processor was found for the asset {}", asset.toLog());
-		}
+         // The cache system is updated with the new key/content pair
+         context.getAssetStorage().put(asset.getStorageKey(), new StorageEntry(asset, assetWriter.toString()));
+      }
+      else {
+         LOG.trace("No compatible processor was found for the asset {}", asset.toLog());
+      }
 
-		return asset;
-	}
+      return asset;
+   }
 
-	private List<AssetProcessor> getCompatibleProcessorFor(Asset asset) {
+   private List<AssetProcessor> getCompatibleProcessorFor(Asset asset) {
 
-		List<AssetProcessor> compatibleProcessors = new ArrayList<AssetProcessor>();
+      List<AssetProcessor> compatibleProcessors = new ArrayList<AssetProcessor>();
 
-		for (AssetProcessor assetProcessor : context.getActiveProcessors()) {
-			Annotation annotation = assetProcessor.getClass().getAnnotation(CompatibleAssetType.class);
-			CompatibleAssetType compatibleAssetType = (CompatibleAssetType) annotation;
-			List<AssetType> compatibleAssetTypes = Arrays.asList(compatibleAssetType.types());
-			if (compatibleAssetTypes.contains(asset.getType())) {
-				compatibleProcessors.add(assetProcessor);
-			}
-		}
+      for (AssetProcessor assetProcessor : context.getActiveProcessors()) {
+         Annotation annotation = assetProcessor.getClass().getAnnotation(CompatibleAssetType.class);
+         CompatibleAssetType compatibleAssetType = (CompatibleAssetType) annotation;
+         List<AssetType> compatibleAssetTypes = Arrays.asList(compatibleAssetType.types());
+         if (compatibleAssetTypes.contains(asset.getType())) {
+            compatibleProcessors.add(assetProcessor);
+         }
+      }
 
-		return compatibleProcessors;
-	}
+      return compatibleProcessors;
+   }
 }

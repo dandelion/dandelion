@@ -49,38 +49,38 @@ import com.github.dandelion.core.utils.scanner.UrlResolver;
  */
 public class JBossVFS3UrlResolver implements UrlResolver {
 
-	private static final String VFS3_PACKAGE = "org.jboss.vfs.";
+   private static final String VFS3_PACKAGE = "org.jboss.vfs.";
 
-	private static Method VFS_METHOD_GET_CHILD;
-	private static Method VIRTUALFILE_METHOD_TO_URL;
+   private static Method VFS_METHOD_GET_CHILD;
+   private static Method VIRTUALFILE_METHOD_TO_URL;
 
-	static {
-		try {
-			Class<?> vfsClass = Class.forName(VFS3_PACKAGE + "VFS");
-			Class<?> virtualFileClass = Class.forName(VFS3_PACKAGE + "VirtualFile");
+   static {
+      try {
+         Class<?> vfsClass = Class.forName(VFS3_PACKAGE + "VFS");
+         Class<?> virtualFileClass = Class.forName(VFS3_PACKAGE + "VirtualFile");
 
-			VFS_METHOD_GET_CHILD = vfsClass.getMethod("getChild", URL.class);
-			VIRTUALFILE_METHOD_TO_URL = virtualFileClass.getMethod("toURL");
-		}
-		catch (Exception e) {
-			StringBuilder message = new StringBuilder("Could not detect JBoss VFS3 classes");
-			throw new DandelionException(message.toString(), e);
-		}
-	}
+         VFS_METHOD_GET_CHILD = vfsClass.getMethod("getChild", URL.class);
+         VIRTUALFILE_METHOD_TO_URL = virtualFileClass.getMethod("toURL");
+      }
+      catch (Exception e) {
+         StringBuilder message = new StringBuilder("Could not detect JBoss VFS3 classes");
+         throw new DandelionException(message.toString(), e);
+      }
+   }
 
-	public URL toStandardUrl(URL url) throws IOException {
+   public URL toStandardUrl(URL url) throws IOException {
 
-		URL standardUrl = null;
-		try {
-			Object child = VFS_METHOD_GET_CHILD.invoke(null, url);
-			standardUrl = (URL) VIRTUALFILE_METHOD_TO_URL.invoke(child);
-		}
-		catch (Exception e) {
-			StringBuilder error = new StringBuilder("Unable to resolve the URL \"");
-			error.append(url.getPath());
-			error.append("\" using JBoss VFS2 classes");
-			throw new DandelionException(error.toString(), e);
-		}
-		return standardUrl;
-	}
+      URL standardUrl = null;
+      try {
+         Object child = VFS_METHOD_GET_CHILD.invoke(null, url);
+         standardUrl = (URL) VIRTUALFILE_METHOD_TO_URL.invoke(child);
+      }
+      catch (Exception e) {
+         StringBuilder error = new StringBuilder("Unable to resolve the URL \"");
+         error.append(url.getPath());
+         error.append("\" using JBoss VFS2 classes");
+         throw new DandelionException(error.toString(), e);
+      }
+      return standardUrl;
+   }
 }

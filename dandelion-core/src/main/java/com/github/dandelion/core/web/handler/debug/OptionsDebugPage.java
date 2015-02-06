@@ -53,88 +53,88 @@ import com.github.dandelion.core.web.handler.HandlerContext;
  */
 public class OptionsDebugPage extends AbstractDebugPage {
 
-	public static final String PAGE_ID = "options";
-	public static final String PAGE_NAME = "Current options";
-	private static final String PAGE_LOCATION = "META-INF/resources/ddl-debugger/html/core-options.html";
+   public static final String PAGE_ID = "options";
+   public static final String PAGE_NAME = "Current options";
+   private static final String PAGE_LOCATION = "META-INF/resources/ddl-debugger/html/core-options.html";
 
-	@Override
-	public String getId() {
-		return PAGE_ID;
-	}
+   @Override
+   public String getId() {
+      return PAGE_ID;
+   }
 
-	@Override
-	public String getName() {
-		return PAGE_NAME;
-	}
+   @Override
+   public String getName() {
+      return PAGE_NAME;
+   }
 
-	@Override
-	public String getTemplate(HandlerContext context) throws IOException {
-		return ResourceUtils.getContentFromInputStream(Thread.currentThread().getContextClassLoader()
-				.getResourceAsStream(PAGE_LOCATION));
-	}
+   @Override
+   public String getTemplate(HandlerContext context) throws IOException {
+      return ResourceUtils.getContentFromInputStream(Thread.currentThread().getContextClassLoader()
+            .getResourceAsStream(PAGE_LOCATION));
+   }
 
-	@Override
-	protected Map<String, Object> getPageContext() {
+   @Override
+   protected Map<String, Object> getPageContext() {
 
-		Configuration conf = context.getContext().getConfiguration();
-		
-		Map<String, Object> pageContext = new HashMap<String, Object>();
-		pageContext.put("activeProfile", conf.getActiveProfile());
+      Configuration conf = context.getContext().getConfiguration();
 
-		List<Map<String, Object>> options = new ArrayList<Map<String, Object>>();
+      Map<String, Object> pageContext = new HashMap<String, Object>();
+      pageContext.put("activeProfile", conf.getActiveProfile());
 
- 		// Asset-related options
-		options.add(option(DandelionConfig.ASSET_MINIFICATION.getName(), conf.isAssetMinificationEnabled()));
-		options.add(option(DandelionConfig.ASSET_LOCATIONS_RESOLUTION_STRATEGY.getName(),
-				conf.getAssetLocationsResolutionStrategy()));
-		options.add(option(DandelionConfig.ASSET_PROCESSORS.getName(), conf.getAssetProcessors()));
-		options.add(option(DandelionConfig.ASSET_JS_EXCLUDES.getName(), conf.getAssetJsExcludes()));
-		options.add(option(DandelionConfig.ASSET_CSS_EXCLUDES.getName(), conf.getAssetCssExcludes()));
-		options.add(option(DandelionConfig.ASSET_URL_PATTERN.getName(), conf.getAssetUrlPattern()));
-		options.add(option(DandelionConfig.ASSET_STORAGE.getName(), conf.getAssetStorage()));
+      List<Map<String, Object>> options = new ArrayList<Map<String, Object>>();
 
-		// Versioning-related options
-		options.add(option(DandelionConfig.ASSET_VERSIONING_MODE.getName(), conf.getAssetVersioningMode()));
-		options.add(option(DandelionConfig.ASSET_VERSIONING_STRATEGY.getName(), conf.getAssetVersioningStrategy()));
-		options.add(option(DandelionConfig.ASSET_FIXED_VERSION_TYPE.getName(), conf.getAssetFixedVersionType()));
-		options.add(option(DandelionConfig.ASSET_FIXED_VERSION_VALUE.getName(), conf.getAssetFixedVersionValue()));
-		options.add(option(DandelionConfig.ASSET_FIXED_VERSION_DATEPATTERN.getName(),
-				conf.getAssetFixedVersionDatePattern()));
-		options.add(option(DandelionConfig.ASSET_FIXED_VERSION_TYPE.getName(), conf.getAssetFixedVersionType()));
+      // Asset-related options
+      options.add(option(DandelionConfig.ASSET_MINIFICATION.getName(), conf.isAssetMinificationEnabled()));
+      options.add(option(DandelionConfig.ASSET_LOCATIONS_RESOLUTION_STRATEGY.getName(),
+            conf.getAssetLocationsResolutionStrategy()));
+      options.add(option(DandelionConfig.ASSET_PROCESSORS.getName(), conf.getAssetProcessors()));
+      options.add(option(DandelionConfig.ASSET_JS_EXCLUDES.getName(), conf.getAssetJsExcludes()));
+      options.add(option(DandelionConfig.ASSET_CSS_EXCLUDES.getName(), conf.getAssetCssExcludes()));
+      options.add(option(DandelionConfig.ASSET_URL_PATTERN.getName(), conf.getAssetUrlPattern()));
+      options.add(option(DandelionConfig.ASSET_STORAGE.getName(), conf.getAssetStorage()));
 
-		// Caching-related options
-		options.add(option(DandelionConfig.CACHE.getName(), conf.isCachingEnabled()));
-		options.add(option(DandelionConfig.CACHE_NAME.getName(), conf.getCacheName()));
-		options.add(option(DandelionConfig.CACHE_MAX_SIZE.getName(), conf.getCacheMaxSize()));
-		options.add(option(DandelionConfig.CACHE_MANAGER_NAME.getName(), conf.getCacheManagerName()));
-		options.add(option(DandelionConfig.CACHE_CONFIGURATION_LOCATION.getName(), conf.getCacheConfigurationLocation()));
+      // Versioning-related options
+      options.add(option(DandelionConfig.ASSET_VERSIONING_MODE.getName(), conf.getAssetVersioningMode()));
+      options.add(option(DandelionConfig.ASSET_VERSIONING_STRATEGY.getName(), conf.getAssetVersioningStrategy()));
+      options.add(option(DandelionConfig.ASSET_FIXED_VERSION_TYPE.getName(), conf.getAssetFixedVersionType()));
+      options.add(option(DandelionConfig.ASSET_FIXED_VERSION_VALUE.getName(), conf.getAssetFixedVersionValue()));
+      options.add(option(DandelionConfig.ASSET_FIXED_VERSION_DATEPATTERN.getName(),
+            conf.getAssetFixedVersionDatePattern()));
+      options.add(option(DandelionConfig.ASSET_FIXED_VERSION_TYPE.getName(), conf.getAssetFixedVersionType()));
 
-		// Bundle-related options
-		options.add(option(DandelionConfig.BUNDLE_LOCATION.getName(), conf.getBundleLocation()));
-		options.add(option(DandelionConfig.BUNDLE_INCLUDES.getName(), conf.getBundleIncludes()));
-		options.add(option(DandelionConfig.BUNDLE_EXCLUDES.getName(), conf.getBundleExcludes()));
+      // Caching-related options
+      options.add(option(DandelionConfig.CACHE.getName(), conf.isCachingEnabled()));
+      options.add(option(DandelionConfig.CACHE_NAME.getName(), conf.getCacheName()));
+      options.add(option(DandelionConfig.CACHE_MAX_SIZE.getName(), conf.getCacheMaxSize()));
+      options.add(option(DandelionConfig.CACHE_MANAGER_NAME.getName(), conf.getCacheManagerName()));
+      options.add(option(DandelionConfig.CACHE_CONFIGURATION_LOCATION.getName(), conf.getCacheConfigurationLocation()));
 
-		// Tooling-related options
-		options.add(option(DandelionConfig.TOOL_GZIP.getName(), conf.isToolGzipEnabled()));
-		options.add(option(DandelionConfig.TOOL_GZIP_MIME_TYPES.getName(), conf.getToolGzipMimeTypes()));
-		options.add(option(DandelionConfig.TOOL_DEBUGGER.getName(), conf.isToolDebuggerEnabled()));
-		options.add(option(DandelionConfig.TOOL_BUNDLE_RELOADING.getName(), conf.isToolBundleReloadingEnabled()));
+      // Bundle-related options
+      options.add(option(DandelionConfig.BUNDLE_LOCATION.getName(), conf.getBundleLocation()));
+      options.add(option(DandelionConfig.BUNDLE_INCLUDES.getName(), conf.getBundleIncludes()));
+      options.add(option(DandelionConfig.BUNDLE_EXCLUDES.getName(), conf.getBundleExcludes()));
 
-		// Monitoring-related options
-		options.add(option(DandelionConfig.MONITORING_JMX.getName(), conf.isMonitoringJmxEnabled()));
+      // Tooling-related options
+      options.add(option(DandelionConfig.TOOL_GZIP.getName(), conf.isToolGzipEnabled()));
+      options.add(option(DandelionConfig.TOOL_GZIP_MIME_TYPES.getName(), conf.getToolGzipMimeTypes()));
+      options.add(option(DandelionConfig.TOOL_DEBUGGER.getName(), conf.isToolDebuggerEnabled()));
+      options.add(option(DandelionConfig.TOOL_BUNDLE_RELOADING.getName(), conf.isToolBundleReloadingEnabled()));
 
-		// Misc options
-		options.add(option(DandelionConfig.ENCODING.getName(), conf.getEncoding()));
+      // Monitoring-related options
+      options.add(option(DandelionConfig.MONITORING_JMX.getName(), conf.isMonitoringJmxEnabled()));
 
-		pageContext.put("options", options);
+      // Misc options
+      options.add(option(DandelionConfig.ENCODING.getName(), conf.getEncoding()));
 
-		return pageContext;
-	}
+      pageContext.put("options", options);
 
-	private Map<String, Object> option(String name, Object value) {
-		Map<String, Object> option = new HashMap<String, Object>();
-		option.put("name", name);
-		option.put("value", value);
-		return option;
-	}
+      return pageContext;
+   }
+
+   private Map<String, Object> option(String name, Object value) {
+      Map<String, Object> option = new HashMap<String, Object>();
+      option.put("name", name);
+      option.put("value", value);
+      return option;
+   }
 }

@@ -46,8 +46,8 @@ import com.github.dandelion.core.utils.scanner.UrlResolver;
  * @since 0.11.0
  */
 public class WebSphereUrlResolver implements UrlResolver {
-	
-	public URL toStandardUrl(URL url) throws IOException {
-		return new URL("jar", url.getHost(), url.getPort(), url.getPath());
-	}
+
+   public URL toStandardUrl(URL url) throws IOException {
+      return new URL("jar", url.getHost(), url.getPort(), url.getPath());
+   }
 }

@@ -40,20 +40,20 @@ import java.util.Collection;
  */
 public class CollectionUtils {
 
-	/**
-	 * @return {@code true} if the source collection contains any null element.
-	 * @param source
-	 *            The {@link Collection} in which all elements are checked.
-	 */
-	public static boolean containsAnyNull(Collection<?> source) {
-		if (source == null || source.isEmpty()) {
-			return true;
-		}
-		for (Object o : source) {
-			if (o == null) {
-				return true;
-			}
-		}
-		return false;
-	}
+   /**
+    * @return {@code true} if the source collection contains any null element.
+    * @param source
+    *           The {@link Collection} in which all elements are checked.
+    */
+   public static boolean containsAnyNull(Collection<?> source) {
+      if (source == null || source.isEmpty()) {
+         return true;
+      }
+      for (Object o : source) {
+         if (o == null) {
+            return true;
+         }
+      }
+      return false;
+   }
 }

@@ -43,8 +43,8 @@ import com.github.dandelion.core.cache.support.ConcurrentLruCache;
 
 /**
  * <p>
- * Service provider for {@link RequestCache} that uses {@link ConcurrentLruCache}s as
- * stores.
+ * Service provider for {@link RequestCache} that uses
+ * {@link ConcurrentLruCache}s as stores.
  * </p>
  * 
  * @author Thibault Duchateau
@@ -53,51 +53,51 @@ import com.github.dandelion.core.cache.support.ConcurrentLruCache;
  */
 public class MemoryRequestCache extends AbstractRequestCache {
 
-	private static final Logger LOG = LoggerFactory.getLogger(MemoryRequestCache.class);
+   private static final Logger LOG = LoggerFactory.getLogger(MemoryRequestCache.class);
 
-	/**
-	 * The backend used to stored cache entries, based on the LRU policy.
-	 */
-	private ConcurrentLruCache<String, CacheEntry> mapRequestAssets;
+   /**
+    * The backend used to stored cache entries, based on the LRU policy.
+    */
+   private ConcurrentLruCache<String, CacheEntry> mapRequestAssets;
 
-	@Override
-	protected Logger getLogger() {
-		return LOG;
-	}
+   @Override
+   protected Logger getLogger() {
+      return LOG;
+   }
 
-	@Override
-	public void initCache(Context context) {
-		super.initCache(context);
-		mapRequestAssets = new ConcurrentLruCache<String, CacheEntry>(context.getConfiguration().getCacheMaxSize());
-	}
+   @Override
+   public void initCache(Context context) {
+      super.initCache(context);
+      mapRequestAssets = new ConcurrentLruCache<String, CacheEntry>(context.getConfiguration().getCacheMaxSize());
+   }
 
-	@Override
-	public String getCacheName() {
-		return "default";
-	}
+   @Override
+   public String getCacheName() {
+      return "default";
+   }
 
-	@Override
-	public CacheEntry doGet(String cacheKey) {
-		return mapRequestAssets.get(cacheKey);
-	}
+   @Override
+   public CacheEntry doGet(String cacheKey) {
+      return mapRequestAssets.get(cacheKey);
+   }
 
-	@Override
-	protected Collection<CacheEntry> doGetAll() {
-		return mapRequestAssets.values();
-	}
+   @Override
+   protected Collection<CacheEntry> doGetAll() {
+      return mapRequestAssets.values();
+   }
 
-	@Override
-	public int doPut(String cacheKey, CacheEntry cacheElement) {
-		mapRequestAssets.put(cacheKey, cacheElement);
-		return this.mapRequestAssets.size();
-	}
+   @Override
+   public int doPut(String cacheKey, CacheEntry cacheElement) {
+      mapRequestAssets.put(cacheKey, cacheElement);
+      return this.mapRequestAssets.size();
+   }
 
-	@Override
-	public void doClear() {
-		mapRequestAssets.clear();
-	}
+   @Override
+   public void doClear() {
+      mapRequestAssets.clear();
+   }
 
-	public Map<String, CacheEntry> getMapRequestAssets() {
-		return this.mapRequestAssets;
-	}
+   public Map<String, CacheEntry> getMapRequestAssets() {
+      return this.mapRequestAssets;
+   }
 }

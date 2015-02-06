@@ -39,49 +39,48 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class VariableSubstitutionTest {
 
-	@Rule
-	public ExpectedException exception = ExpectedException.none();
+   @Rule
+   public ExpectedException exception = ExpectedException.none();
 
-	@Test
-	public void should() {
-		Properties properties = new Properties();
-		properties.put("KEY", "VAL");
+   @Test
+   public void should() {
+      Properties properties = new Properties();
+      properties.put("KEY", "VAL");
 
-		String source = "string string %KEY% string";
-		assertThat(StringUtils.substitute(source, properties)).isEqualTo("string string VAL string");
-	}
+      String source = "string string %KEY% string";
+      assertThat(StringUtils.substitute(source, properties)).isEqualTo("string string VAL string");
+   }
 
-	@Test
-	public void should_substitute_multiple_variables() {
-		Properties properties = new Properties();
-		properties.put("KEY1", "VAL1");
-		properties.put("KEY2", "VAL2");
+   @Test
+   public void should_substitute_multiple_variables() {
+      Properties properties = new Properties();
+      properties.put("KEY1", "VAL1");
+      properties.put("KEY2", "VAL2");
 
-		String source = "string string %KEY1% string %KEY2% string";
-		assertThat(StringUtils.substitute(source, properties)).isEqualTo("string string VAL1 string VAL2 string");
-	}
+      String source = "string string %KEY1% string %KEY2% string";
+      assertThat(StringUtils.substitute(source, properties)).isEqualTo("string string VAL1 string VAL2 string");
+   }
 
-	@Test
-	public void should_throw_an_exception_if_the_parameter_map_is_null() {
+   @Test
+   public void should_throw_an_exception_if_the_parameter_map_is_null() {
 
-		exception.expect(IllegalArgumentException.class);
-		exception.expectMessage("The Properties cannot be null");
+      exception.expect(IllegalArgumentException.class);
+      exception.expectMessage("The Properties cannot be null");
 
-		String source = "string string %KEY1% string %KEY2% string";
-		assertThat(StringUtils.substitute(source, (Properties) null))
-				.isEqualTo("string string VAL1 string VAL2 string");
-	}
+      String source = "string string %KEY1% string %KEY2% string";
+      assertThat(StringUtils.substitute(source, (Properties) null)).isEqualTo("string string VAL1 string VAL2 string");
+   }
 
-	@Test
-	public void should_throw_an_exception_if_a_variable_does_not_exist() {
+   @Test
+   public void should_throw_an_exception_if_a_variable_does_not_exist() {
 
-		exception.expect(IllegalArgumentException.class);
-		exception.expectMessage("The supplied set of variables doesn't contain a variable named \"KEY2\"");
+      exception.expect(IllegalArgumentException.class);
+      exception.expectMessage("The supplied set of variables doesn't contain a variable named \"KEY2\"");
 
-		Properties properties = new Properties();
-		properties.put("KEY1", "VAL1");
+      Properties properties = new Properties();
+      properties.put("KEY1", "VAL1");
 
-		String source = "string string %KEY1% string %KEY2% string";
-		StringUtils.substitute(source, properties);
-	}
+      String source = "string string %KEY1% string %KEY2% string";
+      StringUtils.substitute(source, properties);
+   }
 }

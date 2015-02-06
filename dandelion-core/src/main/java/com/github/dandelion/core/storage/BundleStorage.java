@@ -60,155 +60,155 @@ import com.github.dandelion.core.storage.support.TopologicalSorter;
  */
 public class BundleStorage {
 
-	private static final Logger LOG = LoggerFactory.getLogger(BundleStorage.class);
+   private static final Logger LOG = LoggerFactory.getLogger(BundleStorage.class);
 
-	private final BundleDag bundleDag;
+   private final BundleDag bundleDag;
 
-	public BundleStorage() {
-		this.bundleDag = new BundleDag();
-	}
+   public BundleStorage() {
+      this.bundleDag = new BundleDag();
+   }
 
-	/**
-	 * <p>
-	 * Load all given {@link BundleStorageUnit}s into the {@link BundleDag}.
-	 * </p>
-	 * 
-	 * @param bundleStorageUnits
-	 *            All bundle storage units to load into the dag.
-	 * @return the {@link BundleDag} updated with the new
-	 *         {@link BundleStorageUnit} and {@link AssetStorageUnit}.
-	 * @throws DandelionException
-	 *             as soon as a cycle is detected in the bundle DAG.
-	 */
-	public BundleDag storeBundles(List<BundleStorageUnit> bundleStorageUnits) {
+   /**
+    * <p>
+    * Load all given {@link BundleStorageUnit}s into the {@link BundleDag}.
+    * </p>
+    * 
+    * @param bundleStorageUnits
+    *           All bundle storage units to load into the dag.
+    * @return the {@link BundleDag} updated with the new
+    *         {@link BundleStorageUnit} and {@link AssetStorageUnit}.
+    * @throws DandelionException
+    *            as soon as a cycle is detected in the bundle DAG.
+    */
+   public BundleDag storeBundles(List<BundleStorageUnit> bundleStorageUnits) {
 
-		for (BundleStorageUnit bsu : bundleStorageUnits) {
+      for (BundleStorageUnit bsu : bundleStorageUnits) {
 
-			BundleStorageUnit bsuToAdd = bundleDag.addVertexIfNeeded(bsu);
+         BundleStorageUnit bsuToAdd = bundleDag.addVertexIfNeeded(bsu);
 
-			// DAG updating and dependencies handling
-			if (bsu.getDependencies() != null && !bsu.getDependencies().isEmpty()) {
-				for (String dependency : bsu.getDependencies()) {
+         // DAG updating and dependencies handling
+         if (bsu.getDependencies() != null && !bsu.getDependencies().isEmpty()) {
+            for (String dependency : bsu.getDependencies()) {
 
-					BundleStorageUnit to = bundleDag.addVertexIfNeeded(dependency);
-					bundleDag.addEdge(bsuToAdd, to);
-				}
-			}
-			else {
-				bsuToAdd = bundleDag.addVertexIfNeeded(bsu);
-			}
+               BundleStorageUnit to = bundleDag.addVertexIfNeeded(dependency);
+               bundleDag.addEdge(bsuToAdd, to);
+            }
+         }
+         else {
+            bsuToAdd = bundleDag.addVertexIfNeeded(bsu);
+         }
 
-			// Asset updating
+         // Asset updating
 
-			// Let's see if each asset already exists in any bundle
-			for (AssetStorageUnit asu : bsu.getAssetStorageUnits()) {
+         // Let's see if each asset already exists in any bundle
+         for (AssetStorageUnit asu : bsu.getAssetStorageUnits()) {
 
-				boolean assetAlreadyExists = false;
-				for (BundleStorageUnit existingBundle : bundleDag.getVerticies()) {
-					for (AssetStorageUnit existingAsu : existingBundle.getAssetStorageUnits()) {
+            boolean assetAlreadyExists = false;
+            for (BundleStorageUnit existingBundle : bundleDag.getVerticies()) {
+               for (AssetStorageUnit existingAsu : existingBundle.getAssetStorageUnits()) {
 
-						// If the asset has both the same name
-						// (case-insensitive) and type, the old one is simply
-						// overriden
-						if (existingAsu.getName().equalsIgnoreCase(asu.getName())
-								&& existingAsu.getType().equals(asu.getType())) {
+                  // If the asset has both the same name
+                  // (case-insensitive) and type, the old one is simply
+                  // overriden
+                  if (existingAsu.getName().equalsIgnoreCase(asu.getName())
+                        && existingAsu.getType().equals(asu.getType())) {
 
-							LOG.trace(
-									"Replacing asset '{}' ({}) from the bundle '{}' by the asset {} ({}) from the bundle {}.",
-									existingAsu.getName(), existingAsu.getVersion(), existingBundle.getName(),
-									asu.getName(), asu.getVersion(), bsuToAdd.getName());
+                     LOG.trace(
+                           "Replacing asset '{}' ({}) from the bundle '{}' by the asset {} ({}) from the bundle {}.",
+                           existingAsu.getName(), existingAsu.getVersion(), existingBundle.getName(), asu.getName(),
+                           asu.getVersion(), bsuToAdd.getName());
 
-							existingAsu.setVersion(asu.getVersion());
-							existingAsu.setLocations(asu.getLocations());
-							existingAsu.setDom(asu.getDom());
-							existingAsu.setBundle(existingBundle.getName());
-							existingAsu.setType(asu.getType());
-							existingAsu.setAttributes(asu.getAttributes());
-							existingAsu.setAttributesOnlyName(asu.getAttributesOnlyName());
-							assetAlreadyExists = true;
-							break;
-						}
-					}
+                     existingAsu.setVersion(asu.getVersion());
+                     existingAsu.setLocations(asu.getLocations());
+                     existingAsu.setDom(asu.getDom());
+                     existingAsu.setBundle(existingBundle.getName());
+                     existingAsu.setType(asu.getType());
+                     existingAsu.setAttributes(asu.getAttributes());
+                     existingAsu.setAttributesOnlyName(asu.getAttributesOnlyName());
+                     assetAlreadyExists = true;
+                     break;
+                  }
+               }
 
-					if (assetAlreadyExists) {
-						break;
-					}
-				}
+               if (assetAlreadyExists) {
+                  break;
+               }
+            }
 
-				// If the asset doesn't already exist, we just add it to the
-				// current bundle
-				if (!assetAlreadyExists) {
+            // If the asset doesn't already exist, we just add it to the
+            // current bundle
+            if (!assetAlreadyExists) {
 
-					LOG.trace("Adding {} '{}' ({}) to the bundle '{}'", asu.getType(), asu.getName(), asu.getVersion(),
-							bsuToAdd.getName());
-					bsuToAdd.getAssetStorageUnits().add(asu);
-				}
-			}
-		}
+               LOG.trace("Adding {} '{}' ({}) to the bundle '{}'", asu.getType(), asu.getName(), asu.getVersion(),
+                     bsuToAdd.getName());
+               bsuToAdd.getAssetStorageUnits().add(asu);
+            }
+         }
+      }
 
-		return bundleDag;
-	}
+      return bundleDag;
+   }
 
-	/**
-	 * Return the list of labels of bundles according to the topological sort.
-	 * 
-	 * @param bundleName
-	 *            The name of the bundle.
-	 * 
-	 * @return The list of bundle names sorted by a topological order. The list
-	 *         also contains the given bundle name, always in last.
-	 */
-	public Set<BundleStorageUnit> bundlesFor(String bundleName) {
-		BundleStorageUnit bsu = bundleDag.getVertex(bundleName);
+   /**
+    * Return the list of labels of bundles according to the topological sort.
+    * 
+    * @param bundleName
+    *           The name of the bundle.
+    * 
+    * @return The list of bundle names sorted by a topological order. The list
+    *         also contains the given bundle name, always in last.
+    */
+   public Set<BundleStorageUnit> bundlesFor(String bundleName) {
+      BundleStorageUnit bsu = bundleDag.getVertex(bundleName);
 
-		if (bsu != null) {
-			Set<BundleStorageUnit> retval = null;
+      if (bsu != null) {
+         Set<BundleStorageUnit> retval = null;
 
-			if (bsu.isLeaf()) {
-				retval = new HashSet<BundleStorageUnit>(1);
-				retval.add(bsu);
-			}
-			else {
-				retval = new LinkedHashSet<BundleStorageUnit>(TopologicalSorter.sort(bsu));
-			}
+         if (bsu.isLeaf()) {
+            retval = new HashSet<BundleStorageUnit>(1);
+            retval.add(bsu);
+         }
+         else {
+            retval = new LinkedHashSet<BundleStorageUnit>(TopologicalSorter.sort(bsu));
+         }
 
-			return retval;
-		}
+         return retval;
+      }
 
-		return Collections.emptySet();
-	}
+      return Collections.emptySet();
+   }
 
-	public Set<BundleStorageUnit> bundlesFor(String... bundleNames) {
+   public Set<BundleStorageUnit> bundlesFor(String... bundleNames) {
 
-		Set<BundleStorageUnit> retval = new LinkedHashSet<BundleStorageUnit>();
-		for (String bundleName : bundleNames) {
-			retval.addAll(bundlesFor(bundleName.trim()));
-		}
+      Set<BundleStorageUnit> retval = new LinkedHashSet<BundleStorageUnit>();
+      for (String bundleName : bundleNames) {
+         retval.addAll(bundlesFor(bundleName.trim()));
+      }
 
-		return retval;
-	}
+      return retval;
+   }
 
-	/**
-	 * @return the internal {@link BundleDag} used to store the bundle graph.
-	 */
-	public BundleDag getBundleDag() {
-		return bundleDag;
-	}
+   /**
+    * @return the internal {@link BundleDag} used to store the bundle graph.
+    */
+   public BundleDag getBundleDag() {
+      return bundleDag;
+   }
 
-	public void consolidateBundles(List<BundleStorageUnit> allBundles) {
+   public void consolidateBundles(List<BundleStorageUnit> allBundles) {
 
-		for (BundleStorageUnit bsu : bundleDag.getVerticies()) {
+      for (BundleStorageUnit bsu : bundleDag.getVerticies()) {
 
-			for (BundleStorageUnit rawBsu : allBundles) {
-				if (rawBsu.getName().equalsIgnoreCase(bsu.getName())) {
+         for (BundleStorageUnit rawBsu : allBundles) {
+            if (rawBsu.getName().equalsIgnoreCase(bsu.getName())) {
 
-					bsu.setDependencies(rawBsu.getDependencies());
-					bsu.setAssetStorageUnits(rawBsu.getAssetStorageUnits());
-					bsu.setRelativePath(rawBsu.getRelativePath());
-					bsu.setOrigin(rawBsu.getOrigin());
-					break;
-				}
-			}
-		}
-	}
+               bsu.setDependencies(rawBsu.getDependencies());
+               bsu.setAssetStorageUnits(rawBsu.getAssetStorageUnits());
+               bsu.setRelativePath(rawBsu.getRelativePath());
+               bsu.setOrigin(rawBsu.getOrigin());
+               break;
+            }
+         }
+      }
+   }
 }

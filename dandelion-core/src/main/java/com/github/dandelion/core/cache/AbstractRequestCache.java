@@ -46,87 +46,87 @@ import com.github.dandelion.core.Context;
  */
 public abstract class AbstractRequestCache implements RequestCache {
 
-	protected Context context;
-	private AtomicLong getCount;
-	private AtomicLong putCount;
-	private AtomicLong hitCount;
-	private AtomicLong missCount;
+   protected Context context;
+   private AtomicLong getCount;
+   private AtomicLong putCount;
+   private AtomicLong hitCount;
+   private AtomicLong missCount;
 
-	@Override
-	public void initCache(Context context) {
-		this.context = context;
-		this.getCount = new AtomicLong(0);
-		this.putCount = new AtomicLong(0);
-		this.hitCount = new AtomicLong(0);
-		this.missCount = new AtomicLong(0);
-	}
+   @Override
+   public void initCache(Context context) {
+      this.context = context;
+      this.getCount = new AtomicLong(0);
+      this.putCount = new AtomicLong(0);
+      this.hitCount = new AtomicLong(0);
+      this.missCount = new AtomicLong(0);
+   }
 
-	/**
-	 * @return the {@link Logger} bound to the actual implementation.
-	 */
-	protected abstract Logger getLogger();
+   /**
+    * @return the {@link Logger} bound to the actual implementation.
+    */
+   protected abstract Logger getLogger();
 
-	@Override
-	public CacheEntry get(String cacheKey) {
+   @Override
+   public CacheEntry get(String cacheKey) {
 
-		this.getCount.incrementAndGet();
-		CacheEntry assets = doGet(cacheKey);
+      this.getCount.incrementAndGet();
+      CacheEntry assets = doGet(cacheKey);
 
-		if (assets == null) {
-			this.missCount.incrementAndGet();
-			getLogger().trace("Cache miss for key \"{}\"", cacheKey);
-			return null;
-		}
+      if (assets == null) {
+         this.missCount.incrementAndGet();
+         getLogger().trace("Cache miss for key \"{}\"", cacheKey);
+         return null;
+      }
 
-		this.hitCount.incrementAndGet();
-		getLogger().trace("Cache hit for key \"{}\"", cacheKey);
-		return assets;
-	}
+      this.hitCount.incrementAndGet();
+      getLogger().trace("Cache hit for key \"{}\"", cacheKey);
+      return assets;
+   }
 
-	protected abstract CacheEntry doGet(String cacheKey);
+   protected abstract CacheEntry doGet(String cacheKey);
 
-	@Override
-	public void put(String cacheKey, CacheEntry cacheElement) {
+   @Override
+   public void put(String cacheKey, CacheEntry cacheElement) {
 
-		this.putCount.incrementAndGet();
-		int newSize = doPut(cacheKey, cacheElement);
-		getLogger().trace("Added cache entry for key \"{}\". New size is {}.", cacheKey, newSize);
-	}
+      this.putCount.incrementAndGet();
+      int newSize = doPut(cacheKey, cacheElement);
+      getLogger().trace("Added cache entry for key \"{}\". New size is {}.", cacheKey, newSize);
+   }
 
-	@Override
-	public Collection<CacheEntry> getAll() {
-		return doGetAll();
-	}
+   @Override
+   public Collection<CacheEntry> getAll() {
+      return doGetAll();
+   }
 
-	protected abstract Collection<CacheEntry> doGetAll();
+   protected abstract Collection<CacheEntry> doGetAll();
 
-	protected abstract int doPut(String cacheKey, CacheEntry cacheElement);
+   protected abstract int doPut(String cacheKey, CacheEntry cacheElement);
 
-	@Override
-	public void clear() {
-		getLogger().trace("Clearing cache");
-		this.getCount = new AtomicLong(0);
-		this.putCount = new AtomicLong(0);
-		this.hitCount = new AtomicLong(0);
-		this.missCount = new AtomicLong(0);
-		doClear();
-	}
+   @Override
+   public void clear() {
+      getLogger().trace("Clearing cache");
+      this.getCount = new AtomicLong(0);
+      this.putCount = new AtomicLong(0);
+      this.hitCount = new AtomicLong(0);
+      this.missCount = new AtomicLong(0);
+      doClear();
+   }
 
-	protected abstract void doClear();
+   protected abstract void doClear();
 
-	public AtomicLong getGetCount() {
-		return getCount;
-	}
+   public AtomicLong getGetCount() {
+      return getCount;
+   }
 
-	public AtomicLong getPutCount() {
-		return putCount;
-	}
+   public AtomicLong getPutCount() {
+      return putCount;
+   }
 
-	public AtomicLong getHitCount() {
-		return hitCount;
-	}
+   public AtomicLong getHitCount() {
+      return hitCount;
+   }
 
-	public AtomicLong getMissCount() {
-		return missCount;
-	}
+   public AtomicLong getMissCount() {
+      return missCount;
+   }
 }

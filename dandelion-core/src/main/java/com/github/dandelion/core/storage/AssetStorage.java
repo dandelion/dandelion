@@ -45,56 +45,55 @@ import java.util.Collection;
  */
 public interface AssetStorage {
 
-	/**
-	 * @return the name of the implementation of {@link AssetStorage}.
-	 */
-	String getName();
+   /**
+    * @return the name of the implementation of {@link AssetStorage}.
+    */
+   String getName();
 
-	/**
-	 * <p>
-	 * Gets the asset contents from the storage using the provided
-	 * {@code cacheKey}.
-	 * </p>
-	 * 
-	 * @param storageKey
-	 *            The key under which the asset contents is stored in the
-	 *            storage.
-	 * @return the contents associated with the cache key.
-	 */
-	StorageEntry get(String storageKey);
+   /**
+    * <p>
+    * Gets the asset contents from the storage using the provided
+    * {@code cacheKey}.
+    * </p>
+    * 
+    * @param storageKey
+    *           The key under which the asset contents is stored in the storage.
+    * @return the contents associated with the cache key.
+    */
+   StorageEntry get(String storageKey);
 
-	Collection<StorageEntry> getAll();
+   Collection<StorageEntry> getAll();
 
-	/**
-	 * <p>
-	 * Puts the provided {@code contents} into the storage.
-	 * </p>
-	 * 
-	 * @param storageKey
-	 *            The key used to puts the contents to the storage.
-	 * @param contents
-	 *            The asset contents to store in the storage.
-	 */
-	void put(String storageKey, StorageEntry element);
+   /**
+    * <p>
+    * Puts the provided {@code contents} into the storage.
+    * </p>
+    * 
+    * @param storageKey
+    *           The key used to puts the contents to the storage.
+    * @param contents
+    *           The asset contents to store in the storage.
+    */
+   void put(String storageKey, StorageEntry element);
 
-	/**
-	 * <p>
-	 * Removes the entry in the storage corresponding to the provided cache key.
-	 * </p>
-	 * 
-	 * @param storageKey
-	 *            The key to use to lookup the entry to remove.
-	 */
-	void remove(String storageKey);
+   /**
+    * <p>
+    * Removes the entry in the storage corresponding to the provided cache key.
+    * </p>
+    * 
+    * @param storageKey
+    *           The key to use to lookup the entry to remove.
+    */
+   void remove(String storageKey);
 
-	boolean contains(String storageKey);
+   boolean contains(String storageKey);
 
-	int size();
+   int size();
 
-	/**
-	 * <p>
-	 * Clears the underlying store.
-	 * </p>
-	 */
-	void clear();
+   /**
+    * <p>
+    * Clears the underlying store.
+    * </p>
+    */
+   void clear();
 }

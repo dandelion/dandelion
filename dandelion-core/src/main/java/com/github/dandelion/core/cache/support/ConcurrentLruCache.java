@@ -36,41 +36,43 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 public class ConcurrentLruCache<K, V> extends LinkedHashMap<K, V> {
 
-	private static final long serialVersionUID = 4555114766903087183L;
-	private int maxEntries;
-	private ReadWriteLock lock = new ReentrantReadWriteLock();
+   private static final long serialVersionUID = 4555114766903087183L;
+   private int maxEntries;
+   private ReadWriteLock lock = new ReentrantReadWriteLock();
 
-	public ConcurrentLruCache(int maxEntries) {
-		super(maxEntries + 1);
-		this.maxEntries = maxEntries;
-	}
+   public ConcurrentLruCache(int maxEntries) {
+      super(maxEntries + 1);
+      this.maxEntries = maxEntries;
+   }
 
-	@Override
-	protected boolean removeEldestEntry(Map.Entry<K, V> eldest) {
-		return super.size() > maxEntries && isRemovable(eldest);
-	}
+   @Override
+   protected boolean removeEldestEntry(Map.Entry<K, V> eldest) {
+      return super.size() > maxEntries && isRemovable(eldest);
+   }
 
-	protected boolean isRemovable(Map.Entry<K, V> eldest) {
-		return true;
-	}
+   protected boolean isRemovable(Map.Entry<K, V> eldest) {
+      return true;
+   }
 
-	@Override
-	public V get(Object key) {
-		try {
-			lock.readLock().lock();
-			return super.get(key);
-		} finally {
-			lock.readLock().unlock();
-		}
-	}
+   @Override
+   public V get(Object key) {
+      try {
+         lock.readLock().lock();
+         return super.get(key);
+      }
+      finally {
+         lock.readLock().unlock();
+      }
+   }
 
-	@Override
-	public V put(K key, V value) {
-		try {
-			lock.writeLock().lock();
-			return super.put(key, value);
-		} finally {
-			lock.writeLock().unlock();
-		}
-	}
+   @Override
+   public V put(K key, V value) {
+      try {
+         lock.writeLock().lock();
+         return super.put(key, value);
+      }
+      finally {
+         lock.writeLock().unlock();
+      }
+   }
 }

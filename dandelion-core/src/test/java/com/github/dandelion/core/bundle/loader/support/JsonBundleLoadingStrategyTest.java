@@ -55,48 +55,48 @@ import static org.assertj.core.api.Assertions.assertThat;
 @RunWith(MockitoJUnitRunner.class)
 public class JsonBundleLoadingStrategyTest {
 
-	private LoadingStrategy loadingStrategy;
+   private LoadingStrategy loadingStrategy;
 
-	@Rule
-	public ExpectedException exception = ExpectedException.none();
+   @Rule
+   public ExpectedException exception = ExpectedException.none();
 
-	@Mock(answer = Answers.RETURNS_DEEP_STUBS)
-	private Context context;
+   @Mock(answer = Answers.RETURNS_DEEP_STUBS)
+   private Context context;
 
-	@Before
-	public void setup() {
-		loadingStrategy = new JsonBundleLoadingStrategy(context);
-	}
+   @Before
+   public void setup() {
+      loadingStrategy = new JsonBundleLoadingStrategy(context);
+   }
 
-	@Test
-	public void should_return_empty_set() {
-		Set<String> resourcePaths = loadingStrategy.getResourcePaths("unkown-folder", null);
-		assertThat(resourcePaths).isEmpty();
-	}
+   @Test
+   public void should_return_empty_set() {
+      Set<String> resourcePaths = loadingStrategy.getResourcePaths("unkown-folder", null);
+      assertThat(resourcePaths).isEmpty();
+   }
 
-	@Test
-	public void should_find_json_resource_paths() {
-		Set<String> resourcePaths = loadingStrategy.getResourcePaths("bundle-loading/json/json-strategy", null);
-		assertThat(resourcePaths).hasSize(2);
-	}
+   @Test
+   public void should_find_json_resource_paths() {
+      Set<String> resourcePaths = loadingStrategy.getResourcePaths("bundle-loading/json/json-strategy", null);
+      assertThat(resourcePaths).hasSize(2);
+   }
 
-	@Test
-	public void should_map_to_bundles_using_resource_paths() {
-		Set<String> resourcePaths = loadingStrategy.getResourcePaths("bundle-loading/json/json-strategy", null);
-		List<BundleStorageUnit> bundles = loadingStrategy.mapToBundles(resourcePaths);
+   @Test
+   public void should_map_to_bundles_using_resource_paths() {
+      Set<String> resourcePaths = loadingStrategy.getResourcePaths("bundle-loading/json/json-strategy", null);
+      List<BundleStorageUnit> bundles = loadingStrategy.mapToBundles(resourcePaths);
 
-		assertThat(bundles).hasSize(2);
-		assertThat(bundles).extracting("dependencies").containsExactly(null, null);
-		assertThat(bundles).extracting("name").contains("bundle2");
-		assertThat(bundles).extracting("assetStorageUnits").hasSize(2);
-	}
+      assertThat(bundles).hasSize(2);
+      assertThat(bundles).extracting("dependencies").containsExactly(null, null);
+      assertThat(bundles).extracting("name").contains("bundle2");
+      assertThat(bundles).extracting("assetStorageUnits").hasSize(2);
+   }
 
-	@Test
-	public void should_throw_an_exception_when_the_bundle_is_badly_formatted() {
+   @Test
+   public void should_throw_an_exception_when_the_bundle_is_badly_formatted() {
 
-		exception.expect(DandelionException.class);
-		exception.expectMessage(CoreMatchers.containsString("line: 5, column: 30"));
-		loadingStrategy.mapToBundles(new HashSet<String>(Arrays
-				.asList("bundle-loading/json/wrong-format/dandelion/bundle-wrong-format1.json")));
-	}
+      exception.expect(DandelionException.class);
+      exception.expectMessage(CoreMatchers.containsString("line: 5, column: 30"));
+      loadingStrategy.mapToBundles(new HashSet<String>(Arrays
+            .asList("bundle-loading/json/wrong-format/dandelion/bundle-wrong-format1.json")));
+   }
 }

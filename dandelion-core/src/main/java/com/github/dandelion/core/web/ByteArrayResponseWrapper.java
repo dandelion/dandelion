@@ -53,68 +53,68 @@ import javax.servlet.http.HttpServletResponseWrapper;
  */
 public class ByteArrayResponseWrapper extends HttpServletResponseWrapper {
 
-	/**
-	 * The underlying byte-output stream.
-	 */
-	private ByteArrayOutputStream baos = new ByteArrayOutputStream();
+   /**
+    * The underlying byte-output stream.
+    */
+   private ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
-	/**
-	 * PrintWriter that sits on top of the byte-output stream.
-	 */
-	private PrintWriter pw = new PrintWriter(baos);
+   /**
+    * PrintWriter that sits on top of the byte-output stream.
+    */
+   private PrintWriter pw = new PrintWriter(baos);
 
-	/**
-	 * ServletOutputStream that sits on top of byte-output stream.
-	 */
-	private ServletOutputStream sos = new ByteArrayServletStream(baos);
+   /**
+    * ServletOutputStream that sits on top of byte-output stream.
+    */
+   private ServletOutputStream sos = new ByteArrayServletStream(baos);
 
-	public ByteArrayResponseWrapper(HttpServletResponse response) {
-		super(response);
-	}
+   public ByteArrayResponseWrapper(HttpServletResponse response) {
+      super(response);
+   }
 
-	@Override
-	public ServletOutputStream getOutputStream() throws IOException {
-		return sos;
-	}
+   @Override
+   public ServletOutputStream getOutputStream() throws IOException {
+      return sos;
+   }
 
-	@Override
-	public PrintWriter getWriter() throws IOException {
-		return pw;
-	}
+   @Override
+   public PrintWriter getWriter() throws IOException {
+      return pw;
+   }
 
-	/**
-	 * <p>
-	 * Gets the content of the underlying byte-output stream.
-	 * </p>
-	 * 
-	 * @return the byte array containing the response.
-	 */
-	public byte[] toByteArray() {
+   /**
+    * <p>
+    * Gets the content of the underlying byte-output stream.
+    * </p>
+    * 
+    * @return the byte array containing the response.
+    */
+   public byte[] toByteArray() {
 
-		pw.flush();
-		return baos.toByteArray();
-	}
+      pw.flush();
+      return baos.toByteArray();
+   }
 
-	/**
-	 * <p>
-	 * New specific byte-output stream intended to store the passed stream in a
-	 * byte array.
-	 * </p>
-	 * 
-	 * @author Thibault Duchateau
-	 * @since 0.10.1
-	 */
-	private class ByteArrayServletStream extends ServletOutputStream {
+   /**
+    * <p>
+    * New specific byte-output stream intended to store the passed stream in a
+    * byte array.
+    * </p>
+    * 
+    * @author Thibault Duchateau
+    * @since 0.10.1
+    */
+   private class ByteArrayServletStream extends ServletOutputStream {
 
-		private ByteArrayOutputStream baos;
+      private ByteArrayOutputStream baos;
 
-		private ByteArrayServletStream(ByteArrayOutputStream baos) {
-			this.baos = baos;
-		}
+      private ByteArrayServletStream(ByteArrayOutputStream baos) {
+         this.baos = baos;
+      }
 
-		@Override
-		public void write(int param) throws IOException {
-			baos.write(param);
-		}
-	}
+      @Override
+      public void write(int param) throws IOException {
+         baos.write(param);
+      }
+   }
 }

@@ -43,39 +43,39 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class AbstractJavascriptContentGeneratorTest {
 
-    private AssetContentGenerator javascriptGenerator;
-    private MockHttpServletRequest request;
-    private MockFilterConfig filterConfig;
-    private Context context;
+   private AssetContentGenerator javascriptGenerator;
+   private MockHttpServletRequest request;
+   private MockFilterConfig filterConfig;
+   private Context context;
 
-    @Before
-    public void setup() {
-        javascriptGenerator = new FakeJavascriptContentGenerator();
-    }
+   @Before
+   public void setup() {
+      javascriptGenerator = new FakeJavascriptContentGenerator();
+   }
 
-    @Test
-    public void should_pretty_print_in_devMode() {
-    	filterConfig = new MockFilterConfig();
-    	filterConfig.addInitParameter(DandelionConfig.TOOL_ASSET_PRETTY_PRINTING.getName(), "true");
-        context = new Context(filterConfig);
-        request = new MockHttpServletRequest();
-        request.setContextPath("/context");
-        request.setAttribute(WebConstants.DANDELION_CONTEXT_ATTRIBUTE, context);
-        
-        String generatedAsset = javascriptGenerator.getAssetContent(request);
-        assertThat(generatedAsset).isEqualTo("function() {\n    var o = new Object();\n}");
-    }
+   @Test
+   public void should_pretty_print_in_devMode() {
+      filterConfig = new MockFilterConfig();
+      filterConfig.addInitParameter(DandelionConfig.TOOL_ASSET_PRETTY_PRINTING.getName(), "true");
+      context = new Context(filterConfig);
+      request = new MockHttpServletRequest();
+      request.setContextPath("/context");
+      request.setAttribute(WebConstants.DANDELION_CONTEXT_ATTRIBUTE, context);
 
-    @Test
-    public void should_not_pretty_print_in_prodMode() {
-    	filterConfig = new MockFilterConfig();
-    	filterConfig.addInitParameter(DandelionConfig.TOOL_ASSET_PRETTY_PRINTING.getName(), "false");
-        context = new Context(filterConfig);
-        request = new MockHttpServletRequest();
-        request.setContextPath("/context");
-        request.setAttribute(WebConstants.DANDELION_CONTEXT_ATTRIBUTE, context);
-        
-        String generatedAsset = javascriptGenerator.getAssetContent(request);
-        assertThat(generatedAsset).isEqualTo("function(){var o = new Object();}");
-    }
+      String generatedAsset = javascriptGenerator.getAssetContent(request);
+      assertThat(generatedAsset).isEqualTo("function() {\n    var o = new Object();\n}");
+   }
+
+   @Test
+   public void should_not_pretty_print_in_prodMode() {
+      filterConfig = new MockFilterConfig();
+      filterConfig.addInitParameter(DandelionConfig.TOOL_ASSET_PRETTY_PRINTING.getName(), "false");
+      context = new Context(filterConfig);
+      request = new MockHttpServletRequest();
+      request.setContextPath("/context");
+      request.setAttribute(WebConstants.DANDELION_CONTEXT_ATTRIBUTE, context);
+
+      String generatedAsset = javascriptGenerator.getAssetContent(request);
+      assertThat(generatedAsset).isEqualTo("function(){var o = new Object();}");
+   }
 }

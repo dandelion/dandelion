@@ -44,22 +44,22 @@ import com.github.dandelion.core.html.HtmlScript;
  */
 public class HtmlUtils {
 
-	public static AbstractHtmlTag transformAsset(Asset asset) {
-		AbstractHtmlTag tag;
-		switch (asset.getType()) {
-		case css:
-			tag = new HtmlLink(asset.getFinalLocation());
-			break;
-		case js:
-			tag = new HtmlScript(asset.getFinalLocation());
-			break;
-		default:
-			tag = null;
-		}
-		if (tag != null) {
-			tag.addAttributesOnlyName(asset.getAttributesOnlyName());
-			tag.addAttributes(asset.getAttributes());
-		}
-		return tag;
-	}
+   public static AbstractHtmlTag transformAsset(Asset asset) {
+      AbstractHtmlTag tag;
+      switch (asset.getType()) {
+      case css:
+         tag = new HtmlLink(asset.getFinalLocation());
+         break;
+      case js:
+         tag = new HtmlScript(asset.getFinalLocation());
+         break;
+      default:
+         tag = null;
+      }
+      if (tag != null) {
+         tag.addAttributesOnlyName(asset.getAttributesOnlyName());
+         tag.addAttributes(asset.getAttributes());
+      }
+      return tag;
+   }
 }

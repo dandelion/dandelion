@@ -56,56 +56,56 @@ import static org.assertj.core.api.Assertions.assertThat;
 @RunWith(MockitoJUnitRunner.class)
 public class XmlBundleLoadingStrategyTest {
 
-	private LoadingStrategy loadingStrategy;
+   private LoadingStrategy loadingStrategy;
 
-	@Rule
-	public ExpectedException expectedEx = ExpectedException.none();
+   @Rule
+   public ExpectedException expectedEx = ExpectedException.none();
 
-	@Mock(answer = Answers.RETURNS_DEEP_STUBS)
-	private Context context;
+   @Mock(answer = Answers.RETURNS_DEEP_STUBS)
+   private Context context;
 
-	@Before
-	public void setup() {
-		loadingStrategy = new XmlBundleLoadingStrategy(context);
-	}
+   @Before
+   public void setup() {
+      loadingStrategy = new XmlBundleLoadingStrategy(context);
+   }
 
-	@Test
-	public void should_return_empty_set() {
-		Set<String> resourcePaths = loadingStrategy.getResourcePaths("unkown-folder", null);
-		assertThat(resourcePaths).isEmpty();
-	}
+   @Test
+   public void should_return_empty_set() {
+      Set<String> resourcePaths = loadingStrategy.getResourcePaths("unkown-folder", null);
+      assertThat(resourcePaths).isEmpty();
+   }
 
-	@Test
-	public void should_find_xml_resource_paths() {
-		Set<String> resourcePaths = loadingStrategy.getResourcePaths("bundle-loading/xml/xml-strategy", null);
-		assertThat(resourcePaths).hasSize(4);
-	}
+   @Test
+   public void should_find_xml_resource_paths() {
+      Set<String> resourcePaths = loadingStrategy.getResourcePaths("bundle-loading/xml/xml-strategy", null);
+      assertThat(resourcePaths).hasSize(4);
+   }
 
-	@Test
-	public void should_map_to_bundles_using_resource_paths() {
-		List<BundleStorageUnit> bundles = loadingStrategy.mapToBundles(new HashSet<String>(Arrays
-				.asList("bundle-loading/xml/xml-strategy/bundle2.xml")));
+   @Test
+   public void should_map_to_bundles_using_resource_paths() {
+      List<BundleStorageUnit> bundles = loadingStrategy.mapToBundles(new HashSet<String>(Arrays
+            .asList("bundle-loading/xml/xml-strategy/bundle2.xml")));
 
-		BundleStorageUnit bundle = bundles.get(0);
-		System.out.println(bundle);
-		assertThat(bundle.getName()).isEqualTo("bundle2");
-		assertThat(bundle.getDependencies()).isNull();
-		assertThat(bundle.getAssetStorageUnitNames()).hasSize(1);
-		assertThat(bundle.getAssetStorageUnits()).hasSize(1);
+      BundleStorageUnit bundle = bundles.get(0);
+      System.out.println(bundle);
+      assertThat(bundle.getName()).isEqualTo("bundle2");
+      assertThat(bundle.getDependencies()).isNull();
+      assertThat(bundle.getAssetStorageUnitNames()).hasSize(1);
+      assertThat(bundle.getAssetStorageUnits()).hasSize(1);
 
-		AssetStorageUnit asu = bundle.getAssetStorageUnits().iterator().next();
-		assertThat(asu.getLocations()).hasSize(1);
-		assertThat(asu.getLocations().get("cdn")).isEqualTo("//domain.com/js/asset2_1.js");
-	}
+      AssetStorageUnit asu = bundle.getAssetStorageUnits().iterator().next();
+      assertThat(asu.getLocations()).hasSize(1);
+      assertThat(asu.getLocations().get("cdn")).isEqualTo("//domain.com/js/asset2_1.js");
+   }
 
-	@Test
-	public void should_throw_an_exception_when_the_bundle_is_badly_formatted() {
+   @Test
+   public void should_throw_an_exception_when_the_bundle_is_badly_formatted() {
 
-		expectedEx.expect(DandelionException.class);
-		expectedEx.expectMessage(CoreMatchers.containsString("cvc-complex-type.2.4.a"));
-		expectedEx.expectMessage(CoreMatchers.containsString("unknown"));
+      expectedEx.expect(DandelionException.class);
+      expectedEx.expectMessage(CoreMatchers.containsString("cvc-complex-type.2.4.a"));
+      expectedEx.expectMessage(CoreMatchers.containsString("unknown"));
 
-		loadingStrategy.mapToBundles(new HashSet<String>(Arrays
-				.asList("bundle-loading/xml/xml-strategy/wrong-bundle.xml")));
-	}
+      loadingStrategy.mapToBundles(new HashSet<String>(Arrays
+            .asList("bundle-loading/xml/xml-strategy/wrong-bundle.xml")));
+   }
 }

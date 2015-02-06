@@ -46,23 +46,23 @@ import com.github.dandelion.core.web.WebConstants;
  */
 public abstract class AbstractJsContentGenerator implements AssetContentGenerator {
 
-	private static Logger logger = LoggerFactory.getLogger(AbstractJsContentGenerator.class);
+   private static Logger logger = LoggerFactory.getLogger(AbstractJsContentGenerator.class);
 
-	@Override
-	public String getAssetContent(HttpServletRequest request) {
+   @Override
+   public String getAssetContent(HttpServletRequest request) {
 
-		Context context = (Context) request.getAttribute(WebConstants.DANDELION_CONTEXT_ATTRIBUTE);
+      Context context = (Context) request.getAttribute(WebConstants.DANDELION_CONTEXT_ATTRIBUTE);
 
-		logger.debug("Generating asset...");
-		String generatedContent = getJavascriptContent(request);
-		logger.debug("Asset generated successfully");
+      logger.debug("Generating asset...");
+      String generatedContent = getJavascriptContent(request);
+      logger.debug("Asset generated successfully");
 
-		if (context.getConfiguration().isToolAssetPrettyPrintingEnabled()) {
-			return ScriptingUtils.prettyPrintJs(generatedContent);
-		}
-		
-		return generatedContent;
-	}
+      if (context.getConfiguration().isToolAssetPrettyPrintingEnabled()) {
+         return ScriptingUtils.prettyPrintJs(generatedContent);
+      }
 
-	protected abstract String getJavascriptContent(HttpServletRequest request);
+      return generatedContent;
+   }
+
+   protected abstract String getJavascriptContent(HttpServletRequest request);
 }

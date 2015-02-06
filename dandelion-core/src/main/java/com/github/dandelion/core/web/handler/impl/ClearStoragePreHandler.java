@@ -49,34 +49,34 @@ import com.github.dandelion.core.web.handler.HandlerContext;
  */
 public class ClearStoragePreHandler extends AbstractHandlerChain {
 
-	private static final Logger LOG = LoggerFactory.getLogger(ClearStoragePreHandler.class);
+   private static final Logger LOG = LoggerFactory.getLogger(ClearStoragePreHandler.class);
 
-	@Override
-	protected Logger getLogger() {
-		return LOG;
-	}
+   @Override
+   protected Logger getLogger() {
+      return LOG;
+   }
 
-	@Override
-	public boolean isAfterChaining() {
-		return false;
-	}
+   @Override
+   public boolean isAfterChaining() {
+      return false;
+   }
 
-	@Override
-	public int getRank() {
-		return 0;
-	}
+   @Override
+   public int getRank() {
+      return 0;
+   }
 
-	@Override
-	public boolean isApplicable(HandlerContext handlerContext) {
-		return handlerContext.getContext().getConfiguration().isToolDebuggerEnabled()
-				&& handlerContext.getRequest().getParameter(WebConstants.DANDELION_CLEAR_STORAGE) != null;
-	}
+   @Override
+   public boolean isApplicable(HandlerContext handlerContext) {
+      return handlerContext.getContext().getConfiguration().isToolDebuggerEnabled()
+            && handlerContext.getRequest().getParameter(WebConstants.DANDELION_CLEAR_STORAGE) != null;
+   }
 
-	@Override
-	public boolean handle(HandlerContext handlerContext) {
-		handlerContext.getContext().getAssetStorage().clear();
-		;
-		LOG.info("Cleared asset storage");
-		return true;
-	}
+   @Override
+   public boolean handle(HandlerContext handlerContext) {
+      handlerContext.getContext().getAssetStorage().clear();
+      ;
+      LOG.info("Cleared asset storage");
+      return true;
+   }
 }

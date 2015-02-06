@@ -42,17 +42,17 @@ import java.net.URL;
  */
 public interface UrlResolver {
 
-	/**
-	 * <p>
-	 * Resolves the passed URL, which may be container-specific, into a standard
-	 * Java {@link URL}.
-	 * </p>
-	 * 
-	 * @param url
-	 *            The URL to resolve.
-	 * @return The matching standard Java URL.
-	 * @throws java.io.IOException
-	 *             if something goes wrong during the scanning.
-	 */
-	public URL toStandardUrl(URL url) throws IOException;
+   /**
+    * <p>
+    * Resolves the passed URL, which may be container-specific, into a standard
+    * Java {@link URL}.
+    * </p>
+    * 
+    * @param url
+    *           The URL to resolve.
+    * @return The matching standard Java URL.
+    * @throws java.io.IOException
+    *            if something goes wrong during the scanning.
+    */
+   public URL toStandardUrl(URL url) throws IOException;
 }

@@ -64,113 +64,111 @@ import com.github.dandelion.core.web.handler.HandlerContext;
  */
 public class AssetInjectionPostHandler extends AbstractHandlerChain {
 
-	private static final Logger LOG = LoggerFactory.getLogger(DebuggerPostHandler.class);
+   private static final Logger LOG = LoggerFactory.getLogger(DebuggerPostHandler.class);
 
-	@Override
-	protected Logger getLogger() {
-		return LOG;
-	}
+   @Override
+   protected Logger getLogger() {
+      return LOG;
+   }
 
-	@Override
-	public boolean isAfterChaining() {
-		return true;
-	}
+   @Override
+   public boolean isAfterChaining() {
+      return true;
+   }
 
-	@Override
-	public int getRank() {
-		return 20;
-	}
+   @Override
+   public int getRank() {
+      return 20;
+   }
 
-	@Override
-	public boolean isApplicable(HandlerContext handlerContext) {
+   @Override
+   public boolean isApplicable(HandlerContext handlerContext) {
 
-		HttpServletRequest request = handlerContext.getRequest();
-		HttpServletResponse wrappedResponse = handlerContext.getResponse();
-		boolean retval = true;
+      HttpServletRequest request = handlerContext.getRequest();
+      HttpServletResponse wrappedResponse = handlerContext.getResponse();
+      boolean retval = true;
 
-		// Not applicable in non-HTML resources
-		if (wrappedResponse.getContentType() == null || !wrappedResponse.getContentType().contains("text/html")) {
-			retval = false;
-		}
+      // Not applicable in non-HTML resources
+      if (wrappedResponse.getContentType() == null || !wrappedResponse.getContentType().contains("text/html")) {
+         retval = false;
+      }
 
-		// Also check whether the asset injection has been explicitely disabled
-		// (possibly by other components) either from a request attribute...
-		if (request.getAttribute(WebConstants.DANDELION_ASSET_FILTER_STATE) != null) {
-			retval = retval
-					&& Boolean.parseBoolean(String.valueOf(request
-							.getAttribute(WebConstants.DANDELION_ASSET_FILTER_STATE)));
+      // Also check whether the asset injection has been explicitely disabled
+      // (possibly by other components) either from a request attribute...
+      if (request.getAttribute(WebConstants.DANDELION_ASSET_FILTER_STATE) != null) {
+         retval = retval
+               && Boolean.parseBoolean(String.valueOf(request.getAttribute(WebConstants.DANDELION_ASSET_FILTER_STATE)));
 
-			if (!retval) {
-				LOG.debug("Asset injection explicitely disabled by the {} attribute for the request '{}'",
-						WebConstants.DANDELION_ASSET_FILTER_STATE, request.getRequestURI());
-			}
-		}
-		// ... or from a request parameter
-		else if (request.getParameter(WebConstants.DANDELION_ASSET_FILTER_STATE) != null) {
+         if (!retval) {
+            LOG.debug("Asset injection explicitely disabled by the {} attribute for the request '{}'",
+                  WebConstants.DANDELION_ASSET_FILTER_STATE, request.getRequestURI());
+         }
+      }
+      // ... or from a request parameter
+      else if (request.getParameter(WebConstants.DANDELION_ASSET_FILTER_STATE) != null) {
 
-			retval = retval
-					&& Boolean.parseBoolean(String.valueOf(request
-							.getParameter(WebConstants.DANDELION_ASSET_FILTER_STATE)));
+         retval = retval
+               && Boolean.parseBoolean(String.valueOf(request.getParameter(WebConstants.DANDELION_ASSET_FILTER_STATE)));
 
-			if (!retval) {
-				LOG.debug("Asset injection explicitely disabled by the {} parameter for the request '{}'",
-						WebConstants.DANDELION_ASSET_FILTER_STATE, request.getRequestURI());
-			}
-		}
+         if (!retval) {
+            LOG.debug("Asset injection explicitely disabled by the {} parameter for the request '{}'",
+                  WebConstants.DANDELION_ASSET_FILTER_STATE, request.getRequestURI());
+         }
+      }
 
-		return retval;
-	}
+      return retval;
+   }
 
-	@Override
-	public boolean handle(HandlerContext handlerContext) {
+   @Override
+   public boolean handle(HandlerContext handlerContext) {
 
-		// Convert the response to a String in order to perform easier
-		// replacements
-		String html = new String(handlerContext.getResponseAsBytes());
+      // Convert the response to a String in order to perform easier
+      // replacements
+      String html = new String(handlerContext.getResponseAsBytes());
 
-		// Get all assets to be injected in the <head> section
-		Set<Asset> assetsHead = new AssetQuery(handlerContext.getRequest(), handlerContext.getContext()).atPosition(
-				AssetDomPosition.head).perform();
+      // Get all assets to be injected in the <head> section
+      Set<Asset> assetsHead = new AssetQuery(handlerContext.getRequest(), handlerContext.getContext()).atPosition(
+            AssetDomPosition.head).perform();
 
-		if (!assetsHead.isEmpty()) {
-			StringBuilder htmlHead = new StringBuilder();
-			for (Asset asset : assetsHead) {
-				AbstractHtmlTag tag = HtmlUtils.transformAsset(asset);
-				htmlHead.append(tag.toHtml());
-				htmlHead.append('\n');
-			}
+      if (!assetsHead.isEmpty()) {
+         StringBuilder htmlHead = new StringBuilder();
+         for (Asset asset : assetsHead) {
+            AbstractHtmlTag tag = HtmlUtils.transformAsset(asset);
+            htmlHead.append(tag.toHtml());
+            htmlHead.append('\n');
+         }
 
-			html = html.replace("</head>", htmlHead + "\n</head>");
-		}
+         html = html.replace("</head>", htmlHead + "\n</head>");
+      }
 
-		// Get all assets to be injected in the <body> section
-		Set<Asset> assetsBody = new AssetQuery(handlerContext.getRequest(), handlerContext.getContext()).atPosition(
-				AssetDomPosition.body).perform();
+      // Get all assets to be injected in the <body> section
+      Set<Asset> assetsBody = new AssetQuery(handlerContext.getRequest(), handlerContext.getContext()).atPosition(
+            AssetDomPosition.body).perform();
 
-		if (!assetsBody.isEmpty()) {
-			StringBuilder htmlBody = new StringBuilder();
-			for (Asset asset : assetsBody) {
-				AbstractHtmlTag tag = HtmlUtils.transformAsset(asset);
-				htmlBody.append(tag.toHtml());
-				htmlBody.append('\n');
-			}
-			html = html.replace("</body>", htmlBody + "</body>");
-		}
+      if (!assetsBody.isEmpty()) {
+         StringBuilder htmlBody = new StringBuilder();
+         for (Asset asset : assetsBody) {
+            AbstractHtmlTag tag = HtmlUtils.transformAsset(asset);
+            htmlBody.append(tag.toHtml());
+            htmlBody.append('\n');
+         }
+         html = html.replace("</body>", htmlBody + "</body>");
+      }
 
-		// Once all requested assets injected, convert back to a byte array to
-		// let other handler do their work
-		String configuredEncoding = handlerContext.getContext().getConfiguration().getEncoding();
-		byte[] updatedResponse;
-		try {
-			handlerContext.getResponse().setContentLength(html.getBytes(configuredEncoding).length);
-			updatedResponse = html.getBytes(configuredEncoding);
-		}
-		catch (UnsupportedEncodingException e) {
-			throw new DandelionException("Unable to encode the HTML page using the '" + configuredEncoding
-					+ "', which doesn't seem to be supported", e);
-		}
+      // Once all requested assets injected, convert back to a byte array to
+      // let other handler do their work
+      String configuredEncoding = handlerContext.getContext().getConfiguration().getEncoding();
+      byte[] updatedResponse;
+      try {
+         handlerContext.getResponse().setContentLength(html.getBytes(configuredEncoding).length);
+         updatedResponse = html.getBytes(configuredEncoding);
+      }
+      catch (UnsupportedEncodingException e) {
+         throw new DandelionException("Unable to encode the HTML page using the '" + configuredEncoding
+               + "', which doesn't seem to be supported", e);
+      }
 
-		handlerContext.setResponseAsBytes(updatedResponse);
-		return true;
-	}
+      handlerContext.setResponseAsBytes(updatedResponse);
+      return true;
+   }
 }

@@ -50,60 +50,60 @@ import com.github.dandelion.core.storage.StorageEntry;
  */
 public class MemoryAssetStorage extends AbstractAssetStorage {
 
-	private static final Logger LOG = LoggerFactory.getLogger(MemoryAssetStorage.class);
+   private static final Logger LOG = LoggerFactory.getLogger(MemoryAssetStorage.class);
 
-	/**
-	 * The actual store.
-	 */
-	private ConcurrentHashMap<String, StorageEntry> contentStore;
+   /**
+    * The actual store.
+    */
+   private ConcurrentHashMap<String, StorageEntry> contentStore;
 
-	public MemoryAssetStorage() {
-		this.contentStore = new ConcurrentHashMap<String, StorageEntry>();
-	}
+   public MemoryAssetStorage() {
+      this.contentStore = new ConcurrentHashMap<String, StorageEntry>();
+   }
 
-	@Override
-	protected Logger getLogger() {
-		return LOG;
-	}
+   @Override
+   protected Logger getLogger() {
+      return LOG;
+   }
 
-	@Override
-	public String getName() {
-		return "memory";
-	}
+   @Override
+   public String getName() {
+      return "memory";
+   }
 
-	@Override
-	public StorageEntry doGet(String storageKey) {
-		return this.contentStore.get(storageKey);
-	}
+   @Override
+   public StorageEntry doGet(String storageKey) {
+      return this.contentStore.get(storageKey);
+   }
 
-	@Override
-	public int doPut(String storageKey, StorageEntry element) {
-		this.contentStore.put(storageKey, element);
-		return this.contentStore.size();
-	}
+   @Override
+   public int doPut(String storageKey, StorageEntry element) {
+      this.contentStore.put(storageKey, element);
+      return this.contentStore.size();
+   }
 
-	@Override
-	public void doRemove(String storageKey) {
-		this.contentStore.remove(storageKey);
-	}
+   @Override
+   public void doRemove(String storageKey) {
+      this.contentStore.remove(storageKey);
+   }
 
-	@Override
-	public boolean contains(String storageKey) {
-		return this.contentStore.containsKey(storageKey);
-	}
+   @Override
+   public boolean contains(String storageKey) {
+      return this.contentStore.containsKey(storageKey);
+   }
 
-	@Override
-	public int size() {
-		return this.contentStore.size();
-	}
+   @Override
+   public int size() {
+      return this.contentStore.size();
+   }
 
-	@Override
-	public void doClear() {
-		this.contentStore.clear();
-	}
+   @Override
+   public void doClear() {
+      this.contentStore.clear();
+   }
 
-	@Override
-	public Collection<StorageEntry> getAll() {
-		return this.contentStore.values();
-	}
+   @Override
+   public Collection<StorageEntry> getAll() {
+      return this.contentStore.values();
+   }
 }

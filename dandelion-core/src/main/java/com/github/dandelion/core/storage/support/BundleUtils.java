@@ -54,145 +54,147 @@ import com.github.dandelion.core.utils.StringUtils;
  */
 public final class BundleUtils {
 
-	private static final Logger LOG = LoggerFactory.getLogger(BundleUtils.class);
+   private static final Logger LOG = LoggerFactory.getLogger(BundleUtils.class);
 
-	/**
-	 * <p>
-	 * Performs several initializations on {@link BundleStorageUnit} in order
-	 * for them to be consistent before building the {@link BundleDag}.
-	 * </p>
-	 * 
-	 * @param loadedBundles
-	 * @param context
-	 */
-	public static void finalizeBundleConfiguration(List<BundleStorageUnit> loadedBundles, Context context) {
+   /**
+    * <p>
+    * Performs several initializations on {@link BundleStorageUnit} in order for
+    * them to be consistent before building the {@link BundleDag}.
+    * </p>
+    * 
+    * @param loadedBundles
+    * @param context
+    */
+   public static void finalizeBundleConfiguration(List<BundleStorageUnit> loadedBundles, Context context) {
 
-		LOG.debug("Finishing bundles configuration...");
+      LOG.debug("Finishing bundles configuration...");
 
-		for (BundleStorageUnit bsu : loadedBundles) {
-			finalizeBundleConfiguration(bsu, context);
-		}
-	}
+      for (BundleStorageUnit bsu : loadedBundles) {
+         finalizeBundleConfiguration(bsu, context);
+      }
+   }
 
-	/**
-	 * <p>
-	 * Performs several initializations on {@link BundleStorageUnit} in order
-	 * for them to be consistent before building the {@link BundleDag}.
-	 * </p>
-	 * 
-	 * @param loadedBundles
-	 * @param context
-	 */
-	public static void finalizeBundleConfiguration(BundleStorageUnit bsu, Context context) {
+   /**
+    * <p>
+    * Performs several initializations on {@link BundleStorageUnit} in order for
+    * them to be consistent before building the {@link BundleDag}.
+    * </p>
+    * 
+    * @param loadedBundles
+    * @param context
+    */
+   public static void finalizeBundleConfiguration(BundleStorageUnit bsu, Context context) {
 
-		LOG.trace("Finalizing configuration of bundle \"{}\"", bsu);
+      LOG.trace("Finalizing configuration of bundle \"{}\"", bsu);
 
-		// The name of the bundle is extracted from its path if not
-		// specified
-		if (StringUtils.isBlank(bsu.getName())) {
-			String extractedName = PathUtils.extractLowerCasedName(bsu.getRelativePath());
-			bsu.setName(extractedName);
-			LOG.trace("Name of the bundle extracted from its path: \"{}\"", extractedName);
-		}
+      // The name of the bundle is extracted from its path if not
+      // specified
+      if (StringUtils.isBlank(bsu.getName())) {
+         String extractedName = PathUtils.extractLowerCasedName(bsu.getRelativePath());
+         bsu.setName(extractedName);
+         LOG.trace("Name of the bundle extracted from its path: \"{}\"", extractedName);
+      }
 
-		if (bsu.getAssetStorageUnits() != null) {
+      if (bsu.getAssetStorageUnits() != null) {
 
-			for (AssetStorageUnit asu : bsu.getAssetStorageUnits()) {
-				String firstFoundLocation = asu.getLocations().values().iterator().next();
-				if (StringUtils.isBlank(asu.getName())) {
-					String extractedName = PathUtils.extractLowerCasedName(firstFoundLocation);
-					asu.setName(extractedName);
-					LOG.trace("Name of the asset extracted from its first location: \"{}\"", extractedName);
-				}
-				if (asu.getType() == null) {
-					AssetType extractedType = AssetType.extractFromAssetLocation(firstFoundLocation);
-					asu.setType(extractedType);
-					LOG.trace("Type of the asset extracted from its first location: \"{}\"", extractedType);
-				}
-			}
+         for (AssetStorageUnit asu : bsu.getAssetStorageUnits()) {
+            String firstFoundLocation = asu.getLocations().values().iterator().next();
+            if (StringUtils.isBlank(asu.getName())) {
+               String extractedName = PathUtils.extractLowerCasedName(firstFoundLocation);
+               asu.setName(extractedName);
+               LOG.trace("Name of the asset extracted from its first location: \"{}\"", extractedName);
+            }
+            if (asu.getType() == null) {
+               AssetType extractedType = AssetType.extractFromAssetLocation(firstFoundLocation);
+               asu.setType(extractedType);
+               LOG.trace("Type of the asset extracted from its first location: \"{}\"", extractedType);
+            }
+         }
 
-			// Perform variable substitutions only if the user uses a
-			// configuration file
-			if (context.getConfiguration().getProperties() != null) {
-				for (AssetStorageUnit asu : bsu.getAssetStorageUnits()) {
-					Map<String, String> locations = asu.getLocations();
-					for (Entry<String, String> locationEntry : asu.getLocations().entrySet()) {
-						locations.put(locationEntry.getKey(), StringUtils.substitute(locationEntry.getValue(), context
-								.getConfiguration().getProperties()));
-					}
-				}
-			}
-		}
-	}
+         // Perform variable substitutions only if the user uses a
+         // configuration file
+         if (context.getConfiguration().getProperties() != null) {
+            for (AssetStorageUnit asu : bsu.getAssetStorageUnits()) {
+               Map<String, String> locations = asu.getLocations();
+               for (Entry<String, String> locationEntry : asu.getLocations().entrySet()) {
+                  locations.put(locationEntry.getKey(),
+                        StringUtils.substitute(locationEntry.getValue(), context.getConfiguration().getProperties()));
+               }
+            }
+         }
+      }
+   }
 
-	public static void checkRequiredConfiguration(BundleStorageLogBuilder logBuilder, BundleStorageUnit... bundleStorageUnits) {
+   public static void checkRequiredConfiguration(BundleStorageLogBuilder logBuilder,
+         BundleStorageUnit... bundleStorageUnits) {
 
-		// Check that the DAG contains no empty bundles
-		for (BundleStorageUnit bsu : bundleStorageUnits) {
-			if (bsu.getAssetStorageUnits() == null || bsu.getAssetStorageUnits().isEmpty()) {
-				logBuilder.error("- Empty bundle", "   [" + bsu.getName() + "] The bundle \"" + bsu.getName()
-						+ "\" is empty. You would better remove it.");
-			}
-		}
+      // Check that the DAG contains no empty bundles
+      for (BundleStorageUnit bsu : bundleStorageUnits) {
+         if (bsu.getAssetStorageUnits() == null || bsu.getAssetStorageUnits().isEmpty()) {
+            logBuilder.error("- Empty bundle", "   [" + bsu.getName() + "] The bundle \"" + bsu.getName()
+                  + "\" is empty. You would better remove it.");
+         }
+      }
 
-		// Check that every asset of every bundle contains at least one
-		// locationKey/location pair because both name and type will be deducted
-		// from it
+      // Check that every asset of every bundle contains at least one
+      // locationKey/location pair because both name and type will be deducted
+      // from it
 
-		for (BundleStorageUnit bsu : bundleStorageUnits) {
-			for (AssetStorageUnit asu : bsu.getAssetStorageUnits()) {
+      for (BundleStorageUnit bsu : bundleStorageUnits) {
+         for (AssetStorageUnit asu : bsu.getAssetStorageUnits()) {
 
-				// Check locations
-				if (asu.getLocations().isEmpty()) {
-					logBuilder.error("- Missing asset location(s)", "[" + bsu.getName()
-							+ "] The bundle contain asset with no location whereas it is required.");
-				}
-				else {
-					for (String locationKey : asu.getLocations().keySet()) {
-						if (StringUtils.isBlank(locationKey)) {
-							logBuilder.error(
-									"- Missing location key",
-									"["
-											+ bsu.getName()
-											+ "] One of the assets contained in this bundle has a location with no location key. Please correct it before continuing.");
+            // Check locations
+            if (asu.getLocations().isEmpty()) {
+               logBuilder.error("- Missing asset location(s)", "[" + bsu.getName()
+                     + "] The bundle contain asset with no location whereas it is required.");
+            }
+            else {
+               for (String locationKey : asu.getLocations().keySet()) {
+                  if (StringUtils.isBlank(locationKey)) {
+                     logBuilder
+                           .error(
+                                 "- Missing location key",
+                                 "["
+                                       + bsu.getName()
+                                       + "] One of the assets contained in this bundle has a location with no location key. Please correct it before continuing.");
 
-						}
-					}
+                  }
+               }
 
-					for (String location : asu.getLocations().values()) {
-						if (StringUtils.isBlank(location)) {
-							logBuilder.error("- Missing asset location", "[" + bsu.getName()
-									+ "] One of the assets contained in the bundle \"" + bsu.getName()
-									+ "\" has an empty location. Please correct it before continuing.");
-						}
-						else {
-							// The asset type can be specified explicitely
-							if(asu.getType() == null){
-								boolean extensionNotFound = true;
-								for (AssetType assetType : AssetType.values()) {
-									if (location.toLowerCase().endsWith("." + assetType.toString())) {
-										extensionNotFound = false;
-										break;
-									}
-								}
-								if (extensionNotFound) {
-									logBuilder.error("- Missing extension", "[" + bsu.getName()
-											+ "] The extension is required in all locations.");
-								}
-							}
-						}
-					}
-				}
-			}
-		}
-	}
-	
-	/**
-	 * <p>
-	 * Suppress default constructor for noninstantiability.
-	 * </p>
-	 */
-	private BundleUtils() {
-		throw new AssertionError();
-	}
+               for (String location : asu.getLocations().values()) {
+                  if (StringUtils.isBlank(location)) {
+                     logBuilder.error("- Missing asset location", "[" + bsu.getName()
+                           + "] One of the assets contained in the bundle \"" + bsu.getName()
+                           + "\" has an empty location. Please correct it before continuing.");
+                  }
+                  else {
+                     // The asset type can be specified explicitely
+                     if (asu.getType() == null) {
+                        boolean extensionNotFound = true;
+                        for (AssetType assetType : AssetType.values()) {
+                           if (location.toLowerCase().endsWith("." + assetType.toString())) {
+                              extensionNotFound = false;
+                              break;
+                           }
+                        }
+                        if (extensionNotFound) {
+                           logBuilder.error("- Missing extension", "[" + bsu.getName()
+                                 + "] The extension is required in all locations.");
+                        }
+                     }
+                  }
+               }
+            }
+         }
+      }
+   }
+
+   /**
+    * <p>
+    * Suppress default constructor for noninstantiability.
+    * </p>
+    */
+   private BundleUtils() {
+      throw new AssertionError();
+   }
 }

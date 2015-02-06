@@ -46,29 +46,29 @@ import com.github.dandelion.core.config.Configuration;
  */
 public interface AssetProcessor {
 
-	/**
-	 * @return the processor key associated with the processor. The key is used
-	 *         in the in the {@link Configuration} to activate the corresponding
-	 *         processor.
-	 */
-	String getProcessorKey();
+   /**
+    * @return the processor key associated with the processor. The key is used
+    *         in the in the {@link Configuration} to activate the corresponding
+    *         processor.
+    */
+   String getProcessorKey();
 
-	/**
-	 * <p>
-	 * Performs the processing of the {@link Asset} stored in the given
-	 * {@link ProcessingContext} by reading its content from the given
-	 * {@link Reader} and writing the new content to the {@link Writer}.
-	 * </p>
-	 * 
-	 * @param reader
-	 *            The reader containig the content to process.
-	 * @param writer
-	 *            The destination writer.
-	 * @param processingContext
-	 *            The processing context that includes the {@link Asset} to be
-	 *            processed.
-	 * @throws DandelionException
-	 *             if something goes wrong during the processing of the asset.
-	 */
-	void process(Reader reader, Writer writer, ProcessingContext processingContext) throws DandelionException;
+   /**
+    * <p>
+    * Performs the processing of the {@link Asset} stored in the given
+    * {@link ProcessingContext} by reading its content from the given
+    * {@link Reader} and writing the new content to the {@link Writer}.
+    * </p>
+    * 
+    * @param reader
+    *           The reader containig the content to process.
+    * @param writer
+    *           The destination writer.
+    * @param processingContext
+    *           The processing context that includes the {@link Asset} to be
+    *           processed.
+    * @throws DandelionException
+    *            if something goes wrong during the processing of the asset.
+    */
+   void process(Reader reader, Writer writer, ProcessingContext processingContext) throws DandelionException;
 }

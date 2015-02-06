@@ -33,5 +33,5 @@ package com.github.dandelion.thymeleaf.util;
  * Definition of an Attribute Name object
  */
 public interface AttributeName {
-	public String getAttribute();
+   public String getAttribute();
 }

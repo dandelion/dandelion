@@ -53,19 +53,19 @@ package com.github.dandelion.core.i18n;
  */
 public interface MessageResolver {
 
-	public static final String UNDEFINED_KEY = "???";
+   public static final String UNDEFINED_KEY = "???";
 
-	/**
-	 * Return a localized String.
-	 * 
-	 * @param messageKey
-	 *            The key used to lookup in the configured ResourceBundle.
-	 * @param defaultValue
-	 *            The default value to used if no key is found.
-	 * @param objects
-	 *            Different objects that may be needed to access the
-	 *            ResourceBundle, depending on the present JARs.
-	 * @return a localized String.
-	 */
-	String getResource(String messageKey, String defaultValue, Object... objects);
+   /**
+    * Return a localized String.
+    * 
+    * @param messageKey
+    *           The key used to lookup in the configured ResourceBundle.
+    * @param defaultValue
+    *           The default value to used if no key is found.
+    * @param objects
+    *           Different objects that may be needed to access the
+    *           ResourceBundle, depending on the present JARs.
+    * @return a localized String.
+    */
+   String getResource(String messageKey, String defaultValue, Object... objects);
 }

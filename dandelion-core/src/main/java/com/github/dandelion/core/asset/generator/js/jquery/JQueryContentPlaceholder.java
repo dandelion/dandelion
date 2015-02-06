@@ -43,5 +43,5 @@ import com.github.dandelion.core.asset.generator.AssetPlaceholder;
  * @see com.github.dandelion.core.asset.generator.js.jquery.JQueryContentGenerator
  */
 public enum JQueryContentPlaceholder implements AssetPlaceholder {
-	BEFORE_ALL, BEFORE_START_DOCUMENT_READY, AFTER_START_DOCUMENT_READY, COMPONENT_CONFIGURATION, BEFORE_END_DOCUMENT_READY, AFTER_END_DOCUMENT_READY, AFTER_ALL
+   BEFORE_ALL, BEFORE_START_DOCUMENT_READY, AFTER_START_DOCUMENT_READY, COMPONENT_CONFIGURATION, BEFORE_END_DOCUMENT_READY, AFTER_END_DOCUMENT_READY, AFTER_ALL
 }

@@ -51,53 +51,53 @@ import com.github.dandelion.core.storage.BundleStorageUnit;
  */
 public class TopologicalSorter {
 
-	private final static Integer NOT_VISTITED = new Integer(0);
-	private final static Integer VISITING = new Integer(1);
-	private final static Integer VISITED = new Integer(2);
+   private final static Integer NOT_VISTITED = new Integer(0);
+   private final static Integer VISITING = new Integer(1);
+   private final static Integer VISITED = new Integer(2);
 
-	public static List<BundleStorageUnit> sort(BundleDag graph) {
-		return dfs(graph);
-	}
+   public static List<BundleStorageUnit> sort(BundleDag graph) {
+      return dfs(graph);
+   }
 
-	public static List<BundleStorageUnit> sort(BundleStorageUnit vertex) {
-		List<BundleStorageUnit> retValue = new LinkedList<BundleStorageUnit>();
+   public static List<BundleStorageUnit> sort(BundleStorageUnit vertex) {
+      List<BundleStorageUnit> retValue = new LinkedList<BundleStorageUnit>();
 
-		dfsVisit(vertex, new HashMap<BundleStorageUnit, Integer>(), retValue);
+      dfsVisit(vertex, new HashMap<BundleStorageUnit, Integer>(), retValue);
 
-		return retValue;
-	}
+      return retValue;
+   }
 
-	private static List<BundleStorageUnit> dfs(BundleDag graph) {
-		List<BundleStorageUnit> retValue = new LinkedList<BundleStorageUnit>();
-		Map<BundleStorageUnit, Integer> vertexStateMap = new HashMap<BundleStorageUnit, Integer>();
+   private static List<BundleStorageUnit> dfs(BundleDag graph) {
+      List<BundleStorageUnit> retValue = new LinkedList<BundleStorageUnit>();
+      Map<BundleStorageUnit, Integer> vertexStateMap = new HashMap<BundleStorageUnit, Integer>();
 
-		for (BundleStorageUnit vertex : graph.getVerticies()) {
-			if (isNotVisited(vertex, vertexStateMap)) {
-				dfsVisit(vertex, vertexStateMap, retValue);
-			}
-		}
+      for (BundleStorageUnit vertex : graph.getVerticies()) {
+         if (isNotVisited(vertex, vertexStateMap)) {
+            dfsVisit(vertex, vertexStateMap, retValue);
+         }
+      }
 
-		return retValue;
-	}
+      return retValue;
+   }
 
-	private static boolean isNotVisited(BundleStorageUnit vertex, Map<BundleStorageUnit, Integer> vertexStateMap) {
-		Integer state = vertexStateMap.get(vertex);
+   private static boolean isNotVisited(BundleStorageUnit vertex, Map<BundleStorageUnit, Integer> vertexStateMap) {
+      Integer state = vertexStateMap.get(vertex);
 
-		return (state == null) || NOT_VISTITED.equals(state);
-	}
+      return (state == null) || NOT_VISTITED.equals(state);
+   }
 
-	private static void dfsVisit(BundleStorageUnit vertex, Map<BundleStorageUnit, Integer> vertexStateMap,
-			List<BundleStorageUnit> list) {
-		vertexStateMap.put(vertex, VISITING);
+   private static void dfsVisit(BundleStorageUnit vertex, Map<BundleStorageUnit, Integer> vertexStateMap,
+         List<BundleStorageUnit> list) {
+      vertexStateMap.put(vertex, VISITING);
 
-		for (BundleStorageUnit v : vertex.getChildren()) {
-			if (isNotVisited(v, vertexStateMap)) {
-				dfsVisit(v, vertexStateMap, list);
-			}
-		}
+      for (BundleStorageUnit v : vertex.getChildren()) {
+         if (isNotVisited(v, vertexStateMap)) {
+            dfsVisit(v, vertexStateMap, list);
+         }
+      }
 
-		vertexStateMap.put(vertex, VISITED);
+      vertexStateMap.put(vertex, VISITED);
 
-		list.add(vertex);
-	}
+      list.add(vertex);
+   }
 }

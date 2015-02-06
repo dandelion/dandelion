@@ -41,33 +41,35 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class JarLocationResourceScannerTest {
 
-	private JarLocationResourceScanner scanner = new JarLocationResourceScanner();
+   private JarLocationResourceScanner scanner = new JarLocationResourceScanner();
 
-	@Test
-	public void should_return_scanned_resources_from_jar() throws IOException {
+   @Test
+   public void should_return_scanned_resources_from_jar() throws IOException {
 
-		Enumeration<URL> urls = Thread.currentThread().getContextClassLoader().getResources("scanning-jar/test-1.0.0.jar");
-		Set<String> resourcePaths = new HashSet<String>();
+      Enumeration<URL> urls = Thread.currentThread().getContextClassLoader()
+            .getResources("scanning-jar/test-1.0.0.jar");
+      Set<String> resourcePaths = new HashSet<String>();
 
-		while (urls.hasMoreElements()) {
-			URL url = urls.nextElement();
-			resourcePaths.addAll(scanner.findResourcePaths("dandelion", url));
-		}
+      while (urls.hasMoreElements()) {
+         URL url = urls.nextElement();
+         resourcePaths.addAll(scanner.findResourcePaths("dandelion", url));
+      }
 
-		assertThat(resourcePaths).contains("dandelion/bundle1.json", "dandelion/bundle2.json", "dandelion/");
-	}
+      assertThat(resourcePaths).contains("dandelion/bundle1.json", "dandelion/bundle2.json", "dandelion/");
+   }
 
-	@Test
-	public void should_return_nothing_when_scanning_in_an_unexisting_folder_in_jar() throws IOException {
+   @Test
+   public void should_return_nothing_when_scanning_in_an_unexisting_folder_in_jar() throws IOException {
 
-		Enumeration<URL> urls = Thread.currentThread().getContextClassLoader().getResources("scanning-jar/test-1.0.0.jar");
-		Set<String> resourcePaths = new HashSet<String>();
+      Enumeration<URL> urls = Thread.currentThread().getContextClassLoader()
+            .getResources("scanning-jar/test-1.0.0.jar");
+      Set<String> resourcePaths = new HashSet<String>();
 
-		while (urls.hasMoreElements()) {
-			URL url = urls.nextElement();
-			resourcePaths.addAll(scanner.findResourcePaths("unexisting-folder", url));
-		}
+      while (urls.hasMoreElements()) {
+         URL url = urls.nextElement();
+         resourcePaths.addAll(scanner.findResourcePaths("unexisting-folder", url));
+      }
 
-		assertThat(resourcePaths).isEmpty();
-	}
+      assertThat(resourcePaths).isEmpty();
+   }
 }

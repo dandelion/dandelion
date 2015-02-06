@@ -40,19 +40,19 @@ import java.util.Set;
  */
 public interface LocationResourceScanner {
 
-	/**
-	 * <p>
-	 * Finds all resource paths below the given location by reading the
-	 * classpath under the given {@link URL}.
-	 * </p>
-	 * 
-	 * @param location
-	 *            The system-independent location on the classpath.
-	 * @param resourceUrl
-	 *            The system-specific physical location URL of the resource.
-	 * @return The system-independent resource paths on the classpath.
-	 * @throws IOException
-	 *             is something goes wrong during resource scanning.
-	 */
-	public Set<String> findResourcePaths(String location, URL resourceUrl) throws IOException;
+   /**
+    * <p>
+    * Finds all resource paths below the given location by reading the classpath
+    * under the given {@link URL}.
+    * </p>
+    * 
+    * @param location
+    *           The system-independent location on the classpath.
+    * @param resourceUrl
+    *           The system-specific physical location URL of the resource.
+    * @return The system-independent resource paths on the classpath.
+    * @throws IOException
+    *            is something goes wrong during resource scanning.
+    */
+   public Set<String> findResourcePaths(String location, URL resourceUrl) throws IOException;
 }

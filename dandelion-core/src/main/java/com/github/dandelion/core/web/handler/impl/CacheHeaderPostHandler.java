@@ -52,68 +52,68 @@ import com.github.dandelion.core.web.handler.cache.HttpHeaderUtils;
  */
 public class CacheHeaderPostHandler extends AbstractHandlerChain {
 
-	private static final Logger LOG = LoggerFactory.getLogger(CacheHeaderPostHandler.class);
+   private static final Logger LOG = LoggerFactory.getLogger(CacheHeaderPostHandler.class);
 
-	private static final long ONE_YEAR_IN_SECONDS = 365 * 24 * 60 * 60;
-	private static final long ONE_YEAR_IN_MILLISECONDS = ONE_YEAR_IN_SECONDS * 1000L;
-	private final static long LAST_MODIFIED = System.currentTimeMillis();
+   private static final long ONE_YEAR_IN_SECONDS = 365 * 24 * 60 * 60;
+   private static final long ONE_YEAR_IN_MILLISECONDS = ONE_YEAR_IN_SECONDS * 1000L;
+   private final static long LAST_MODIFIED = System.currentTimeMillis();
 
-	@Override
-	protected Logger getLogger() {
-		return LOG;
-	}
+   @Override
+   protected Logger getLogger() {
+      return LOG;
+   }
 
-	@Override
-	public boolean isAfterChaining() {
-		return true;
-	}
+   @Override
+   public boolean isAfterChaining() {
+      return true;
+   }
 
-	@Override
-	public int getRank() {
-		return 40;
-	}
+   @Override
+   public int getRank() {
+      return 40;
+   }
 
-	@Override
-	public boolean isApplicable(HandlerContext handlerContext) {
-		return handlerContext.getResponse().getContentType() != null
-				&& !handlerContext.getResponse().getContentType().contains("text/html");
-	}
+   @Override
+   public boolean isApplicable(HandlerContext handlerContext) {
+      return handlerContext.getResponse().getContentType() != null
+            && !handlerContext.getResponse().getContentType().contains("text/html");
+   }
 
-	@Override
-	public boolean handle(HandlerContext handlerContext) {
+   @Override
+   public boolean handle(HandlerContext handlerContext) {
 
-		HttpServletResponse httpResponse = handlerContext.getResponse();
+      HttpServletResponse httpResponse = handlerContext.getResponse();
 
-		if (handlerContext.getContext().getConfiguration().isCachingEnabled()) {
+      if (handlerContext.getContext().getConfiguration().isCachingEnabled()) {
 
-			httpResponse.setHeader(HttpHeader.CACHE_CONTROL.getName(), "public, max-age=" + ONE_YEAR_IN_SECONDS);
+         httpResponse.setHeader(HttpHeader.CACHE_CONTROL.getName(), "public, max-age=" + ONE_YEAR_IN_SECONDS);
 
-			httpResponse.setHeader(HttpHeader.ETAG.getName(),
-					HttpHeaderUtils.computeETag(handlerContext.getResponseAsBytes(), handlerContext));
+         httpResponse.setHeader(HttpHeader.ETAG.getName(),
+               HttpHeaderUtils.computeETag(handlerContext.getResponseAsBytes(), handlerContext));
 
-			httpResponse.setDateHeader(HttpHeader.EXPIRES.getName(), System.currentTimeMillis()
-					+ ONE_YEAR_IN_MILLISECONDS);
+         httpResponse
+               .setDateHeader(HttpHeader.EXPIRES.getName(), System.currentTimeMillis() + ONE_YEAR_IN_MILLISECONDS);
 
-			// Considered the last modified date as the start up time of the
-			// server
-			httpResponse.setDateHeader(HttpHeader.LAST_MODIFIED.getName(), LAST_MODIFIED);
-		}
-		// Headers are set in order to disable cache and force new resource
-		// updates to fetched (default in dev profile)
-		else {
+         // Considered the last modified date as the start up time of the
+         // server
+         httpResponse.setDateHeader(HttpHeader.LAST_MODIFIED.getName(), LAST_MODIFIED);
+      }
+      // Headers are set in order to disable cache and force new resource
+      // updates to fetched (default in dev profile)
+      else {
 
-			httpResponse.setHeader(HttpHeader.CACHE_CONTROL.getName(), "no-cache, no-store");
+         httpResponse.setHeader(HttpHeader.CACHE_CONTROL.getName(), "no-cache, no-store");
 
-			httpResponse.setHeader(HttpHeader.ETAG.getName(),
-					HttpHeaderUtils.computeETag(handlerContext.getResponseAsBytes(), handlerContext));
+         httpResponse.setHeader(HttpHeader.ETAG.getName(),
+               HttpHeaderUtils.computeETag(handlerContext.getResponseAsBytes(), handlerContext));
 
-			Calendar past = Calendar.getInstance();
-			past.add(Calendar.YEAR, -1);
-			httpResponse.setDateHeader(HttpHeader.EXPIRES.getName(), past.getTimeInMillis());
-		}
+         Calendar past = Calendar.getInstance();
+         past.add(Calendar.YEAR, -1);
+         httpResponse.setDateHeader(HttpHeader.EXPIRES.getName(), past.getTimeInMillis());
+      }
 
-		httpResponse.setHeader(HttpHeader.VARY.getName(), "Accept-Encoding");
+      httpResponse.setHeader(HttpHeader.VARY.getName(), "Accept-Encoding");
 
-		return true;
-	}
+      return true;
+   }
 }

@@ -47,30 +47,30 @@ import com.github.dandelion.thymeleaf.processor.BundleAttrProcessor;
  */
 public class DandelionDialect extends AbstractDialect {
 
-	public static final String DIALECT_PREFIX = "ddl";
-	public static final String LAYOUT_NAMESPACE = "http://www.thymeleaf.org/dandelion";
-	public static final int HIGHEST_PRECEDENCE = 3500;
+   public static final String DIALECT_PREFIX = "ddl";
+   public static final String LAYOUT_NAMESPACE = "http://www.thymeleaf.org/dandelion";
+   public static final int HIGHEST_PRECEDENCE = 3500;
 
-	public String getPrefix() {
-		return DIALECT_PREFIX;
-	}
+   public String getPrefix() {
+      return DIALECT_PREFIX;
+   }
 
-	public boolean isLenient() {
-		return false;
-	}
+   public boolean isLenient() {
+      return false;
+   }
 
-	@Override
-	public Set<IProcessor> getProcessors() {
-		final Set<IProcessor> processors = new HashSet<IProcessor>();
+   @Override
+   public Set<IProcessor> getProcessors() {
+      final Set<IProcessor> processors = new HashSet<IProcessor>();
 
-		for (AssetAttributeNames attr : AssetAttributeNames.values()) {
-			processors.add(new AssetAttrProcessor(attr.getAttribute()));
-		}
+      for (AssetAttributeNames attr : AssetAttributeNames.values()) {
+         processors.add(new AssetAttrProcessor(attr.getAttribute()));
+      }
 
-		for (BundleAttributeNames attr : BundleAttributeNames.values()) {
-			processors.add(new BundleAttrProcessor(attr.getAttribute()));
-		}
-		
-		return processors;
-	}
+      for (BundleAttributeNames attr : BundleAttributeNames.values()) {
+         processors.add(new BundleAttrProcessor(attr.getAttribute()));
+      }
+
+      return processors;
+   }
 }

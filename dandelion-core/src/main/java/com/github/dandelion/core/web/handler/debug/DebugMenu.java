@@ -44,13 +44,13 @@ import java.util.List;
  */
 public interface DebugMenu {
 
-	/**
-	 * @return the name of the menu to display in the sidebar.
-	 */
-	String getDisplayName();
+   /**
+    * @return the name of the menu to display in the sidebar.
+    */
+   String getDisplayName();
 
-	/**
-	 * @return all debug pages to display under this menu.
-	 */
-	List<DebugPage> getPages();
+   /**
+    * @return all debug pages to display under this menu.
+    */
+   List<DebugPage> getPages();
 }

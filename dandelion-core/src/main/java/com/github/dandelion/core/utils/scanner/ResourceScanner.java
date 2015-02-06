@@ -56,323 +56,322 @@ import com.github.dandelion.core.utils.scanner.websphere.WebSphereUrlResolver;
  */
 public final class ResourceScanner {
 
-	private static final Logger LOG = LoggerFactory.getLogger(ResourceScanner.class);
+   private static final Logger LOG = LoggerFactory.getLogger(ResourceScanner.class);
 
-	/**
-	 * <p>
-	 * Finds the logical path of the first resource that matches the given
-	 * {@code resourceName} by scanning the classpath under the given
-	 * {@code location}.
-	 * </p>
-	 * <p>
-	 * By default, no other condition but the name will be applied to the
-	 * resource name.
-	 * </p>
-	 * 
-	 * @param location
-	 *            The classpath location where to scan.
-	 * @param nameFilter
-	 *            The name of the resource to look for.
-	 * @return The logical path of the resource if found, otherwise {@code null}
-	 *         .
-	 * @throws IOException
-	 *             if something goes wrong during the scanning.
-	 */
-	public static String findResourcePath(String location, String nameFilter) throws IOException {
-		Set<String> resourcePaths = scanForResourcePaths(location, null, nameFilter, null, null);
-		if (resourcePaths.isEmpty()) {
-			return null;
-		}
-		else {
-			return resourcePaths.iterator().next();
-		}
-	}
+   /**
+    * <p>
+    * Finds the logical path of the first resource that matches the given
+    * {@code resourceName} by scanning the classpath under the given
+    * {@code location}.
+    * </p>
+    * <p>
+    * By default, no other condition but the name will be applied to the
+    * resource name.
+    * </p>
+    * 
+    * @param location
+    *           The classpath location where to scan.
+    * @param nameFilter
+    *           The name of the resource to look for.
+    * @return The logical path of the resource if found, otherwise {@code null}
+    *         .
+    * @throws IOException
+    *            if something goes wrong during the scanning.
+    */
+   public static String findResourcePath(String location, String nameFilter) throws IOException {
+      Set<String> resourcePaths = scanForResourcePaths(location, null, nameFilter, null, null);
+      if (resourcePaths.isEmpty()) {
+         return null;
+      }
+      else {
+         return resourcePaths.iterator().next();
+      }
+   }
 
-	/**
-	 * <p>
-	 * Finds the virtual path of all resources that match the given conditions
-	 * by scanning the classpath under the given {@code location}.
-	 * </p>
-	 * 
-	 * @param location
-	 *            The classpath location where to scan.
-	 * @param excludedPaths
-	 *            List of paths which will be excluded during the classpath
-	 *            scanning.
-	 * @param nameFilter
-	 *            The name of the resource to look for.
-	 * @return A set of resource paths that match the given conditions.
-	 * @throws IOException
-	 *             if something goes wrong during the scanning.
-	 */
-	public static Set<String> findResourcePaths(String location, Set<String> excludedPaths, String nameFilter)
-			throws IOException {
-		return scanForResourcePaths(location, excludedPaths, nameFilter, null, null);
-	}
+   /**
+    * <p>
+    * Finds the virtual path of all resources that match the given conditions by
+    * scanning the classpath under the given {@code location}.
+    * </p>
+    * 
+    * @param location
+    *           The classpath location where to scan.
+    * @param excludedPaths
+    *           List of paths which will be excluded during the classpath
+    *           scanning.
+    * @param nameFilter
+    *           The name of the resource to look for.
+    * @return A set of resource paths that match the given conditions.
+    * @throws IOException
+    *            if something goes wrong during the scanning.
+    */
+   public static Set<String> findResourcePaths(String location, Set<String> excludedPaths, String nameFilter)
+         throws IOException {
+      return scanForResourcePaths(location, excludedPaths, nameFilter, null, null);
+   }
 
-	/**
-	 * <p>
-	 * Finds the virtual path of all resources that match the given conditions
-	 * by scanning the classpath under the given {@code location}.
-	 * </p>
-	 * 
-	 * @param location
-	 *            The classpath location where to scan.
-	 * @param excludedPaths
-	 *            List of paths which will be excluded during the classpath
-	 *            scanning.
-	 * @param prefixFilter
-	 *            The prefix condition to be applied on the resource name.
-	 * @param suffixFilter
-	 *            The suffix condition to be applied on the resource name.
-	 * @return A set of resource paths that match the given conditions.
-	 * @throws IOException
-	 *             if something goes wrong during the scanning.
-	 */
-	public static Set<String> findResourcePaths(String location, Set<String> excludedPaths, String prefixFilter,
-			String suffixFilter) throws IOException {
-		return scanForResourcePaths(location, excludedPaths, null, prefixFilter, suffixFilter);
-	}
+   /**
+    * <p>
+    * Finds the virtual path of all resources that match the given conditions by
+    * scanning the classpath under the given {@code location}.
+    * </p>
+    * 
+    * @param location
+    *           The classpath location where to scan.
+    * @param excludedPaths
+    *           List of paths which will be excluded during the classpath
+    *           scanning.
+    * @param prefixFilter
+    *           The prefix condition to be applied on the resource name.
+    * @param suffixFilter
+    *           The suffix condition to be applied on the resource name.
+    * @return A set of resource paths that match the given conditions.
+    * @throws IOException
+    *            if something goes wrong during the scanning.
+    */
+   public static Set<String> findResourcePaths(String location, Set<String> excludedPaths, String prefixFilter,
+         String suffixFilter) throws IOException {
+      return scanForResourcePaths(location, excludedPaths, null, prefixFilter, suffixFilter);
+   }
 
-	/**
-	 * <p>
-	 * Scans for all resources that match the given confitions by scanning the
-	 * classpath using the context {@link ClassLoader} of the current
-	 * {@link Thread}.
-	 * </p>
-	 * 
-	 * @param location
-	 *            The classpath location where to scan.
-	 * @param excludedPaths
-	 *            List of paths which will be excluded during the classpath
-	 *            scanning.
-	 * @param nameFilter
-	 *            The name of the resource to look for.
-	 * @param prefixFilter
-	 *            The prefix condition to be applied on the resource name.
-	 * @param suffixFilter
-	 *            The suffix condition to be applied on the resource name.
-	 * @return A set of resource paths that match the given conditions.
-	 * @throws IOException
-	 *             if something goes wrong during the scanning.
-	 * @throws DandelionException
-	 *             if the URL protocol used to access the resource is not
-	 *             supported.
-	 */
-	private static Set<String> scanForResourcePaths(String location, Set<String> excludedPaths, String nameFilter,
-			String prefixFilter, String suffixFilter) throws IOException {
+   /**
+    * <p>
+    * Scans for all resources that match the given confitions by scanning the
+    * classpath using the context {@link ClassLoader} of the current
+    * {@link Thread}.
+    * </p>
+    * 
+    * @param location
+    *           The classpath location where to scan.
+    * @param excludedPaths
+    *           List of paths which will be excluded during the classpath
+    *           scanning.
+    * @param nameFilter
+    *           The name of the resource to look for.
+    * @param prefixFilter
+    *           The prefix condition to be applied on the resource name.
+    * @param suffixFilter
+    *           The suffix condition to be applied on the resource name.
+    * @return A set of resource paths that match the given conditions.
+    * @throws IOException
+    *            if something goes wrong during the scanning.
+    * @throws DandelionException
+    *            if the URL protocol used to access the resource is not
+    *            supported.
+    */
+   private static Set<String> scanForResourcePaths(String location, Set<String> excludedPaths, String nameFilter,
+         String prefixFilter, String suffixFilter) throws IOException {
 
-		LOG.trace("Scanning for resources at '{}'...", location);
+      LOG.trace("Scanning for resources at '{}'...", location);
 
-		Set<String> resourcePaths = new HashSet<String>();
+      Set<String> resourcePaths = new HashSet<String>();
 
-		Enumeration<URL> urls = Thread.currentThread().getContextClassLoader().getResources(location);
+      Enumeration<URL> urls = Thread.currentThread().getContextClassLoader().getResources(location);
 
-		while (urls.hasMoreElements()) {
+      while (urls.hasMoreElements()) {
 
-			URL url = urls.nextElement();
-			LOG.trace("Found URL: {} (protocol:{})", url.getPath(), url.getProtocol());
+         URL url = urls.nextElement();
+         LOG.trace("Found URL: {} (protocol:{})", url.getPath(), url.getProtocol());
 
-			UrlResolver urlResolver = createUrlResolver(url.getProtocol());
-			LOG.trace("Resolving URL \"{}\" with the resolver {}", url.getPath(), urlResolver.getClass()
-					.getSimpleName());
+         UrlResolver urlResolver = createUrlResolver(url.getProtocol());
+         LOG.trace("Resolving URL \"{}\" with the resolver {}", url.getPath(), urlResolver.getClass().getSimpleName());
 
-			URL resolvedUrl = urlResolver.toStandardUrl(url);
-			LOG.trace("Resolved URL: \"{}\"", resolvedUrl.getPath());
+         URL resolvedUrl = urlResolver.toStandardUrl(url);
+         LOG.trace("Resolved URL: \"{}\"", resolvedUrl.getPath());
 
-			String protocol = resolvedUrl.getProtocol();
-			LocationResourceScanner classPathLocationScanner = createLocationScanner(protocol);
+         String protocol = resolvedUrl.getProtocol();
+         LocationResourceScanner classPathLocationScanner = createLocationScanner(protocol);
 
-			resourcePaths.addAll(classPathLocationScanner.findResourcePaths(location, resolvedUrl));
-		}
+         resourcePaths.addAll(classPathLocationScanner.findResourcePaths(location, resolvedUrl));
+      }
 
-		LOG.trace("{} resources found before filtering", resourcePaths.size());
-		return filterResourcePaths(location, resourcePaths, excludedPaths, nameFilter, prefixFilter, suffixFilter);
-	}
+      LOG.trace("{} resources found before filtering", resourcePaths.size());
+      return filterResourcePaths(location, resourcePaths, excludedPaths, nameFilter, prefixFilter, suffixFilter);
+   }
 
-	/**
-	 * <p>
-	 * Tests whether the given {@code path} is authorized according to the
-	 * passed list of paths to exclude.
-	 * </p>
-	 * 
-	 * @param path
-	 *            The path name that must not be present in the list of excluded
-	 *            paths.
-	 * @param authorizedLocation
-	 *            Current location being scanned by the scanner.
-	 * @param excludedPaths
-	 *            List of paths which will be excluded during the classpath
-	 *            scanning.
-	 * @return {@code true} if the path is authorized, otherwise {@code false}.
-	 */
-	private static boolean isPathAuthorized(String resourcePath, String authorizedLocation, Set<String> excludedPaths) {
+   /**
+    * <p>
+    * Tests whether the given {@code path} is authorized according to the passed
+    * list of paths to exclude.
+    * </p>
+    * 
+    * @param path
+    *           The path name that must not be present in the list of excluded
+    *           paths.
+    * @param authorizedLocation
+    *           Current location being scanned by the scanner.
+    * @param excludedPaths
+    *           List of paths which will be excluded during the classpath
+    *           scanning.
+    * @return {@code true} if the path is authorized, otherwise {@code false}.
+    */
+   private static boolean isPathAuthorized(String resourcePath, String authorizedLocation, Set<String> excludedPaths) {
 
-		if (excludedPaths != null) {
-			for (String excludedFolder : excludedPaths) {
-				if (resourcePath.startsWith(excludedFolder)) {
-					return false;
-				}
-			}
-			return true;
-		}
-		else if (resourcePath.startsWith(authorizedLocation)) {
-			return true;
-		}
-		else {
-			return false;
-		}
-	}
+      if (excludedPaths != null) {
+         for (String excludedFolder : excludedPaths) {
+            if (resourcePath.startsWith(excludedFolder)) {
+               return false;
+            }
+         }
+         return true;
+      }
+      else if (resourcePath.startsWith(authorizedLocation)) {
+         return true;
+      }
+      else {
+         return false;
+      }
+   }
 
-	/**
-	 * <p>
-	 * Filters the given set of resource paths in multiple ways:
-	 * </p>
-	 * <ul>
-	 * <li>If the resource path contains any of the given {@code excludedPaths},
-	 * the resource path will be filtered out.</li>
-	 * <li>If the {@code nameFilter} is used, the resource is only filtered on
-	 * its name. Suffix and prefix have no effect.</li>
-	 * <li>If either {@code prefixFilter} or {@code suffixFilter} or both are
-	 * used, the resource won't be filtered on its name at all.</li>
-	 * </ul>
-	 * 
-	 * @param resourcePaths
-	 *            The scanned resource paths.
-	 * @param excludedPaths
-	 *            List of paths which will be excluded during the classpath
-	 *            scanning.
-	 * @param nameFilter
-	 *            The name of the resource to look for.
-	 * @param prefixFilter
-	 *            The prefix condition to be applied on the resource name.
-	 * @param suffixFilter
-	 *            The suffix condition to be applied on the resource name;
-	 * @return A set of resource paths that match the given conditions.
-	 */
-	private static Set<String> filterResourcePaths(String location, Set<String> resourcePaths,
-			Set<String> excludedPaths, String nameFilter, String prefixFilter, String suffixFilter) {
-		Set<String> filteredResources = new HashSet<String>();
+   /**
+    * <p>
+    * Filters the given set of resource paths in multiple ways:
+    * </p>
+    * <ul>
+    * <li>If the resource path contains any of the given {@code excludedPaths},
+    * the resource path will be filtered out.</li>
+    * <li>If the {@code nameFilter} is used, the resource is only filtered on
+    * its name. Suffix and prefix have no effect.</li>
+    * <li>If either {@code prefixFilter} or {@code suffixFilter} or both are
+    * used, the resource won't be filtered on its name at all.</li>
+    * </ul>
+    * 
+    * @param resourcePaths
+    *           The scanned resource paths.
+    * @param excludedPaths
+    *           List of paths which will be excluded during the classpath
+    *           scanning.
+    * @param nameFilter
+    *           The name of the resource to look for.
+    * @param prefixFilter
+    *           The prefix condition to be applied on the resource name.
+    * @param suffixFilter
+    *           The suffix condition to be applied on the resource name;
+    * @return A set of resource paths that match the given conditions.
+    */
+   private static Set<String> filterResourcePaths(String location, Set<String> resourcePaths,
+         Set<String> excludedPaths, String nameFilter, String prefixFilter, String suffixFilter) {
+      Set<String> filteredResources = new HashSet<String>();
 
-		LOG.trace("Filtering scanned resources...");
-		for (String resourcePath : resourcePaths) {
+      LOG.trace("Filtering scanned resources...");
+      for (String resourcePath : resourcePaths) {
 
-			if (isPathAuthorized(resourcePath, location, excludedPaths)) {
+         if (isPathAuthorized(resourcePath, location, excludedPaths)) {
 
-				String resourceName = resourcePath.substring(resourcePath.lastIndexOf("/") + 1);
+            String resourceName = resourcePath.substring(resourcePath.lastIndexOf("/") + 1);
 
-				if (StringUtils.isBlank(nameFilter) && StringUtils.isBlank(prefixFilter)
-						&& StringUtils.isBlank(suffixFilter)) {
-					filteredResources.add(resourcePath);
-					continue;
-				}
+            if (StringUtils.isBlank(nameFilter) && StringUtils.isBlank(prefixFilter)
+                  && StringUtils.isBlank(suffixFilter)) {
+               filteredResources.add(resourcePath);
+               continue;
+            }
 
-				// if name condition is set, it's the only test on resources.
-				if (StringUtils.isNotBlank(nameFilter)) {
-					if (nameFilter.equalsIgnoreCase(resourceName)) {
-						filteredResources.add(resourcePath);
-					}
-				}
-				else {
-					// otherwise prefix and suffix conditions are verified
-					if (suffixFilter == null && resourceName.startsWith(prefixFilter)) {
-						filteredResources.add(resourcePath);
-					}
-					else if (prefixFilter == null && resourceName.endsWith(suffixFilter)) {
-						filteredResources.add(resourcePath);
-					}
-					else if (prefixFilter != null && suffixFilter != null && resourceName.startsWith(prefixFilter)
-							&& resourceName.endsWith(suffixFilter)) {
-						filteredResources.add(resourcePath);
-					}
-				}
-			}
-		}
+            // if name condition is set, it's the only test on resources.
+            if (StringUtils.isNotBlank(nameFilter)) {
+               if (nameFilter.equalsIgnoreCase(resourceName)) {
+                  filteredResources.add(resourcePath);
+               }
+            }
+            else {
+               // otherwise prefix and suffix conditions are verified
+               if (suffixFilter == null && resourceName.startsWith(prefixFilter)) {
+                  filteredResources.add(resourcePath);
+               }
+               else if (prefixFilter == null && resourceName.endsWith(suffixFilter)) {
+                  filteredResources.add(resourcePath);
+               }
+               else if (prefixFilter != null && suffixFilter != null && resourceName.startsWith(prefixFilter)
+                     && resourceName.endsWith(suffixFilter)) {
+                  filteredResources.add(resourcePath);
+               }
+            }
+         }
+      }
 
-		LOG.trace("{} resources found after filtering", filteredResources.size());
-		return filteredResources;
-	}
+      LOG.trace("{} resources found after filtering", filteredResources.size());
+      return filteredResources;
+   }
 
-	/**
-	 * <p>
-	 * Creates and returns the appropriate URL resolver for the given
-	 * {@link URL} protocol.
-	 * </p>
-	 * 
-	 * @param protocol
-	 *            The protocol of the location url to scan.
-	 * @return The url resolver for this protocol.
-	 */
-	private static UrlResolver createUrlResolver(String protocol) {
+   /**
+    * <p>
+    * Creates and returns the appropriate URL resolver for the given {@link URL}
+    * protocol.
+    * </p>
+    * 
+    * @param protocol
+    *           The protocol of the location url to scan.
+    * @return The url resolver for this protocol.
+    */
+   private static UrlResolver createUrlResolver(String protocol) {
 
-		// Websphere
-		if (protocol.startsWith("wsjar")) {
-			LOG.trace("Selected URL resolver: {}", WebSphereUrlResolver.class.getSimpleName());
-			return new WebSphereUrlResolver();
-		}
+      // Websphere
+      if (protocol.startsWith("wsjar")) {
+         LOG.trace("Selected URL resolver: {}", WebSphereUrlResolver.class.getSimpleName());
+         return new WebSphereUrlResolver();
+      }
 
-		// JBoss 5+ / WildFly
-		if (protocol.startsWith("vfs") || protocol.startsWith("vfszip")) {
+      // JBoss 5+ / WildFly
+      if (protocol.startsWith("vfs") || protocol.startsWith("vfszip")) {
 
-			if (LibraryDetector.isJBossVFS2Available()) {
-				LOG.trace("Selected URL resolver: {}", JBossVFS2UrlResolver.class.getSimpleName());
-				return new JBossVFS2UrlResolver();
-			}
+         if (LibraryDetector.isJBossVFS2Available()) {
+            LOG.trace("Selected URL resolver: {}", JBossVFS2UrlResolver.class.getSimpleName());
+            return new JBossVFS2UrlResolver();
+         }
 
-			if (LibraryDetector.isJBossVFS3Available()) {
-				LOG.trace("Selected URL resolver: {}", JBossVFS3UrlResolver.class.getSimpleName());
-				return new JBossVFS3UrlResolver();
-			}
-		}
+         if (LibraryDetector.isJBossVFS3Available()) {
+            LOG.trace("Selected URL resolver: {}", JBossVFS3UrlResolver.class.getSimpleName());
+            return new JBossVFS3UrlResolver();
+         }
+      }
 
-		LOG.trace("Selected URL resolver: {}", StandardUrlResolver.class.getSimpleName());
-		return new StandardUrlResolver();
-	}
+      LOG.trace("Selected URL resolver: {}", StandardUrlResolver.class.getSimpleName());
+      return new StandardUrlResolver();
+   }
 
-	/**
-	 * <p>
-	 * Creates and returns the appropriate resource scanner for the given
-	 * {@link URL} protocol.
-	 * </p>
-	 * 
-	 * @param protocol
-	 *            The protocol of the location url to scan.
-	 * @return The resource scanner for this protocol.
-	 * @throws DandelionException
-	 *             if the protocol is not supported.
-	 */
-	private static LocationResourceScanner createLocationScanner(String protocol) {
+   /**
+    * <p>
+    * Creates and returns the appropriate resource scanner for the given
+    * {@link URL} protocol.
+    * </p>
+    * 
+    * @param protocol
+    *           The protocol of the location url to scan.
+    * @return The resource scanner for this protocol.
+    * @throws DandelionException
+    *            if the protocol is not supported.
+    */
+   private static LocationResourceScanner createLocationScanner(String protocol) {
 
-		if ("file".equals(protocol)) {
-			LOG.trace("Selected resource scanner: {}", FileSystemLocationResourceScanner.class.getSimpleName());
-			return new FileSystemLocationResourceScanner();
-		}
+      if ("file".equals(protocol)) {
+         LOG.trace("Selected resource scanner: {}", FileSystemLocationResourceScanner.class.getSimpleName());
+         return new FileSystemLocationResourceScanner();
+      }
 
-		if ("jar".equals(protocol) || "zip".equals(protocol) // WebLogic
-				|| "wsjar".equals(protocol) // WebSphere
-		) {
-			LOG.trace("Selected resource scanner: {}", JarLocationResourceScanner.class.getSimpleName());
-			return new JarLocationResourceScanner();
-		}
+      if ("jar".equals(protocol) || "zip".equals(protocol) // WebLogic
+            || "wsjar".equals(protocol) // WebSphere
+      ) {
+         LOG.trace("Selected resource scanner: {}", JarLocationResourceScanner.class.getSimpleName());
+         return new JarLocationResourceScanner();
+      }
 
-		// JBoss / WildFly
-		if ("vfs".equals(protocol) && LibraryDetector.isJBossVFS3Available()) {
-			LOG.debug("Selected resource scanner: {}", JBossVFS3LocationResourceScanner.class.getSimpleName());
-			return new JBossVFS3LocationResourceScanner();
-		}
+      // JBoss / WildFly
+      if ("vfs".equals(protocol) && LibraryDetector.isJBossVFS3Available()) {
+         LOG.debug("Selected resource scanner: {}", JBossVFS3LocationResourceScanner.class.getSimpleName());
+         return new JBossVFS3LocationResourceScanner();
+      }
 
-		StringBuilder sb = new StringBuilder("The protocol ");
-		sb.append(protocol);
-		sb.append(" is not supported.");
-		throw new DandelionException(sb.toString());
-	}
+      StringBuilder sb = new StringBuilder("The protocol ");
+      sb.append(protocol);
+      sb.append(" is not supported.");
+      throw new DandelionException(sb.toString());
+   }
 
-	/**
-	 * <p>
-	 * Suppress default constructor for noninstantiability.
-	 * </p>
-	 */
-	private ResourceScanner() {
-		throw new AssertionError();
-	}
+   /**
+    * <p>
+    * Suppress default constructor for noninstantiability.
+    * </p>
+    */
+   private ResourceScanner() {
+      throw new AssertionError();
+   }
 }

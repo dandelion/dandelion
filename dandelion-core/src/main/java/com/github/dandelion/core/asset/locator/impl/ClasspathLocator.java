@@ -52,27 +52,27 @@ import com.github.dandelion.core.utils.ResourceUtils;
  */
 public class ClasspathLocator extends AbstractAssetLocator {
 
-	public ClasspathLocator() {
-		active = true;
-	}
+   public ClasspathLocator() {
+      active = true;
+   }
 
-	@Override
-	public String getLocationKey() {
-		return "classpath";
-	}
+   @Override
+   public String getLocationKey() {
+      return "classpath";
+   }
 
-	@Override
-	public boolean isCachingForced() {
-		return true;
-	}
+   @Override
+   public boolean isCachingForced() {
+      return true;
+   }
 
-	@Override
-	public String doGetLocation(AssetStorageUnit asu, HttpServletRequest request) {
-		return asu.getLocations().get(getLocationKey());
-	}
+   @Override
+   public String doGetLocation(AssetStorageUnit asu, HttpServletRequest request) {
+      return asu.getLocations().get(getLocationKey());
+   }
 
-	@Override
-	protected String doGetContent(String location, Map<String, Object> parameters, HttpServletRequest request) {
-		return ResourceUtils.getFileContentFromClasspath(location, false);
-	}
+   @Override
+   protected String doGetContent(String location, Map<String, Object> parameters, HttpServletRequest request) {
+      return ResourceUtils.getFileContentFromClasspath(location, false);
+   }
 }

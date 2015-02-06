@@ -39,8 +39,9 @@ import com.github.dandelion.core.web.handler.HandlerContext;
 
 /**
  * <p>
- * Pre-handler intended to clear the configured {@link RequestCache} based on the
- * presence of the {@link WebConstants#DANDELION_CLEAR_CACHE} request parameter.
+ * Pre-handler intended to clear the configured {@link RequestCache} based on
+ * the presence of the {@link WebConstants#DANDELION_CLEAR_CACHE} request
+ * parameter.
  * </p>
  * 
  * @author Thibault Duchateau
@@ -48,33 +49,33 @@ import com.github.dandelion.core.web.handler.HandlerContext;
  */
 public class ClearCachePreHandler extends AbstractHandlerChain {
 
-	private static final Logger LOG = LoggerFactory.getLogger(ClearCachePreHandler.class);
+   private static final Logger LOG = LoggerFactory.getLogger(ClearCachePreHandler.class);
 
-	@Override
-	protected Logger getLogger() {
-		return LOG;
-	}
+   @Override
+   protected Logger getLogger() {
+      return LOG;
+   }
 
-	@Override
-	public boolean isAfterChaining() {
-		return false;
-	}
+   @Override
+   public boolean isAfterChaining() {
+      return false;
+   }
 
-	@Override
-	public int getRank() {
-		return 0;
-	}
+   @Override
+   public int getRank() {
+      return 0;
+   }
 
-	@Override
-	public boolean isApplicable(HandlerContext handlerContext) {
-		return handlerContext.getContext().getConfiguration().isToolDebuggerEnabled()
-				&& handlerContext.getRequest().getParameter(WebConstants.DANDELION_CLEAR_CACHE) != null;
-	}
+   @Override
+   public boolean isApplicable(HandlerContext handlerContext) {
+      return handlerContext.getContext().getConfiguration().isToolDebuggerEnabled()
+            && handlerContext.getRequest().getParameter(WebConstants.DANDELION_CLEAR_CACHE) != null;
+   }
 
-	@Override
-	public boolean handle(HandlerContext handlerContext) {
-		handlerContext.getContext().getCache().clear();
-		LOG.info("Cleared configured cache");
-		return true;
-	}
+   @Override
+   public boolean handle(HandlerContext handlerContext) {
+      handlerContext.getContext().getCache().clear();
+      LOG.info("Cleared configured cache");
+      return true;
+   }
 }

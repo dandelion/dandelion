@@ -51,54 +51,55 @@ import com.github.dandelion.core.utils.PathUtils;
  */
 public class FileSystemLocationResourceScanner implements LocationResourceScanner {
 
-	private static final Logger LOG = LoggerFactory.getLogger(FileSystemLocationResourceScanner.class);
+   private static final Logger LOG = LoggerFactory.getLogger(FileSystemLocationResourceScanner.class);
 
-	public Set<String> findResourcePaths(String location, URL resourceUrl) throws IOException {
+   public Set<String> findResourcePaths(String location, URL resourceUrl) throws IOException {
 
-		// Computes the physical root of the classpath to later
-		// determine the resource path more easily
-		String resourcePath = PathUtils.toFilePath(resourceUrl);
-		String classpathPhysicalRoot = resourcePath.substring(0, resourcePath.length() - location.length());
+      // Computes the physical root of the classpath to later
+      // determine the resource path more easily
+      String resourcePath = PathUtils.toFilePath(resourceUrl);
+      String classpathPhysicalRoot = resourcePath.substring(0, resourcePath.length() - location.length());
 
-		// Gets the folder in which files will be scanned
-		File folder = new File(resourcePath);
+      // Gets the folder in which files will be scanned
+      File folder = new File(resourcePath);
 
-		return scanForResourcePathsInFileSystem(folder, classpathPhysicalRoot);
-	}
-	
-	/**
-	 * <p>
-	 * Scans recursively for all resources in the given file system {@code folder}.
-	 * </p>
-	 * 
-	 * @param folder
-	 *            Folder in which the files will be scanned/listed.
-	 * @param classpathPhysicalRoot
-	 *            Physical root of the classpath, used to compute the resource
-	 *            path.
-	 * @return A set of non-filtered resource paths.
-	 * @throws IOException
-	 *             if something goes wrong during the scanning.
-	 */
-	private Set<String> scanForResourcePathsInFileSystem(File folder, String classpathPhysicalRoot) throws IOException {
+      return scanForResourcePathsInFileSystem(folder, classpathPhysicalRoot);
+   }
 
-		Set<String> extractedResourcePaths = new HashSet<String>();
+   /**
+    * <p>
+    * Scans recursively for all resources in the given file system
+    * {@code folder}.
+    * </p>
+    * 
+    * @param folder
+    *           Folder in which the files will be scanned/listed.
+    * @param classpathPhysicalRoot
+    *           Physical root of the classpath, used to compute the resource
+    *           path.
+    * @return A set of non-filtered resource paths.
+    * @throws IOException
+    *            if something goes wrong during the scanning.
+    */
+   private Set<String> scanForResourcePathsInFileSystem(File folder, String classpathPhysicalRoot) throws IOException {
 
-		for (File file : folder.listFiles()) {
-			if (file.canRead()) {
+      Set<String> extractedResourcePaths = new HashSet<String>();
 
-				if (file.isDirectory()) {
-					extractedResourcePaths.addAll(scanForResourcePathsInFileSystem(file, classpathPhysicalRoot));
-				}
-				else {
-					String filePath = URLDecoder.decode(file.toURI().toURL().getFile(), "UTF-8");
-					String resourcePath = filePath.substring(classpathPhysicalRoot.length());
-					LOG.trace("Resource path: {}", resourcePath);
-					extractedResourcePaths.add(resourcePath);
-				}
-			}
-		}
+      for (File file : folder.listFiles()) {
+         if (file.canRead()) {
 
-		return extractedResourcePaths;
-	}
+            if (file.isDirectory()) {
+               extractedResourcePaths.addAll(scanForResourcePathsInFileSystem(file, classpathPhysicalRoot));
+            }
+            else {
+               String filePath = URLDecoder.decode(file.toURI().toURL().getFile(), "UTF-8");
+               String resourcePath = filePath.substring(classpathPhysicalRoot.length());
+               LOG.trace("Resource path: {}", resourcePath);
+               extractedResourcePaths.add(resourcePath);
+            }
+         }
+      }
+
+      return extractedResourcePaths;
+   }
 }

@@ -53,25 +53,24 @@ import com.github.dandelion.core.utils.WriterOutputStream;
 @CompatibleAssetType(types = AssetType.js)
 public class JsMinProcessor extends AbstractAssetProcessor {
 
-	@Override
-	public String getProcessorKey() {
-		return "jsmin";
-	}
+   @Override
+   public String getProcessorKey() {
+      return "jsmin";
+   }
 
-	@Override
-	public void doProcess(Reader reader, Writer writer, ProcessingContext processingContext) throws Exception {
-		InputStream is = new ReaderInputStream(reader, processingContext.getContext().getConfiguration().getEncoding());
-		OutputStream os = new WriterOutputStream(writer, processingContext.getContext().getConfiguration()
-				.getEncoding());
-		try {
-			new JSMin(is, os).jsmin();
-		}
-		catch (Exception e) {
-			throw e;
-		}
-		finally {
-			is.close();
-			os.close();
-		}
-	}
+   @Override
+   public void doProcess(Reader reader, Writer writer, ProcessingContext processingContext) throws Exception {
+      InputStream is = new ReaderInputStream(reader, processingContext.getContext().getConfiguration().getEncoding());
+      OutputStream os = new WriterOutputStream(writer, processingContext.getContext().getConfiguration().getEncoding());
+      try {
+         new JSMin(is, os).jsmin();
+      }
+      catch (Exception e) {
+         throw e;
+      }
+      finally {
+         is.close();
+         os.close();
+      }
+   }
 }

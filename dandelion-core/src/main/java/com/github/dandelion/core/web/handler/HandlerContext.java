@@ -45,37 +45,37 @@ import com.github.dandelion.core.Context;
  */
 public final class HandlerContext {
 
-	private final Context context;
-	private final HttpServletRequest request;
-	private final HttpServletResponse response;
-	private byte[] responseAsBytes;
+   private final Context context;
+   private final HttpServletRequest request;
+   private final HttpServletResponse response;
+   private byte[] responseAsBytes;
 
-	public HandlerContext(Context context, HttpServletRequest request, HttpServletResponse response,
-			byte[] responseAsBytes) {
-		super();
-		this.context = context;
-		this.request = request;
-		this.response = response;
-		this.responseAsBytes = responseAsBytes;
-	}
+   public HandlerContext(Context context, HttpServletRequest request, HttpServletResponse response,
+         byte[] responseAsBytes) {
+      super();
+      this.context = context;
+      this.request = request;
+      this.response = response;
+      this.responseAsBytes = responseAsBytes;
+   }
 
-	public Context getContext() {
-		return context;
-	}
+   public Context getContext() {
+      return context;
+   }
 
-	public HttpServletRequest getRequest() {
-		return request;
-	}
+   public HttpServletRequest getRequest() {
+      return request;
+   }
 
-	public HttpServletResponse getResponse() {
-		return response;
-	}
+   public HttpServletResponse getResponse() {
+      return response;
+   }
 
-	public byte[] getResponseAsBytes() {
-		return responseAsBytes;
-	}
+   public byte[] getResponseAsBytes() {
+      return responseAsBytes;
+   }
 
-	public void setResponseAsBytes(byte[] responseAsBytes) {
-		this.responseAsBytes = responseAsBytes;
-	}
+   public void setResponseAsBytes(byte[] responseAsBytes) {
+      this.responseAsBytes = responseAsBytes;
+   }
 }

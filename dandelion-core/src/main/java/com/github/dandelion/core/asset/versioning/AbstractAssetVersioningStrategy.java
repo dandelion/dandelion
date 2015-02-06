@@ -45,13 +45,13 @@ import com.github.dandelion.core.Context;
  */
 public abstract class AbstractAssetVersioningStrategy implements AssetVersioningStrategy {
 
-	private Context context;
+   private Context context;
 
-	public void init(Context context) {
-		this.context = context;
-	}
+   public void init(Context context) {
+      this.context = context;
+   }
 
-	public Context getContext() {
-		return context;
-	}
+   public Context getContext() {
+      return context;
+   }
 }

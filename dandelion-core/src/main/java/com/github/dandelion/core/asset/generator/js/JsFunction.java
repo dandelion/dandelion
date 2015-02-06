@@ -46,74 +46,74 @@ import com.github.dandelion.core.utils.StringUtils;
  */
 public class JsFunction {
 
-	private String code;
-	private boolean hasReturn;
-	private String[] args;
+   private String code;
+   private boolean hasReturn;
+   private String[] args;
 
-	public JsFunction(String code) {
-		this.code = code;
-		this.hasReturn = false;
-		this.args = null;
-	}
+   public JsFunction(String code) {
+      this.code = code;
+      this.hasReturn = false;
+      this.args = null;
+   }
 
-	public JsFunction(String code, boolean hasReturn) {
-		this.code = code;
-		this.hasReturn = hasReturn;
-		this.args = null;
-	}
+   public JsFunction(String code, boolean hasReturn) {
+      this.code = code;
+      this.hasReturn = hasReturn;
+      this.args = null;
+   }
 
-	public JsFunction(String code, String... args) {
-		this.code = code;
-		this.args = args;
-	}
+   public JsFunction(String code, String... args) {
+      this.code = code;
+      this.args = args;
+   }
 
-	public JsFunction(String code, boolean hasReturn, String... args) {
-		this.code = code;
-		this.hasReturn = hasReturn;
-		this.args = args;
-	}
+   public JsFunction(String code, boolean hasReturn, String... args) {
+      this.code = code;
+      this.hasReturn = hasReturn;
+      this.args = args;
+   }
 
-	@Override
-	public String toString() {
-		StringBuilder js = new StringBuilder();
-		js.append("function(");
-		js.append((args != null ? StringUtils.join(args, ",") : ""));
-		js.append("){");
-		js.append((hasReturn ? "return " : ""));
-		js.append(code);
-		js.append("}");
-		return js.toString();
-	}
+   @Override
+   public String toString() {
+      StringBuilder js = new StringBuilder();
+      js.append("function(");
+      js.append((args != null ? StringUtils.join(args, ",") : ""));
+      js.append("){");
+      js.append((hasReturn ? "return " : ""));
+      js.append(code);
+      js.append("}");
+      return js.toString();
+   }
 
-	public String getCode() {
-		return this.code;
-	}
+   public String getCode() {
+      return this.code;
+   }
 
-	public void setCode(String code) {
-		this.code = code;
-	}
+   public void setCode(String code) {
+      this.code = code;
+   }
 
-	public void appendCode(String code) {
-		this.code += code;
-	}
+   public void appendCode(String code) {
+      this.code += code;
+   }
 
-	public void appendCode(char character) {
-		this.code += character;
-	}
+   public void appendCode(char character) {
+      this.code += character;
+   }
 
-	@Override
-	public boolean equals(Object javascriptFunction) {
-		if (javascriptFunction != null && javascriptFunction instanceof JsFunction) {
-			JsFunction castedJavascriptFunction = (JsFunction) javascriptFunction;
-			return toString().equals(castedJavascriptFunction.toString());
-		}
-		else {
-			return false;
-		}
-	}
+   @Override
+   public boolean equals(Object javascriptFunction) {
+      if (javascriptFunction != null && javascriptFunction instanceof JsFunction) {
+         JsFunction castedJavascriptFunction = (JsFunction) javascriptFunction;
+         return toString().equals(castedJavascriptFunction.toString());
+      }
+      else {
+         return false;
+      }
+   }
 
-	@Override
-	public int hashCode() {
-		return toString().hashCode();
-	}
+   @Override
+   public int hashCode() {
+      return toString().hashCode();
+   }
 }

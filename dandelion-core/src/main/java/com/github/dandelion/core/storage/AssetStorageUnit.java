@@ -52,263 +52,263 @@ import com.github.dandelion.core.bundle.loader.impl.VendorBundleLoader;
  */
 public class AssetStorageUnit {
 
-	/**
-	 * <p>
-	 * Name of the asset.
-	 * </p>
-	 * <p>
-	 * <b>Optional.</b>
-	 * </p>
-	 */
-	private String name;
+   /**
+    * <p>
+    * Name of the asset.
+    * </p>
+    * <p>
+    * <b>Optional.</b>
+    * </p>
+    */
+   private String name;
 
-	/**
-	 * <p>
-	 * Version of the asset, if forced.
-	 * </p>
-	 * <p>
-	 * <b>Optional.</b>
-	 * </p>
-	 */
-	private String version;
+   /**
+    * <p>
+    * Version of the asset, if forced.
+    * </p>
+    * <p>
+    * <b>Optional.</b>
+    * </p>
+    */
+   private String version;
 
-	/**
-	 * <p>
-	 * Type of the asset.
-	 * </p>
-	 * <p>
-	 * <b>Optional.</b>
-	 * </p>
-	 */
-	private AssetType type;
+   /**
+    * <p>
+    * Type of the asset.
+    * </p>
+    * <p>
+    * <b>Optional.</b>
+    * </p>
+    */
+   private AssetType type;
 
-	/**
-	 * <p>
-	 * The position of the asset in the DOM.
-	 * </p>
-	 * <p>
-	 * <b>Optional.</b>
-	 * </p>
-	 */
-	private AssetDomPosition dom;
+   /**
+    * <p>
+    * The position of the asset in the DOM.
+    * </p>
+    * <p>
+    * <b>Optional.</b>
+    * </p>
+    */
+   private AssetDomPosition dom;
 
-	/**
-	 * <p>
-	 * Location key/location pairs.
-	 * <p>
-	 * Required.
-	 */
-	private Map<String, String> locations;
+   /**
+    * <p>
+    * Location key/location pairs.
+    * <p>
+    * Required.
+    */
+   private Map<String, String> locations;
 
-	/**
-	 * <p>
-	 * Attribute name/value pairs.
-	 * <p>
-	 * Optional.
-	 */
-	private Map<String, String> attributes;
+   /**
+    * <p>
+    * Attribute name/value pairs.
+    * <p>
+    * Optional.
+    */
+   private Map<String, String> attributes;
 
-	private String[] attributesOnlyName;
+   private String[] attributesOnlyName;
 
-	private String cacheKey;
+   private String cacheKey;
 
-	/**
-	 * The parent bundle.
-	 */
-	private String bundle;
+   /**
+    * The parent bundle.
+    */
+   private String bundle;
 
-	/**
-	 * <p>
-	 * Whether the asset is loaded by the {@link VendorBundleLoader}.
-	 * </p>
-	 */
-	private boolean vendor;
+   /**
+    * <p>
+    * Whether the asset is loaded by the {@link VendorBundleLoader}.
+    * </p>
+    */
+   private boolean vendor;
 
-	/**
-	 * <p>
-	 * Required by Jackson for deserialization.
-	 */
-	public AssetStorageUnit() {
-	}
+   /**
+    * <p>
+    * Required by Jackson for deserialization.
+    */
+   public AssetStorageUnit() {
+   }
 
-	/**
-	 * <p>
-	 * Testing only.
-	 * 
-	 * @param name
-	 * @param version
-	 * @param type
-	 */
-	public AssetStorageUnit(String name, String version, AssetType type) {
-		this.name = name;
-		this.version = version;
-		this.type = type;
-	}
+   /**
+    * <p>
+    * Testing only.
+    * 
+    * @param name
+    * @param version
+    * @param type
+    */
+   public AssetStorageUnit(String name, String version, AssetType type) {
+      this.name = name;
+      this.version = version;
+      this.type = type;
+   }
 
-	public AssetStorageUnit(String name, String version, AssetType type, AssetDomPosition domPosition) {
+   public AssetStorageUnit(String name, String version, AssetType type, AssetDomPosition domPosition) {
       this.name = name;
       this.version = version;
       this.type = type;
       this.dom = domPosition;
    }
-	
-	/**
-	 * <p>
-	 * Testing only.
-	 * 
-	 * @param name
-	 * @param locations
-	 */
-	public AssetStorageUnit(String name, Map<String, String> locations) {
-		this.name = name;
-		this.locations = locations;
-		this.type = AssetType.extractFromAssetLocation(locations.values().iterator().next());
-	}
 
-	// /**
-	// * <p>
-	// * TESTING ONLY.
-	// *
-	// * @param name
-	// * @param version
-	// * @param locations
-	// */
-	// public AssetStorageUnit(String name, String version, Map<String, String>
-	// locations) {
-	//
-	// String firstLocation = locations.values().iterator().next();
-	// // this.name = name;
-	// this.name = AssetUtils.extractName(firstLocation);
-	// this.version = version;
-	// this.locations = locations;
-	// this.type = AssetType.typeOf(firstLocation);
-	// }
+   /**
+    * <p>
+    * Testing only.
+    * 
+    * @param name
+    * @param locations
+    */
+   public AssetStorageUnit(String name, Map<String, String> locations) {
+      this.name = name;
+      this.locations = locations;
+      this.type = AssetType.extractFromAssetLocation(locations.values().iterator().next());
+   }
 
-	public String getName() {
-		return name;
-	}
+   // /**
+   // * <p>
+   // * TESTING ONLY.
+   // *
+   // * @param name
+   // * @param version
+   // * @param locations
+   // */
+   // public AssetStorageUnit(String name, String version, Map<String, String>
+   // locations) {
+   //
+   // String firstLocation = locations.values().iterator().next();
+   // // this.name = name;
+   // this.name = AssetUtils.extractName(firstLocation);
+   // this.version = version;
+   // this.locations = locations;
+   // this.type = AssetType.typeOf(firstLocation);
+   // }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+   public String getName() {
+      return name;
+   }
 
-	public String getVersion() {
-		return version;
-	}
+   public void setName(String name) {
+      this.name = name;
+   }
 
-	public void setVersion(String version) {
-		this.version = version;
-	}
+   public String getVersion() {
+      return version;
+   }
 
-	public AssetType getType() {
-		return type;
-	}
+   public void setVersion(String version) {
+      this.version = version;
+   }
 
-	public void setType(AssetType type) {
-		this.type = type;
-	}
+   public AssetType getType() {
+      return type;
+   }
 
-	public AssetDomPosition getDom() {
-		return dom;
-	}
+   public void setType(AssetType type) {
+      this.type = type;
+   }
 
-	public void setDom(AssetDomPosition dom) {
-		this.dom = dom;
-	}
+   public AssetDomPosition getDom() {
+      return dom;
+   }
 
-	public Map<String, String> getLocations() {
-		return locations;
-	}
+   public void setDom(AssetDomPosition dom) {
+      this.dom = dom;
+   }
 
-	public void setLocations(Map<String, String> locations) {
-		this.locations = locations;
-	}
+   public Map<String, String> getLocations() {
+      return locations;
+   }
 
-	public Map<String, String> getAttributes() {
-		return attributes;
-	}
+   public void setLocations(Map<String, String> locations) {
+      this.locations = locations;
+   }
 
-	public void setAttributes(Map<String, String> attributes) {
-		this.attributes = attributes;
-	}
+   public Map<String, String> getAttributes() {
+      return attributes;
+   }
 
-	public String[] getAttributesOnlyName() {
-		if (attributesOnlyName == null)
-			return new String[0];
-		return attributesOnlyName;
-	}
+   public void setAttributes(Map<String, String> attributes) {
+      this.attributes = attributes;
+   }
 
-	public void setAttributesOnlyName(String[] attributesOnlyName) {
-		this.attributesOnlyName = attributesOnlyName;
-	}
+   public String[] getAttributesOnlyName() {
+      if (attributesOnlyName == null)
+         return new String[0];
+      return attributesOnlyName;
+   }
 
-	public String getCacheKey() {
-		return cacheKey;
-	}
+   public void setAttributesOnlyName(String[] attributesOnlyName) {
+      this.attributesOnlyName = attributesOnlyName;
+   }
 
-	public void setCacheKey(String cacheKey) {
-		this.cacheKey = cacheKey;
-	}
+   public String getCacheKey() {
+      return cacheKey;
+   }
 
-	public boolean isVendor() {
-		return vendor;
-	}
+   public void setCacheKey(String cacheKey) {
+      this.cacheKey = cacheKey;
+   }
 
-	public boolean isNotVendor() {
-		return !isVendor();
-	}
+   public boolean isVendor() {
+      return vendor;
+   }
 
-	public void setVendor(boolean vendor) {
-		this.vendor = vendor;
-	}
+   public boolean isNotVendor() {
+      return !isVendor();
+   }
 
-	/**
-	 * Validate this asset
-	 * 
-	 * @return <code>true</code> if the asset is valid
-	 */
-	public boolean isValid() {
-		return name != null && version != null && type != null && locations != null;
-	}
+   public void setVendor(boolean vendor) {
+      this.vendor = vendor;
+   }
 
-	public String getAssetKey() {
-		return name + "." + type;
-	}
+   /**
+    * Validate this asset
+    * 
+    * @return <code>true</code> if the asset is valid
+    */
+   public boolean isValid() {
+      return name != null && version != null && type != null && locations != null;
+   }
 
-	public void addAttribute(String attributeName, String attributeValue) {
-		if (attributes == null) {
-			attributes = new HashMap<String, String>();
-		}
+   public String getAssetKey() {
+      return name + "." + type;
+   }
 
-		attributes.put(attributeName, attributeValue);
-	}
+   public void addAttribute(String attributeName, String attributeValue) {
+      if (attributes == null) {
+         attributes = new HashMap<String, String>();
+      }
 
-	public void addAttribute(String attributeName) {
-		if (attributesOnlyName == null) {
-			attributesOnlyName = new String[] { attributeName };
-		}
-		else {
-			Arrays.copyOf(attributesOnlyName, attributesOnlyName.length + 1);
-			attributesOnlyName[attributesOnlyName.length] = attributeName;
-		}
-	}
+      attributes.put(attributeName, attributeValue);
+   }
 
-	public String getBundle() {
-		return bundle;
-	}
+   public void addAttribute(String attributeName) {
+      if (attributesOnlyName == null) {
+         attributesOnlyName = new String[] { attributeName };
+      }
+      else {
+         Arrays.copyOf(attributesOnlyName, attributesOnlyName.length + 1);
+         attributesOnlyName[attributesOnlyName.length] = attributeName;
+      }
+   }
 
-	public void setBundle(String bundle) {
-		this.bundle = bundle;
-	}
+   public String getBundle() {
+      return bundle;
+   }
 
-	@Override
-	public String toString() {
-		return "AssetStorageUnit [name=" + name + ", version=" + version + ", type=" + type + ", dom=" + dom
-				+ ", locations=" + locations + ", attributes=" + attributes + ", attributesOnlyName="
-				+ Arrays.toString(attributesOnlyName) + "]";
-	}
+   public void setBundle(String bundle) {
+      this.bundle = bundle;
+   }
 
-	public String toLog() {
-		return "'" + name + "' (" + type + ", v" + version + ")";
-	}
+   @Override
+   public String toString() {
+      return "AssetStorageUnit [name=" + name + ", version=" + version + ", type=" + type + ", dom=" + dom
+            + ", locations=" + locations + ", attributes=" + attributes + ", attributesOnlyName="
+            + Arrays.toString(attributesOnlyName) + "]";
+   }
+
+   public String toLog() {
+      return "'" + name + "' (" + type + ", v" + version + ")";
+   }
 }

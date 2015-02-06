@@ -64,78 +64,78 @@ import com.github.dandelion.core.utils.StringUtils;
  */
 public class FixedAssetVersioningStrategy extends AbstractAssetVersioningStrategy {
 
-	private static final Logger LOG = LoggerFactory.getLogger(FixedAssetVersioningStrategy.class);
+   private static final Logger LOG = LoggerFactory.getLogger(FixedAssetVersioningStrategy.class);
 
-	/**
-	 * The fixed version to be applied on all non-vendor assets.
-	 */
-	private String fixedVersion;
+   /**
+    * The fixed version to be applied on all non-vendor assets.
+    */
+   private String fixedVersion;
 
-	@Override
-	public String getName() {
-		return "fixed";
-	}
+   @Override
+   public String getName() {
+      return "fixed";
+   }
 
-	@Override
-	public void init(Context context) {
+   @Override
+   public void init(Context context) {
 
-		FixedVersionType fixedVersionType = null;
+      FixedVersionType fixedVersionType = null;
 
-		try {
-			fixedVersionType = FixedVersionType.valueOf(context.getConfiguration().getAssetFixedVersionType()
-					.toUpperCase());
-		}
-		catch (IllegalArgumentException e) {
-			StringBuilder error = new StringBuilder();
-			error.append("'");
-			error.append(context.getConfiguration().getAssetFixedVersionType());
-			error.append("' is not a valid versioning type. Possible values are: ");
-			error.append(EnumUtils.printPossibleValuesOf(FixedVersionType.class));
-			throw new DandelionException(error.toString(), e);
-		}
+      try {
+         fixedVersionType = FixedVersionType.valueOf(context.getConfiguration().getAssetFixedVersionType()
+               .toUpperCase());
+      }
+      catch (IllegalArgumentException e) {
+         StringBuilder error = new StringBuilder();
+         error.append("'");
+         error.append(context.getConfiguration().getAssetFixedVersionType());
+         error.append("' is not a valid versioning type. Possible values are: ");
+         error.append(EnumUtils.printPossibleValuesOf(FixedVersionType.class));
+         throw new DandelionException(error.toString(), e);
+      }
 
-		switch (fixedVersionType) {
-		case DATE:
-			LOG.debug("Selected fixed version type: {}", FixedVersionType.DATE);
-			DateFormat dateFormat = null;
-			String desiredDateFormat = context.getConfiguration().getAssetFixedVersionDatePattern();
+      switch (fixedVersionType) {
+      case DATE:
+         LOG.debug("Selected fixed version type: {}", FixedVersionType.DATE);
+         DateFormat dateFormat = null;
+         String desiredDateFormat = context.getConfiguration().getAssetFixedVersionDatePattern();
 
-			LOG.debug("Selected date format: {}", desiredDateFormat);
-			try {
-				dateFormat = new SimpleDateFormat(desiredDateFormat);
-				LOG.debug("Selected fixed version type option: Date format = {}", desiredDateFormat);
-			}
-			catch (IllegalArgumentException e) {
-				throw new DandelionException("Wrong date pattern configured : " + desiredDateFormat, e);
-			}
+         LOG.debug("Selected date format: {}", desiredDateFormat);
+         try {
+            dateFormat = new SimpleDateFormat(desiredDateFormat);
+            LOG.debug("Selected fixed version type option: Date format = {}", desiredDateFormat);
+         }
+         catch (IllegalArgumentException e) {
+            throw new DandelionException("Wrong date pattern configured : " + desiredDateFormat, e);
+         }
 
-			Date date = null;
-			String desiredDate = context.getConfiguration().getAssetFixedVersionValue();
-			if (StringUtils.isNotBlank(desiredDate)) {
-				try {
-					date = dateFormat.parse(desiredDate);
-				}
-				catch (ParseException e) {
-					throw new DandelionException("Unable to parse the desired date \"" + desiredDate
-							+ "\" in the format \"" + desiredDateFormat + "\"");
-				}
-			}
-			else {
-				date = GregorianCalendar.getInstance().getTime();
-			}
-			this.fixedVersion = dateFormat.format(date);
-			break;
-		case STRING:
-			LOG.debug("Selected fixed version type: {}", FixedVersionType.STRING);
-			this.fixedVersion = context.getConfiguration().getAssetFixedVersionValue();
-			break;
-		default:
-			break;
-		}
-	}
+         Date date = null;
+         String desiredDate = context.getConfiguration().getAssetFixedVersionValue();
+         if (StringUtils.isNotBlank(desiredDate)) {
+            try {
+               date = dateFormat.parse(desiredDate);
+            }
+            catch (ParseException e) {
+               throw new DandelionException("Unable to parse the desired date \"" + desiredDate + "\" in the format \""
+                     + desiredDateFormat + "\"");
+            }
+         }
+         else {
+            date = GregorianCalendar.getInstance().getTime();
+         }
+         this.fixedVersion = dateFormat.format(date);
+         break;
+      case STRING:
+         LOG.debug("Selected fixed version type: {}", FixedVersionType.STRING);
+         this.fixedVersion = context.getConfiguration().getAssetFixedVersionValue();
+         break;
+      default:
+         break;
+      }
+   }
 
-	@Override
-	public String getAssetVersion(Asset asset) {
-		return this.fixedVersion;
-	}
+   @Override
+   public String getAssetVersion(Asset asset) {
+      return this.fixedVersion;
+   }
 }

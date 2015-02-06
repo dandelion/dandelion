@@ -15,49 +15,48 @@ import static org.assertj.core.util.Lists.newArrayList;
 import static org.assertj.core.util.Sets.newLinkedHashSet;
 
 public class AssetFakeLoader extends AbstractBundleLoader {
-	
-	@Override
-	public List<BundleStorageUnit> loadBundles() {
-		Map<String, String> locations = new HashMap<String, String>();
-		locations.put("remote", "remoteURL");
-		locations.put("local", "localPath");
-		Map<String, String> locations2 = new HashMap<String, String>();
-		locations.put("remote", "remoteURL2");
-		locations.put("local", "localPath2");
 
-		AssetStorageUnit fakeAsset1 = new AssetStorageUnit();
-		fakeAsset1.setName("name1");
-		fakeAsset1.setVersion("version");
-		fakeAsset1.setLocations(locations);
-		
-		AssetStorageUnit fakeAsset2 = new AssetStorageUnit();
-		fakeAsset2.setName("name2");
-		fakeAsset2.setVersion("version");
-		fakeAsset2.setLocations(locations2);
-		
-		return newArrayList(
-				new BundleStorageUnit("default", new HashSet<AssetStorageUnit>()),
-				new BundleStorageUnit("fake", newLinkedHashSet(fakeAsset1, fakeAsset2)));
-	}
+   @Override
+   public List<BundleStorageUnit> loadBundles() {
+      Map<String, String> locations = new HashMap<String, String>();
+      locations.put("remote", "remoteURL");
+      locations.put("local", "localPath");
+      Map<String, String> locations2 = new HashMap<String, String>();
+      locations.put("remote", "remoteURL2");
+      locations.put("local", "localPath2");
 
-	@Override
-	public String getName() {
-		return "fake";
-	}
+      AssetStorageUnit fakeAsset1 = new AssetStorageUnit();
+      fakeAsset1.setName("name1");
+      fakeAsset1.setVersion("version");
+      fakeAsset1.setLocations(locations);
 
-	@Override
-	protected Logger getLogger() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+      AssetStorageUnit fakeAsset2 = new AssetStorageUnit();
+      fakeAsset2.setName("name2");
+      fakeAsset2.setVersion("version");
+      fakeAsset2.setLocations(locations2);
 
-	@Override
-	public String getPath() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+      return newArrayList(new BundleStorageUnit("default", new HashSet<AssetStorageUnit>()), new BundleStorageUnit(
+            "fake", newLinkedHashSet(fakeAsset1, fakeAsset2)));
+   }
 
-	@Override
-	protected void doCustomBundlePostProcessing(List<BundleStorageUnit> bundles) {
-	}
+   @Override
+   public String getName() {
+      return "fake";
+   }
+
+   @Override
+   protected Logger getLogger() {
+      // TODO Auto-generated method stub
+      return null;
+   }
+
+   @Override
+   public String getPath() {
+      // TODO Auto-generated method stub
+      return null;
+   }
+
+   @Override
+   protected void doCustomBundlePostProcessing(List<BundleStorageUnit> bundles) {
+   }
 }

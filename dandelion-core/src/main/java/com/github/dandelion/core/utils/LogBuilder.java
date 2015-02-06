@@ -40,50 +40,50 @@ package com.github.dandelion.core.utils;
  */
 public class LogBuilder {
 
-	private static String PLACEHOLDER = "\\{\\}";
-	protected StringBuilder logBuilder;
+   private static String PLACEHOLDER = "\\{\\}";
+   protected StringBuilder logBuilder;
 
-	public LogBuilder() {
-		this.logBuilder = new StringBuilder();
-	}
+   public LogBuilder() {
+      this.logBuilder = new StringBuilder();
+   }
 
-	protected void end(String line) {
-		this.logBuilder.append(line);
-	}
+   protected void end(String line) {
+      this.logBuilder.append(line);
+   }
 
-	protected void line(String line) {
-		this.logBuilder.append(line).append("\n");
-	}
+   protected void line(String line) {
+      this.logBuilder.append(line).append("\n");
+   }
 
-	protected void line(String line, Object p1) {
-		this.logBuilder.append(replace(line, p1)).append("\n");
-	}
+   protected void line(String line, Object p1) {
+      this.logBuilder.append(replace(line, p1)).append("\n");
+   }
 
-	protected void line(String line, Object p1, Object p2) {
-		this.logBuilder.append(replace(replace(line, p1), p2)).append("\n");
-	}
+   protected void line(String line, Object p1, Object p2) {
+      this.logBuilder.append(replace(replace(line, p1), p2)).append("\n");
+   }
 
-	protected void line(String line, Object[] pArr) {
-		String newLine = line;
-		for (Object aPArr : pArr) {
-			newLine = replace(newLine, aPArr);
-		}
-		this.logBuilder.append(newLine).append("\n");
-	}
+   protected void line(String line, Object[] pArr) {
+      String newLine = line;
+      for (Object aPArr : pArr) {
+         newLine = replace(newLine, aPArr);
+      }
+      this.logBuilder.append(newLine).append("\n");
+   }
 
-	@Override
-	public String toString() {
-		return this.logBuilder.toString();
-	}
+   @Override
+   public String toString() {
+      return this.logBuilder.toString();
+   }
 
-	private String replace(String str, Object replacement) {
-		return str.replaceFirst(PLACEHOLDER, (replacement == null ? "" : param(replacement)));
-	}
+   private String replace(String str, Object replacement) {
+      return str.replaceFirst(PLACEHOLDER, (replacement == null ? "" : param(replacement)));
+   }
 
-	private String param(Object p) {
-		if (p == null) {
-			return null;
-		}
-		return p.toString().replaceAll("\\$", "\\.");
-	}
+   private String param(Object p) {
+      if (p == null) {
+         return null;
+      }
+      return p.toString().replaceAll("\\$", "\\.");
+   }
 }

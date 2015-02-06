@@ -49,32 +49,32 @@ import com.github.dandelion.core.storage.BundleStorageUnit;
  */
 public class VendorBundleLoader extends AbstractBundleLoader {
 
-	private static final Logger LOG = LoggerFactory.getLogger(VendorBundleLoader.class);
+   private static final Logger LOG = LoggerFactory.getLogger(VendorBundleLoader.class);
 
-	public static final String LOADER_NAME = "vendor";
-	public static final String SCANNING_PATH = "dandelion/vendor";
+   public static final String LOADER_NAME = "vendor";
+   public static final String SCANNING_PATH = "dandelion/vendor";
 
-	@Override
-	public String getName() {
-		return LOADER_NAME;
-	}
+   @Override
+   public String getName() {
+      return LOADER_NAME;
+   }
 
-	@Override
-	public String getPath() {
-		return SCANNING_PATH;
-	}
+   @Override
+   public String getPath() {
+      return SCANNING_PATH;
+   }
 
-	@Override
-	protected Logger getLogger() {
-		return LOG;
-	}
+   @Override
+   protected Logger getLogger() {
+      return LOG;
+   }
 
-	@Override
-	protected void doCustomBundlePostProcessing(List<BundleStorageUnit> bundles) {
-		for (BundleStorageUnit bsu : bundles) {
-			for (AssetStorageUnit asu : bsu.getAssetStorageUnits()) {
-				asu.setVendor(true);
-			}
-		}
-	}
+   @Override
+   protected void doCustomBundlePostProcessing(List<BundleStorageUnit> bundles) {
+      for (BundleStorageUnit bsu : bundles) {
+         for (AssetStorageUnit asu : bsu.getAssetStorageUnits()) {
+            asu.setVendor(true);
+         }
+      }
+   }
 }

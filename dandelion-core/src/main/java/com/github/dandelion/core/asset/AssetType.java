@@ -47,48 +47,48 @@ import static com.github.dandelion.core.asset.AssetDomPosition.head;
  */
 public enum AssetType {
 
-	css("text/css", head), js("application/javascript", body);
+   css("text/css", head), js("application/javascript", body);
 
-	private String contentType;
-	private AssetDomPosition defaultDom;
+   private String contentType;
+   private AssetDomPosition defaultDom;
 
-	private AssetType(String contentType, AssetDomPosition defaultDom) {
-		this.contentType = contentType;
-		this.defaultDom = defaultDom;
-	}
+   private AssetType(String contentType, AssetDomPosition defaultDom) {
+      this.contentType = contentType;
+      this.defaultDom = defaultDom;
+   }
 
-	public String getContentType() {
-		return contentType;
-	}
+   public String getContentType() {
+      return contentType;
+   }
 
-	public AssetDomPosition getDefaultDom() {
-		return defaultDom;
-	}
+   public AssetDomPosition getDefaultDom() {
+      return defaultDom;
+   }
 
-	public static AssetType extractFromRequest(HttpServletRequest request) {
+   public static AssetType extractFromRequest(HttpServletRequest request) {
 
-		Pattern p = Pattern.compile("/[a-f0-9]{32}/(.*)/");
-		Matcher m = p.matcher(request.getRequestURL());
+      Pattern p = Pattern.compile("/[a-f0-9]{32}/(.*)/");
+      Matcher m = p.matcher(request.getRequestURL());
 
-		String assetType = null;
-		if (m.find()) {
-			assetType = m.group(1);
-		}
+      String assetType = null;
+      if (m.find()) {
+         assetType = m.group(1);
+      }
 
-		for (AssetType type : values()) {
-			if (assetType.toLowerCase().endsWith(type.name())) {
-				return type;
-			}
-		}
-		return null;
-	}
+      for (AssetType type : values()) {
+         if (assetType.toLowerCase().endsWith(type.name())) {
+            return type;
+         }
+      }
+      return null;
+   }
 
-	public static AssetType extractFromAssetLocation(String assetLocation) {
-		for (AssetType type : values()) {
-			if (assetLocation.toLowerCase().endsWith(type.name())) {
-				return type;
-			}
-		}
-		return null;
-	}
+   public static AssetType extractFromAssetLocation(String assetLocation) {
+      for (AssetType type : values()) {
+         if (assetLocation.toLowerCase().endsWith(type.name())) {
+            return type;
+         }
+      }
+      return null;
+   }
 }

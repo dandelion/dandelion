@@ -43,29 +43,29 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class BundleSaxHandlerTest {
 
-	private BundleSaxHandler bsp;
+   private BundleSaxHandler bsp;
 
-	@Test
-	public void should_parse_all_possible_elements_and_attributes() throws Exception {
+   @Test
+   public void should_parse_all_possible_elements_and_attributes() throws Exception {
 
-		SAXParserFactory saxParserFactory = SAXParserFactory.newInstance();
+      SAXParserFactory saxParserFactory = SAXParserFactory.newInstance();
 
-		SAXParser saxParser = saxParserFactory.newSAXParser();
-		bsp = new BundleSaxHandler();
-		InputStream is = Thread.currentThread().getContextClassLoader()
-				.getResourceAsStream("bundle-loading/xml/xml-strategy/bundle-full.xml");
-		saxParser.parse(is, bsp);
+      SAXParser saxParser = saxParserFactory.newSAXParser();
+      bsp = new BundleSaxHandler();
+      InputStream is = Thread.currentThread().getContextClassLoader()
+            .getResourceAsStream("bundle-loading/xml/xml-strategy/bundle-full.xml");
+      saxParser.parse(is, bsp);
 
-		BundleStorageUnit bsu = bsp.getBsu();
+      BundleStorageUnit bsu = bsp.getBsu();
 
-		assertThat(bsu.getName()).isEqualTo("bundle-full");
-		assertThat(bsu.getDependencies()).hasSize(1);
-		assertThat(bsu.getDependencies()).contains("other-bundle");
-		assertThat(bsu.getAssetStorageUnits()).hasSize(2);
+      assertThat(bsu.getName()).isEqualTo("bundle-full");
+      assertThat(bsu.getDependencies()).hasSize(1);
+      assertThat(bsu.getDependencies()).contains("other-bundle");
+      assertThat(bsu.getAssetStorageUnits()).hasSize(2);
 
-		assertThat(bsu.getAssetStorageUnits()).extracting("name").contains("asset1", "asset2");
-		assertThat(bsu.getAssetStorageUnits()).extracting("version").contains("1.0.0", "2.0.0");
-		 assertThat(bsu.getAssetStorageUnits()).extracting("type").contains(AssetType.js);
-		assertThat(bsu.getAssetStorageUnits()).extracting("locations").hasSize(2);
-	}
+      assertThat(bsu.getAssetStorageUnits()).extracting("name").contains("asset1", "asset2");
+      assertThat(bsu.getAssetStorageUnits()).extracting("version").contains("1.0.0", "2.0.0");
+      assertThat(bsu.getAssetStorageUnits()).extracting("type").contains(AssetType.js);
+      assertThat(bsu.getAssetStorageUnits()).extracting("locations").hasSize(2);
+   }
 }

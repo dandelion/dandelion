@@ -40,17 +40,17 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class CustomAssetVersioningStrategyTest {
 
-	@Test
-	public void should_return_a_version_based_on_a_custom_strategy() {
+   @Test
+   public void should_return_a_version_based_on_a_custom_strategy() {
 
-		MockFilterConfig filterConfig = new MockFilterConfig();
-		filterConfig.addInitParameter(DandelionConfig.ASSET_VERSIONING_MODE.getName(), "auto");
-		filterConfig.addInitParameter(DandelionConfig.ASSET_VERSIONING_STRATEGY.getName(), "my-strategy");
-		Context dandelionContext = new Context(filterConfig);
+      MockFilterConfig filterConfig = new MockFilterConfig();
+      filterConfig.addInitParameter(DandelionConfig.ASSET_VERSIONING_MODE.getName(), "auto");
+      filterConfig.addInitParameter(DandelionConfig.ASSET_VERSIONING_STRATEGY.getName(), "my-strategy");
+      Context dandelionContext = new Context(filterConfig);
 
-		AssetVersioningStrategy strategy = new MyVersioningStrategy();
-		strategy.init(dandelionContext);
+      AssetVersioningStrategy strategy = new MyVersioningStrategy();
+      strategy.init(dandelionContext);
 
-		assertThat(strategy.getAssetVersion(null)).isEqualTo(strategy.getAssetVersion(null));
-	}
+      assertThat(strategy.getAssetVersion(null)).isEqualTo(strategy.getAssetVersion(null));
+   }
 }

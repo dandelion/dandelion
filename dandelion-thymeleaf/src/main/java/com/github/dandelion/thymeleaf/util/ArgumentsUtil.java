@@ -36,12 +36,12 @@ import org.thymeleaf.context.WebContext;
  * Util for Thymeleaf Arguments
  */
 public class ArgumentsUtil {
-	/**
-	 * @param arguments
-	 *            Thymeleaf arguments
-	 * @return web context of arguments
-	 */
-	public static WebContext getWebContext(Arguments arguments) {
-		return (WebContext) arguments.getContext();
-	}
+   /**
+    * @param arguments
+    *           Thymeleaf arguments
+    * @return web context of arguments
+    */
+   public static WebContext getWebContext(Arguments arguments) {
+      return (WebContext) arguments.getContext();
+   }
 }

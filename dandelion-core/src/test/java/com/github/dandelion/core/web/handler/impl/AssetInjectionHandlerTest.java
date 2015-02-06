@@ -68,112 +68,110 @@ import static org.powermock.api.mockito.PowerMockito.whenNew;
 @PrepareForTest({ AssetInjectionPostHandler.class, Context.class })
 public class AssetInjectionHandlerTest {
 
-	private static final String HTML = "<html><head></head><body></body></html>";
-	private AssetInjectionPostHandler handler;
-	private MockHttpServletRequest request;
-	private HttpServletResponse response;
+   private static final String HTML = "<html><head></head><body></body></html>";
+   private AssetInjectionPostHandler handler;
+   private MockHttpServletRequest request;
+   private HttpServletResponse response;
 
-	@Rule
-	public ExpectedException exception = ExpectedException.none();
+   @Rule
+   public ExpectedException exception = ExpectedException.none();
 
-	@Mock
-	private AssetQuery assetQuery;
+   @Mock
+   private AssetQuery assetQuery;
 
-	@Mock
-	private Context context;
+   @Mock
+   private Context context;
 
-	@Before
-	public void setup() {
-		handler = new AssetInjectionPostHandler();
-		request = new MockHttpServletRequest();
-		response = new MockHttpServletResponse();
-	}
+   @Before
+   public void setup() {
+      handler = new AssetInjectionPostHandler();
+      request = new MockHttpServletRequest();
+      response = new MockHttpServletResponse();
+   }
 
-	@Test
-	public void should_not_apply_on_javascript() {
-		response.setContentType("text/javascript");
-		HandlerContext handlerContext = new HandlerContext(context, request, response, null);
-		assertThat(handler.isApplicable(handlerContext)).isFalse();
-	}
+   @Test
+   public void should_not_apply_on_javascript() {
+      response.setContentType("text/javascript");
+      HandlerContext handlerContext = new HandlerContext(context, request, response, null);
+      assertThat(handler.isApplicable(handlerContext)).isFalse();
+   }
 
-	@Test
-	public void should_not_apply_on_css() {
-		response.setContentType("text/css");
-		HandlerContext handlerContext = new HandlerContext(context, request, response, null);
-		assertThat(handler.isApplicable(handlerContext)).isFalse();
-	}
+   @Test
+   public void should_not_apply_on_css() {
+      response.setContentType("text/css");
+      HandlerContext handlerContext = new HandlerContext(context, request, response, null);
+      assertThat(handler.isApplicable(handlerContext)).isFalse();
+   }
 
-	@Test
-	public void should_not_apply_if_explicitely_disabled_by_a_request_parameter() {
-		request.addParameter(WebConstants.DANDELION_ASSET_FILTER_STATE, "false");
-		response.setContentType("text/html");
-		HandlerContext handlerContext = new HandlerContext(context, request, response, null);
-		assertThat(handler.isApplicable(handlerContext)).isFalse();
-	}
+   @Test
+   public void should_not_apply_if_explicitely_disabled_by_a_request_parameter() {
+      request.addParameter(WebConstants.DANDELION_ASSET_FILTER_STATE, "false");
+      response.setContentType("text/html");
+      HandlerContext handlerContext = new HandlerContext(context, request, response, null);
+      assertThat(handler.isApplicable(handlerContext)).isFalse();
+   }
 
-	@Test
-	public void should_not_apply_if_explicitely_disabled_by_a_request_attribute() {
-		request.setAttribute(WebConstants.DANDELION_ASSET_FILTER_STATE, "false");
-		response.setContentType("text/html");
-		HandlerContext handlerContext = new HandlerContext(context, request, response, null);
-		assertThat(handler.isApplicable(handlerContext)).isFalse();
-	}
+   @Test
+   public void should_not_apply_if_explicitely_disabled_by_a_request_attribute() {
+      request.setAttribute(WebConstants.DANDELION_ASSET_FILTER_STATE, "false");
+      response.setContentType("text/html");
+      HandlerContext handlerContext = new HandlerContext(context, request, response, null);
+      assertThat(handler.isApplicable(handlerContext)).isFalse();
+   }
 
-	@Test
-	public void should_apply_on_html() {
-		response.setContentType("text/html");
-		HandlerContext handlerContext = new HandlerContext(context, request, response, null);
-		assertThat(handler.isApplicable(handlerContext)).isTrue();
-	}
+   @Test
+   public void should_apply_on_html() {
+      response.setContentType("text/html");
+      HandlerContext handlerContext = new HandlerContext(context, request, response, null);
+      assertThat(handler.isApplicable(handlerContext)).isTrue();
+   }
 
-	// TODO: assets are not properly filtered
-	@Test
-	public void should_insert_html_tags_in_the_html_response() throws Exception {
+   // TODO: assets are not properly filtered
+   @Test
+   public void should_insert_html_tags_in_the_html_response() throws Exception {
 
-		Set<Asset> assets = new HashSet<Asset>();
-		assets.add(new Asset("a1", "1.0.0", AssetType.css, "final-location/a1.css"));
-		assets.add(new Asset("a2", "1.0.0", AssetType.css, "final-location/a2.css"));
-		assets.add(new Asset("a1", "1.0.0", AssetType.js, "final-location/a1.js"));
-		assets.add(new Asset("a2", "1.0.0", AssetType.js, "final-location/a2.js"));
+      Set<Asset> assets = new HashSet<Asset>();
+      assets.add(new Asset("a1", "1.0.0", AssetType.css, "final-location/a1.css"));
+      assets.add(new Asset("a2", "1.0.0", AssetType.css, "final-location/a2.css"));
+      assets.add(new Asset("a1", "1.0.0", AssetType.js, "final-location/a1.js"));
+      assets.add(new Asset("a2", "1.0.0", AssetType.js, "final-location/a2.js"));
 
-		context = mock(Context.class, Mockito.RETURNS_DEEP_STUBS);
-		when(context.getConfiguration().getEncoding()).thenReturn("UTF-8");
+      context = mock(Context.class, Mockito.RETURNS_DEEP_STUBS);
+      when(context.getConfiguration().getEncoding()).thenReturn("UTF-8");
 
-		whenNew(AssetQuery.class).withAnyArguments().thenReturn(assetQuery);
-		when(assetQuery.atPosition(any(AssetDomPosition.class))).thenReturn(assetQuery);
-		when(assetQuery.perform()).thenReturn(assets);
+      whenNew(AssetQuery.class).withAnyArguments().thenReturn(assetQuery);
+      when(assetQuery.atPosition(any(AssetDomPosition.class))).thenReturn(assetQuery);
+      when(assetQuery.perform()).thenReturn(assets);
 
-		HandlerContext handlerContext = new HandlerContext(context, request, response, HTML.getBytes());
+      HandlerContext handlerContext = new HandlerContext(context, request, response, HTML.getBytes());
 
-		handler.handle(handlerContext);
-		byte[] processedResponse = handlerContext.getResponseAsBytes();
-		String processedResponseAsString = new String(processedResponse);
-		assertThat(processedResponseAsString).contains("<script src=\"final-location/a1.js\"></script>");
-		assertThat(processedResponseAsString).contains("<script src=\"final-location/a2.js\"></script>");
-		assertThat(processedResponseAsString).contains(
-				"<link rel=\"stylesheet\" href=\"final-location/a1.css\"></link>");
-		assertThat(processedResponseAsString).contains(
-				"<link rel=\"stylesheet\" href=\"final-location/a2.css\"></link>");
-	}
+      handler.handle(handlerContext);
+      byte[] processedResponse = handlerContext.getResponseAsBytes();
+      String processedResponseAsString = new String(processedResponse);
+      assertThat(processedResponseAsString).contains("<script src=\"final-location/a1.js\"></script>");
+      assertThat(processedResponseAsString).contains("<script src=\"final-location/a2.js\"></script>");
+      assertThat(processedResponseAsString).contains("<link rel=\"stylesheet\" href=\"final-location/a1.css\"></link>");
+      assertThat(processedResponseAsString).contains("<link rel=\"stylesheet\" href=\"final-location/a2.css\"></link>");
+   }
 
-	@Test
-	public void should_throw_an_exception_if_a_wrong_encoding_is_configured() throws Exception {
+   @Test
+   public void should_throw_an_exception_if_a_wrong_encoding_is_configured() throws Exception {
 
-		String wrongEncoding = "WRONG-ENCODING";
+      String wrongEncoding = "WRONG-ENCODING";
 
-		whenNew(AssetQuery.class).withAnyArguments().thenReturn(assetQuery);
-		when(assetQuery.atPosition(any(AssetDomPosition.class))).thenReturn(assetQuery);
-		when(assetQuery.perform()).thenReturn(new HashSet<Asset>());
+      whenNew(AssetQuery.class).withAnyArguments().thenReturn(assetQuery);
+      when(assetQuery.atPosition(any(AssetDomPosition.class))).thenReturn(assetQuery);
+      when(assetQuery.perform()).thenReturn(new HashSet<Asset>());
 
-		exception.expect(DandelionException.class);
-		exception.expectMessage("Unable to encode the HTML page using the '" + wrongEncoding
-				+ "', which doesn't seem to be supported");
+      exception.expect(DandelionException.class);
+      exception.expectMessage("Unable to encode the HTML page using the '" + wrongEncoding
+            + "', which doesn't seem to be supported");
 
-		context = mock(Context.class, Mockito.RETURNS_DEEP_STUBS);
-		when(context.getConfiguration().getEncoding()).thenReturn(wrongEncoding);
+      context = mock(Context.class, Mockito.RETURNS_DEEP_STUBS);
+      when(context.getConfiguration().getEncoding()).thenReturn(wrongEncoding);
 
-		HandlerContext handlerContext = new HandlerContext(context, request, response, HTML.getBytes());
+      HandlerContext handlerContext = new HandlerContext(context, request, response, HTML.getBytes());
 
-		handler.handle(handlerContext);
-	}
+      handler.handle(handlerContext);
+   }
 }

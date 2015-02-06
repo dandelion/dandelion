@@ -40,17 +40,16 @@ import com.github.dandelion.thymeleaf.util.AttributeName;
  */
 public enum BundleAttributeNames implements AttributeName {
 
-	INCLUDES("bundle-includes"),
-	EXCLUDES("bundle-excludes");
+   INCLUDES("bundle-includes"), EXCLUDES("bundle-excludes");
 
-	private String attribute;
+   private String attribute;
 
-	private BundleAttributeNames(String attribute) {
-		this.attribute = attribute;
-	}
+   private BundleAttributeNames(String attribute) {
+      this.attribute = attribute;
+   }
 
-	@Override
-	public String getAttribute() {
-		return attribute;
-	}
+   @Override
+   public String getAttribute() {
+      return attribute;
+   }
 }

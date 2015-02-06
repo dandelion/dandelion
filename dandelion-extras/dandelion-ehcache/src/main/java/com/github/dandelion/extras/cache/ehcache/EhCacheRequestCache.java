@@ -86,84 +86,84 @@ import com.github.dandelion.core.utils.scanner.ResourceScanner;
  */
 public class EhCacheRequestCache extends AbstractRequestCache {
 
-	private static final Logger LOG = LoggerFactory.getLogger(EhCacheRequestCache.class);
+   private static final Logger LOG = LoggerFactory.getLogger(EhCacheRequestCache.class);
 
-	private Cache cache;
+   private Cache cache;
 
-	@Override
-	public String getCacheName() {
-		return "ehcache";
-	}
+   @Override
+   public String getCacheName() {
+      return "ehcache";
+   }
 
-	@Override
-	protected Logger getLogger() {
-		return LOG;
-	}
+   @Override
+   protected Logger getLogger() {
+      return LOG;
+   }
 
-	@Override
-	public void initCache(Context context) {
-		super.initCache(context);
+   @Override
+   public void initCache(Context context) {
+      super.initCache(context);
 
-		CacheManager cacheManager = null;
-		String cacheManagerName = context.getConfiguration().getCacheManagerName();
+      CacheManager cacheManager = null;
+      String cacheManagerName = context.getConfiguration().getCacheManagerName();
 
-		// First try to get an existing CacheManager
-		if (StringUtils.isNotBlank(cacheManagerName)) {
-			cacheManager = CacheManager.getCacheManager(cacheManagerName);
-			LOG.warn("No cache manager found with the name '{}'. Dandelion will create one.", cacheManagerName);
-		}
+      // First try to get an existing CacheManager
+      if (StringUtils.isNotBlank(cacheManagerName)) {
+         cacheManager = CacheManager.getCacheManager(cacheManagerName);
+         LOG.warn("No cache manager found with the name '{}'. Dandelion will create one.", cacheManagerName);
+      }
 
-		if (cacheManager == null) {
-			InputStream stream = null;
+      if (cacheManager == null) {
+         InputStream stream = null;
 
-			String cacheConfigurationPath = context.getConfiguration().getCacheConfigurationLocation();
+         String cacheConfigurationPath = context.getConfiguration().getCacheConfigurationLocation();
 
-			if (StringUtils.isBlank(cacheConfigurationPath)) {
-				LOG.warn("The 'cache.configuration.location' configuration is not set. Dandelion will scan for any ehcache.xml file inside the classpath.");
-				try {
-					cacheConfigurationPath = ResourceScanner.findResourcePath("", "ehcache.xml");
-					LOG.debug("ehcache.xml file found: {}", cacheConfigurationPath);
-				}
-				catch (IOException e) {
-					LOG.warn("No ehcache.xml configuration file has been found. Dandelion will let EhCache use the default configuration.");
-				}
-			}
+         if (StringUtils.isBlank(cacheConfigurationPath)) {
+            LOG.warn("The 'cache.configuration.location' configuration is not set. Dandelion will scan for any ehcache.xml file inside the classpath.");
+            try {
+               cacheConfigurationPath = ResourceScanner.findResourcePath("", "ehcache.xml");
+               LOG.debug("ehcache.xml file found: {}", cacheConfigurationPath);
+            }
+            catch (IOException e) {
+               LOG.warn("No ehcache.xml configuration file has been found. Dandelion will let EhCache use the default configuration.");
+            }
+         }
 
-			stream = Thread.currentThread().getContextClassLoader().getResourceAsStream(cacheConfigurationPath);
-			cacheManager = stream == null ? CacheManager.create() : CacheManager.create(stream);
-		}
+         stream = Thread.currentThread().getContextClassLoader().getResourceAsStream(cacheConfigurationPath);
+         cacheManager = stream == null ? CacheManager.create() : CacheManager.create(stream);
+      }
 
-		if (!cacheManager.cacheExists(DANDELION_CACHE_NAME)) {
-			cacheManager.addCache(DANDELION_CACHE_NAME);
-			LOG.debug("Added cache called '{}' to the cache manager", DANDELION_CACHE_NAME);
-		}
-		cache = cacheManager.getCache(DANDELION_CACHE_NAME);
-	}
+      if (!cacheManager.cacheExists(DANDELION_CACHE_NAME)) {
+         cacheManager.addCache(DANDELION_CACHE_NAME);
+         LOG.debug("Added cache called '{}' to the cache manager", DANDELION_CACHE_NAME);
+      }
+      cache = cacheManager.getCache(DANDELION_CACHE_NAME);
+   }
 
-	@Override
-	public CacheEntry doGet(String cacheKey) {
-		Element element = cache.get(cacheKey);
-		return (element == null ? null : (CacheEntry) element.getObjectValue());
-	}
+   @Override
+   public CacheEntry doGet(String cacheKey) {
+      Element element = cache.get(cacheKey);
+      return (element == null ? null : (CacheEntry) element.getObjectValue());
+   }
 
-	@Override
-	protected int doPut(String cacheKey, CacheEntry cacheElement) {
-		cache.put(new Element(cacheKey, cacheElement));
-		return cache.getKeysNoDuplicateCheck().size();
-	}
+   @Override
+   protected int doPut(String cacheKey, CacheEntry cacheElement) {
+      cache.put(new Element(cacheKey, cacheElement));
+      return cache.getKeysNoDuplicateCheck().size();
+   }
 
-	@Override
-	public void doClear() {
-		cache.removeAll();
-	}
+   @Override
+   public void doClear() {
+      cache.removeAll();
+   }
 
-	@Override
-	protected Collection<CacheEntry> doGetAll() {
-		Collection<Element> elements = cache.getAll(cache.getKeysNoDuplicateCheck()).values();
-		Collection<CacheEntry> cacheElements = new ArrayList<CacheEntry>();
-		for (Element e : elements) {
-			cacheElements.add((CacheEntry) e.getObjectValue());
-		}
-		return cacheElements;
-	}
+   @Override
+   protected Collection<CacheEntry> doGetAll() {
+      Collection<Element> elements = cache.getAll(cache.getKeysNoDuplicateCheck()).values();
+      Collection<CacheEntry> cacheElements = new ArrayList<CacheEntry>();
+      for (Element e : elements) {
+         cacheElements.add((CacheEntry) e.getObjectValue());
+      }
+      return cacheElements;
+   }
 }

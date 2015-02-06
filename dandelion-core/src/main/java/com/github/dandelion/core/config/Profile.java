@@ -55,62 +55,62 @@ import com.github.dandelion.core.utils.StringUtils;
  */
 public class Profile {
 
-	public static final String DANDELION_PROFILE_ACTIVE = "dandelion.profile.active";
-	public static final String DEFAULT_DEV_PROFILE = "dev";
-	public static final String DEFAULT_PROD_PROFILE = "prod";
-	public static final String[] DEV_ALIASES = new String[] { "", "dev", "development" };
-	public static final String[] PROD_ALIASES = new String[] { "prod", "production" };
+   public static final String DANDELION_PROFILE_ACTIVE = "dandelion.profile.active";
+   public static final String DEFAULT_DEV_PROFILE = "dev";
+   public static final String DEFAULT_PROD_PROFILE = "prod";
+   public static final String[] DEV_ALIASES = new String[] { "", "dev", "development" };
+   public static final String[] PROD_ALIASES = new String[] { "prod", "production" };
 
-	/**
-	 * <p>
-	 * Retrieves the current active profile.
-	 * </p>
-	 * 
-	 * <p>
-	 * Some words are reserved and allow Dandelion to use a preconfigured set of
-	 * configurations:
-	 * </p>
-	 * <ul>
-	 * <li>"" (empty or null), "dev" or "development": all these words will lead
-	 * to activate the "dev" profile, and thus to use all default development
-	 * values of each {@link DandelionConfig} entry.</li>
-	 * <li>"prod" or "production": these words will lead to activate the "prod"
-	 * profile, and thus to use all default production values of each
-	 * {@link DandelionConfig} entry.</li>
-	 * </ul>
-	 * 
-	 * @return <ul>
-	 *         <li>{@value #DEFAULT_DEV_PROFILE} if the
-	 *         {@value #DANDELION_PROFILE_ACTIVE} system property is set to "",
-	 *         "dev" or "development"</li>
-	 *         <li>{@value #DEFAULT_PROD_PROFILE} if the
-	 *         {@value #DANDELION_PROFILE_ACTIVE} system property is set to
-	 *         "prod" or "production"</li>
-	 *         <li>otherwise the active profile, trimmed.</li>
-	 *         </ul>
-	 */
-	public static String getActiveProfile() {
-		String activeProfile = System.getProperty(DANDELION_PROFILE_ACTIVE);
-		if (StringUtils.isBlank(activeProfile) || Arrays.asList(DEV_ALIASES).contains(activeProfile)) {
-			return DEFAULT_DEV_PROFILE;
-		}
-		else if (StringUtils.isNotBlank(activeProfile) && Arrays.asList(PROD_ALIASES).contains(activeProfile)) {
-			return DEFAULT_PROD_PROFILE;
-		}
+   /**
+    * <p>
+    * Retrieves the current active profile.
+    * </p>
+    * 
+    * <p>
+    * Some words are reserved and allow Dandelion to use a preconfigured set of
+    * configurations:
+    * </p>
+    * <ul>
+    * <li>"" (empty or null), "dev" or "development": all these words will lead
+    * to activate the "dev" profile, and thus to use all default development
+    * values of each {@link DandelionConfig} entry.</li>
+    * <li>"prod" or "production": these words will lead to activate the "prod"
+    * profile, and thus to use all default production values of each
+    * {@link DandelionConfig} entry.</li>
+    * </ul>
+    * 
+    * @return <ul>
+    *         <li>{@value #DEFAULT_DEV_PROFILE} if the
+    *         {@value #DANDELION_PROFILE_ACTIVE} system property is set to "",
+    *         "dev" or "development"</li>
+    *         <li>{@value #DEFAULT_PROD_PROFILE} if the
+    *         {@value #DANDELION_PROFILE_ACTIVE} system property is set to
+    *         "prod" or "production"</li>
+    *         <li>otherwise the active profile, trimmed.</li>
+    *         </ul>
+    */
+   public static String getActiveProfile() {
+      String activeProfile = System.getProperty(DANDELION_PROFILE_ACTIVE);
+      if (StringUtils.isBlank(activeProfile) || Arrays.asList(DEV_ALIASES).contains(activeProfile)) {
+         return DEFAULT_DEV_PROFILE;
+      }
+      else if (StringUtils.isNotBlank(activeProfile) && Arrays.asList(PROD_ALIASES).contains(activeProfile)) {
+         return DEFAULT_PROD_PROFILE;
+      }
 
-		return activeProfile.trim();
-	}
+      return activeProfile.trim();
+   }
 
-	/**
-	 * <p>
-	 * Retrieves the current and untouched active profile.
-	 * </p>
-	 * 
-	 * @return the raw active profile, but at least trimmed if not null and
-	 *         empty.
-	 */
-	public static String getActiveRawProfile() {
-		String activeProfile = System.getProperty(DANDELION_PROFILE_ACTIVE);
-		return StringUtils.isNotBlank(activeProfile) ? activeProfile.trim() : activeProfile;
-	}
+   /**
+    * <p>
+    * Retrieves the current and untouched active profile.
+    * </p>
+    * 
+    * @return the raw active profile, but at least trimmed if not null and
+    *         empty.
+    */
+   public static String getActiveRawProfile() {
+      String activeProfile = System.getProperty(DANDELION_PROFILE_ACTIVE);
+      return StringUtils.isNotBlank(activeProfile) ? activeProfile.trim() : activeProfile;
+   }
 }

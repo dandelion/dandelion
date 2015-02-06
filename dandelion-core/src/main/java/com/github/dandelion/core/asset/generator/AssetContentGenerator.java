@@ -45,21 +45,21 @@ import com.github.dandelion.core.config.Configuration;
  */
 public interface AssetContentGenerator {
 
-	/**
-	 * <p>
-	 * Generates a string that will be used as a content for an {@link Asset}
-	 * configured with the {@code delegate} location key.
-	 * </p>
-	 * 
-	 * <p>
-	 * Depending on the Dandelion {@link Configuration}, the content will be
-	 * formatted or not.
-	 * </p>
-	 * 
-	 * @param request
-	 *            The {@link javax.servlet.http.HttpServletRequest} that may be
-	 *            used by generators.
-	 * @return The code to be used as a content for the {@link Asset}.
-	 */
-	public String getAssetContent(HttpServletRequest request);
+   /**
+    * <p>
+    * Generates a string that will be used as a content for an {@link Asset}
+    * configured with the {@code delegate} location key.
+    * </p>
+    * 
+    * <p>
+    * Depending on the Dandelion {@link Configuration}, the content will be
+    * formatted or not.
+    * </p>
+    * 
+    * @param request
+    *           The {@link javax.servlet.http.HttpServletRequest} that may be
+    *           used by generators.
+    * @return The code to be used as a content for the {@link Asset}.
+    */
+   public String getAssetContent(HttpServletRequest request);
 }

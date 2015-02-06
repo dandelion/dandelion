@@ -49,82 +49,82 @@ import com.github.dandelion.core.DandelionException;
  */
 public final class DigestUtils {
 
-	private static final String MD5_ALGORITHM_NAME = "MD5";
-	private static final String SHA1_ALGORITHM_NAME = "SHA1";
+   private static final String MD5_ALGORITHM_NAME = "MD5";
+   private static final String SHA1_ALGORITHM_NAME = "SHA1";
 
-	private static final char[] HEX_CHARS = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd',
-			'e', 'f' };
+   private static final char[] HEX_CHARS = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e',
+         'f' };
 
-	public static String md5Digest(String string) {
+   public static String md5Digest(String string) {
 
-		Validate.notBlank(string, "The string to get the hash from cannot be blank");
-		char[] encodedDigest;
-		try {
-			byte[] digest = digest(MD5_ALGORITHM_NAME, string.getBytes("UTF-8"));
-			encodedDigest = encodeHex(digest);
-		}
-		catch (UnsupportedEncodingException e) {
-			throw new DandelionException("Unable to get a MD5 hash of " + string, e);
-		}
+      Validate.notBlank(string, "The string to get the hash from cannot be blank");
+      char[] encodedDigest;
+      try {
+         byte[] digest = digest(MD5_ALGORITHM_NAME, string.getBytes("UTF-8"));
+         encodedDigest = encodeHex(digest);
+      }
+      catch (UnsupportedEncodingException e) {
+         throw new DandelionException("Unable to get a MD5 hash of " + string, e);
+      }
 
-		return new String(encodedDigest);
-	}
+      return new String(encodedDigest);
+   }
 
-	/**
-	 * Calculate the MD5 digest of the given bytes.
-	 * 
-	 * @param bytes
-	 *            the bytes to calculate the digest over
-	 * @return the digest
-	 */
-	public static byte[] md5Digest(byte[] bytes) {
-		return digest(MD5_ALGORITHM_NAME, bytes);
-	}
+   /**
+    * Calculate the MD5 digest of the given bytes.
+    * 
+    * @param bytes
+    *           the bytes to calculate the digest over
+    * @return the digest
+    */
+   public static byte[] md5Digest(byte[] bytes) {
+      return digest(MD5_ALGORITHM_NAME, bytes);
+   }
 
-	/**
-	 * Calculate the MD5 digest of the given bytes.
-	 * 
-	 * @param bytes
-	 *            the bytes to calculate the digest over
-	 * @return the digest
-	 */
-	public static byte[] sha1Digest(byte[] bytes) {
-		return digest(SHA1_ALGORITHM_NAME, bytes);
-	}
+   /**
+    * Calculate the MD5 digest of the given bytes.
+    * 
+    * @param bytes
+    *           the bytes to calculate the digest over
+    * @return the digest
+    */
+   public static byte[] sha1Digest(byte[] bytes) {
+      return digest(SHA1_ALGORITHM_NAME, bytes);
+   }
 
-	/**
-	 * Creates a new {@link MessageDigest} with the given algorithm. Necessary
-	 * because {@code MessageDigest} is not thread-safe.
-	 */
-	private static MessageDigest getDigest(String algorithm) {
-		try {
-			return MessageDigest.getInstance(algorithm);
-		}
-		catch (NoSuchAlgorithmException e) {
-			throw new IllegalStateException("Could not find MessageDigest with algorithm \"" + algorithm + "\"", e);
-		}
-	}
+   /**
+    * Creates a new {@link MessageDigest} with the given algorithm. Necessary
+    * because {@code MessageDigest} is not thread-safe.
+    */
+   private static MessageDigest getDigest(String algorithm) {
+      try {
+         return MessageDigest.getInstance(algorithm);
+      }
+      catch (NoSuchAlgorithmException e) {
+         throw new IllegalStateException("Could not find MessageDigest with algorithm \"" + algorithm + "\"", e);
+      }
+   }
 
-	private static byte[] digest(String algorithm, byte[] bytes) {
-		return getDigest(algorithm).digest(bytes);
-	}
+   private static byte[] digest(String algorithm, byte[] bytes) {
+      return getDigest(algorithm).digest(bytes);
+   }
 
-	private static char[] encodeHex(byte[] bytes) {
-		char chars[] = new char[32];
-		for (int i = 0; i < chars.length; i = i + 2) {
-			byte b = bytes[i / 2];
-			chars[i] = HEX_CHARS[(b >>> 0x4) & 0xf];
-			chars[i + 1] = HEX_CHARS[b & 0xf];
-		}
-		return chars;
-	}
+   private static char[] encodeHex(byte[] bytes) {
+      char chars[] = new char[32];
+      for (int i = 0; i < chars.length; i = i + 2) {
+         byte b = bytes[i / 2];
+         chars[i] = HEX_CHARS[(b >>> 0x4) & 0xf];
+         chars[i + 1] = HEX_CHARS[b & 0xf];
+      }
+      return chars;
+   }
 
-	/**
-	 * <p>
-	 * Suppress default constructor for noninstantiability.
-	 * </p>
-	 */
-	private DigestUtils() {
-		throw new AssertionError();
-	}
+   /**
+    * <p>
+    * Suppress default constructor for noninstantiability.
+    * </p>
+    */
+   private DigestUtils() {
+      throw new AssertionError();
+   }
 }

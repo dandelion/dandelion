@@ -51,95 +51,95 @@ import com.github.dandelion.core.storage.BundleStorageUnit;
  */
 public class BundleCycleDetector {
 
-	private static Integer NOT_VISTITED = new Integer(0);
-	private static Integer VISITING = new Integer(1);
-	private static Integer VISITED = new Integer(2);
+   private static Integer NOT_VISTITED = new Integer(0);
+   private static Integer VISITING = new Integer(1);
+   private static Integer VISITED = new Integer(2);
 
-	public static List<BundleStorageUnit> hasCycle(BundleDag graph) {
-		List<BundleStorageUnit> verticies = graph.getVerticies();
+   public static List<BundleStorageUnit> hasCycle(BundleDag graph) {
+      List<BundleStorageUnit> verticies = graph.getVerticies();
 
-		Map<BundleStorageUnit, Integer> vertexStateMap = new HashMap<BundleStorageUnit, Integer>();
+      Map<BundleStorageUnit, Integer> vertexStateMap = new HashMap<BundleStorageUnit, Integer>();
 
-		List<BundleStorageUnit> retValue = null;
+      List<BundleStorageUnit> retValue = null;
 
-		for (BundleStorageUnit vertex : verticies) {
-			if (isNotVisited(vertex, vertexStateMap)) {
-				retValue = introducesCycle(vertex, vertexStateMap);
+      for (BundleStorageUnit vertex : verticies) {
+         if (isNotVisited(vertex, vertexStateMap)) {
+            retValue = introducesCycle(vertex, vertexStateMap);
 
-				if (retValue != null) {
-					break;
-				}
-			}
-		}
+            if (retValue != null) {
+               break;
+            }
+         }
+      }
 
-		return retValue;
-	}
+      return retValue;
+   }
 
-	/**
-	 * This method will be called when an edge leading to given vertex was added
-	 * and we want to check if introduction of this edge has not resulted in
-	 * apparition of cycle in the graph
-	 * 
-	 * @param vertex
-	 * @param vertexStateMap
-	 * @return
-	 */
-	public static List<BundleStorageUnit> introducesCycle(BundleStorageUnit vertex,
-			Map<BundleStorageUnit, Integer> vertexStateMap) {
-		LinkedList<BundleStorageUnit> cycleStack = new LinkedList<BundleStorageUnit>();
+   /**
+    * This method will be called when an edge leading to given vertex was added
+    * and we want to check if introduction of this edge has not resulted in
+    * apparition of cycle in the graph
+    * 
+    * @param vertex
+    * @param vertexStateMap
+    * @return
+    */
+   public static List<BundleStorageUnit> introducesCycle(BundleStorageUnit vertex,
+         Map<BundleStorageUnit, Integer> vertexStateMap) {
+      LinkedList<BundleStorageUnit> cycleStack = new LinkedList<BundleStorageUnit>();
 
-		boolean hasCycle = dfsVisit(vertex, cycleStack, vertexStateMap);
+      boolean hasCycle = dfsVisit(vertex, cycleStack, vertexStateMap);
 
-		if (hasCycle) {
-			BundleStorageUnit firstBsu = cycleStack.getFirst();
-			int pos = cycleStack.lastIndexOf(firstBsu);
-			List<BundleStorageUnit> cycle = cycleStack.subList(0, pos + 1);
-			Collections.reverse(cycle);
-			return cycle;
-		}
+      if (hasCycle) {
+         BundleStorageUnit firstBsu = cycleStack.getFirst();
+         int pos = cycleStack.lastIndexOf(firstBsu);
+         List<BundleStorageUnit> cycle = cycleStack.subList(0, pos + 1);
+         Collections.reverse(cycle);
+         return cycle;
+      }
 
-		return null;
-	}
+      return null;
+   }
 
-	public static List<BundleStorageUnit> introducesCycle(BundleStorageUnit vertex) {
-		Map<BundleStorageUnit, Integer> vertexStateMap = new HashMap<BundleStorageUnit, Integer>();
-		return introducesCycle(vertex, vertexStateMap);
-	}
+   public static List<BundleStorageUnit> introducesCycle(BundleStorageUnit vertex) {
+      Map<BundleStorageUnit, Integer> vertexStateMap = new HashMap<BundleStorageUnit, Integer>();
+      return introducesCycle(vertex, vertexStateMap);
+   }
 
-	private static boolean isNotVisited(BundleStorageUnit vertex, Map<BundleStorageUnit, Integer> vertexStateMap) {
-		Integer state = vertexStateMap.get(vertex);
-		return (state == null) || NOT_VISTITED.equals(state);
-	}
+   private static boolean isNotVisited(BundleStorageUnit vertex, Map<BundleStorageUnit, Integer> vertexStateMap) {
+      Integer state = vertexStateMap.get(vertex);
+      return (state == null) || NOT_VISTITED.equals(state);
+   }
 
-	private static boolean isVisiting(BundleStorageUnit vertex, Map<BundleStorageUnit, Integer> vertexStateMap) {
-		Integer state = vertexStateMap.get(vertex);
-		return VISITING.equals(state);
-	}
+   private static boolean isVisiting(BundleStorageUnit vertex, Map<BundleStorageUnit, Integer> vertexStateMap) {
+      Integer state = vertexStateMap.get(vertex);
+      return VISITING.equals(state);
+   }
 
-	private static boolean dfsVisit(BundleStorageUnit vertex, LinkedList<BundleStorageUnit> cycle,
-			Map<BundleStorageUnit, Integer> vertexStateMap) {
-		cycle.addFirst(vertex);
+   private static boolean dfsVisit(BundleStorageUnit vertex, LinkedList<BundleStorageUnit> cycle,
+         Map<BundleStorageUnit, Integer> vertexStateMap) {
+      cycle.addFirst(vertex);
 
-		vertexStateMap.put(vertex, VISITING);
+      vertexStateMap.put(vertex, VISITING);
 
-		for (BundleStorageUnit v : vertex.getChildren()) {
-			if (isNotVisited(v, vertexStateMap)) {
-				boolean hasCycle = dfsVisit(v, cycle, vertexStateMap);
+      for (BundleStorageUnit v : vertex.getChildren()) {
+         if (isNotVisited(v, vertexStateMap)) {
+            boolean hasCycle = dfsVisit(v, cycle, vertexStateMap);
 
-				if (hasCycle) {
-					return true;
-				}
-			}
-			else if (isVisiting(v, vertexStateMap)) {
-				cycle.addFirst(v);
+            if (hasCycle) {
+               return true;
+            }
+         }
+         else if (isVisiting(v, vertexStateMap)) {
+            cycle.addFirst(v);
 
-				return true;
-			}
-		}
-		vertexStateMap.put(vertex, VISITED);
+            return true;
+         }
+      }
+      vertexStateMap.put(vertex, VISITED);
 
-		cycle.removeFirst();
+      cycle.removeFirst();
 
-		return false;
-	}
+      return false;
+   }
 }

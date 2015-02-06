@@ -52,30 +52,30 @@ import com.github.dandelion.core.storage.AssetStorageUnit;
  */
 public class ApiLocator extends AbstractAssetLocator {
 
-	public static final String API_CONTENT_PARAM = "API_CONTENT_PARAM";
-	public static final String LOCATION_KEY = "api";
-	
-	public ApiLocator() {
-		active = true;
-	}
+   public static final String API_CONTENT_PARAM = "API_CONTENT_PARAM";
+   public static final String LOCATION_KEY = "api";
 
-	@Override
-	public String getLocationKey() {
-		return LOCATION_KEY;
-	}
+   public ApiLocator() {
+      active = true;
+   }
 
-	@Override
-	public boolean isCachingForced() {
-		return true;
-	}
+   @Override
+   public String getLocationKey() {
+      return LOCATION_KEY;
+   }
 
-	@Override
-	public String doGetLocation(AssetStorageUnit asu, HttpServletRequest request) {
-		return asu.getLocations().get(getLocationKey());
-	}
+   @Override
+   public boolean isCachingForced() {
+      return true;
+   }
 
-	@Override
-	protected String doGetContent(String location, Map<String, Object> parameters, HttpServletRequest request) {
-		return ((AssetContentGenerator) parameters.get(API_CONTENT_PARAM)).getAssetContent(request);
-	}
+   @Override
+   public String doGetLocation(AssetStorageUnit asu, HttpServletRequest request) {
+      return asu.getLocations().get(getLocationKey());
+   }
+
+   @Override
+   protected String doGetContent(String location, Map<String, Object> parameters, HttpServletRequest request) {
+      return ((AssetContentGenerator) parameters.get(API_CONTENT_PARAM)).getAssetContent(request);
+   }
 }

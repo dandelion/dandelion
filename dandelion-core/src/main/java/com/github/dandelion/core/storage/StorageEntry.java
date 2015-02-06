@@ -47,54 +47,54 @@ import com.github.dandelion.core.asset.Asset;
  */
 public class StorageEntry implements Serializable {
 
-	private static final long serialVersionUID = -1783943858520890324L;
+   private static final long serialVersionUID = -1783943858520890324L;
 
-	/**
-	 * The asset metadata.
-	 */
-	private final Asset asset;
+   /**
+    * The asset metadata.
+    */
+   private final Asset asset;
 
-	/**
-	 * The asset contents.
-	 */
-	private final String contents;
+   /**
+    * The asset contents.
+    */
+   private final String contents;
 
-	/**
-	 * <p>
-	 * Creates a new storage entry.
-	 * </p>
-	 * 
-	 * @param asset
-	 *            The asset metadata.
-	 * @param contents
-	 *            The asset contents.
-	 */
-	public StorageEntry(Asset asset, String contents) {
-		super();
-		this.asset = asset;
-		this.contents = contents;
-	}
+   /**
+    * <p>
+    * Creates a new storage entry.
+    * </p>
+    * 
+    * @param asset
+    *           The asset metadata.
+    * @param contents
+    *           The asset contents.
+    */
+   public StorageEntry(Asset asset, String contents) {
+      super();
+      this.asset = asset;
+      this.contents = contents;
+   }
 
-	/**
-	 * <p>
-	 * Retrieves the asset stored in this storage entry.
-	 * </p>
-	 * 
-	 * @return all the asset metadata.
-	 */
-	public Asset getAsset() {
-		return asset;
-	}
+   /**
+    * <p>
+    * Retrieves the asset stored in this storage entry.
+    * </p>
+    * 
+    * @return all the asset metadata.
+    */
+   public Asset getAsset() {
+      return asset;
+   }
 
-	/**
-	 * <p>
-	 * Retrieves the asset contents.
-	 * </p>
-	 * 
-	 * @return the asset contents.
-	 */
-	public String getContents() {
-		return contents;
-	}
+   /**
+    * <p>
+    * Retrieves the asset contents.
+    * </p>
+    * 
+    * @return the asset contents.
+    */
+   public String getContents() {
+      return contents;
+   }
 
 }

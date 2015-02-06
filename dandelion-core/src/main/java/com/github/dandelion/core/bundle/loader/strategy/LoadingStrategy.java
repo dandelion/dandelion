@@ -44,29 +44,29 @@ import com.github.dandelion.core.storage.BundleStorageUnit;
  */
 public interface LoadingStrategy {
 
-	/**
-	 * <p>
-	 * Scans for bundles in the classpath using different filters.
-	 * </p>
-	 * 
-	 * @param bundleLocation
-	 *            The root folder in the classpath where the scanning starts.
-	 * 
-	 * @param excludedPaths
-	 *            A set of paths to exclude from the search.
-	 * @return a set of paths corresponding to bundles.
-	 */
-	Set<String> getResourcePaths(String bundleLocation, Set<String> excludedPaths);
+   /**
+    * <p>
+    * Scans for bundles in the classpath using different filters.
+    * </p>
+    * 
+    * @param bundleLocation
+    *           The root folder in the classpath where the scanning starts.
+    * 
+    * @param excludedPaths
+    *           A set of paths to exclude from the search.
+    * @return a set of paths corresponding to bundles.
+    */
+   Set<String> getResourcePaths(String bundleLocation, Set<String> excludedPaths);
 
-	/**
-	 * <p>
-	 * Loads the resources pointed by the provided resource paths and map them
-	 * into {@link BundleStorageUnit} instances.
-	 * </p>
-	 * 
-	 * @param resourcePaths
-	 *            A set of paths corresponding to bundles.
-	 * @return a collection of {@link BundleStorageUnit}s.
-	 */
-	List<BundleStorageUnit> mapToBundles(Set<String> resourcePaths);
+   /**
+    * <p>
+    * Loads the resources pointed by the provided resource paths and map them
+    * into {@link BundleStorageUnit} instances.
+    * </p>
+    * 
+    * @param resourcePaths
+    *           A set of paths corresponding to bundles.
+    * @return a collection of {@link BundleStorageUnit}s.
+    */
+   List<BundleStorageUnit> mapToBundles(Set<String> resourcePaths);
 }

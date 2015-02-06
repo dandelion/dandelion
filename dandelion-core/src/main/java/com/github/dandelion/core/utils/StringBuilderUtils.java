@@ -42,23 +42,23 @@ import java.io.Reader;
  */
 public class StringBuilderUtils {
 
-	public static boolean isNotBlank(StringBuilder stringBuilder) {
-		return stringBuilder != null && stringBuilder.length() > 0;
-	}
+   public static boolean isNotBlank(StringBuilder stringBuilder) {
+      return stringBuilder != null && stringBuilder.length() > 0;
+   }
 
-	public static boolean isBlank(StringBuilder stringBuilder) {
-		return !isNotBlank(stringBuilder);
-	}
-	
-	public static StringBuilder toStringBuilder(Reader reader) throws IOException {
+   public static boolean isBlank(StringBuilder stringBuilder) {
+      return !isNotBlank(stringBuilder);
+   }
 
-		BufferedReader in = new BufferedReader(reader);
-		String line = null;
-		StringBuilder retval = new StringBuilder();
-		while ((line = in.readLine()) != null) {
-			retval.append(line).append('\n');
-		}
+   public static StringBuilder toStringBuilder(Reader reader) throws IOException {
 
-		return retval;
-	}
+      BufferedReader in = new BufferedReader(reader);
+      String line = null;
+      StringBuilder retval = new StringBuilder();
+      while ((line = in.readLine()) != null) {
+         retval.append(line).append('\n');
+      }
+
+      return retval;
+   }
 }

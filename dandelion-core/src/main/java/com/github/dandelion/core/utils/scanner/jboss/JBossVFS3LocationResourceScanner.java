@@ -50,57 +50,57 @@ import com.github.dandelion.core.utils.scanner.LocationResourceScanner;
  */
 public class JBossVFS3LocationResourceScanner implements LocationResourceScanner {
 
-	private static final String VFS3_PACKAGE = "org.jboss.vfs.";
+   private static final String VFS3_PACKAGE = "org.jboss.vfs.";
 
-	private static Class<?> VFS_CLASS;
-	private static Method VFS_METHOD_GET_CHILD;
-	private static Method VIRTUALFILE_METHOD_GET_CHILDREN_RECURSIVELY;
-	private static Method VIRTUALFILE_METHOD_GET_PATH_NAME;
+   private static Class<?> VFS_CLASS;
+   private static Method VFS_METHOD_GET_CHILD;
+   private static Method VIRTUALFILE_METHOD_GET_CHILDREN_RECURSIVELY;
+   private static Method VIRTUALFILE_METHOD_GET_PATH_NAME;
 
-	static {
-		try {
-			VFS_CLASS = Class.forName(VFS3_PACKAGE + "VFS");
-			Class<?> virtualFileClass = Class.forName(VFS3_PACKAGE + "VirtualFile");
+   static {
+      try {
+         VFS_CLASS = Class.forName(VFS3_PACKAGE + "VFS");
+         Class<?> virtualFileClass = Class.forName(VFS3_PACKAGE + "VirtualFile");
 
-			VFS_METHOD_GET_CHILD = VFS_CLASS.getMethod("getChild", String.class);
-			VIRTUALFILE_METHOD_GET_CHILDREN_RECURSIVELY = virtualFileClass.getMethod("getChildrenRecursively");
-			VIRTUALFILE_METHOD_GET_PATH_NAME = virtualFileClass.getMethod("getPathName");
+         VFS_METHOD_GET_CHILD = VFS_CLASS.getMethod("getChild", String.class);
+         VIRTUALFILE_METHOD_GET_CHILDREN_RECURSIVELY = virtualFileClass.getMethod("getChildrenRecursively");
+         VIRTUALFILE_METHOD_GET_PATH_NAME = virtualFileClass.getMethod("getPathName");
 
-		}
-		catch (Exception e) {
-			StringBuilder message = new StringBuilder("Could not detect JBoss VFS3 classes");
-			throw new DandelionException(message.toString(), e);
-		}
-	}
+      }
+      catch (Exception e) {
+         StringBuilder message = new StringBuilder("Could not detect JBoss VFS3 classes");
+         throw new DandelionException(message.toString(), e);
+      }
+   }
 
-	public Set<String> findResourcePaths(String location, URL resourceUrl) throws IOException {
+   public Set<String> findResourcePaths(String location, URL resourceUrl) throws IOException {
 
-		Set<String> resourceNames = null;
+      Set<String> resourceNames = null;
 
-		try {
-			String filePath = PathUtils.toFilePath(resourceUrl);
-			
-			String classPathRootOnDisk = filePath.substring(0, filePath.length() - location.length());
-			if (!classPathRootOnDisk.endsWith("/")) {
-				classPathRootOnDisk = classPathRootOnDisk + "/";
-			}
+      try {
+         String filePath = PathUtils.toFilePath(resourceUrl);
 
-			resourceNames = new TreeSet<String>();
+         String classPathRootOnDisk = filePath.substring(0, filePath.length() - location.length());
+         if (!classPathRootOnDisk.endsWith("/")) {
+            classPathRootOnDisk = classPathRootOnDisk + "/";
+         }
 
-			Object root = VFS_METHOD_GET_CHILD.invoke(VFS_CLASS, filePath);
+         resourceNames = new TreeSet<String>();
 
-			// Everything is retrieved: folder and files
-			List<?> children = (List<?>) VIRTUALFILE_METHOD_GET_CHILDREN_RECURSIVELY.invoke(root);
+         Object root = VFS_METHOD_GET_CHILD.invoke(VFS_CLASS, filePath);
 
-			for (Object file : children) {
-				String pathName = (String) VIRTUALFILE_METHOD_GET_PATH_NAME.invoke(file);
-				resourceNames.add(pathName.substring(classPathRootOnDisk.length()));
-			}
+         // Everything is retrieved: folder and files
+         List<?> children = (List<?>) VIRTUALFILE_METHOD_GET_CHILDREN_RECURSIVELY.invoke(root);
 
-		}
-		catch (Exception e) {
-			throw new DandelionException("JBoss VFS v3 call failed", e);
-		}
-		return resourceNames;
-	}
+         for (Object file : children) {
+            String pathName = (String) VIRTUALFILE_METHOD_GET_PATH_NAME.invoke(file);
+            resourceNames.add(pathName.substring(classPathRootOnDisk.length()));
+         }
+
+      }
+      catch (Exception e) {
+         throw new DandelionException("JBoss VFS v3 call failed", e);
+      }
+      return resourceNames;
+   }
 }

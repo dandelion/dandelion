@@ -49,48 +49,48 @@ import com.github.dandelion.core.web.handler.HandlerContext;
  */
 public final class HttpHeaderUtils {
 
-	private static final Logger LOG = LoggerFactory.getLogger(Sha1Utils.class);
+   private static final Logger LOG = LoggerFactory.getLogger(Sha1Utils.class);
 
-	/**
-	 * <p>
-	 * Computes a MD5 hash of the provided response. This hash is used as an
-	 * ETag value.
-	 * </p>
-	 * <p>
-	 * The ETag is wrapped with {@code "} as suggested in the RFC 2616, section
-	 * 14.19.
-	 * </p>
-	 * 
-	 * @param response
-	 *            The response from which the ETag is computed.
-	 * @param context
-	 *            The context in which the ETag must be computed.
-	 * @return a MD5 hash of the provided response, used as an ETag.
-	 */
-	public static String computeETag(byte[] response, HandlerContext context) {
+   /**
+    * <p>
+    * Computes a MD5 hash of the provided response. This hash is used as an ETag
+    * value.
+    * </p>
+    * <p>
+    * The ETag is wrapped with {@code "} as suggested in the RFC 2616, section
+    * 14.19.
+    * </p>
+    * 
+    * @param response
+    *           The response from which the ETag is computed.
+    * @param context
+    *           The context in which the ETag must be computed.
+    * @return a MD5 hash of the provided response, used as an ETag.
+    */
+   public static String computeETag(byte[] response, HandlerContext context) {
 
-		Configuration configuration = context.getContext().getConfiguration();
+      Configuration configuration = context.getContext().getConfiguration();
 
-		StringBuilder etagValue = new StringBuilder();
-		try {
-			etagValue.append("\"");
-			etagValue.append(DigestUtils.md5Digest(new String(response, configuration.getEncoding())));
-			etagValue.append("\"");
-		}
-		catch (UnsupportedEncodingException e) {
-			LOG.warn("Unable to calculte the ETag of the resource corresponding to the request URL: {}", context
-					.getRequest().getRequestURL());
-		}
+      StringBuilder etagValue = new StringBuilder();
+      try {
+         etagValue.append("\"");
+         etagValue.append(DigestUtils.md5Digest(new String(response, configuration.getEncoding())));
+         etagValue.append("\"");
+      }
+      catch (UnsupportedEncodingException e) {
+         LOG.warn("Unable to calculte the ETag of the resource corresponding to the request URL: {}", context
+               .getRequest().getRequestURL());
+      }
 
-		return etagValue.toString();
-	}
+      return etagValue.toString();
+   }
 
-	/**
-	 * <p>
-	 * Suppress default constructor for noninstantiability.
-	 * </p>
-	 */
-	private HttpHeaderUtils() {
-		throw new AssertionError();
-	}
+   /**
+    * <p>
+    * Suppress default constructor for noninstantiability.
+    * </p>
+    */
+   private HttpHeaderUtils() {
+      throw new AssertionError();
+   }
 }

@@ -37,8 +37,8 @@ import com.github.dandelion.core.utils.UrlUtils;
 
 /**
  * <p>
- * System in charge of manipulating the selected implementation of {@link RequestCache}
- * .
+ * System in charge of manipulating the selected implementation of
+ * {@link RequestCache} .
  * </p>
  * 
  * @author Romain Lespinasse
@@ -47,34 +47,34 @@ import com.github.dandelion.core.utils.UrlUtils;
  */
 public class CacheManager {
 
-	/**
-	 * The Dandelion context.
-	 */
-	private final Context context;
+   /**
+    * The Dandelion context.
+    */
+   private final Context context;
 
-	public CacheManager(Context context) {
-		this.context = context;
-	}
+   public CacheManager(Context context) {
+      this.context = context;
+   }
 
-	public String generateRequestCacheKey(HttpServletRequest request) {
-		StringBuilder cacheKey = new StringBuilder(UrlUtils.getCurrentUri(request));
-		return DigestUtils.md5Digest(cacheKey.toString());
-	}
+   public String generateRequestCacheKey(HttpServletRequest request) {
+      StringBuilder cacheKey = new StringBuilder(UrlUtils.getCurrentUri(request));
+      return DigestUtils.md5Digest(cacheKey.toString());
+   }
 
-	public CacheEntry getAssets(String cacheKey) {
-		return context.getCache().get(cacheKey);
-	}
+   public CacheEntry getAssets(String cacheKey) {
+      return context.getCache().get(cacheKey);
+   }
 
-	public CacheEntry storeAssets(String key, CacheEntry cacheElement) {
-		context.getCache().put(key, cacheElement);
-		return cacheElement;
-	}
+   public CacheEntry storeAssets(String key, CacheEntry cacheElement) {
+      context.getCache().put(key, cacheElement);
+      return cacheElement;
+   }
 
-	public String getCacheName() {
-		return context.getCache().getCacheName();
-	}
+   public String getCacheName() {
+      return context.getCache().getCacheName();
+   }
 
-	public void clearCache() {
-		context.getCache();
-	}
+   public void clearCache() {
+      context.getCache();
+   }
 }

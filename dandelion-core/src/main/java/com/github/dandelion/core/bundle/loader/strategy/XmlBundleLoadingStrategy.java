@@ -58,96 +58,96 @@ import com.github.dandelion.core.utils.scanner.ResourceScanner;
  */
 public class XmlBundleLoadingStrategy implements LoadingStrategy {
 
-	private static final Logger LOG = LoggerFactory.getLogger(XmlBundleLoadingStrategy.class);
+   private static final Logger LOG = LoggerFactory.getLogger(XmlBundleLoadingStrategy.class);
 
-	private static final String XSD_LOCATION = "dandelion/internal/xsd/dandelion-bundle.xsd";
-	private static SAXParserFactory saxParserFactory;
-	private static SAXParser saxParser;
-	private final Context context;
+   private static final String XSD_LOCATION = "dandelion/internal/xsd/dandelion-bundle.xsd";
+   private static SAXParserFactory saxParserFactory;
+   private static SAXParser saxParser;
+   private final Context context;
 
-	/**
-	 * @return the uniq static instance of {@link XmlBundleLoadingStrategy}.
-	 */
-	public XmlBundleLoadingStrategy(Context context) {
-		this.context = context;
-	}
+   /**
+    * @return the uniq static instance of {@link XmlBundleLoadingStrategy}.
+    */
+   public XmlBundleLoadingStrategy(Context context) {
+      this.context = context;
+   }
 
-	static {
-		try {
-			ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+   static {
+      try {
+         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
 
-			saxParserFactory = SAXParserFactory.newInstance();
-			saxParserFactory.setValidating(true);
-			saxParserFactory.setNamespaceAware(true);
+         saxParserFactory = SAXParserFactory.newInstance();
+         saxParserFactory.setValidating(true);
+         saxParserFactory.setNamespaceAware(true);
 
-			saxParser = saxParserFactory.newSAXParser();
-			saxParser.setProperty(BundleSaxHandler.JAXP_SCHEMA_LANGUAGE, BundleSaxHandler.W3C_XML_SCHEMA);
-			saxParser.setProperty(BundleSaxHandler.JAXP_SCHEMA_SOURCE, classLoader.getResourceAsStream(XSD_LOCATION));
-		}
-		catch (ParserConfigurationException e) {
-			throw new DandelionException("Unable to configure the SAX parser", e);
-		}
-		catch (SAXException e) {
-			throw new DandelionException("Unable to configure the SAX parser", e);
-		}
-	}
+         saxParser = saxParserFactory.newSAXParser();
+         saxParser.setProperty(BundleSaxHandler.JAXP_SCHEMA_LANGUAGE, BundleSaxHandler.W3C_XML_SCHEMA);
+         saxParser.setProperty(BundleSaxHandler.JAXP_SCHEMA_SOURCE, classLoader.getResourceAsStream(XSD_LOCATION));
+      }
+      catch (ParserConfigurationException e) {
+         throw new DandelionException("Unable to configure the SAX parser", e);
+      }
+      catch (SAXException e) {
+         throw new DandelionException("Unable to configure the SAX parser", e);
+      }
+   }
 
-	@Override
-	public Set<String> getResourcePaths(String bundleLocation, Set<String> excludedPaths) {
+   @Override
+   public Set<String> getResourcePaths(String bundleLocation, Set<String> excludedPaths) {
 
-		Set<String> resourcePaths = null;
+      Set<String> resourcePaths = null;
 
-		try {
-			resourcePaths = ResourceScanner.findResourcePaths(bundleLocation, excludedPaths, null, ".xml");
-		}
-		catch (IOException e) {
-			throw new DandelionException("Something went wrong when scanning files in " + bundleLocation, e);
-		}
+      try {
+         resourcePaths = ResourceScanner.findResourcePaths(bundleLocation, excludedPaths, null, ".xml");
+      }
+      catch (IOException e) {
+         throw new DandelionException("Something went wrong when scanning files in " + bundleLocation, e);
+      }
 
-		return resourcePaths;
-	}
+      return resourcePaths;
+   }
 
-	@Override
-	public List<BundleStorageUnit> mapToBundles(Set<String> resourcePaths) {
+   @Override
+   public List<BundleStorageUnit> mapToBundles(Set<String> resourcePaths) {
 
-		List<BundleStorageUnit> bundles = new ArrayList<BundleStorageUnit>();
+      List<BundleStorageUnit> bundles = new ArrayList<BundleStorageUnit>();
 
-		BundleStorageLogBuilder bslb = new BundleStorageLogBuilder();
-		BundleSaxHandler bundleSaxHandler = new BundleSaxHandler();
+      BundleStorageLogBuilder bslb = new BundleStorageLogBuilder();
+      BundleSaxHandler bundleSaxHandler = new BundleSaxHandler();
 
-		for (String resourcePath : resourcePaths) {
+      for (String resourcePath : resourcePaths) {
 
-			try {
-				ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-				InputStream configFileStream = classLoader.getResourceAsStream(resourcePath);
-				saxParser.parse(configFileStream, bundleSaxHandler);
-				BundleStorageUnit bsu = bundleSaxHandler.getBsu();
-				bsu.setRelativePath(resourcePath);
-				BundleUtils.checkRequiredConfiguration(bslb, bsu);
-				BundleUtils.finalizeBundleConfiguration(bsu, context);
-				LOG.debug("Parsed bundle \"{}\" ({})", bsu.getName(), bsu);
-				bundles.add(bsu);
-			}
-			catch (SAXException e) {
-				e.printStackTrace();
-				StringBuilder error = new StringBuilder("- The file '");
-				error.append(resourcePath);
-				error.append("' is wrongly formatted for the following reason: " + e.getMessage());
-				bslb.error("Wrong bundle format:", error.toString());
-			}
-			catch (IOException e) {
-				e.printStackTrace();
-				StringBuilder error = new StringBuilder("- The file '");
-				error.append(resourcePath);
-				error.append("' is wrongly formatted for the following reason: " + e.getMessage());
-				bslb.error("Wrong bundle format:", error.toString());
-			}
-		}
+         try {
+            ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+            InputStream configFileStream = classLoader.getResourceAsStream(resourcePath);
+            saxParser.parse(configFileStream, bundleSaxHandler);
+            BundleStorageUnit bsu = bundleSaxHandler.getBsu();
+            bsu.setRelativePath(resourcePath);
+            BundleUtils.checkRequiredConfiguration(bslb, bsu);
+            BundleUtils.finalizeBundleConfiguration(bsu, context);
+            LOG.debug("Parsed bundle \"{}\" ({})", bsu.getName(), bsu);
+            bundles.add(bsu);
+         }
+         catch (SAXException e) {
+            e.printStackTrace();
+            StringBuilder error = new StringBuilder("- The file '");
+            error.append(resourcePath);
+            error.append("' is wrongly formatted for the following reason: " + e.getMessage());
+            bslb.error("Wrong bundle format:", error.toString());
+         }
+         catch (IOException e) {
+            e.printStackTrace();
+            StringBuilder error = new StringBuilder("- The file '");
+            error.append(resourcePath);
+            error.append("' is wrongly formatted for the following reason: " + e.getMessage());
+            bslb.error("Wrong bundle format:", error.toString());
+         }
+      }
 
-		if (bslb.hasError()) {
-			throw new DandelionException(bslb.toString());
-		}
+      if (bslb.hasError()) {
+         throw new DandelionException(bslb.toString());
+      }
 
-		return bundles;
-	}
+      return bundles;
+   }
 }

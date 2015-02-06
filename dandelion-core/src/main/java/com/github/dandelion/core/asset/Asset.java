@@ -53,313 +53,313 @@ import com.github.dandelion.core.storage.AssetStorageUnit;
  */
 public class Asset implements Serializable {
 
-	private static final long serialVersionUID = -5249405621430370618L;
+   private static final long serialVersionUID = -5249405621430370618L;
 
-	/**
-	 * Arbitrary name given to the asset.
-	 */
-	private String name;
+   /**
+    * Arbitrary name given to the asset.
+    */
+   private String name;
 
-	/**
-	 * Version of the asset.
-	 */
-	private String version;
+   /**
+    * Version of the asset.
+    */
+   private String version;
 
-	/**
-	 * Type of the asset.
-	 */
-	private AssetType type;
+   /**
+    * Type of the asset.
+    */
+   private AssetType type;
 
-	/**
-	 * Position where the asset must be injected.
-	 */
-	private AssetDomPosition dom;
+   /**
+    * Position where the asset must be injected.
+    */
+   private AssetDomPosition dom;
 
-	/**
-	 * Key of the locator used to get the asset.
-	 */
-	private String configLocationKey;
+   /**
+    * Key of the locator used to get the asset.
+    */
+   private String configLocationKey;
 
-	/**
-	 * Raw location of the asset, corresponding to the selected location key.
-	 */
-	private String configLocation;
+   /**
+    * Raw location of the asset, corresponding to the selected location key.
+    */
+   private String configLocation;
 
-	private String processedConfigLocation;
+   private String processedConfigLocation;
 
-	/**
-	 * Computed location of the asset, using the right {@link AssetLocator}.
-	 */
-	private String finalLocation;
+   /**
+    * Computed location of the asset, using the right {@link AssetLocator}.
+    */
+   private String finalLocation;
 
-	/**
-	 * Various HTML attributes of the HTML tag.
-	 */
-	private Map<String, String> attributes;
+   /**
+    * Various HTML attributes of the HTML tag.
+    */
+   private Map<String, String> attributes;
 
-	/**
-	 * Various HTML attributes which only need a name.
-	 */
-	private String[] attributesOnlyName;
+   /**
+    * Various HTML attributes which only need a name.
+    */
+   private String[] attributesOnlyName;
 
-	// Internal attribute
+   // Internal attribute
 
-	/**
-	 * The computed storage key of the asset.
-	 */
-	private String storageKey;
+   /**
+    * The computed storage key of the asset.
+    */
+   private String storageKey;
 
-	/**
-	 * The parent bundle.
-	 */
-	private String bundle;
+   /**
+    * The parent bundle.
+    */
+   private String bundle;
 
-	/**
-	 * Whether the asset has been loaded by the {@link VendorBundleLoader}.
-	 */
-	private boolean vendor;
+   /**
+    * Whether the asset has been loaded by the {@link VendorBundleLoader}.
+    */
+   private boolean vendor;
 
-	public Asset() {
-	}
+   public Asset() {
+   }
 
-	/**
-	 * Enforce the declaration of a full asset (mandatory fields).
-	 * 
-	 * @param name
-	 *            name
-	 * @param version
-	 *            version
-	 * @param type
-	 *            type
-	 * @param locations
-	 *            locations of source
-	 */
-	public Asset(String name, String version, AssetType type, Map<String, String> locations) {
-		this.name = name;
-		this.version = version;
-		this.type = type;
-	}
+   /**
+    * Enforce the declaration of a full asset (mandatory fields).
+    * 
+    * @param name
+    *           name
+    * @param version
+    *           version
+    * @param type
+    *           type
+    * @param locations
+    *           locations of source
+    */
+   public Asset(String name, String version, AssetType type, Map<String, String> locations) {
+      this.name = name;
+      this.version = version;
+      this.type = type;
+   }
 
-	public Asset(String name, String version, AssetType type, String location) {
-		this.name = name;
-		this.version = version;
-		this.type = type;
-		this.finalLocation = location;
-	}
+   public Asset(String name, String version, AssetType type, String location) {
+      this.name = name;
+      this.version = version;
+      this.type = type;
+      this.finalLocation = location;
+   }
 
-	protected Asset(String name, String version, AssetType type, AssetDomPosition dom, String location) {
-		this.name = name;
-		this.version = version;
-		this.type = type;
-		this.dom = dom;
-		this.finalLocation = location;
-	}
+   protected Asset(String name, String version, AssetType type, AssetDomPosition dom, String location) {
+      this.name = name;
+      this.version = version;
+      this.type = type;
+      this.dom = dom;
+      this.finalLocation = location;
+   }
 
-	public Asset(String name, String version, AssetType type) {
-		this.name = name;
-		this.version = version;
-		this.type = type;
-	}
+   public Asset(String name, String version, AssetType type) {
+      this.name = name;
+      this.version = version;
+      this.type = type;
+   }
 
-	public Asset(AssetStorageUnit asu) {
-		this.name = asu.getName();
-		this.type = asu.getType();
-		this.version = asu.getVersion();
-		this.dom = asu.getDom();
-		this.attributes = asu.getAttributes();
-		this.attributesOnlyName = asu.getAttributesOnlyName();
-		this.vendor = asu.isVendor();
-		this.bundle = asu.getBundle();
-	}
+   public Asset(AssetStorageUnit asu) {
+      this.name = asu.getName();
+      this.type = asu.getType();
+      this.version = asu.getVersion();
+      this.dom = asu.getDom();
+      this.attributes = asu.getAttributes();
+      this.attributesOnlyName = asu.getAttributesOnlyName();
+      this.vendor = asu.isVendor();
+      this.bundle = asu.getBundle();
+   }
 
-	public Asset(String name, String version, AssetType type, AssetDomPosition position) {
-		this.name = name;
-		this.version = version;
-		this.type = type;
-		this.dom = position;
-	}
+   public Asset(String name, String version, AssetType type, AssetDomPosition position) {
+      this.name = name;
+      this.version = version;
+      this.type = type;
+      this.dom = position;
+   }
 
-	public String getName() {
-		return name;
-	}
+   public String getName() {
+      return name;
+   }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+   public void setName(String name) {
+      this.name = name;
+   }
 
-	public String getVersion() {
-		return version;
-	}
+   public String getVersion() {
+      return version;
+   }
 
-	public void setVersion(String version) {
-		this.version = version;
-	}
+   public void setVersion(String version) {
+      this.version = version;
+   }
 
-	public AssetType getType() {
-		return type;
-	}
+   public AssetType getType() {
+      return type;
+   }
 
-	public void setType(AssetType type) {
-		this.type = type;
-	}
+   public void setType(AssetType type) {
+      this.type = type;
+   }
 
-	public String getConfigLocation() {
-		return configLocation;
-	}
+   public String getConfigLocation() {
+      return configLocation;
+   }
 
-	public void setConfigLocation(String configLocation) {
-		this.configLocation = configLocation;
-	}
+   public void setConfigLocation(String configLocation) {
+      this.configLocation = configLocation;
+   }
 
-	public String getProcessedConfigLocation() {
-		return processedConfigLocation;
-	}
+   public String getProcessedConfigLocation() {
+      return processedConfigLocation;
+   }
 
-	public void setProcessedConfigLocation(String processedConfigLocation) {
-		this.processedConfigLocation = processedConfigLocation;
-	}
+   public void setProcessedConfigLocation(String processedConfigLocation) {
+      this.processedConfigLocation = processedConfigLocation;
+   }
 
-	public String getConfigLocationKey() {
-		return configLocationKey;
-	}
+   public String getConfigLocationKey() {
+      return configLocationKey;
+   }
 
-	public void setConfigLocationKey(String configLocationKey) {
-		this.configLocationKey = configLocationKey;
-	}
+   public void setConfigLocationKey(String configLocationKey) {
+      this.configLocationKey = configLocationKey;
+   }
 
-	public String getFinalLocation() {
-		return finalLocation;
-	}
+   public String getFinalLocation() {
+      return finalLocation;
+   }
 
-	public void setFinalLocation(String finalLocation) {
-		this.finalLocation = finalLocation;
-	}
+   public void setFinalLocation(String finalLocation) {
+      this.finalLocation = finalLocation;
+   }
 
-	public AssetDomPosition getDom() {
-		return dom;
-	}
+   public AssetDomPosition getDom() {
+      return dom;
+   }
 
-	public void setDom(AssetDomPosition dom) {
-		this.dom = dom;
-	}
+   public void setDom(AssetDomPosition dom) {
+      this.dom = dom;
+   }
 
-	public Map<String, String> getAttributes() {
-		return attributes;
-	}
+   public Map<String, String> getAttributes() {
+      return attributes;
+   }
 
-	public void setAttributes(Map<String, String> attributes) {
-		this.attributes = attributes;
-	}
+   public void setAttributes(Map<String, String> attributes) {
+      this.attributes = attributes;
+   }
 
-	public String[] getAttributesOnlyName() {
-		if (attributesOnlyName == null)
-			return new String[0];
-		return attributesOnlyName;
-	}
+   public String[] getAttributesOnlyName() {
+      if (attributesOnlyName == null)
+         return new String[0];
+      return attributesOnlyName;
+   }
 
-	public void setAttributesOnlyName(String[] attributesOnlyName) {
-		this.attributesOnlyName = attributesOnlyName;
-	}
+   public void setAttributesOnlyName(String[] attributesOnlyName) {
+      this.attributesOnlyName = attributesOnlyName;
+   }
 
-	/**
-	 * Validate this asset
-	 * 
-	 * @return <code>true</code> if the asset is valid
-	 */
-	public boolean isValid() {
-		return name != null && version != null && type != null && finalLocation != null;
-	}
+   /**
+    * Validate this asset
+    * 
+    * @return <code>true</code> if the asset is valid
+    */
+   public boolean isValid() {
+      return name != null && version != null && type != null && finalLocation != null;
+   }
 
-	public String getAssetKey() {
-		return name + "." + type;
-	}
+   public String getAssetKey() {
+      return name + "." + type;
+   }
 
-	public void addAttribute(String attributeName, String attributeValue) {
-		if (attributes == null) {
-			attributes = new HashMap<String, String>();
-		}
+   public void addAttribute(String attributeName, String attributeValue) {
+      if (attributes == null) {
+         attributes = new HashMap<String, String>();
+      }
 
-		attributes.put(attributeName, attributeValue);
-	}
+      attributes.put(attributeName, attributeValue);
+   }
 
-	public void addAttribute(String attributeName) {
-		if (attributesOnlyName == null) {
-			attributesOnlyName = new String[] { attributeName };
-		}
-		else {
-			Arrays.copyOf(attributesOnlyName, attributesOnlyName.length + 1);
-			attributesOnlyName[attributesOnlyName.length] = attributeName;
-		}
-	}
+   public void addAttribute(String attributeName) {
+      if (attributesOnlyName == null) {
+         attributesOnlyName = new String[] { attributeName };
+      }
+      else {
+         Arrays.copyOf(attributesOnlyName, attributesOnlyName.length + 1);
+         attributesOnlyName[attributesOnlyName.length] = attributeName;
+      }
+   }
 
-	public String getStorageKey() {
-		return storageKey;
-	}
+   public String getStorageKey() {
+      return storageKey;
+   }
 
-	public void setStorageKey(String cacheKey) {
-		this.storageKey = cacheKey;
-	}
+   public void setStorageKey(String cacheKey) {
+      this.storageKey = cacheKey;
+   }
 
-	public boolean isVendor() {
-		return vendor;
-	}
+   public boolean isVendor() {
+      return vendor;
+   }
 
-	public boolean isNotVendor() {
-		return !isVendor();
-	}
+   public boolean isNotVendor() {
+      return !isVendor();
+   }
 
-	public String getBundle() {
-		return bundle;
-	}
+   public String getBundle() {
+      return bundle;
+   }
 
-	public void setBundle(String bundle) {
-		this.bundle = bundle;
-	}
+   public void setBundle(String bundle) {
+      this.bundle = bundle;
+   }
 
-	@Override
-	public String toString() {
-		return "Asset [name=" + name + ", version=" + version + ", type=" + type + ", dom=" + dom + ", configLocation="
-				+ configLocation + ", configLocationKey=" + configLocationKey + ", finalLocation=" + finalLocation
-				+ ", attributes=" + attributes + ", attributesOnlyName=" + Arrays.toString(attributesOnlyName) + "]";
-	}
+   @Override
+   public String toString() {
+      return "Asset [name=" + name + ", version=" + version + ", type=" + type + ", dom=" + dom + ", configLocation="
+            + configLocation + ", configLocationKey=" + configLocationKey + ", finalLocation=" + finalLocation
+            + ", attributes=" + attributes + ", attributesOnlyName=" + Arrays.toString(attributesOnlyName) + "]";
+   }
 
-	public String toLog() {
-		StringBuilder log = new StringBuilder("\"");
-		log.append(name);
-		log.append("\" (type: ");
-		log.append(type);
-		log.append(", version: ");
-		log.append(version);
-		log.append(")");
-		return log.toString();
-	}
+   public String toLog() {
+      StringBuilder log = new StringBuilder("\"");
+      log.append(name);
+      log.append("\" (type: ");
+      log.append(type);
+      log.append(", version: ");
+      log.append(version);
+      log.append(")");
+      return log.toString();
+   }
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((name == null) ? 0 : name.hashCode());
-		result = prime * result + ((type == null) ? 0 : type.hashCode());
-		return result;
-	}
+   @Override
+   public int hashCode() {
+      final int prime = 31;
+      int result = 1;
+      result = prime * result + ((name == null) ? 0 : name.hashCode());
+      result = prime * result + ((type == null) ? 0 : type.hashCode());
+      return result;
+   }
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Asset other = (Asset) obj;
-		if (name == null) {
-			if (other.name != null)
-				return false;
-		}
-		else if (!name.equals(other.name))
-			return false;
-		if (type != other.type)
-			return false;
-		return true;
-	}
+   @Override
+   public boolean equals(Object obj) {
+      if (this == obj)
+         return true;
+      if (obj == null)
+         return false;
+      if (getClass() != obj.getClass())
+         return false;
+      Asset other = (Asset) obj;
+      if (name == null) {
+         if (other.name != null)
+            return false;
+      }
+      else if (!name.equals(other.name))
+         return false;
+      if (type != other.type)
+         return false;
+      return true;
+   }
 }

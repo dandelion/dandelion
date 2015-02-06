@@ -44,37 +44,37 @@ import com.github.dandelion.core.asset.Asset;
  */
 public class ProcessingContext {
 
-	/**
-	 * The Dandelion context.
-	 */
-	private final Context context;
+   /**
+    * The Dandelion context.
+    */
+   private final Context context;
 
-	/**
-	 * The asset to be processed.
-	 */
-	private final Asset asset;
+   /**
+    * The asset to be processed.
+    */
+   private final Asset asset;
 
-	/**
-	 * The current HTTP request.
-	 */
-	private final HttpServletRequest request;
+   /**
+    * The current HTTP request.
+    */
+   private final HttpServletRequest request;
 
-	public ProcessingContext(Context context, Asset asset, HttpServletRequest request) {
-		super();
-		this.context = context;
-		this.asset = asset;
-		this.request = request;
-	}
+   public ProcessingContext(Context context, Asset asset, HttpServletRequest request) {
+      super();
+      this.context = context;
+      this.asset = asset;
+      this.request = request;
+   }
 
-	public Context getContext() {
-		return context;
-	}
+   public Context getContext() {
+      return context;
+   }
 
-	public Asset getAsset() {
-		return asset;
-	}
+   public Asset getAsset() {
+      return asset;
+   }
 
-	public HttpServletRequest getRequest() {
-		return request;
-	}
+   public HttpServletRequest getRequest() {
+      return request;
+   }
 }

@@ -47,16 +47,15 @@ import com.github.dandelion.core.Context;
  */
 public interface ConfigurationLoader {
 
-	public final static String DANDELION_CONFLOADER_CLASS = "dandelion.confloader.class";
+   public final static String DANDELION_CONFLOADER_CLASS = "dandelion.confloader.class";
 
-	/**
-	 * <p>
-	 * Load the user configuration which can be used to override the default
-	 * one.
-	 * <p>
-	 * Once the bundle loaded, it is converted into Properties.
-	 * 
-	 * @return the ResourceBundle containing the user configuration.
-	 */
-	public Properties loadUserConfiguration();
+   /**
+    * <p>
+    * Load the user configuration which can be used to override the default one.
+    * <p>
+    * Once the bundle loaded, it is converted into Properties.
+    * 
+    * @return the ResourceBundle containing the user configuration.
+    */
+   public Properties loadUserConfiguration();
 }

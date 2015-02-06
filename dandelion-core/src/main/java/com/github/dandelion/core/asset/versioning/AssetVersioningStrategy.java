@@ -42,29 +42,29 @@ import com.github.dandelion.core.asset.Asset;
  */
 public interface AssetVersioningStrategy {
 
-	/**
-	 * <p>
-	 * Initiliazes the versioning strategy by injecting the Dandelion context.
-	 * </p>
-	 * 
-	 * @param context
-	 *            The Dandelion context.
-	 */
-	void init(Context context);
+   /**
+    * <p>
+    * Initiliazes the versioning strategy by injecting the Dandelion context.
+    * </p>
+    * 
+    * @param context
+    *           The Dandelion context.
+    */
+   void init(Context context);
 
-	/**
-	 * @return the name of the versioning strategy.
-	 */
-	String getName();
+   /**
+    * @return the name of the versioning strategy.
+    */
+   String getName();
 
-	/**
-	 * <p>
-	 * Returns the asset version.
-	 * </p>
-	 * 
-	 * @param asset
-	 *            The asset for which the version is to be retrieved.
-	 * @return the asset version.
-	 */
-	String getAssetVersion(Asset asset);
+   /**
+    * <p>
+    * Returns the asset version.
+    * </p>
+    * 
+    * @param asset
+    *           The asset for which the version is to be retrieved.
+    * @return the asset version.
+    */
+   String getAssetVersion(Asset asset);
 }

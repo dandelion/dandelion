@@ -57,83 +57,83 @@ import com.github.dandelion.core.utils.StringUtils;
  */
 public class StandardConfigurationLoader implements ConfigurationLoader {
 
-	private static Logger logger = LoggerFactory.getLogger(StandardConfigurationLoader.class);
+   private static Logger logger = LoggerFactory.getLogger(StandardConfigurationLoader.class);
 
-	public static final String DANDELION_USER_PROPERTIES = "dandelion";
-	public static final String DANDELION_CONFIGURATION = "dandelion.configuration";
+   public static final String DANDELION_USER_PROPERTIES = "dandelion";
+   public static final String DANDELION_CONFIGURATION = "dandelion.configuration";
 
-	/**
-	 * {@inheritDoc}
-	 */
-	public Properties loadUserConfiguration() {
+   /**
+    * {@inheritDoc}
+    */
+   public Properties loadUserConfiguration() {
 
-		logger.debug("Loading user configuration...");
+      logger.debug("Loading user configuration...");
 
-		Properties userProperties = null;
+      Properties userProperties = null;
 
-		// Get the Dandelion mode
-		String activeRawProfile = Profile.getActiveRawProfile();
+      // Get the Dandelion mode
+      String activeRawProfile = Profile.getActiveRawProfile();
 
-		// Get the configuration base path, if set
-		String dandelionBasePath = System.getProperty(DANDELION_CONFIGURATION);
+      // Get the configuration base path, if set
+      String dandelionBasePath = System.getProperty(DANDELION_CONFIGURATION);
 
-		// Compute the name of the file to load
-		String dandelionFileName = null;
-		if (StringUtils.isBlank(activeRawProfile)) {
-			dandelionFileName = DANDELION_USER_PROPERTIES + ".properties";
-		}
-		else if (StringUtils.isNotBlank(activeRawProfile)) {
-			dandelionFileName = DANDELION_USER_PROPERTIES + "_" + activeRawProfile + ".properties";
-		}
+      // Compute the name of the file to load
+      String dandelionFileName = null;
+      if (StringUtils.isBlank(activeRawProfile)) {
+         dandelionFileName = DANDELION_USER_PROPERTIES + ".properties";
+      }
+      else if (StringUtils.isNotBlank(activeRawProfile)) {
+         dandelionFileName = DANDELION_USER_PROPERTIES + "_" + activeRawProfile + ".properties";
+      }
 
-		// Compute the full path
-		String dandelionFilePath = null;
+      // Compute the full path
+      String dandelionFilePath = null;
 
-		// First check if the resource bundle is externalized
-		if (StringUtils.isNotBlank(dandelionBasePath)) {
+      // First check if the resource bundle is externalized
+      if (StringUtils.isNotBlank(dandelionBasePath)) {
 
-			if (!dandelionBasePath.endsWith(String.valueOf(File.separatorChar))) {
-				dandelionBasePath += File.separator;
-			}
-			dandelionFilePath = dandelionBasePath + dandelionFileName;
-			logger.debug("Trying to load the configuration from \"{}\"", dandelionFilePath);
+         if (!dandelionBasePath.endsWith(String.valueOf(File.separatorChar))) {
+            dandelionBasePath += File.separator;
+         }
+         dandelionFilePath = dandelionBasePath + dandelionFileName;
+         logger.debug("Trying to load the configuration from \"{}\"", dandelionFilePath);
 
-			try {
-				userProperties = PropertiesUtils.loadFromFileSystem(dandelionFilePath, "UTF-8");
-			}
-			catch (Exception e) {
-				StringBuilder error = new StringBuilder("No file \"");
-				error.append(dandelionFileName);
-				error.append("\" was found in \"");
-				error.append(dandelionBasePath);
-				error.append("\".");
-				if (StringUtils.isNotBlank(activeRawProfile)) {
-					throw new DandelionException(error.toString());
-				}
-				else {
-					logger.warn("No file \"{}\" was found in \"{}\". The default configuration will be used.",
-							dandelionFileName, dandelionBasePath);
-				}
-			}
-		}
+         try {
+            userProperties = PropertiesUtils.loadFromFileSystem(dandelionFilePath, "UTF-8");
+         }
+         catch (Exception e) {
+            StringBuilder error = new StringBuilder("No file \"");
+            error.append(dandelionFileName);
+            error.append("\" was found in \"");
+            error.append(dandelionBasePath);
+            error.append("\".");
+            if (StringUtils.isNotBlank(activeRawProfile)) {
+               throw new DandelionException(error.toString());
+            }
+            else {
+               logger.warn("No file \"{}\" was found in \"{}\". The default configuration will be used.",
+                     dandelionFileName, dandelionBasePath);
+            }
+         }
+      }
 
-		// No system property is set, retrieves the bundle from the classpath
-		if (userProperties == null) {
+      // No system property is set, retrieves the bundle from the classpath
+      if (userProperties == null) {
 
-			dandelionFilePath = "dandelion/" + dandelionFileName;
-			logger.debug("Trying to load the configuration from \"{}\"", dandelionFilePath);
+         dandelionFilePath = "dandelion/" + dandelionFileName;
+         logger.debug("Trying to load the configuration from \"{}\"", dandelionFilePath);
 
-			try {
-				userProperties = PropertiesUtils.loadFromClasspath(dandelionFilePath, "UTF-8");
-			}
-			catch (Exception e) {
-				logger.warn("No file \"dandelion.properties\" was found in \"" + dandelionFilePath
-						+ "\" (classpath). The default configuration will be used.");
-			}
-		}
+         try {
+            userProperties = PropertiesUtils.loadFromClasspath(dandelionFilePath, "UTF-8");
+         }
+         catch (Exception e) {
+            logger.warn("No file \"dandelion.properties\" was found in \"" + dandelionFilePath
+                  + "\" (classpath). The default configuration will be used.");
+         }
+      }
 
-		logger.debug("User configuration loaded");
+      logger.debug("User configuration loaded");
 
-		return userProperties;
-	}
+      return userProperties;
+   }
 }

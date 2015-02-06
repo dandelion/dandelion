@@ -33,37 +33,37 @@ package com.github.dandelion.thymeleaf.util;
  * Util for Thymeleaf Attribute
  */
 public class AttributesUtil {
-	/**
-	 * strip the Dialect Prefix from the attribute name
-	 * 
-	 * @param attributeName
-	 *            attribute name
-	 * @param dialectPrefix
-	 *            dialect prefix
-	 * @return the clean attribute name
-	 */
-	public static String stripPrefix(String attributeName, String dialectPrefix) {
-		if (!attributeName.startsWith(dialectPrefix))
-			return attributeName;
-		return attributeName.substring(dialectPrefix.length() + 1, attributeName.length());
-	}
+   /**
+    * strip the Dialect Prefix from the attribute name
+    * 
+    * @param attributeName
+    *           attribute name
+    * @param dialectPrefix
+    *           dialect prefix
+    * @return the clean attribute name
+    */
+   public static String stripPrefix(String attributeName, String dialectPrefix) {
+      if (!attributeName.startsWith(dialectPrefix))
+         return attributeName;
+      return attributeName.substring(dialectPrefix.length() + 1, attributeName.length());
+   }
 
-	/**
-	 * Find the Attribute Name object who matches the attribute name String
-	 * 
-	 * @param attributeName
-	 *            attribute name
-	 * @param names
-	 *            attribute name objects
-	 * @return the matched Attribute Name
-	 */
-	public static AttributeName find(String attributeName, AttributeName[] names) {
-		for (AttributeName name : names) {
-			String processedName = attributeName.contains("data-") ? attributeName.substring(9) : attributeName;
-			if (name.getAttribute().equalsIgnoreCase(processedName)) {
-				return name;
-			}
-		}
-		return null;
-	}
+   /**
+    * Find the Attribute Name object who matches the attribute name String
+    * 
+    * @param attributeName
+    *           attribute name
+    * @param names
+    *           attribute name objects
+    * @return the matched Attribute Name
+    */
+   public static AttributeName find(String attributeName, AttributeName[] names) {
+      for (AttributeName name : names) {
+         String processedName = attributeName.contains("data-") ? attributeName.substring(9) : attributeName;
+         if (name.getAttribute().equalsIgnoreCase(processedName)) {
+            return name;
+         }
+      }
+      return null;
+   }
 }

@@ -55,99 +55,99 @@ import static com.github.dandelion.core.asset.generator.js.jquery.JQueryContentP
  */
 
 public class JQueryContent extends AbstractAssetPlaceholderContent<JQueryContentPlaceholder> {
-	
-	/**
-	 * <p>
-	 * Appends the provided content to the
-	 * {@link JQueryContentPlaceholder#BEFORE_ALL} placeholder.
-	 * </p>
-	 * 
-	 * @param content
-	 *            The content to be appended to the placeholder.
-	 */
-	public void appendToBeforeAll(String content) {
-		appendToPlaceholder(BEFORE_ALL, content);
-	}
 
-	/**
-	 * <p>
-	 * Appends the provided content to the
-	 * {@link JQueryContentPlaceholder#BEFORE_START_DOCUMENT_READY} placeholder.
-	 * </p>
-	 * 
-	 * @param content
-	 *            The content to be appended to the placeholder.
-	 */
-	public void appendToBeforeStartDocumentReady(String content) {
-		appendToPlaceholder(BEFORE_START_DOCUMENT_READY, content);
-	}
+   /**
+    * <p>
+    * Appends the provided content to the
+    * {@link JQueryContentPlaceholder#BEFORE_ALL} placeholder.
+    * </p>
+    * 
+    * @param content
+    *           The content to be appended to the placeholder.
+    */
+   public void appendToBeforeAll(String content) {
+      appendToPlaceholder(BEFORE_ALL, content);
+   }
 
-	/**
-	 * <p>
-	 * Appends the provided content to the
-	 * {@link JQueryContentPlaceholder#AFTER_START_DOCUMENT_READY} placeholder.
-	 * </p>
-	 * 
-	 * @param content
-	 *            The content to be appended to the placeholder.
-	 */
-	public void appendToAfterStartDocumentReady(String content) {
-		appendToPlaceholder(AFTER_START_DOCUMENT_READY, content);
-	}
+   /**
+    * <p>
+    * Appends the provided content to the
+    * {@link JQueryContentPlaceholder#BEFORE_START_DOCUMENT_READY} placeholder.
+    * </p>
+    * 
+    * @param content
+    *           The content to be appended to the placeholder.
+    */
+   public void appendToBeforeStartDocumentReady(String content) {
+      appendToPlaceholder(BEFORE_START_DOCUMENT_READY, content);
+   }
 
-	/**
-	 * <p>
-	 * Appends the provided content to the
-	 * {@link JQueryContentPlaceholder#COMPONENT_CONFIGURATION} placeholder.
-	 * </p>
-	 * 
-	 * @param content
-	 *            The content to be appended to the placeholder.
-	 */
-	public void appendToComponentConfiguration(String content) {
-		appendToPlaceholder(COMPONENT_CONFIGURATION, content);
-	}
+   /**
+    * <p>
+    * Appends the provided content to the
+    * {@link JQueryContentPlaceholder#AFTER_START_DOCUMENT_READY} placeholder.
+    * </p>
+    * 
+    * @param content
+    *           The content to be appended to the placeholder.
+    */
+   public void appendToAfterStartDocumentReady(String content) {
+      appendToPlaceholder(AFTER_START_DOCUMENT_READY, content);
+   }
 
-	/**
-	 * <p>
-	 * Appends the provided content to the
-	 * {@link JQueryContentPlaceholder#BEFORE_END_DOCUMENT_READY} placeholder.
-	 * </p>
-	 * 
-	 * @param content
-	 *            The content to be appended to the placeholder.
-	 */
-	public void appendToBeforeEndDocumentReady(String content) {
-		appendToPlaceholder(BEFORE_END_DOCUMENT_READY, content);
-	}
+   /**
+    * <p>
+    * Appends the provided content to the
+    * {@link JQueryContentPlaceholder#COMPONENT_CONFIGURATION} placeholder.
+    * </p>
+    * 
+    * @param content
+    *           The content to be appended to the placeholder.
+    */
+   public void appendToComponentConfiguration(String content) {
+      appendToPlaceholder(COMPONENT_CONFIGURATION, content);
+   }
 
-	/**
-	 * <p>
-	 * Appends the provided content to the
-	 * {@link JQueryContentPlaceholder#AFTER_END_DOCUMENT_READY} placeholder.
-	 * </p>
-	 * 
-	 * @param content
-	 *            The content to be appended to the placeholder.
-	 */
-	public void appendToAfterEndDocumentReady(String content) {
-		appendToPlaceholder(AFTER_END_DOCUMENT_READY, content);
-	}
+   /**
+    * <p>
+    * Appends the provided content to the
+    * {@link JQueryContentPlaceholder#BEFORE_END_DOCUMENT_READY} placeholder.
+    * </p>
+    * 
+    * @param content
+    *           The content to be appended to the placeholder.
+    */
+   public void appendToBeforeEndDocumentReady(String content) {
+      appendToPlaceholder(BEFORE_END_DOCUMENT_READY, content);
+   }
 
-	/**
-	 * <p>
-	 * Appends the provided content to the
-	 * {@link JQueryContentPlaceholder#AFTER_ALL} placeholder.
-	 * </p>
-	 * 
-	 * @param content
-	 *            The content to be appended to the placeholder.
-	 */
-	public void appendToAfterAll(String content) {
-		appendToPlaceholder(AFTER_ALL, content);
-	}
+   /**
+    * <p>
+    * Appends the provided content to the
+    * {@link JQueryContentPlaceholder#AFTER_END_DOCUMENT_READY} placeholder.
+    * </p>
+    * 
+    * @param content
+    *           The content to be appended to the placeholder.
+    */
+   public void appendToAfterEndDocumentReady(String content) {
+      appendToPlaceholder(AFTER_END_DOCUMENT_READY, content);
+   }
 
-	public Map<JQueryContentPlaceholder, StringBuilder> getPlaceholderContent() {
-		return super.getPlaceholderContent();
-	}
+   /**
+    * <p>
+    * Appends the provided content to the
+    * {@link JQueryContentPlaceholder#AFTER_ALL} placeholder.
+    * </p>
+    * 
+    * @param content
+    *           The content to be appended to the placeholder.
+    */
+   public void appendToAfterAll(String content) {
+      appendToPlaceholder(AFTER_ALL, content);
+   }
+
+   public Map<JQueryContentPlaceholder, StringBuilder> getPlaceholderContent() {
+      return super.getPlaceholderContent();
+   }
 }

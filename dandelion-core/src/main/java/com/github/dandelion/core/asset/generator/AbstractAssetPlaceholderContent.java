@@ -45,61 +45,61 @@ import com.github.dandelion.core.utils.StringUtils;
  * @author Thibault Duchateau
  * @since 0.11.0
  * @param <P>
- *            the type of {@link AssetPlaceholder} that the content is
- *            associated with.
+ *           the type of {@link AssetPlaceholder} that the content is associated
+ *           with.
  */
 public abstract class AbstractAssetPlaceholderContent<P extends AssetPlaceholder> {
 
-	/**
-	 * The map in which different contents can be associated with different
-	 * placeholders.
-	 */
-	private final Map<P, StringBuilder> content = new HashMap<P, StringBuilder>();
+   /**
+    * The map in which different contents can be associated with different
+    * placeholders.
+    */
+   private final Map<P, StringBuilder> content = new HashMap<P, StringBuilder>();
 
-	/**
-	 * <p>
-	 * Appends some String content to the corresponding placeholder, only if
-	 * it's not null nor empty.
-	 * </p>
-	 * 
-	 * @param placeholder
-	 *            The placeholder in which the content will be appened.
-	 * @param content
-	 *            The content to append.
-	 */
-	public void appendToPlaceholder(P placeholder, String content) {
-		if (StringUtils.isNotBlank(content)) {
-			if (!this.content.containsKey(placeholder)) {
-				this.content.put(placeholder, new StringBuilder());
-			}
-			this.content.get(placeholder).append(content);
-		}
-	}
+   /**
+    * <p>
+    * Appends some String content to the corresponding placeholder, only if it's
+    * not null nor empty.
+    * </p>
+    * 
+    * @param placeholder
+    *           The placeholder in which the content will be appened.
+    * @param content
+    *           The content to append.
+    */
+   public void appendToPlaceholder(P placeholder, String content) {
+      if (StringUtils.isNotBlank(content)) {
+         if (!this.content.containsKey(placeholder)) {
+            this.content.put(placeholder, new StringBuilder());
+         }
+         this.content.get(placeholder).append(content);
+      }
+   }
 
-	/**
-	 * <p>
-	 * Appends some content to the corresponding placeholder, only if it's not
-	 * null nor empty.
-	 * </p>
-	 * 
-	 * @param placeholder
-	 *            The placeholder in which the content will be appened.
-	 * @param content
-	 *            The content to append.
-	 */
-	public void appendToPlaceholder(P placeholder, StringBuilder content) {
-		if (StringBuilderUtils.isNotBlank(content)) {
-			if (!this.content.containsKey(placeholder)) {
-				this.content.put(placeholder, new StringBuilder());
-			}
-			this.content.get(placeholder).append(content);
-		}
-	}
+   /**
+    * <p>
+    * Appends some content to the corresponding placeholder, only if it's not
+    * null nor empty.
+    * </p>
+    * 
+    * @param placeholder
+    *           The placeholder in which the content will be appened.
+    * @param content
+    *           The content to append.
+    */
+   public void appendToPlaceholder(P placeholder, StringBuilder content) {
+      if (StringBuilderUtils.isNotBlank(content)) {
+         if (!this.content.containsKey(placeholder)) {
+            this.content.put(placeholder, new StringBuilder());
+         }
+         this.content.get(placeholder).append(content);
+      }
+   }
 
-	/**
-	 * @return the map that associates content to its placeholder.
-	 */
-	protected Map<P, StringBuilder> getPlaceholderContent() {
-		return content;
-	}
+   /**
+    * @return the map that associates content to its placeholder.
+    */
+   protected Map<P, StringBuilder> getPlaceholderContent() {
+      return content;
+   }
 }

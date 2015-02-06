@@ -48,22 +48,22 @@ import com.github.dandelion.core.utils.ResourceUtils;
  */
 public class RemoteLocator extends AbstractAssetLocator {
 
-	public RemoteLocator() {
-		this.active = true;
-	}
+   public RemoteLocator() {
+      this.active = true;
+   }
 
-	@Override
-	public String getLocationKey() {
-		return "remote";
-	}
+   @Override
+   public String getLocationKey() {
+      return "remote";
+   }
 
-	@Override
-	public String doGetLocation(AssetStorageUnit asu, HttpServletRequest request) {
-		return asu.getLocations().get(getLocationKey());
-	}
+   @Override
+   public String doGetLocation(AssetStorageUnit asu, HttpServletRequest request) {
+      return asu.getLocations().get(getLocationKey());
+   }
 
-	@Override
-	protected String doGetContent(String location, Map<String, Object> parameters, HttpServletRequest request) {
-		return ResourceUtils.getContentFromUrl(request, location, true);
-	}
+   @Override
+   protected String doGetContent(String location, Map<String, Object> parameters, HttpServletRequest request) {
+      return ResourceUtils.getContentFromUrl(request, location, true);
+   }
 }

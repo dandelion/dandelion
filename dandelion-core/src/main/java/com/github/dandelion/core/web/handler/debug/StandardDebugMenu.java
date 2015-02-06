@@ -34,19 +34,19 @@ import java.util.List;
 
 public class StandardDebugMenu implements DebugMenu {
 
-	@Override
-	public String getDisplayName() {
-		return "Dandelion Core";
-	}
+   @Override
+   public String getDisplayName() {
+      return "Dandelion Core";
+   }
 
-	@Override
-	public List<DebugPage> getPages() {
-		List<DebugPage> debugPages = new ArrayList<DebugPage>();
-		debugPages.add(new AssetsDebugPage());
-		debugPages.add(new OptionsDebugPage());
-		debugPages.add(new AssetStorageDebugPage());
-		debugPages.add(new BundleStorageDebugPage());
-		debugPages.add(new CacheDebugPage());
-		return debugPages;
-	}
+   @Override
+   public List<DebugPage> getPages() {
+      List<DebugPage> debugPages = new ArrayList<DebugPage>();
+      debugPages.add(new AssetsDebugPage());
+      debugPages.add(new OptionsDebugPage());
+      debugPages.add(new AssetStorageDebugPage());
+      debugPages.add(new BundleStorageDebugPage());
+      debugPages.add(new CacheDebugPage());
+      return debugPages;
+   }
 }

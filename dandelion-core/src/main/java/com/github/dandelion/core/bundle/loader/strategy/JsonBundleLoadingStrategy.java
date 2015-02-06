@@ -57,68 +57,68 @@ import com.github.dandelion.core.utils.scanner.ResourceScanner;
  */
 public class JsonBundleLoadingStrategy implements LoadingStrategy {
 
-	private static final Logger LOG = LoggerFactory.getLogger(JsonBundleLoadingStrategy.class);
-	private final Context context;
-	private static ObjectMapper mapper;
+   private static final Logger LOG = LoggerFactory.getLogger(JsonBundleLoadingStrategy.class);
+   private final Context context;
+   private static ObjectMapper mapper;
 
-	static {
-		mapper = new ObjectMapper();
-		mapper.configure(JsonParser.Feature.ALLOW_COMMENTS, true);
-		mapper.configure(JsonParser.Feature.ALLOW_SINGLE_QUOTES, true);
-		mapper.configure(JsonParser.Feature.ALLOW_BACKSLASH_ESCAPING_ANY_CHARACTER, true);
-	}
+   static {
+      mapper = new ObjectMapper();
+      mapper.configure(JsonParser.Feature.ALLOW_COMMENTS, true);
+      mapper.configure(JsonParser.Feature.ALLOW_SINGLE_QUOTES, true);
+      mapper.configure(JsonParser.Feature.ALLOW_BACKSLASH_ESCAPING_ANY_CHARACTER, true);
+   }
 
-	public JsonBundleLoadingStrategy(Context context){
-		this.context = context;
-	}
-	
-	@Override
-	public Set<String> getResourcePaths(String bundleLocation, Set<String> excludedPaths) {
+   public JsonBundleLoadingStrategy(Context context) {
+      this.context = context;
+   }
 
-		Set<String> resourcePaths = null;
+   @Override
+   public Set<String> getResourcePaths(String bundleLocation, Set<String> excludedPaths) {
 
-		try {
-			resourcePaths = ResourceScanner.findResourcePaths(bundleLocation, excludedPaths, null, ".json");
-		}
-		catch (IOException e) {
-			throw new DandelionException("Something went wrong when scanning files in " + bundleLocation, e);
-		}
+      Set<String> resourcePaths = null;
 
-		return resourcePaths;
-	}
+      try {
+         resourcePaths = ResourceScanner.findResourcePaths(bundleLocation, excludedPaths, null, ".json");
+      }
+      catch (IOException e) {
+         throw new DandelionException("Something went wrong when scanning files in " + bundleLocation, e);
+      }
 
-	@Override
-	public List<BundleStorageUnit> mapToBundles(Set<String> resourcePaths) {
+      return resourcePaths;
+   }
 
-		List<BundleStorageUnit> bundles = new ArrayList<BundleStorageUnit>();
+   @Override
+   public List<BundleStorageUnit> mapToBundles(Set<String> resourcePaths) {
 
-		ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+      List<BundleStorageUnit> bundles = new ArrayList<BundleStorageUnit>();
 
-		BundleStorageLogBuilder bslb = new BundleStorageLogBuilder();
+      ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
 
-		for (String resourcePath : resourcePaths) {
+      BundleStorageLogBuilder bslb = new BundleStorageLogBuilder();
 
-			try {
-				InputStream configFileStream = classLoader.getResourceAsStream(resourcePath);
-				BundleStorageUnit bsu = mapper.readValue(configFileStream, BundleStorageUnit.class);
-				bsu.setRelativePath(resourcePath);
-				BundleUtils.checkRequiredConfiguration(bslb, bsu);
-				BundleUtils.finalizeBundleConfiguration(bsu, context);
-				LOG.trace("Parsed bundle \"{}\" ({})", bsu.getName(), bsu);
-				bundles.add(bsu);
-			}
-			catch (IOException e) {
-				StringBuilder error = new StringBuilder("- The file '");
-				error.append(resourcePath);
-				error.append("' is wrongly formatted for the following reason: " + e.getMessage());
-				bslb.error("Wrong bundle format:", error.toString());
-			}
-		}
+      for (String resourcePath : resourcePaths) {
 
-		if (bslb.hasError()) {
-			throw new DandelionException(bslb.toString());
-		}
+         try {
+            InputStream configFileStream = classLoader.getResourceAsStream(resourcePath);
+            BundleStorageUnit bsu = mapper.readValue(configFileStream, BundleStorageUnit.class);
+            bsu.setRelativePath(resourcePath);
+            BundleUtils.checkRequiredConfiguration(bslb, bsu);
+            BundleUtils.finalizeBundleConfiguration(bsu, context);
+            LOG.trace("Parsed bundle \"{}\" ({})", bsu.getName(), bsu);
+            bundles.add(bsu);
+         }
+         catch (IOException e) {
+            StringBuilder error = new StringBuilder("- The file '");
+            error.append(resourcePath);
+            error.append("' is wrongly formatted for the following reason: " + e.getMessage());
+            bslb.error("Wrong bundle format:", error.toString());
+         }
+      }
 
-		return bundles;
-	}
+      if (bslb.hasError()) {
+         throw new DandelionException(bslb.toString());
+      }
+
+      return bundles;
+   }
 }

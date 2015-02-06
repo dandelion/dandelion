@@ -53,8 +53,8 @@ import com.github.dandelion.core.asset.AssetType;
 @Inherited
 public @interface CompatibleAssetType {
 
-	/**
-	 * @return the asset types compatible with the marked {@link AssetProcessor}
-	 */
-	AssetType[] types();
+   /**
+    * @return the asset types compatible with the marked {@link AssetProcessor}
+    */
+   AssetType[] types();
 }

@@ -43,7 +43,7 @@ import java.net.URL;
  */
 public class StandardUrlResolver implements UrlResolver {
 
-	public URL toStandardUrl(URL url) throws IOException {
-		return url;
-	}
+   public URL toStandardUrl(URL url) throws IOException {
+      return url;
+   }
 }

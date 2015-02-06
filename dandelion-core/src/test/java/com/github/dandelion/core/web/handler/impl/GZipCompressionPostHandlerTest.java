@@ -50,78 +50,78 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class GZipCompressionPostHandlerTest {
 
-	private GzipCompressionPostHandler handler;
-	private MockHttpServletRequest request;
-	private MockHttpServletResponse response;
-	private MockFilterConfig filterConfig;
-	private Context context;
+   private GzipCompressionPostHandler handler;
+   private MockHttpServletRequest request;
+   private MockHttpServletResponse response;
+   private MockFilterConfig filterConfig;
+   private Context context;
 
-	@Before
-	public void setup() throws Exception {
-		handler = new GzipCompressionPostHandler();
-		filterConfig = new MockFilterConfig();
-		context = new Context(filterConfig);
-		request = new MockHttpServletRequest();
-		response = new MockHttpServletResponse();
-	}
+   @Before
+   public void setup() throws Exception {
+      handler = new GzipCompressionPostHandler();
+      filterConfig = new MockFilterConfig();
+      context = new Context(filterConfig);
+      request = new MockHttpServletRequest();
+      response = new MockHttpServletResponse();
+   }
 
-	@Test
-	public void should_not_apply_if_gzip_is_not_accepted_by_the_browser() {
-		request.addHeader(HttpHeader.ACCEPT_ENCODING.getName(), "compress");
-		HandlerContext handlerContext = new HandlerContext(context, request, response, null);
-		assertThat(handler.isApplicable(handlerContext)).isFalse();
-	}
+   @Test
+   public void should_not_apply_if_gzip_is_not_accepted_by_the_browser() {
+      request.addHeader(HttpHeader.ACCEPT_ENCODING.getName(), "compress");
+      HandlerContext handlerContext = new HandlerContext(context, request, response, null);
+      assertThat(handler.isApplicable(handlerContext)).isFalse();
+   }
 
-	@Test
-	public void should_not_apply_if_the_response_has_an_incompatible_mimeType() {
-		response.setContentType("incompatible-content-type");
-		HandlerContext handlerContext = new HandlerContext(context, request, response, null);
-		assertThat(handler.isApplicable(handlerContext)).isFalse();
-	}
+   @Test
+   public void should_not_apply_if_the_response_has_an_incompatible_mimeType() {
+      response.setContentType("incompatible-content-type");
+      HandlerContext handlerContext = new HandlerContext(context, request, response, null);
+      assertThat(handler.isApplicable(handlerContext)).isFalse();
+   }
 
-	@Test
-	public void should_return_gzipped_content() throws Exception {
+   @Test
+   public void should_return_gzipped_content() throws Exception {
 
-		String content = "response-to-compress";
+      String content = "response-to-compress";
 
-		HandlerContext handlerContext = new HandlerContext(context, request, response, content.getBytes());
-		handler.handle(handlerContext);
+      HandlerContext handlerContext = new HandlerContext(context, request, response, content.getBytes());
+      handler.handle(handlerContext);
 
-		InputStream ungzippedStream = new GZIPInputStream(new ByteArrayInputStream(handlerContext.getResponseAsBytes()));
+      InputStream ungzippedStream = new GZIPInputStream(new ByteArrayInputStream(handlerContext.getResponseAsBytes()));
 
-		assertThat(IOUtils.toString(ungzippedStream)).isEqualTo(content);
-		assertThat(response.getHeader(HttpHeader.CONTENT_ENCODING.getName())).isEqualTo("gzip");
-	}
+      assertThat(IOUtils.toString(ungzippedStream)).isEqualTo(content);
+      assertThat(response.getHeader(HttpHeader.CONTENT_ENCODING.getName())).isEqualTo("gzip");
+   }
 
-	@Test
-	public void should_return_false_if_the_response_is_already_commited() throws Exception {
+   @Test
+   public void should_return_false_if_the_response_is_already_commited() throws Exception {
 
-		response.setCommitted(true);
-		HandlerContext handlerContext = new HandlerContext(context, request, response, "".getBytes());
-		assertThat(handler.handle(handlerContext)).isFalse();
-	}
+      response.setCommitted(true);
+      HandlerContext handlerContext = new HandlerContext(context, request, response, "".getBytes());
+      assertThat(handler.handle(handlerContext)).isFalse();
+   }
 
-	@Test
-	public void should_return_false_if_204() throws Exception {
+   @Test
+   public void should_return_false_if_204() throws Exception {
 
-		response.setStatus(HttpServletResponse.SC_NO_CONTENT);
-		HandlerContext handlerContext = new HandlerContext(context, request, response, "".getBytes());
-		assertThat(handler.handle(handlerContext)).isFalse();
-	}
+      response.setStatus(HttpServletResponse.SC_NO_CONTENT);
+      HandlerContext handlerContext = new HandlerContext(context, request, response, "".getBytes());
+      assertThat(handler.handle(handlerContext)).isFalse();
+   }
 
-	@Test
-	public void should_return_false_if_205() throws Exception {
+   @Test
+   public void should_return_false_if_205() throws Exception {
 
-		response.setStatus(HttpServletResponse.SC_RESET_CONTENT);
-		HandlerContext handlerContext = new HandlerContext(context, request, response, "".getBytes());
-		assertThat(handler.handle(handlerContext)).isFalse();
-	}
+      response.setStatus(HttpServletResponse.SC_RESET_CONTENT);
+      HandlerContext handlerContext = new HandlerContext(context, request, response, "".getBytes());
+      assertThat(handler.handle(handlerContext)).isFalse();
+   }
 
-	@Test
-	public void should_return_false_if_304() throws Exception {
+   @Test
+   public void should_return_false_if_304() throws Exception {
 
-		response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
-		HandlerContext handlerContext = new HandlerContext(context, request, response, "".getBytes());
-		assertThat(handler.handle(handlerContext)).isFalse();
-	}
+      response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
+      HandlerContext handlerContext = new HandlerContext(context, request, response, "".getBytes());
+      assertThat(handler.handle(handlerContext)).isFalse();
+   }
 }

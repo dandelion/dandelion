@@ -57,35 +57,35 @@ import com.github.dandelion.core.utils.AssetUtils;
  */
 public class DandelionServlet extends HttpServlet {
 
-	private static final long serialVersionUID = -6874842638265359418L;
+   private static final long serialVersionUID = -6874842638265359418L;
 
-	private static final Logger LOG = LoggerFactory.getLogger(DandelionServlet.class);
+   private static final Logger LOG = LoggerFactory.getLogger(DandelionServlet.class);
 
-	public static final String DANDELION_ASSETS_URL = "/dandelion-assets/";
+   public static final String DANDELION_ASSETS_URL = "/dandelion-assets/";
 
-	@Override
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		getLogger().debug("Dandelion Asset servlet captured GET request {}", request.getRequestURI());
+   @Override
+   protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+      getLogger().debug("Dandelion Asset servlet captured GET request {}", request.getRequestURI());
 
-		Context context = (Context) request.getAttribute(WebConstants.DANDELION_CONTEXT_ATTRIBUTE);
+      Context context = (Context) request.getAttribute(WebConstants.DANDELION_CONTEXT_ATTRIBUTE);
 
-		// Get the asset content thanks to the cache key
-		String cacheKey = AssetUtils.extractCacheKeyFromRequest(request);
-		AssetType assetType = AssetType.extractFromRequest(request);
-		LOG.debug("Retrieved asset type: {}, cache key: {}", assetType, cacheKey);
+      // Get the asset content thanks to the cache key
+      String cacheKey = AssetUtils.extractCacheKeyFromRequest(request);
+      AssetType assetType = AssetType.extractFromRequest(request);
+      LOG.debug("Retrieved asset type: {}, cache key: {}", assetType, cacheKey);
 
-		response.setContentType(assetType.getContentType() == null ? "text/plain" : assetType.getContentType());
+      response.setContentType(assetType.getContentType() == null ? "text/plain" : assetType.getContentType());
 
-		// Write the asset content
-		PrintWriter writer = response.getWriter();
-		writer.write(context.getAssetStorage().get(cacheKey).getContents());
+      // Write the asset content
+      PrintWriter writer = response.getWriter();
+      writer.write(context.getAssetStorage().get(cacheKey).getContents());
 
-		// The response is explicitely closed here instead of setting a
-		// Content-Length header
-		writer.close();
-	}
+      // The response is explicitely closed here instead of setting a
+      // Content-Length header
+      writer.close();
+   }
 
-	protected Logger getLogger() {
-		return LOG;
-	}
+   protected Logger getLogger() {
+      return LOG;
+   }
 }

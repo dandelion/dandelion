@@ -41,17 +41,16 @@ import com.github.dandelion.thymeleaf.util.AttributeName;
  */
 public enum AssetAttributeNames implements AttributeName {
 
-	JS_EXCLUDES("asset-js-excludes"),
-	CSS_EXCLUDES("asset-css-excludes");
+   JS_EXCLUDES("asset-js-excludes"), CSS_EXCLUDES("asset-css-excludes");
 
-	private String attribute;
+   private String attribute;
 
-	private AssetAttributeNames(String attribute) {
-		this.attribute = attribute;
-	}
+   private AssetAttributeNames(String attribute) {
+      this.attribute = attribute;
+   }
 
-	@Override
-	public String getAttribute() {
-		return attribute;
-	}
+   @Override
+   public String getAttribute() {
+      return attribute;
+   }
 }

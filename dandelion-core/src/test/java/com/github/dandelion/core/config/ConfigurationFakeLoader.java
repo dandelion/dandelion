@@ -33,7 +33,7 @@ import java.util.Properties;
 
 public class ConfigurationFakeLoader implements ConfigurationLoader {
 
-	public Properties loadUserConfiguration() {
-		return null;
-	}
+   public Properties loadUserConfiguration() {
+      return null;
+   }
 }

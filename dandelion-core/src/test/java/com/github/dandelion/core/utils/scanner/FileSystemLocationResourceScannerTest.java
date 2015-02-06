@@ -41,33 +41,33 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class FileSystemLocationResourceScannerTest {
 
-	private FileSystemLocationResourceScanner scanner = new FileSystemLocationResourceScanner();
+   private FileSystemLocationResourceScanner scanner = new FileSystemLocationResourceScanner();
 
-	@Test
-	public void should_return_scanned_resources_from_file_system() throws IOException {
+   @Test
+   public void should_return_scanned_resources_from_file_system() throws IOException {
 
-		Enumeration<URL> urls = Thread.currentThread().getContextClassLoader().getResources("scanning");
-		Set<String> resourcePaths = new HashSet<String>();
+      Enumeration<URL> urls = Thread.currentThread().getContextClassLoader().getResources("scanning");
+      Set<String> resourcePaths = new HashSet<String>();
 
-		while (urls.hasMoreElements()) {
-			URL url = urls.nextElement();
-			resourcePaths.addAll(scanner.findResourcePaths("scanning", url));
-		}
+      while (urls.hasMoreElements()) {
+         URL url = urls.nextElement();
+         resourcePaths.addAll(scanner.findResourcePaths("scanning", url));
+      }
 
-		assertThat(resourcePaths).hasSize(8);
-	}
+      assertThat(resourcePaths).hasSize(8);
+   }
 
-	@Test
-	public void should_return_nothing_when_scanning_in_an_unexisting_folder_in_file_system() throws IOException {
+   @Test
+   public void should_return_nothing_when_scanning_in_an_unexisting_folder_in_file_system() throws IOException {
 
-		Enumeration<URL> urls = Thread.currentThread().getContextClassLoader().getResources("unexisting-folder");
-		Set<String> resourcePaths = new HashSet<String>();
+      Enumeration<URL> urls = Thread.currentThread().getContextClassLoader().getResources("unexisting-folder");
+      Set<String> resourcePaths = new HashSet<String>();
 
-		while (urls.hasMoreElements()) {
-			URL url = urls.nextElement();
-			resourcePaths.addAll(scanner.findResourcePaths("unexisting-folder", url));
-		}
+      while (urls.hasMoreElements()) {
+         URL url = urls.nextElement();
+         resourcePaths.addAll(scanner.findResourcePaths("unexisting-folder", url));
+      }
 
-		assertThat(resourcePaths).isEmpty();
-	}
+      assertThat(resourcePaths).isEmpty();
+   }
 }

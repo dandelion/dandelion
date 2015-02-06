@@ -49,14 +49,14 @@ import com.github.dandelion.core.asset.processor.vendor.CssCompressor;
 @CompatibleAssetType(types = AssetType.css)
 public class CssMinProcessor extends AbstractAssetProcessor {
 
-	@Override
-	public String getProcessorKey() {
-		return "cssmin";
-	}
+   @Override
+   public String getProcessorKey() {
+      return "cssmin";
+   }
 
-	@Override
-	public void doProcess(Reader reader, Writer writer, ProcessingContext processingContext) throws Exception {
-		new CssCompressor(reader).compress(writer, -1);
-		writer.flush();
-	}
+   @Override
+   public void doProcess(Reader reader, Writer writer, ProcessingContext processingContext) throws Exception {
+      new CssCompressor(reader).compress(writer, -1);
+      writer.flush();
+   }
 }

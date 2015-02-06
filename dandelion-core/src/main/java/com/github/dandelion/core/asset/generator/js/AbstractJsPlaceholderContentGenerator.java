@@ -47,23 +47,23 @@ import com.github.dandelion.core.scripting.ScriptingUtils;
  * @since 0.11.0
  */
 public abstract class AbstractJsPlaceholderContentGenerator<P extends AssetPlaceholder, C extends AbstractAssetPlaceholderContent<P>>
-        extends AbstractAssetPlaceholderContentGenerator<P, C> {
+      extends AbstractAssetPlaceholderContentGenerator<P, C> {
 
-    private static final Logger logger = LoggerFactory.getLogger(AbstractJsPlaceholderContentGenerator.class);
+   private static final Logger logger = LoggerFactory.getLogger(AbstractJsPlaceholderContentGenerator.class);
 
-    protected AbstractJsPlaceholderContentGenerator(C content) {
-        super(content);
-    }
+   protected AbstractJsPlaceholderContentGenerator(C content) {
+      super(content);
+   }
 
-    @Override
-    public String getPlaceholderContent(HttpServletRequest request, Map<P, StringBuilder> contents) {
+   @Override
+   public String getPlaceholderContent(HttpServletRequest request, Map<P, StringBuilder> contents) {
 
-        logger.debug("Generating asset...");
-        String generatedContent = getPlaceholderJavascriptContent(request, contents);
-        logger.debug("Asset generated successfully");
+      logger.debug("Generating asset...");
+      String generatedContent = getPlaceholderJavascriptContent(request, contents);
+      logger.debug("Asset generated successfully");
 
-        return ScriptingUtils.prettyPrintJs(generatedContent);
-    }
+      return ScriptingUtils.prettyPrintJs(generatedContent);
+   }
 
-    protected abstract String getPlaceholderJavascriptContent(HttpServletRequest request, Map<P, StringBuilder> contents);
+   protected abstract String getPlaceholderJavascriptContent(HttpServletRequest request, Map<P, StringBuilder> contents);
 }

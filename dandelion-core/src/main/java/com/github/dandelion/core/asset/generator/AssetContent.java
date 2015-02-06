@@ -45,29 +45,29 @@ import com.github.dandelion.core.utils.StringUtils;
  */
 public class AssetContent {
 
-	/**
-	 * The actual content of the asset.
-	 */
-	private final StringBuilder content = new StringBuilder();
+   /**
+    * The actual content of the asset.
+    */
+   private final StringBuilder content = new StringBuilder();
 
-	/**
-	 * <p>
-	 * Appends some code to the {@link #content}.
-	 * </p>
-	 * 
-	 * @param code
-	 *            Some code to append to the content of the asset.
-	 */
-	public void appendTo(String code) {
-		if (StringUtils.isNotBlank(code)) {
-			content.append(code);
-		}
-	}
+   /**
+    * <p>
+    * Appends some code to the {@link #content}.
+    * </p>
+    * 
+    * @param code
+    *           Some code to append to the content of the asset.
+    */
+   public void appendTo(String code) {
+      if (StringUtils.isNotBlank(code)) {
+         content.append(code);
+      }
+   }
 
-	/**
-	 * @return the content of the asset.
-	 */
-	public StringBuilder getContent() {
-		return content;
-	}
+   /**
+    * @return the content of the asset.
+    */
+   public StringBuilder getContent() {
+      return content;
+   }
 }
