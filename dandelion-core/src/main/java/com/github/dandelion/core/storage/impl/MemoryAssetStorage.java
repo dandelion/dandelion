@@ -29,6 +29,7 @@
  */
 package com.github.dandelion.core.storage.impl;
 
+import java.util.Collection;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.slf4j.Logger;
@@ -36,6 +37,7 @@ import org.slf4j.LoggerFactory;
 
 import com.github.dandelion.core.storage.AbstractAssetStorage;
 import com.github.dandelion.core.storage.AssetStorage;
+import com.github.dandelion.core.storage.StorageEntry;
 
 /**
  * <p>
@@ -48,45 +50,60 @@ import com.github.dandelion.core.storage.AssetStorage;
  */
 public class MemoryAssetStorage extends AbstractAssetStorage {
 
-   private static final Logger LOG = LoggerFactory.getLogger(MemoryAssetStorage.class);
+	private static final Logger LOG = LoggerFactory.getLogger(MemoryAssetStorage.class);
 
-   /**
-    * The actual store.
-    */
-   private ConcurrentHashMap<String, String> contentStore;
+	/**
+	 * The actual store.
+	 */
+	private ConcurrentHashMap<String, StorageEntry> contentStore;
 
-   public MemoryAssetStorage() {
-      this.contentStore = new ConcurrentHashMap<String, String>();
-   }
+	public MemoryAssetStorage() {
+		this.contentStore = new ConcurrentHashMap<String, StorageEntry>();
+	}
 
-   @Override
-   protected Logger getLogger() {
-      return LOG;
-   }
+	@Override
+	protected Logger getLogger() {
+		return LOG;
+	}
 
-   @Override
-   public String getName() {
-      return "memory";
-   }
+	@Override
+	public String getName() {
+		return "memory";
+	}
 
-   @Override
-   public String doGet(String cacheKey) {
-      return this.contentStore.get(cacheKey);
-   }
+	@Override
+	public StorageEntry doGet(String storageKey) {
+		return this.contentStore.get(storageKey);
+	}
 
-   @Override
-   public int doPut(String cacheKey, String contents) {
-      this.contentStore.putIfAbsent(cacheKey, contents);
-      return this.contentStore.size();
-   }
+	@Override
+	public int doPut(String storageKey, StorageEntry element) {
+		this.contentStore.put(storageKey, element);
+		return this.contentStore.size();
+	}
 
-   @Override
-   public void doRemove(String cacheKey) {
-      this.contentStore.remove(cacheKey);
-   }
+	@Override
+	public void doRemove(String storageKey) {
+		this.contentStore.remove(storageKey);
+	}
 
-   @Override
-   public void doClear() {
-      this.contentStore.clear();
-   }
+	@Override
+	public boolean contains(String storageKey) {
+		return this.contentStore.containsKey(storageKey);
+	}
+
+	@Override
+	public int size() {
+		return this.contentStore.size();
+	}
+
+	@Override
+	public void doClear() {
+		this.contentStore.clear();
+	}
+
+	@Override
+	public Collection<StorageEntry> getAll() {
+		return this.contentStore.values();
+	}
 }

@@ -1,0 +1,68 @@
+<div class="page-header">
+  <h1>
+    {{pageHeader}} <small>View the content of the cache store</small>
+  </h1>
+</div>
+
+{{#cacheEnabled}}
+<div class="pull-right">
+  <a class="btn btn-danger" href="{{clearCacheUrl}}"><span class="glyphicon glyphicon-trash"></span>
+    Clear cache</a>
+</div>
+<p>
+  Active implementation:
+  <code>{{implementation}}</code>
+</p>
+<div class="table-responsive clear">
+<table class="table" style="width:75%">
+  <thead>
+    <tr>
+      <th class="text-center" style="width:24%">Get count</th>
+      <th class="text-center" style="width:24%">Hit count</th>
+      <th class="text-center" style="width:24%">Miss count</th>
+      <th class="text-center" style="width:24%">Put count</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td class="text-center"><span class="badge">{{getCount}}</span></td>
+      <td class="text-center"><span class="badge">{{hitCount}}</span></td>
+      <td class="text-center"><span class="badge">{{missCount}}</span></td>
+      <td class="text-center"><span class="badge">{{putCount}}</span></td>
+    </tr>
+  </tbody>
+</table>
+</div>
+<div class="table-responsive">
+
+  <table class='table table-striped table-hover table-bordered' style='margin-top: 15px;'>
+    <thead>
+      <tr>
+        <th style="width:60%">Request</th>
+        <th>Assets</th>
+      </tr>
+    </thead>
+    <tbody>
+      {{#cacheElements}}
+      <tr>
+        <td>{{requestUri}}</td>
+        <td>
+        <ul>
+        {{#assets}}
+        <li>{{name}} ({{type}})</li>
+        {{/assets}}
+        </ul>
+        </td>
+      </tr>
+      {{/cacheElements}}
+      {{^cacheElements}}
+      <tr>
+        <td class="text-center" colspan="3">Empty</td>
+      </tr>
+      {{/cacheElements}}
+    </tbody>
+  </table>
+</div>
+{{/cacheEnabled}} {{^cacheEnabled}}
+<div class="bg-warning"><p>Caching is disabled</p></div>
+{{/cacheEnabled}}

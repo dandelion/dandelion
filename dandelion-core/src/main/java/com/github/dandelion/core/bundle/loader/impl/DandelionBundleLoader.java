@@ -59,11 +59,12 @@ public class DandelionBundleLoader extends AbstractBundleLoader {
 
 	private static final Logger LOG = LoggerFactory.getLogger(DandelionBundleLoader.class);
 
+	public static final String LOADER_NAME = "dandelion";
 	public static final String SCANNING_PATH = "dandelion";
 
 	@Override
 	public String getName() {
-		return "dandelion";
+		return LOADER_NAME;
 	}
 
 	@Override

@@ -29,37 +29,34 @@
  */
 package com.github.dandelion.core.cache;
 
-import java.util.HashMap;
-import java.util.Set;
+import java.util.Collection;
 import java.util.concurrent.atomic.AtomicLong;
 
 import com.github.dandelion.core.Context;
-import com.github.dandelion.core.asset.Asset;
-import com.github.dandelion.core.cache.impl.MemoryCache;
+import com.github.dandelion.core.cache.impl.MemoryRequestCache;
 import com.github.dandelion.core.web.DandelionFilter;
 
 /**
  * <p>
- * SPI for all implementation of {@link Cache}.
+ * SPI for all implementation of {@link RequestCache}.
  * 
  * <p>
  * Dandelion provides one out-of-the-box service provider:
  * <ul>
- * <li>{@link MemoryCache} that uses a simple {@link HashMap} for in-memory
- * caching.</li>
+ * <li>{@link MemoryRequestCache} that uses the memory to store cache entries.</li>
  * </ul>
  * 
  * @author Romain Lespinasse
  * @author Thibault Duchateau
  * @since 0.10.0
  */
-public interface Cache {
+public interface RequestCache {
 
 	public static final String DANDELION_CACHE_NAME = "dandelionCache";
 
 	/**
 	 * <p>
-	 * Initializes the configured service provider of the {@link Cache} SPI by
+	 * Initializes the configured service provider of the {@link RequestCache} SPI by
 	 * using the {@link Context}.
 	 * 
 	 * @param context
@@ -82,17 +79,19 @@ public interface Cache {
 	 *            cache.
 	 * @return the assets associated with the cache key.
 	 */
-	Set<Asset> get(String cacheKey);
+	CacheEntry get(String cacheKey);
+
+	Collection<CacheEntry> getAll();
 
 	/**
 	 * Puts the passed {@code assets} to the cache.
 	 * 
 	 * @param cacheKey
 	 *            The key used to puts the assets to the cache.
-	 * @param assets
+	 * @param cacheElement
 	 *            The assets to store in the cache.
 	 */
-	void put(String cacheKey, Set<Asset> assets);
+	void put(String cacheKey, CacheEntry cacheElement);
 
 	AtomicLong getGetCount();
 

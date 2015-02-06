@@ -29,6 +29,7 @@
  */
 package com.github.dandelion.core.asset;
 
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -50,7 +51,9 @@ import com.github.dandelion.core.storage.AssetStorageUnit;
  * @author Thibault Duchateau
  * @since 0.0.1
  */
-public class Asset {
+public class Asset implements Serializable {
+
+	private static final long serialVersionUID = -5249405621430370618L;
 
 	/**
 	 * Arbitrary name given to the asset.
@@ -102,9 +105,9 @@ public class Asset {
 	// Internal attribute
 
 	/**
-	 * The computed cache key of the asset.
+	 * The computed storage key of the asset.
 	 */
-	private String cacheKey;
+	private String storageKey;
 
 	/**
 	 * The parent bundle.
@@ -115,8 +118,6 @@ public class Asset {
 	 * Whether the asset has been loaded by the {@link VendorBundleLoader}.
 	 */
 	private boolean vendor;
-
-	private AssetLocator assetLocator;
 
 	public Asset() {
 	}
@@ -260,14 +261,6 @@ public class Asset {
 		this.attributesOnlyName = attributesOnlyName;
 	}
 
-	public AssetLocator getAssetLocator() {
-		return assetLocator;
-	}
-
-	public void setAssetLocator(AssetLocator assetLocator) {
-		this.assetLocator = assetLocator;
-	}
-
 	/**
 	 * Validate this asset
 	 * 
@@ -279,10 +272,6 @@ public class Asset {
 
 	public String getAssetKey() {
 		return name + "." + type;
-	}
-
-	public Asset clone() {
-		return new Asset(name, version, type, dom, finalLocation);
 	}
 
 	public void addAttribute(String attributeName, String attributeValue) {
@@ -303,12 +292,12 @@ public class Asset {
 		}
 	}
 
-	public String getCacheKey() {
-		return cacheKey;
+	public String getStorageKey() {
+		return storageKey;
 	}
 
-	public void setCacheKey(String cacheKey) {
-		this.cacheKey = cacheKey;
+	public void setStorageKey(String cacheKey) {
+		this.storageKey = cacheKey;
 	}
 
 	public boolean isVendor() {

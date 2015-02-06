@@ -39,12 +39,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.github.dandelion.core.Context;
-import com.github.dandelion.core.cache.Cache;
+import com.github.dandelion.core.cache.RequestCache;
+import com.github.dandelion.core.cache.CacheEntry;
 import com.github.dandelion.core.storage.AssetStorageUnit;
 import com.github.dandelion.core.storage.BundleStorageUnit;
 import com.github.dandelion.core.utils.AssetUtils;
 import com.github.dandelion.core.utils.UrlUtils;
 import com.github.dandelion.core.web.AssetRequestContext;
+import com.github.dandelion.core.web.WebConstants;
 
 /**
  * <p>
@@ -53,7 +55,7 @@ import com.github.dandelion.core.web.AssetRequestContext;
  * </p>
  * <p>
  * If caching is enabled, the result of the query is cached in the configured
- * {@link Cache} system to be returned faster.
+ * {@link RequestCache} system to be returned faster.
  * </p>
  * 
  * @author Thibault Duchateau
@@ -113,19 +115,23 @@ public class AssetQuery {
 
 		Set<Asset> requestedAssets = null;
 		String requestCacheKey = null;
+		String currentUri = UrlUtils.getCurrentUri(request).toString();
 
-		LOG.debug("Performing query for the request \"{}\"", UrlUtils.getCurrentUri(request));
+		LOG.debug("Performing query for the request \"{}\"", currentUri);
 
-		if (this.context.getConfiguration().isCachingEnabled()) {
-			requestCacheKey = this.context.getCacheManager().generateRequestCacheKey(this.request,
-					this.assetDomPosition);
-			requestedAssets = this.context.getCacheManager().getAssets(requestCacheKey);
+		if (this.context.getConfiguration().isCachingEnabled()
+				&& UrlUtils.doesNotContainParamater(request, WebConstants.DANDELION_DEBUGGER)) {
+			requestCacheKey = this.context.getCacheManager().generateRequestCacheKey(this.request);
+			CacheEntry cacheElement = this.context.getCacheManager().getAssets(requestCacheKey);
+			if (cacheElement != null) {
+				requestedAssets = cacheElement.getAssets();
+			}
 		}
 
 		if (requestedAssets == null) {
 
 			// All asset storage units are gathered in an ordered set
-			Set<AssetStorageUnit> assetStorageUnits = gatherAssetStorageUnits();
+			Set<AssetStorageUnit> assetStorageUnits = collectAssetStorageUnits();
 
 			// Convert all asset storage units into assets
 			AssetMapper assetMapper = new AssetMapper(context, request);
@@ -134,23 +140,19 @@ public class AssetQuery {
 			// If caching is enabled, the assocation request<=>assets is cached
 			// for
 			// quicker future access
-			if (this.context.getConfiguration().isCachingEnabled()) {
-				requestedAssets = context.getCacheManager().storeAssets(requestCacheKey, requestedAssets);
+			if (this.context.getConfiguration().isCachingEnabled()
+					&& UrlUtils.doesNotContainParamater(request, WebConstants.DANDELION_DEBUGGER)) {
+				requestedAssets = context.getCacheManager()
+						.storeAssets(requestCacheKey, new CacheEntry(currentUri, requestedAssets)).getAssets();
 			}
 		}
 
-		LOG.debug("-> Query returned {} assets: {}", requestedAssets.size(), requestedAssets);
-		return requestedAssets;
+		Set<Asset> filteredAssets = getFilteredAssets(requestedAssets);
+		LOG.debug("-> Query returned {} assets: {}", filteredAssets.size(), filteredAssets);
+		return filteredAssets;
 	}
 
-	private Set<AssetStorageUnit> gatherAssetStorageUnits() {
-
-		Set<AssetStorageUnit> asus = new LinkedHashSet<AssetStorageUnit>();
-
-		String[] bundleNames = AssetRequestContext.get(this.request).getBundles(true);
-		for (BundleStorageUnit bsu : this.context.getBundleStorage().bundlesFor(bundleNames)) {
-			asus.addAll(bsu.getAssetStorageUnits());
-		}
+	private Set<Asset> getFilteredAssets(Set<Asset> requestedAssets) {
 
 		// First collect JS from the excluded bundles
 		Set<String> excludedJsNames = new HashSet<String>();
@@ -181,17 +183,28 @@ public class AssetQuery {
 		}
 
 		if (this.assetDomPosition != null) {
-			asus = AssetUtils.filtersByDomPosition(asus, this.assetDomPosition);
+			requestedAssets = AssetUtils.filtersByDomPosition(requestedAssets, this.assetDomPosition);
 		}
 
 		if (!excludedJsNames.isEmpty()) {
-			asus = AssetUtils.filtersByNameAndType(asus, excludedJsNames, AssetType.js);
+			requestedAssets = AssetUtils.filtersByNameAndType(requestedAssets, excludedJsNames, AssetType.js);
 		}
 
 		if (!excludedCssNames.isEmpty()) {
-			asus = AssetUtils.filtersByNameAndType(asus, excludedCssNames, AssetType.css);
+			requestedAssets = AssetUtils.filtersByNameAndType(requestedAssets, excludedCssNames, AssetType.css);
 		}
 
+		return requestedAssets;
+	}
+
+	private Set<AssetStorageUnit> collectAssetStorageUnits() {
+
+		Set<AssetStorageUnit> asus = new LinkedHashSet<AssetStorageUnit>();
+
+		String[] bundleNames = AssetRequestContext.get(this.request).getBundles(true);
+		for (BundleStorageUnit bsu : this.context.getBundleStorage().bundlesFor(bundleNames)) {
+			asus.addAll(bsu.getAssetStorageUnits());
+		}
 		return asus;
 	}
 }

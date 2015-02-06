@@ -1,5 +1,7 @@
 # Pre-filtering request handlers
-com.github.dandelion.core.web.handler.impl.BundleReloadingPreHandler
+com.github.dandelion.core.web.handler.impl.ReloadBundlePreHandler
+com.github.dandelion.core.web.handler.impl.ClearStoragePreHandler
+com.github.dandelion.core.web.handler.impl.ClearCachePreHandler
 
 # Post-filtering request handlers
 com.github.dandelion.core.web.handler.impl.ETagPostHandler

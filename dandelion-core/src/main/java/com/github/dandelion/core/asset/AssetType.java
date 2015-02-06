@@ -29,13 +29,13 @@
  */
 package com.github.dandelion.core.asset;
 
-import static com.github.dandelion.core.asset.AssetDomPosition.body;
-import static com.github.dandelion.core.asset.AssetDomPosition.head;
-
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
+
+import static com.github.dandelion.core.asset.AssetDomPosition.body;
+import static com.github.dandelion.core.asset.AssetDomPosition.head;
 
 /**
  * <p>

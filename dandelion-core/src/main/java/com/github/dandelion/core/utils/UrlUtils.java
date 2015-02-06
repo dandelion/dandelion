@@ -159,7 +159,25 @@ public class UrlUtils {
 		return new StringBuilder(request.getContextPath());
 	}
 
+	public static void addParameter(StringBuilder url, String name) {
+		if (url.toString().contains(name)) {
+			return;
+		}
+
+		if (url.indexOf("?") == -1) {
+			url.append("?");
+		}
+		else {
+			url.append("&");
+		}
+		url.append(name);
+	}
+
 	public static void addParameter(StringBuilder url, String name, Object value) {
+		if (url.toString().contains(name)) {
+			return;
+		}
+
 		if (url.indexOf("?") == -1) {
 			url.append("?");
 		}
@@ -179,6 +197,14 @@ public class UrlUtils {
 		}
 	}
 
+	public static boolean containsParameter(HttpServletRequest request, String parameterName) {
+		return getCurrentUrl(request, true).toString().contains(parameterName);
+	}
+
+	public static boolean doesNotContainParamater(HttpServletRequest request, String parameterName) {
+		return !containsParameter(request, parameterName);
+	}
+	
 	/**
 	 * <p>
 	 * Returns the base URL, with the context path included by default.

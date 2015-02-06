@@ -29,19 +29,15 @@
  */
 package com.github.dandelion.core.cache;
 
-import java.util.Set;
-
 import javax.servlet.http.HttpServletRequest;
 
 import com.github.dandelion.core.Context;
-import com.github.dandelion.core.asset.Asset;
-import com.github.dandelion.core.asset.AssetDomPosition;
 import com.github.dandelion.core.utils.DigestUtils;
 import com.github.dandelion.core.utils.UrlUtils;
 
 /**
  * <p>
- * System in charge of manipulating the selected implementation of {@link Cache}
+ * System in charge of manipulating the selected implementation of {@link RequestCache}
  * .
  * </p>
  * 
@@ -60,19 +56,18 @@ public class CacheManager {
 		this.context = context;
 	}
 
-	public String generateRequestCacheKey(HttpServletRequest request, AssetDomPosition domPosition) {
+	public String generateRequestCacheKey(HttpServletRequest request) {
 		StringBuilder cacheKey = new StringBuilder(UrlUtils.getCurrentUri(request));
-		cacheKey.append(domPosition.name());
 		return DigestUtils.md5Digest(cacheKey.toString());
 	}
 
-	public Set<Asset> getAssets(String cacheKey) {
+	public CacheEntry getAssets(String cacheKey) {
 		return context.getCache().get(cacheKey);
 	}
 
-	public Set<Asset> storeAssets(String key, Set<Asset> a) {
-		context.getCache().put(key, a);
-		return a;
+	public CacheEntry storeAssets(String key, CacheEntry cacheElement) {
+		context.getCache().put(key, cacheElement);
+		return cacheElement;
 	}
 
 	public String getCacheName() {

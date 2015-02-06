@@ -29,23 +29,22 @@
  */
 package com.github.dandelion.core.cache;
 
-import java.util.Set;
+import java.util.Collection;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.slf4j.Logger;
 
 import com.github.dandelion.core.Context;
-import com.github.dandelion.core.asset.Asset;
 
 /**
  * <p>
- * Abstract base class for all implemenations of {@link Cache}.
+ * Abstract base class for all implemenations of {@link RequestCache}.
  * </p>
  * 
  * @author Thibault Duchateau
  * @since 0.10.0
  */
-public abstract class AbstractCache implements Cache {
+public abstract class AbstractRequestCache implements RequestCache {
 
 	protected Context context;
 	private AtomicLong getCount;
@@ -68,10 +67,10 @@ public abstract class AbstractCache implements Cache {
 	protected abstract Logger getLogger();
 
 	@Override
-	public Set<Asset> get(String cacheKey) {
+	public CacheEntry get(String cacheKey) {
 
 		this.getCount.incrementAndGet();
-		Set<Asset> assets = doGet(cacheKey);
+		CacheEntry assets = doGet(cacheKey);
 
 		if (assets == null) {
 			this.missCount.incrementAndGet();
@@ -84,21 +83,32 @@ public abstract class AbstractCache implements Cache {
 		return assets;
 	}
 
-	protected abstract Set<Asset> doGet(String cacheKey);
+	protected abstract CacheEntry doGet(String cacheKey);
 
 	@Override
-	public void put(String cacheKey, Set<Asset> a) {
+	public void put(String cacheKey, CacheEntry cacheElement) {
 
 		this.putCount.incrementAndGet();
-		int newSize = doPut(cacheKey, a);
+		int newSize = doPut(cacheKey, cacheElement);
 		getLogger().trace("Added cache entry for key \"{}\". New size is {}.", cacheKey, newSize);
 	}
 
-	protected abstract int doPut(String cacheKey, Set<Asset> a);
+	@Override
+	public Collection<CacheEntry> getAll() {
+		return doGetAll();
+	}
+
+	protected abstract Collection<CacheEntry> doGetAll();
+
+	protected abstract int doPut(String cacheKey, CacheEntry cacheElement);
 
 	@Override
 	public void clear() {
 		getLogger().trace("Clearing cache");
+		this.getCount = new AtomicLong(0);
+		this.putCount = new AtomicLong(0);
+		this.hitCount = new AtomicLong(0);
+		this.missCount = new AtomicLong(0);
 		doClear();
 	}
 

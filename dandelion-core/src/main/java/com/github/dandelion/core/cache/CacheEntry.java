@@ -1,6 +1,6 @@
 /*
  * [The "BSD licence"]
- * Copyright (c) 2013-2015 Dandelion
+ * Copyright (c) 2013-2014 Dandelion
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,69 +27,50 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.github.dandelion.core.cache.impl;
+package com.github.dandelion.core.cache;
 
-import java.util.Map;
+import java.io.Serializable;
 import java.util.Set;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.github.dandelion.core.Context;
 import com.github.dandelion.core.asset.Asset;
-import com.github.dandelion.core.cache.AbstractCache;
-import com.github.dandelion.core.cache.Cache;
-import com.github.dandelion.core.cache.support.ConcurrentLruCache;
 
 /**
  * <p>
- * Service provider for {@link Cache} that uses {@link ConcurrentLruCache}s as
- * stores.
+ * Wrapper for entries stored in the {@link RequestCache}.
+ * </p>
+ * <p>
+ * Mainly used to store the association between a request URI and its
+ * {@link Asset}s.
  * </p>
  * 
  * @author Thibault Duchateau
- * @author Romain Lespinasse
- * @since 0.10.0
+ * @since 0.11.0
  */
-public class MemoryCache extends AbstractCache {
+public class CacheEntry implements Serializable {
 
-	private static final Logger LOG = LoggerFactory.getLogger(MemoryCache.class);
+	private static final long serialVersionUID = 5199806370887972590L;
 
-	private Map<String, Set<Asset>> mapRequestAssets;
+	/**
+	 * The raw request URI.
+	 */
+	private final String requestUri;
 
-	@Override
-	protected Logger getLogger() {
-		return LOG;
+	/**
+	 * The associated assets.
+	 */
+	private final Set<Asset> asset;
+
+	public CacheEntry(String requestUri, Set<Asset> asset) {
+		super();
+		this.requestUri = requestUri;
+		this.asset = asset;
 	}
 
-	@Override
-	public void initCache(Context context) {
-		super.initCache(context);
-		mapRequestAssets = new ConcurrentLruCache<String, Set<Asset>>(context.getConfiguration().getCacheMaxSize());
+	public String getRequestUri() {
+		return requestUri;
 	}
 
-	@Override
-	public String getCacheName() {
-		return "default";
-	}
-
-	@Override
-	public Set<Asset> doGet(String cacheKey) {
-		return mapRequestAssets.get(cacheKey);
-	}
-
-	@Override
-	public int doPut(String cacheKey, Set<Asset> a) {
-		mapRequestAssets.put(cacheKey, a);
-		return this.mapRequestAssets.size();
-	}
-
-	@Override
-	public void doClear() {
-		mapRequestAssets.clear();
-	}
-
-	public Map<String, Set<Asset>> getMapRequestAssets() {
-		return this.mapRequestAssets;
+	public Set<Asset> getAssets() {
+		return asset;
 	}
 }

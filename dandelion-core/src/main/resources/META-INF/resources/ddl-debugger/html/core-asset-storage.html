@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Dandelion debugger">
+<meta name="author" content="Dandelion team">
+<title>Dandelion debugger</title>
+<link href="%CONTEXT%/ddl-debugger/css/bootstrap.min.css" rel="stylesheet"></link>
+<link href="%CONTEXT%/ddl-debugger/css/dashboard.css" rel="stylesheet">
+<link href="%CONTEXT%/ddl-debugger/css/jquery.dataTables.custom.min.css" rel="stylesheet">
+</head>
+<body>
+  <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation" id="navbar"></nav>
+
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-sm-3 col-md-2 sidebar" id="menus"></div>
+      <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main" id="contents"></div>
+    </div>
+  </div>
+
+  <script src="%CONTEXT%/ddl-debugger/js/jquery-1.11.1.min.js"></script>
+  <script src="%CONTEXT%/ddl-debugger/js/bootstrap.min.js"></script>
+  <script src="%CONTEXT%/ddl-debugger/js/mustache.min.js"></script>
+  <script src="%CONTEXT%/ddl-debugger/js/jquery.dataTables.min.js"></script>
+  <script>
+    var context = %MUSTACHE_CTX%;
+    $(document).ready(function() {
+      $.get('%CONTEXT%/ddl-debugger/html/includes/navbar.mustache.html', function(template) {
+        $('#navbar').html(Mustache.render(template, context)); 
+      });
+      $.get('%CONTEXT%/ddl-debugger/html/includes/menus.mustache.html', function(template) {
+        $('#menus').html(Mustache.render(template, context)); 
+      });
+      $.get('%CONTEXT%/ddl-debugger/html/includes/ddl-asset-storage.mustache.html', function(template) {
+        $('#contents').html(Mustache.render(template, context));
+        $('#assets').DataTable({
+        	"paging": false,
+        	"dom" : 't',
+        	"lengthChange" : false,
+        	"stripeClasses" : []
+        });
+        if(window.location.hash) {
+          var hash = window.location.hash.substring(1); //Puts hash in variable, and removes the # character
+          console.log(hash);	
+            toggle(hash, $('#' + hash).prev());
+            $('#tr' + hash).addClass('bg-warning');
+          $('#tr' + hash).focus();
+        }
+      });
+    });
+    
+    function toggle(storageKey, element) {
+    	if($(element).html() == 'Show contents'){
+    		$(element).html('Hide contents');
+    	}
+    	else {
+    		$(element).html('Show contents');
+    	}
+    	$( "#" + storageKey).slideToggle( "slow");
+    }
+  </script>
+</body>
+</html>

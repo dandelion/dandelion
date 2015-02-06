@@ -29,14 +29,16 @@
  */
 package com.github.dandelion.core.web.handler.debug;
 
-import java.util.Collection;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.dandelion.core.config.DandelionConfig;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.github.dandelion.core.utils.UrlUtils;
 import com.github.dandelion.core.web.WebConstants;
 import com.github.dandelion.core.web.handler.HandlerContext;
@@ -63,6 +65,8 @@ public abstract class AbstractDebugPage implements DebugPage {
 		mapper.configure(JsonParser.Feature.ALLOW_SINGLE_QUOTES, true);
 		mapper.configure(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES, true);
 		mapper.configure(JsonParser.Feature.ALLOW_BACKSLASH_ESCAPING_ANY_CHARACTER, true);
+		mapper.configure(JsonParser.Feature.STRICT_DUPLICATE_DETECTION, true);
+		mapper.configure(SerializationFeature.USE_EQUALITY_FOR_OBJECT_ID, true);
 	}
 
 	public void initWith(HandlerContext context) {
@@ -70,52 +74,82 @@ public abstract class AbstractDebugPage implements DebugPage {
 	}
 
 	@Override
-	public Map<String, String> getParameters(HandlerContext context) {
-		Map<String, String> params = new HashMap<String, String>();
+	public String getContext() {
+		String mustacheContext = null;
+		Map<String, Object> ctx = new HashMap<String, Object>();
+		ctx.putAll(getCommonPageContext());
+		ctx.putAll(getPageContext());
+		try {
+			mustacheContext = mapper.writeValueAsString(ctx);
+		}
+		catch (JsonProcessingException e) {
+			e.printStackTrace();
+		}
 
-		// Default variables, available in all debug pages
-		params.put("%DEBUGGER_PARAM%", "?" + WebConstants.DANDELION_DEBUGGER);
-		params.put("%CONTEXT%", UrlUtils.getContext(context.getRequest()).toString());
+		return mustacheContext;
+	}
+
+	private Map<String, Object> getCommonPageContext() {
+		Map<String, Object> commonCtx = new HashMap<String, Object>();
+
+		StringBuilder currentUrlWithParams = UrlUtils.getCurrentUrl(context.getRequest(), true);
+
+		commonCtx.put("currentContextPath", UrlUtils.getContext(context.getRequest()).toString());
+
+		commonCtx.put("pageHeader", getName());
 
 		String currentUri = UrlUtils.getCurrentUri(context.getRequest()).toString();
 		String appUri = currentUri.substring(0, currentUri.indexOf(WebConstants.DANDELION_DEBUGGER) - 1);
-		params.put("%CURRENT_URI%", appUri);
+		commonCtx.put("currentUri", appUri);
 
-		StringBuilder componentMenus = new StringBuilder();
+		StringBuilder debuggerUrl = new StringBuilder(UrlUtils.getContext(context.getRequest()));
+		UrlUtils.addParameter(debuggerUrl, WebConstants.DANDELION_DEBUGGER);
+		commonCtx.put("debuggerUrl", debuggerUrl);
+
+		StringBuilder debuggerUrlWithParam = new StringBuilder(currentUrlWithParams);
+		UrlUtils.addParameter(debuggerUrlWithParam, WebConstants.DANDELION_DEBUGGER);
+		commonCtx.put("debuggerUrlWithParam", debuggerUrlWithParam);
+
+		StringBuilder clearStorageUrl = new StringBuilder(currentUrlWithParams);
+		UrlUtils.addParameter(clearStorageUrl, WebConstants.DANDELION_CLEAR_STORAGE);
+		commonCtx.put("clearStorageUrl", clearStorageUrl);
+
+		StringBuilder clearCacheUrl = new StringBuilder(currentUrlWithParams);
+		UrlUtils.addParameter(clearCacheUrl, WebConstants.DANDELION_CLEAR_CACHE);
+		commonCtx.put("clearCacheUrl", clearCacheUrl);
+
+		StringBuilder reloadBundleUrl = new StringBuilder(currentUrlWithParams);
+		UrlUtils.addParameter(reloadBundleUrl, WebConstants.DANDELION_RELOAD_BUNDLES);
+		commonCtx.put("reloadBundleUrl", reloadBundleUrl);
+
+		List<Map<String, Object>> menusMap = new ArrayList<Map<String, Object>>();
 		for (DebugMenu debugMenu : context.getContext().getDebugMenuMap().values()) {
-			componentMenus.append(getComponentMenu(debugMenu, appUri));
-		}
-		params.put("%COMPONENTS%", componentMenus.toString());
 
-		StringBuilder actionLinks = new StringBuilder();
-		actionLinks.append(li(appUri, "<span class='glyphicon glyphicon-backward'></span> Back to application"));
-		params.put("%ACTION_LINKS%", actionLinks.toString());
-
-		// Add custom parameters
-		params.putAll(getCustomParameters(context));
-
-		return params;
-	}
-
-	private StringBuilder getComponentMenu(DebugMenu debugMenu, String appUri) {
-		StringBuilder menu = new StringBuilder("<ul class=\"nav nav-sidebar\">");
-		menu.append("<li class=\"nav-header disabled\"><a>").append(debugMenu.getDisplayName()).append("</a></li>");
-		for (DebugPage page : debugMenu.getPages()) {
-			String href = getComponentDebugPageUrl(appUri, page);
-			menu.append("<li");
-			if (this.getClass().getSimpleName().equals(page.getClass().getSimpleName())) {
-				menu.append(" class=\"active\"");
+			List<Map<String, String>> pagesMap = new ArrayList<Map<String, String>>();
+			for (DebugPage page : debugMenu.getPages()) {
+				pagesMap.add(new MapBuilder<String, String>()
+						.entry("pageName", page.getName())
+						.entry("pageUri", getComponentDebugPageUrl(appUri, page))
+						.entry("pageActive",
+								this.getClass().getSimpleName().equals(page.getClass().getSimpleName()) ? "active" : "")
+						.create());
 			}
-			menu.append(">");
-			menu.append("<a href=\"");
-			menu.append(href);
-			menu.append("\">");
-			menu.append(page.getName());
-			menu.append("</a></li>");
+
+			menusMap.add(new MapBuilder<String, Object>()
+					.entry("menuPages", pagesMap)
+					.entry("menuName", debugMenu.getDisplayName()).create());
 		}
-		menu.append("</ul>");
-		return menu;
+		commonCtx.put("menus", menusMap);
+
+		return commonCtx;
 	}
+
+	@Override
+	public Map<String, String> getExtraParams() {
+		return Collections.emptyMap();
+	}
+
+	protected abstract Map<String, Object> getPageContext();
 
 	private String getComponentDebugPageUrl(String appUri, DebugPage debugPage) {
 		StringBuilder componentPage = new StringBuilder(appUri);
@@ -131,74 +165,26 @@ public abstract class AbstractDebugPage implements DebugPage {
 		return componentPage.toString();
 	}
 
-	/**
-	 * <p>
-	 * Returns a {@link Map} of parameters that will be merged will the default
-	 * ones coming from {@link #getParameters(HandlerContext)} and used inside
-	 * the template for variables substitution.
-	 * </p>
-	 * 
-	 * @param context
-	 *            The wrapper object holding the context.
-	 * 
-	 * @return a {@link Map} of custom parameters.
-	 */
-	protected abstract Map<String, String> getCustomParameters(HandlerContext context);
+	public class MapBuilder<K, V> {
 
-	protected StringBuilder tr(Object... cols) {
-		StringBuilder line = new StringBuilder();
-		line.append("<tr>");
-		for (Object col : cols) {
-			line.append("<td>").append(col).append("</td>");
+		private Map<K, V> map = null;
+
+		public MapBuilder() {
+			map = new HashMap<K, V>();
 		}
-		line.append("</tr>");
-		return line;
-	}
 
-	protected StringBuilder tr(DandelionConfig option, Object value) {
-
-		StringBuilder line = new StringBuilder();
-		line.append("<tr>");
-		line.append("<td>").append(option.getName()).append("</td>");
-		line.append("<td>").append(format(value)).append("</td>");
-		line.append("</tr>");
-		return line;
-	}
-
-	protected StringBuilder tr(DandelionConfig option, Object value, String description) {
-		StringBuilder line = new StringBuilder();
-		line.append("<tr>");
-		line.append("<td>").append(option.getName()).append("</td>");
-		line.append("<td>").append(value).append("</td>");
-		line.append("<td>").append(description).append("</td>");
-		line.append("</tr>");
-		return line;
-	}
-
-	protected StringBuilder li(String href, String text) {
-		StringBuilder li = new StringBuilder("<li>");
-		li.append("<a href=\"").append(href).append("\">");
-		li.append(text);
-		li.append("</a></li>");
-		return li;
-	}
-
-	@SuppressWarnings("unchecked")
-	private StringBuilder format(Object value) {
-		StringBuilder retval = new StringBuilder();
-
-		if (value instanceof Collection) {
-			Collection<String> collectionValue = (Collection<String>) value;
-			for (Iterator<String> iterator = collectionValue.iterator(); iterator.hasNext();) {
-				retval.append(iterator.next());
-				if (iterator.hasNext()) {
-					retval.append(", ");
-				}
-			}
+		public MapBuilder<K, V> entry(K key, V value) {
+			map.put(key, value);
+			return this;
 		}
-		else {
-			retval.append(value);
+
+		public Map<K, V> create() {
+			return map;
 		}
-		return retval;
+
+		public MapBuilder<K, V> addTo(List<Map<K, V>> dest) {
+			dest.add(map);
+			return this;
+		}
 	}
 }

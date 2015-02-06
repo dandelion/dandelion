@@ -1,0 +1,76 @@
+<div class="page-header">
+  <h1>
+    {{pageHeader}} <small>All assets currently injected into this page</small>
+  </h1>
+</div>
+
+<p>This page provides debugging information about assets injected into the HTML page for the
+  current request.</p>
+<p>
+  Current request:
+  <code>{{currentUri}}</code>
+</p>
+<ul id="asset-tab" class="nav nav-tabs" style="margin-top: 25px;">
+  <li class="active"><a href="#debug-graph" id="profile-tab" data-toggle="tab">Graph</a></li>
+  <li><a href="#debug-table" id="home-tab" data-toggle="tab">Table</a></li>
+  <li><a href="#debug-html" id="profile-tab" data-toggle="tab">HTML</a></li>
+</ul>
+<div id="asset-tab-content" class="tab-content">
+  <div class="tab-pane fade active in" id="debug-graph">
+    <p style="margin-top: 10px">See below in a graph view what bundles are included in the
+      current request</p>
+    <svg id="svg-app" style="width: 100%; height: 500px; padding: 10px;">
+              <g />
+            </svg>
+  </div>
+  <div class="tab-pane fade" id="debug-table">
+    <p style="margin-top: 10px">See below in a tabular view what assets Dandelion injects into
+      the current page</p>
+    <div class="table-responsive">
+      <table id="currentAssets" class='table table-striped table-hover table-bordered' style='margin-top: 10px;'>
+        <thead>
+          <tr>
+            <th>Bundle</th>
+            <th>Asset</th>
+            <th>Type</th>
+            <th>Version</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{#assets}}
+          <tr>
+            <td>{{bundle}}</td>
+            <td>{{name}}</td>
+            <td>{{type}}</td>
+            <td>{{version}}</td>
+            <td><a href="{{debuggerUrl}}&ddl-debug-page=asset-storage#{{storageKey}}"
+              class="btn btn-sm btn-default">View asset</a></td>
+          </tr>
+          {{/assets}}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="tab-pane fade" id="debug-html">
+    <p style="margin-top: 10px">See below how Dandelion injects assets into the current page</p>
+    <p>
+    <pre id="htmlSource">
+&lt;html&gt;
+  &lt;head&gt;
+    ...
+  {{#assetsInHead}}
+&nbsp;&nbsp;&nbsp;&lt;link href="{{{.}}}">&lt;/link>
+  {{/assetsInHead}}
+  &lt;/head&gt;
+  &lt;body&gt;
+    ...
+  {{#assetsInBody}}
+&nbsp;&nbsp;&nbsp;&lt;script src="{{{.}}}">&lt;/script>
+  {{/assetsInBody}} 
+  &lt;/body&gt;
+&lt;/html&gt;
+</pre>
+    </p>
+  </div>
+</div>

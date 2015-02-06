@@ -48,6 +48,8 @@ import org.slf4j.LoggerFactory;
 import com.github.dandelion.core.Context;
 import com.github.dandelion.core.asset.Asset;
 import com.github.dandelion.core.asset.AssetType;
+import com.github.dandelion.core.asset.locator.AssetLocator;
+import com.github.dandelion.core.storage.StorageEntry;
 import com.github.dandelion.core.utils.AssetUtils;
 
 /**
@@ -102,7 +104,8 @@ public final class AssetProcessorManager {
 			// Context to be passed in asset processors
 			ProcessingContext processingContext = new ProcessingContext(context, asset, request);
 
-			String contents = asset.getAssetLocator().getContent(asset, request);
+			AssetLocator locator = AssetUtils.getAssetLocator(asset, context);
+			String contents = locator.getContent(asset, request);
 
 			Reader assetReader = new StringReader(contents);
 			Writer assetWriter = new StringWriter();
@@ -119,7 +122,7 @@ public final class AssetProcessorManager {
 			}
 
 			// The cache system is updated with the new key/content pair
-			context.getAssetStorage().put(asset.getCacheKey(), assetWriter.toString());
+			context.getAssetStorage().put(asset.getStorageKey(), new StorageEntry(asset, assetWriter.toString()));
 		}
 		else {
 			LOG.trace("No compatible processor was found for the asset {}", asset.toLog());

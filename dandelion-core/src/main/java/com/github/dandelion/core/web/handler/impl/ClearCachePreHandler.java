@@ -32,13 +32,23 @@ package com.github.dandelion.core.web.handler.impl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.github.dandelion.core.cache.RequestCache;
 import com.github.dandelion.core.web.WebConstants;
 import com.github.dandelion.core.web.handler.AbstractHandlerChain;
 import com.github.dandelion.core.web.handler.HandlerContext;
 
-public class BundleReloadingPreHandler extends AbstractHandlerChain {
+/**
+ * <p>
+ * Pre-handler intended to clear the configured {@link RequestCache} based on the
+ * presence of the {@link WebConstants#DANDELION_CLEAR_CACHE} request parameter.
+ * </p>
+ * 
+ * @author Thibault Duchateau
+ * @since 0.11.0
+ */
+public class ClearCachePreHandler extends AbstractHandlerChain {
 
-	private static final Logger LOG = LoggerFactory.getLogger(BundleReloadingPreHandler.class);
+	private static final Logger LOG = LoggerFactory.getLogger(ClearCachePreHandler.class);
 
 	@Override
 	protected Logger getLogger() {
@@ -57,15 +67,14 @@ public class BundleReloadingPreHandler extends AbstractHandlerChain {
 
 	@Override
 	public boolean isApplicable(HandlerContext handlerContext) {
-		return handlerContext.getContext().getConfiguration().isToolBundleReloadingEnabled()
-				&& handlerContext.getRequest().getParameter(WebConstants.DANDELION_RELOAD_BUNDLES) != null;
+		return handlerContext.getContext().getConfiguration().isToolDebuggerEnabled()
+				&& handlerContext.getRequest().getParameter(WebConstants.DANDELION_CLEAR_CACHE) != null;
 	}
 
 	@Override
 	public boolean handle(HandlerContext handlerContext) {
-		LOG.info("Bundle reloading requested via request parameter");
-		handlerContext.getContext().initBundleStorage();
-		LOG.info("Bundle reloaded");
+		handlerContext.getContext().getCache().clear();
+		LOG.info("Cleared configured cache");
 		return true;
 	}
 }

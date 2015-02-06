@@ -51,11 +51,12 @@ public class VendorBundleLoader extends AbstractBundleLoader {
 
 	private static final Logger LOG = LoggerFactory.getLogger(VendorBundleLoader.class);
 
+	public static final String LOADER_NAME = "vendor";
 	public static final String SCANNING_PATH = "dandelion/vendor";
 
 	@Override
 	public String getName() {
-		return "vendor";
+		return LOADER_NAME;
 	}
 
 	@Override

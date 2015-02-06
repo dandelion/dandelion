@@ -137,6 +137,7 @@ public abstract class AbstractBundleLoader implements BundleLoader {
 	@Override
 	public void postProcessBundles(List<BundleStorageUnit> bundles) {
 		for (BundleStorageUnit bsu : bundles) {
+			bsu.setOrigin(getName());
 			for (AssetStorageUnit asu : bsu.getAssetStorageUnits()) {
 				asu.setBundle(bsu.getName());
 			}

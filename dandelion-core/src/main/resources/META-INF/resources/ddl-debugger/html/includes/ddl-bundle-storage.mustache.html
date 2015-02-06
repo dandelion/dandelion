@@ -1,0 +1,49 @@
+<div class="page-header">
+  <h1>
+    {{pageHeader}} <small>Browse bundles currently stored in the bundle storage</small>
+  </h1>
+</div>
+<div class="pull-right">
+  <a class="btn btn-danger" href="{{reloadBundleUrl}}"><span class="glyphicon glyphicon-refresh"></span>
+    Reload bundle storage</a>
+</div>
+<p>
+  Number of elements: <span class="badge">{{number}}</span>
+</p>
+<ul id="asset-tab" class="nav nav-tabs" style="margin-top: 25px;">
+  <li class="active"><a href="#debug-graph" id="profile-tab" data-toggle="tab">Graph</a></li>
+  <li><a href="#debug-table" id="home-tab" data-toggle="tab">Table</a></li>
+</ul>
+<div id="asset-tab-content" class="tab-content">
+  <div class="tab-pane fade active in" id="debug-graph">
+    <p style="margin-top: 10px">See below a global graph of all bundles available in the current application</p>
+    <svg id="svg-app" style="width: 100%; height: 800px; padding: 10px;">
+              <g />
+            </svg>
+  </div>
+  <div class="tab-pane fade" id="debug-table">
+    <p style="margin-top: 10px">See below in a tabular view what bundles are scanned by Dandelion</p>
+    <div class="table-responsive">
+      <table id="bundles" class="table table-striped table-hover table-bordered" style="margin-top: 10px;">
+        <thead>
+          <tr>
+            <th>Bundle</th>
+            <th>Type</th>
+            <th>Dependencies</th>
+            <th>Path</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{#bundles}}
+          <tr>
+            <td>{{name}}</td>
+            <td class="text-center"><span class="label label-{{labelType}}">{{type}}</span></td>
+            <td>{{dependencies}}</td>
+            <td>{{relativePath}}</td>
+          </tr>
+          {{/bundles}}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

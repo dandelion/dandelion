@@ -29,6 +29,8 @@
  */
 package com.github.dandelion.core.storage;
 
+import java.util.Collection;
+
 /**
  * <p>
  * Interface for an asset storage.
@@ -43,50 +45,56 @@ package com.github.dandelion.core.storage;
  */
 public interface AssetStorage {
 
-   /**
-    * @return the name of the implementation of {@link AssetStorage}.
-    */
-   String getName();
+	/**
+	 * @return the name of the implementation of {@link AssetStorage}.
+	 */
+	String getName();
 
-   /**
-    * <p>
-    * Gets the asset contents from the storage using the provided
-    * {@code cacheKey}.
-    * </p>
-    * 
-    * @param cacheKey
-    *           The cache key under which the asset contents is stored in the
-    *           storage.
-    * @return the contents associated with the cache key.
-    */
-   String get(String cacheKey);
+	/**
+	 * <p>
+	 * Gets the asset contents from the storage using the provided
+	 * {@code cacheKey}.
+	 * </p>
+	 * 
+	 * @param storageKey
+	 *            The key under which the asset contents is stored in the
+	 *            storage.
+	 * @return the contents associated with the cache key.
+	 */
+	StorageEntry get(String storageKey);
 
-   /**
-    * <p>
-    * Puts the provided {@code contents} into the storage.
-    * </p>
-    * 
-    * @param cacheKey
-    *           The key used to puts the contents to the storage.
-    * @param contents
-    *           The asset contents to store in the storage.
-    */
-   void put(String cacheKey, String contents);
+	Collection<StorageEntry> getAll();
 
-   /**
-    * <p>
-    * Removes the entry in the storage corresponding to the provided cache key.
-    * </p>
-    * 
-    * @param cacheKey
-    *           The cache key to use to lookup the entry to remove.
-    */
-   void remove(String cacheKey);
+	/**
+	 * <p>
+	 * Puts the provided {@code contents} into the storage.
+	 * </p>
+	 * 
+	 * @param storageKey
+	 *            The key used to puts the contents to the storage.
+	 * @param contents
+	 *            The asset contents to store in the storage.
+	 */
+	void put(String storageKey, StorageEntry element);
 
-   /**
-    * <p>
-    * Clears the underlying store.
-    * </p>
-    */
-   void clear();
+	/**
+	 * <p>
+	 * Removes the entry in the storage corresponding to the provided cache key.
+	 * </p>
+	 * 
+	 * @param storageKey
+	 *            The key to use to lookup the entry to remove.
+	 */
+	void remove(String storageKey);
+
+	boolean contains(String storageKey);
+
+	int size();
+
+	/**
+	 * <p>
+	 * Clears the underlying store.
+	 * </p>
+	 */
+	void clear();
 }

@@ -30,7 +30,6 @@
 package com.github.dandelion.core.asset;
 
 import java.util.LinkedHashSet;
-import java.util.Map;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
@@ -42,8 +41,9 @@ import com.github.dandelion.core.Context;
 import com.github.dandelion.core.DandelionException;
 import com.github.dandelion.core.asset.locator.AssetLocator;
 import com.github.dandelion.core.asset.versioning.AssetVersioningStrategy;
-import com.github.dandelion.core.cache.Cache;
+import com.github.dandelion.core.cache.RequestCache;
 import com.github.dandelion.core.storage.AssetStorageUnit;
+import com.github.dandelion.core.storage.StorageEntry;
 import com.github.dandelion.core.utils.AssetUtils;
 import com.github.dandelion.core.utils.PathUtils;
 import com.github.dandelion.core.utils.StringUtils;
@@ -103,7 +103,7 @@ public class AssetMapper {
 	 * <p>
 	 * Depending on how the {@link AssetStorageUnit} is configured, the
 	 * {@link Asset} will contains resolved locations and its content will be
-	 * cached in the configured {@link Cache}.
+	 * cached in the configured {@link RequestCache}.
 	 * </p>
 	 * 
 	 * @param asu
@@ -118,32 +118,17 @@ public class AssetMapper {
 
 		LOG.trace("Resolving location for the asset {}", asset.toLog());
 
-		// Selecting location key
+		// Resolve location key and location
 		String locationKey = getLocationKey(asu);
 		asset.setConfigLocationKey(locationKey);
 		
-		Map<String, AssetLocator> locators = this.context.getAssetLocatorsMap();
-		if (!locators.containsKey(locationKey)) {
-			StringBuilder msg = new StringBuilder("The location key '");
-			msg.append(locationKey);
-			msg.append("' is not valid. Please choose a valid one among ");
-			msg.append(locators.keySet());
-			msg.append(".");
-			throw new DandelionException(msg.toString());
-		}
-
-		// Otherwise check for the locator
-		String location = null;
-		AssetLocator locator = locators.get(locationKey);
-		if (locators.containsKey(locationKey)) {
-			LOG.trace("Locator '{}' will be applied on the asset {}.", locator.getClass().getSimpleName(), asu.toLog());
-			location = locators.get(locationKey).getLocation(asu, request);
-		}
-		asset.setAssetLocator(locator);
+		AssetLocator assetLocator = AssetUtils.getAssetLocator(asset, context);
+		
+		String location = assetLocator.getLocation(asu, request);;
+		LOG.trace("Locator '{}' will be applied on the asset {}.", assetLocator.getClass().getSimpleName(), asu.toLog());
 		asset.setProcessedConfigLocation(location);
 
-		String cacheKey = AssetUtils.generateCacheKey(asset, request);
-		asset.setCacheKey(cacheKey);
+		asset.setStorageKey(AssetUtils.generateStorageKey(asset, request));
 
 		// Vendor assets are served as-is, no need to store them
 		if (asset.isNotVendor()) {
@@ -154,9 +139,9 @@ public class AssetMapper {
 			}
 			// Update the asset storage with normal contents
 			else if (context.getConfiguration().isAssetAutoVersioningEnabled()
-					|| asset.getAssetLocator().isCachingForced()) {
-				String contents = asset.getAssetLocator().getContent(asset, request);
-				this.context.getAssetStorage().put(asset.getCacheKey(), contents);
+					|| assetLocator.isCachingForced()) {
+				String contents = assetLocator.getContent(asset, request);
+				this.context.getAssetStorage().put(asset.getStorageKey(), new StorageEntry(asset, contents));
 			}
 		}
 
@@ -164,7 +149,7 @@ public class AssetMapper {
 		asset.setType(getType(asu, location));
 		asset.setConfigLocation(asu.getLocations().get(locationKey));
 		asset.setVersion(getVersion(asset));
-		asset.setFinalLocation(getFinalLocation(asset));
+		asset.setFinalLocation(getFinalLocation(asset, assetLocator));
 
 		return asset;
 	}
@@ -216,11 +201,11 @@ public class AssetMapper {
 	 *            The selected asset locator.
 	 * @return The final location of the asset.
 	 */
-	private String getFinalLocation(Asset asset) {
+	private String getFinalLocation(Asset asset, AssetLocator locator) {
 
 		if (asset.isNotVendor()
 				&& (this.context.getConfiguration().isAssetAutoVersioningEnabled()
-						|| asset.getAssetLocator().isCachingForced() || this.context.getConfiguration()
+						|| locator.isCachingForced() || this.context.getConfiguration()
 						.isAssetMinificationEnabled())) {
 			return AssetUtils.getAssetFinalLocation(request, asset, null);
 		}

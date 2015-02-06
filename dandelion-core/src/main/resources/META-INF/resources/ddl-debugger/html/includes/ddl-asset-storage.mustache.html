@@ -1,0 +1,76 @@
+<div class="page-header">
+  <h1>
+    {{pageHeader}} <small>Browse assets currently stored in the asset storage</small>
+  </h1>
+</div>
+<div class="pull-right">
+  <a class="btn btn-danger" href="{{clearStorageUrl}}"><span class="glyphicon glyphicon-trash"></span>
+    Clear storage</a>
+</div>
+<p>
+  Active implementation:
+  <code>{{impl}}</code>
+</p>
+<p>
+  Number of elements: <span class="badge">{{number}}</span>
+</p>
+<div class="table-responsive">
+
+  <table id="assets" class='table table-hover table-bordered'
+    style='margin-top: 15px;'>
+    <thead>
+      <tr>
+        <th style="width: 15%">Name</th>
+        <th style="width: 5%">Type</th>
+        <th>Information</th>
+      </tr>
+    </thead>
+    <tbody>
+      {{#assets}}
+      <tr id="tr{{storageKey}}">
+        <td>{{name}}</td>
+        <td class="text-center">{{type}}</td>
+        <td>
+          <table style="width: 100%; margin-bottom: 10px;" class="table-striped">
+            <tbody>
+              <tr>
+                <td style="width: 20%">Version:</td>
+                <td>{{version}}</td>
+              </tr>
+              <tr>
+                <td>Bundle:</td>
+                <td>{{bundle}}</td>
+              </tr>
+              <tr>
+                <td>Location key:</td>
+                <td><span class="label label-primary">{{locationKey}}</span></td>
+              </tr>
+              <tr>
+                <td>Raw location:</td>
+                <td><code>{{rawLocation}}</code></td>
+              </tr>
+              <tr>
+                <td>Final location:</td>
+                <td><code>{{finalLocation}}</code></td>
+              </tr>
+              <tr>
+                <td>Storage key:</td>
+                <td>{{storageKey}}</td>
+              </tr>
+              <tr>
+                <td>Contents:</td>
+                <td>{{#presentInStorage}} <a class="btn btn-sm btn-default"
+                  onclick="toggle('{{storageKey}}', this)">Show contents</a>
+                  <div id="{{storageKey}}" style="display: none;">
+                    <pre style="margin-top: 5px;">{{contents}}</pre>
+                  </div> {{/presentInStorage}} {{^presentInStorage}} Not fetched {{/presentInStorage}}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </td>
+      </tr>
+      {{/assets}}
+    </tbody>
+  </table>
+</div>

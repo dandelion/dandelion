@@ -33,18 +33,14 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import javax.servlet.http.HttpServletRequest;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.github.dandelion.core.DandelionException;
 import com.github.dandelion.core.asset.Asset;
 import com.github.dandelion.core.asset.AssetDomPosition;
-import com.github.dandelion.core.asset.AssetMapper;
 import com.github.dandelion.core.asset.AssetQuery;
 import com.github.dandelion.core.storage.AssetStorageUnit;
 import com.github.dandelion.core.storage.BundleStorageUnit;
@@ -68,7 +64,7 @@ import com.github.dandelion.core.web.handler.HandlerContext;
 public class AssetsDebugPage extends AbstractDebugPage {
 
 	public static final String PAGE_ID = "assets";
-	public static final String PAGE_NAME = "Bundles/assets";
+	public static final String PAGE_NAME = "Current assets";
 	private static final String PAGE_LOCATION = "META-INF/resources/ddl-debugger/html/core-assets.html";
 
 	@Override
@@ -88,147 +84,74 @@ public class AssetsDebugPage extends AbstractDebugPage {
 	}
 
 	@Override
-	protected Map<String, String> getCustomParameters(HandlerContext context) {
-		StringBuilder sbNodesRequest = new StringBuilder();
-		AssetMapper assetMapper = new AssetMapper(context.getContext(), context.getRequest());
-		HttpServletRequest request = context.getRequest();
+	protected Map<String, Object> getPageContext() {
+		Map<String, Object> pageContext = new HashMap<String, Object>();
 
-		Map<String, String> params = new HashMap<String, String>();
-
-		try {
-			Set<BundleStorageUnit> bsuRequest = context.getContext().getBundleStorage()
-					.bundlesFor(AssetRequestContext.get(request).getBundles(true));
-
-			for (BundleStorageUnit bsu : bsuRequest) {
-				Map<String, Object> map = new HashMap<String, Object>();
-				map.put("label", bsu.getName());
-				map.put("assets", convertToD3Assets(bsu.getAssetStorageUnits(), assetMapper));
-				map.put("shape", "ellipse");
-				String bundle;
-				bundle = mapper.writeValueAsString(map);
-
-				sbNodesRequest.append("requestGraph.setNode('" + bsu.getName() + "'," + bundle + ");").append('\n');
-			}
-
-			Set<String> edgesRequest = new HashSet<String>();
-			for (BundleStorageUnit bsu : bsuRequest) {
-				if (bsu.getChildren() != null && !bsu.getChildren().isEmpty()) {
-					for (BundleStorageUnit childBsu : bsu.getChildren()) {
-						edgesRequest.add("requestGraph.setEdge('" + bsu.getName() + "', '" + childBsu.getName()
-								+ "', { label: \"depends on\" });");
-					}
-				}
-			}
-			for (String edge : edgesRequest) {
-				sbNodesRequest.append(edge).append('\n');
-			}
-
-			params.put("%NODES_REQUEST%", sbNodesRequest.toString());
-		}
-		catch (JsonProcessingException e) {
-			throw new DandelionException("An error occurred when converting bundles to JSON", e);
-		}
-
-		Set<Asset> assets = new AssetQuery(context.getRequest(), context.getContext()).perform();
-
-		StringBuilder table = new StringBuilder("<table class='table table-striped table-hover'><thead>");
-		table.append("<tr><th>Bundle</th><th>Asset</th><th>Version</th><th>Location</th></tr></thead><tbody>");
-		for (Asset asset : assets) {
-			table.append(tr(asset.getBundle(), asset.getName(), asset.getVersion(), asset.getFinalLocation()));
-		}
-		table.append("</tbody></table>");
-
-		params.put("%ASSETS%", table.toString());
-
-		StringBuilder sbHead = new StringBuilder();
-		StringBuilder sbBody = new StringBuilder();
 		Set<Asset> assetsHead = new AssetQuery(context.getRequest(), context.getContext()).atPosition(
 				AssetDomPosition.head).perform();
-		Iterator<Asset> iteratorAssetHead = assetsHead.iterator();
-		while (iteratorAssetHead.hasNext()) {
-			sbHead.append("    &lt;link href=\"" + iteratorAssetHead.next().getFinalLocation() + "\" />");
-			if (iteratorAssetHead.hasNext()) {
-				sbHead.append('\n');
-			}
+		List<String> assetsInHead = new ArrayList<String>();
+		for (Asset asset : assetsHead) {
+			assetsInHead.add(asset.getFinalLocation());
 		}
+		pageContext.put("assetsInHead", assetsInHead);
 
 		Set<Asset> assetsBody = new AssetQuery(context.getRequest(), context.getContext()).atPosition(
 				AssetDomPosition.body).perform();
-		Iterator<Asset> iteratorAssetBody = assetsBody.iterator();
-		while (iteratorAssetBody.hasNext()) {
-			sbBody.append("    &lt;script src=\"" + iteratorAssetBody.next().getFinalLocation() + "\"></script>");
-			if (iteratorAssetBody.hasNext()) {
-				sbBody.append('\n');
+		List<String> assetsInBody = new ArrayList<String>();
+		for (Asset asset : assetsBody) {
+			assetsInBody.add(asset.getFinalLocation());
+		}
+		pageContext.put("assetsInBody", assetsInBody);
+
+		Set<Asset> allAssets = new HashSet<Asset>(assetsHead);
+		allAssets.addAll(assetsBody);
+		pageContext.put("assets", allAssets);
+		return pageContext;
+	}
+
+	@Override
+	public Map<String, String> getExtraParams() {
+		StringBuilder sbNodesRequest = new StringBuilder();
+		Set<BundleStorageUnit> bsuRequest = context.getContext().getBundleStorage()
+				.bundlesFor(AssetRequestContext.get(context.getRequest()).getBundles(true));
+
+		for (BundleStorageUnit bsu : bsuRequest) {
+			Map<String, Object> map = new HashMap<String, Object>();
+			map.put("label", bsu.getName());
+
+			List<Map<String, Object>> assets = new ArrayList<Map<String, Object>>();
+
+			for (AssetStorageUnit asu : bsu.getAssetStorageUnits()) {
+				assets.add(new MapBuilder<String, Object>().entry("name", asu.getName()).entry("type", asu.getType())
+						.entry("version", asu.getVersion()).entry("bundle", asu.getBundle())
+						.entry("locations", asu.getLocations()).create());
+			}
+			map.put("assets", assets);
+			map.put("shape", "ellipse");
+			String bundle = null;
+			try {
+				bundle = mapper.writeValueAsString(map);
+			}
+			catch (JsonProcessingException e) {
+				throw new DandelionException("An error occured when generating the debug page of current assets", e);
+			}
+
+			sbNodesRequest.append("requestGraph.setNode(\"" + bsu.getName() + "\"," + bundle + ");").append('\n');
+		}
+
+		Set<String> edgesRequest = new HashSet<String>();
+		for (BundleStorageUnit bsu : bsuRequest) {
+			if (bsu.getChildren() != null && !bsu.getChildren().isEmpty()) {
+				for (BundleStorageUnit childBsu : bsu.getChildren()) {
+					edgesRequest.add("requestGraph.setEdge(\"" + bsu.getName() + "\", \"" + childBsu.getName()
+							+ "\", { label: \"depends on\", lineInterpolate: \"basis\" });");
+				}
 			}
 		}
-
-		params.put("%ASSETS_HEAD%", sbHead.toString());
-		params.put("%ASSETS_BODY%", sbBody.toString());
-		return params;
-	}
-
-	public List<D3Asset> convertToD3Assets(Set<AssetStorageUnit> asus, AssetMapper assetMapper) {
-		List<D3Asset> d3Assets = new ArrayList<AssetsDebugPage.D3Asset>();
-		Set<Asset> assets = assetMapper.mapToAssets(asus);
-		for (Asset a : assets) {
-			d3Assets.add(new D3Asset(a));
-		}
-		return d3Assets;
-	}
-
-	private class D3Asset {
-		private String url;
-		private String name;
-		private String version;
-		private String type;
-		private String location;
-
-		public D3Asset(Asset a) {
-			this.name = a.getName();
-			this.version = a.getVersion();
-			this.type = a.getType().toString();
-			this.location = a.getConfigLocationKey();
-			this.url = a.getFinalLocation();
+		for (String edge : edgesRequest) {
+			sbNodesRequest.append(edge).append('\n');
 		}
 
-		public String getUrl() {
-			return url;
-		}
-
-		public void setUrl(String url) {
-			this.url = url;
-		}
-
-		public String getName() {
-			return name;
-		}
-
-		public void setName(String name) {
-			this.name = name;
-		}
-
-		public String getVersion() {
-			return version;
-		}
-
-		public void setVersion(String version) {
-			this.version = version;
-		}
-
-		public String getType() {
-			return type;
-		}
-
-		public void setType(String type) {
-			this.type = type;
-		}
-
-		public String getLocation() {
-			return location;
-		}
-
-		public void setLocation(String location) {
-			this.location = location;
-		}
+		return new MapBuilder<String, String>().entry("%EXTRA%", sbNodesRequest.toString()).create();
 	}
 }

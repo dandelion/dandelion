@@ -1,0 +1,28 @@
+<div class="container-fluid">
+  <div class="navbar-header">
+    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+      data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+      <span class="sr-only">Toggle navigation</span> <span class="icon-bar"></span> <span
+        class="icon-bar"></span> <span class="icon-bar"></span>
+    </button>
+    <a class="navbar-brand" href="{{debuggerUrlWithParam}}">Dandelion Debugger</a>
+  </div>
+  <div id="navbar" class="navbar-collapse collapse">
+    <ul class="nav navbar-nav">
+      <li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown"
+        role="button" aria-expanded="false">Quick actions<span class="caret"></span></a>
+        <ul class="dropdown-menu" role="menu">
+          <li><a href="{{reloadBundleUrl}}">Reload bundle storage</a></li>
+          <li><a href="{{clearStorageUrl}}">Clear asset storage</a></li>
+          <li><a href="{{clearCacheUrl}}">Clear cache</a></li>
+        </ul></li>
+    </ul>
+    <ul class="nav navbar-nav navbar-right">
+      <li><a href="{{currentUri}}"><span class='glyphicon glyphicon-backward'></span> Back
+          to app</a></li>
+      <li class="divider"></li>
+      <li><a href="http://dandelion-forum.48353.x6.nabble.com/"><span
+          class="glyphicon glyphicon-question-sign"></span> Support</a></li>
+    </ul>
+  </div>
+</div>

@@ -35,7 +35,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.github.dandelion.core.config.Configuration;
 import com.github.dandelion.core.config.DandelionConfig;
 import com.github.dandelion.core.utils.ResourceUtils;
@@ -55,7 +54,7 @@ import com.github.dandelion.core.web.handler.HandlerContext;
 public class OptionsDebugPage extends AbstractDebugPage {
 
 	public static final String PAGE_ID = "options";
-	public static final String PAGE_NAME = "Options";
+	public static final String PAGE_NAME = "Current options";
 	private static final String PAGE_LOCATION = "META-INF/resources/ddl-debugger/html/core-options.html";
 
 	@Override
@@ -75,19 +74,19 @@ public class OptionsDebugPage extends AbstractDebugPage {
 	}
 
 	@Override
-	public Map<String, String> getCustomParameters(HandlerContext context) {
+	protected Map<String, Object> getPageContext() {
 
 		Configuration conf = context.getContext().getConfiguration();
 		
-		Map<String, Object> ctx = new HashMap<String, Object>();
+		Map<String, Object> pageContext = new HashMap<String, Object>();
+		pageContext.put("activeProfile", conf.getActiveProfile());
 
-		List<Map<String, Object>> options = new ArrayList<Map<String,Object>>();
+		List<Map<String, Object>> options = new ArrayList<Map<String, Object>>();
 
-		options.add(option("Active profile", conf.getActiveProfile()));
-
-		// Asset-related options
+ 		// Asset-related options
 		options.add(option(DandelionConfig.ASSET_MINIFICATION.getName(), conf.isAssetMinificationEnabled()));
-		options.add(option(DandelionConfig.ASSET_LOCATIONS_RESOLUTION_STRATEGY.getName(), conf.getAssetLocationsResolutionStrategy()));
+		options.add(option(DandelionConfig.ASSET_LOCATIONS_RESOLUTION_STRATEGY.getName(),
+				conf.getAssetLocationsResolutionStrategy()));
 		options.add(option(DandelionConfig.ASSET_PROCESSORS.getName(), conf.getAssetProcessors()));
 		options.add(option(DandelionConfig.ASSET_JS_EXCLUDES.getName(), conf.getAssetJsExcludes()));
 		options.add(option(DandelionConfig.ASSET_CSS_EXCLUDES.getName(), conf.getAssetCssExcludes()));
@@ -99,7 +98,8 @@ public class OptionsDebugPage extends AbstractDebugPage {
 		options.add(option(DandelionConfig.ASSET_VERSIONING_STRATEGY.getName(), conf.getAssetVersioningStrategy()));
 		options.add(option(DandelionConfig.ASSET_FIXED_VERSION_TYPE.getName(), conf.getAssetFixedVersionType()));
 		options.add(option(DandelionConfig.ASSET_FIXED_VERSION_VALUE.getName(), conf.getAssetFixedVersionValue()));
-		options.add(option(DandelionConfig.ASSET_FIXED_VERSION_DATEPATTERN.getName(), conf.getAssetFixedVersionDatePattern()));
+		options.add(option(DandelionConfig.ASSET_FIXED_VERSION_DATEPATTERN.getName(),
+				conf.getAssetFixedVersionDatePattern()));
 		options.add(option(DandelionConfig.ASSET_FIXED_VERSION_TYPE.getName(), conf.getAssetFixedVersionType()));
 
 		// Caching-related options
@@ -119,26 +119,18 @@ public class OptionsDebugPage extends AbstractDebugPage {
 		options.add(option(DandelionConfig.TOOL_GZIP_MIME_TYPES.getName(), conf.getToolGzipMimeTypes()));
 		options.add(option(DandelionConfig.TOOL_DEBUGGER.getName(), conf.isToolDebuggerEnabled()));
 		options.add(option(DandelionConfig.TOOL_BUNDLE_RELOADING.getName(), conf.isToolBundleReloadingEnabled()));
-		
+
 		// Monitoring-related options
 		options.add(option(DandelionConfig.MONITORING_JMX.getName(), conf.isMonitoringJmxEnabled()));
 
 		// Misc options
 		options.add(option(DandelionConfig.ENCODING.getName(), conf.getEncoding()));
 
-		ctx.put("options", options);
-		ctx.put("page-header", PAGE_NAME);
-		
-		Map<String, String> params = new HashMap<String, String>();
-		try {
-			params.put("%MUSTACHE_CTX%", mapper.writeValueAsString(ctx));
-		}
-		catch (JsonProcessingException e) {
-			e.printStackTrace();
-		}
-		return params;
+		pageContext.put("options", options);
+
+		return pageContext;
 	}
-	
+
 	private Map<String, Object> option(String name, Object value) {
 		Map<String, Object> option = new HashMap<String, Object>();
 		option.put("name", name);

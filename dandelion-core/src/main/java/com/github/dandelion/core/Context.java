@@ -53,9 +53,9 @@ import com.github.dandelion.core.asset.versioning.AssetVersioningStrategy;
 import com.github.dandelion.core.bundle.loader.BundleLoader;
 import com.github.dandelion.core.bundle.loader.impl.DandelionBundleLoader;
 import com.github.dandelion.core.bundle.loader.impl.VendorBundleLoader;
-import com.github.dandelion.core.cache.Cache;
+import com.github.dandelion.core.cache.RequestCache;
 import com.github.dandelion.core.cache.CacheManager;
-import com.github.dandelion.core.cache.impl.MemoryCache;
+import com.github.dandelion.core.cache.impl.MemoryRequestCache;
 import com.github.dandelion.core.config.Configuration;
 import com.github.dandelion.core.config.ConfigurationLoader;
 import com.github.dandelion.core.config.Profile;
@@ -79,7 +79,7 @@ import com.github.dandelion.core.web.handler.debug.DebugPage;
  * </p>
  * <p>
  * This class is in charge of discovering and storing several configuration
- * points, such as the configured {@link Cache} implementation or the active
+ * points, such as the configured {@link RequestCache} implementation or the active
  * {@link AssetProcessor}s.
  * </p>
  * <p>
@@ -93,7 +93,7 @@ public class Context {
 
 	private static final Logger LOG = LoggerFactory.getLogger(Context.class);
 
-	private Cache assetCache;
+	private RequestCache requestCache;
 	private Map<String, AssetProcessor> processorsMap;
 	private Map<String, AssetVersioningStrategy> versioningStrategyMap;
 	private AssetVersioningStrategy activeVersioningStrategy;
@@ -136,7 +136,7 @@ public class Context {
 		initConfiguration(filterConfig);
 		initBundleLoaders();
 		initAssetLocators();
-		initAssetCache();
+		initRequestCache();
 		initAssetProcessors();
 		initAssetVersioning();
 
@@ -271,16 +271,16 @@ public class Context {
 
 	/**
 	 * <p>
-	 * Initializes the service provider of {@link Cache} to use for caching.
+	 * Initializes the service provider of {@link RequestCache} to use for caching.
 	 * </p>
 	 */
-	public void initAssetCache() {
+	public void initRequestCache() {
 		LOG.info("Initializing asset caching system");
 
-		ServiceLoader<Cache> assetCacheServiceLoader = ServiceLoader.load(Cache.class);
+		ServiceLoader<RequestCache> assetCacheServiceLoader = ServiceLoader.load(RequestCache.class);
 
-		Map<String, Cache> caches = new HashMap<String, Cache>();
-		for (Cache ac : assetCacheServiceLoader) {
+		Map<String, RequestCache> caches = new HashMap<String, RequestCache>();
+		for (RequestCache ac : assetCacheServiceLoader) {
 			caches.put(ac.getCacheName().toLowerCase().trim(), ac);
 			LOG.info("Found asset caching system: {}", ac.getCacheName());
 		}
@@ -288,7 +288,7 @@ public class Context {
 		String desiredCacheName = configuration.getCacheName();
 		if (StringUtils.isNotBlank(desiredCacheName)) {
 			if (caches.containsKey(desiredCacheName)) {
-				assetCache = caches.get(desiredCacheName);
+				requestCache = caches.get(desiredCacheName);
 			}
 			else {
 				LOG.warn(
@@ -298,13 +298,13 @@ public class Context {
 		}
 
 		// If no caching system is detected, it defaults to memory caching
-		if (assetCache == null) {
-			assetCache = new MemoryCache();
+		if (requestCache == null) {
+			requestCache = new MemoryRequestCache();
 		}
 
-		assetCache.initCache(this);
+		requestCache.initCache(this);
 
-		LOG.info("Asset cache system initialized with: {}", assetCache.getCacheName());
+		LOG.info("Asset cache system initialized with: {}", requestCache.getCacheName());
 	}
 
 	/**
@@ -381,19 +381,23 @@ public class Context {
 		LOG.info("Initializing bundle storage");
 
 		bundleStorage = new BundleStorage();
-
+		List<BundleStorageUnit> allBundles = new ArrayList<BundleStorageUnit>();
+		
 		for (BundleLoader bundleLoader : getBundleLoaders()) {
 			LOG.debug("Loading bundles using the {}", bundleLoader.getClass().getSimpleName());
 
 			// Load all bundles using the current BundleLoader
 			List<BundleStorageUnit> loadedBundles = bundleLoader.loadBundles();
-
+			allBundles.addAll(loadedBundles);
+			
 			LOG.debug("Found {} bundle{}: {}", loadedBundles.size(), loadedBundles.size() <= 1 ? "" : "s",
 					loadedBundles);
 
 			bundleStorage.storeBundles(loadedBundles);
 		}
 
+		bundleStorage.consolidateBundles(allBundles);
+		
 		LOG.info("Bundle storage initialized with {} bundles", bundleStorage.getBundleDag().getVertexMap().size());
 	}
 
@@ -418,7 +422,7 @@ public class Context {
 			assetStorage = new MemoryAssetStorage();
 		}
 
-		assetCache.initCache(this);
+		requestCache.initCache(this);
 
 		LOG.info("Asset storage initialized with: {}", assetStorage.getName());
 	}
@@ -546,8 +550,8 @@ public class Context {
 	/**
 	 * @return the selected asset caching system.
 	 */
-	public Cache getCache() {
-		return assetCache;
+	public RequestCache getCache() {
+		return requestCache;
 	}
 
 	/**

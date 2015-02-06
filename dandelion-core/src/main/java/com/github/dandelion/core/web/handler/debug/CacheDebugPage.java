@@ -31,6 +31,7 @@ package com.github.dandelion.core.web.handler.debug;
 
 import java.io.IOException;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 
 import com.github.dandelion.core.utils.ResourceUtils;
@@ -58,8 +59,25 @@ public class CacheDebugPage extends AbstractDebugPage {
 				.getResourceAsStream(PAGE_LOCATION));
 	}
 
-	@Override
 	protected Map<String, String> getCustomParameters(HandlerContext context) {
 		return Collections.emptyMap();
+	}
+
+	@Override
+	protected Map<String, Object> getPageContext() {
+		Map<String, Object> pageContext = new HashMap<String, Object>();
+
+		boolean cachingEnabled = context.getContext().getConfiguration().isCachingEnabled();
+		pageContext.put("cacheEnabled", cachingEnabled);
+
+		if (cachingEnabled) {
+			pageContext.put("implementation", context.getContext().getCache().getClass());
+			pageContext.put("cacheElements", context.getContext().getCache().getAll());
+			pageContext.put("getCount", context.getContext().getCache().getGetCount());
+			pageContext.put("hitCount", context.getContext().getCache().getHitCount());
+			pageContext.put("missCount", context.getContext().getCache().getMissCount());
+			pageContext.put("putCount", context.getContext().getCache().getPutCount());
+		}
+		return pageContext;
 	}
 }

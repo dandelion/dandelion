@@ -48,7 +48,9 @@ public class WebConstants {
 	 */
 	public static final String DANDELION_DEBUGGER = "ddl-debug";
 	public static final String DANDELION_DEBUGGER_PAGE = "ddl-debug-page";
-	public static final String DANDELION_RELOAD_BUNDLES = "ddl-reload";
+	public static final String DANDELION_RELOAD_BUNDLES = "ddl-reload-bundles";
+	public static final String DANDELION_CLEAR_STORAGE = "ddl-clear-storage";
+	public static final String DANDELION_CLEAR_CACHE = "ddl-clear-cache";	
 	
 	/**
 	 * Request attributes/parameters

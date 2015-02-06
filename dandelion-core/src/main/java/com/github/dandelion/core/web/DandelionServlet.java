@@ -42,13 +42,13 @@ import org.slf4j.LoggerFactory;
 
 import com.github.dandelion.core.Context;
 import com.github.dandelion.core.asset.AssetType;
-import com.github.dandelion.core.cache.Cache;
+import com.github.dandelion.core.cache.RequestCache;
 import com.github.dandelion.core.utils.AssetUtils;
 
 /**
  * <p>
  * Dandelion servlet in charge of serving the assets stored in the configured
- * {@link Cache}.
+ * {@link RequestCache}.
  * </p>
  * 
  * @author Thibault Duchateau
@@ -78,7 +78,7 @@ public class DandelionServlet extends HttpServlet {
 
 		// Write the asset content
 		PrintWriter writer = response.getWriter();
-		writer.write(context.getAssetStorage().get(cacheKey));
+		writer.write(context.getAssetStorage().get(cacheKey).getContents());
 
 		// The response is explicitely closed here instead of setting a
 		// Content-Length header

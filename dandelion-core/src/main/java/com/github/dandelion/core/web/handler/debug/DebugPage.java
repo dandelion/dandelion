@@ -86,15 +86,6 @@ public interface DebugPage {
 	 */
 	String getTemplate(HandlerContext context) throws IOException;
 
-	/**
-	 * <p>
-	 * Populates a {@link Map} of parameters that will be injected into the
-	 * template.
-	 * </p>
-	 * 
-	 * @param context
-	 *            The wrapper object holding the context.
-	 * @return a {@link Map} of parameters.
-	 */
-	Map<String, String> getParameters(HandlerContext context);
+	Map<String, String> getExtraParams();
+	String getContext();
 }

@@ -62,8 +62,8 @@ public enum DandelionConfig {
 
 	// Caching-related configurations
 	CACHE("cache", "false", "true"),
-	CACHE_NAME("cache.name", "", ""),
-	CACHE_MAX_SIZE("cache.request.max.size", "50", "50"), 
+	CACHE_NAME("cache.name", "dandelionCache", "dandelionCache"),
+	CACHE_MAX_SIZE("cache.max.size", "50", "50"), 
 	CACHE_MANAGER_NAME("cache.manager.name", "", ""), 
 	CACHE_CONFIGURATION_LOCATION("cache.configuration.location", "", ""),
 

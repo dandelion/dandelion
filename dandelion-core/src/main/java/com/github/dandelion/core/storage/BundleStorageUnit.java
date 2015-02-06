@@ -64,11 +64,13 @@ public class BundleStorageUnit {
 
 	// Internal attributes
 	private List<BundleStorageUnit> children = new LinkedList<BundleStorageUnit>();
-	
+
 	private List<BundleStorageUnit> parents = new LinkedList<BundleStorageUnit>();
 
 	private String relativePath;
-	
+
+	private String origin;
+
 	public BundleStorageUnit() {
 	}
 
@@ -193,7 +195,6 @@ public class BundleStorageUnit {
 		return retValue;
 	}
 
-	
 	public String getRelativePath() {
 		return relativePath;
 	}
@@ -220,6 +221,14 @@ public class BundleStorageUnit {
 	 */
 	public boolean isConnected() {
 		return isRoot() || isLeaf();
+	}
+
+	public String getOrigin() {
+		return origin;
+	}
+
+	public void setOrigin(String origin) {
+		this.origin = origin;
 	}
 
 	@Override
@@ -251,6 +260,6 @@ public class BundleStorageUnit {
 	@Override
 	public String toString() {
 		return "BundleStorageUnit [name=" + name + ", dependencies=" + dependencies + ", assetStorageUnits="
-				+ assetStorageUnits + "]";
+				+ assetStorageUnits + ", relativePath=" + relativePath + "]";
 	}
 }

@@ -40,6 +40,7 @@ import org.slf4j.LoggerFactory;
 
 import com.github.dandelion.core.DandelionException;
 import com.github.dandelion.core.utils.StringUtils;
+import com.github.dandelion.core.utils.UrlUtils;
 import com.github.dandelion.core.web.WebConstants;
 import com.github.dandelion.core.web.handler.AbstractHandlerChain;
 import com.github.dandelion.core.web.handler.HandlerContext;
@@ -105,8 +106,9 @@ public class DebuggerPostHandler extends AbstractHandlerChain {
 			throw new DandelionException("An error occured when generating the \"" + debugPage + "\"debug page.", e);
 		}
 
-		handlerContext.setResponseAsBytes(newResponse);
 		// The response is overriden with a new one containing the debug page
+		handlerContext.setResponseAsBytes(newResponse);
+
 		return false;
 	}
 
@@ -134,13 +136,18 @@ public class DebuggerPostHandler extends AbstractHandlerChain {
 		// Get the template
 		String template = page.getTemplate(context);
 
-		// Perform parameters substitution
-		Map<String, String> variables = page.getParameters(context);
+		// Inject Mustache context
+		template = template.replace("%CONTEXT%", UrlUtils.getContext(context.getRequest()).toString());
+		
+		Map<String, String> variables = page.getExtraParams();
 		if (variables != null) {
 			for (Entry<String, String> variable : variables.entrySet()) {
 				template = template.replace(variable.getKey(), variable.getValue());
 			}
 		}
+		
+		template = template.replace("%MUSTACHE_CTX%", page.getContext());
+
 		return template;
 	}
 }

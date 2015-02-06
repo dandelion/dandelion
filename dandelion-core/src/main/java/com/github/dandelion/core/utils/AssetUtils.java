@@ -33,6 +33,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -40,12 +41,13 @@ import java.util.regex.Pattern;
 import javax.servlet.http.HttpServletRequest;
 
 import com.github.dandelion.core.Context;
+import com.github.dandelion.core.DandelionException;
 import com.github.dandelion.core.asset.Asset;
 import com.github.dandelion.core.asset.AssetDomPosition;
 import com.github.dandelion.core.asset.AssetType;
+import com.github.dandelion.core.asset.locator.AssetLocator;
 import com.github.dandelion.core.asset.locator.impl.ApiLocator;
 import com.github.dandelion.core.config.DandelionConfig;
-import com.github.dandelion.core.storage.AssetStorageUnit;
 import com.github.dandelion.core.web.WebConstants;
 
 /**
@@ -123,13 +125,12 @@ public final class AssetUtils {
 	 *            The type of asset to exclude.
 	 * @return a filtered collection of {@link Asset}s.
 	 */
-	public static Set<AssetStorageUnit> filtersByNameAndType(Set<AssetStorageUnit> asus,
-			Set<String> excludedAssetNames, AssetType type) {
+	public static Set<Asset> filtersByNameAndType(Set<Asset> assets, Set<String> excludedAssetNames, AssetType type) {
 
 		List<String> excludedAssetNameList = new ArrayList<String>(excludedAssetNames);
 
-		Set<AssetStorageUnit> filteredAsus = new LinkedHashSet<AssetStorageUnit>();
-		for (AssetStorageUnit asu : asus) {
+		Set<Asset> filteredAsus = new LinkedHashSet<Asset>();
+		for (Asset asu : assets) {
 
 			if (!asu.getType().equals(type) || !excludedAssetNameList.contains(asu.getName().trim().toLowerCase())) {
 				filteredAsus.add(asu);
@@ -151,11 +152,10 @@ public final class AssetUtils {
 	 *            The DOM position used to filter.
 	 * @return a filtered collection of {@link Asset}s.
 	 */
-	public static Set<AssetStorageUnit> filtersByDomPosition(Set<AssetStorageUnit> asus,
-			AssetDomPosition desiredPosition) {
-		Set<AssetStorageUnit> filteredAsus = new LinkedHashSet<AssetStorageUnit>();
-		Set<AssetStorageUnit> filteredJsAsus = new LinkedHashSet<AssetStorageUnit>();
-		for (AssetStorageUnit asu : asus) {
+	public static Set<Asset> filtersByDomPosition(Set<Asset> assets, AssetDomPosition desiredPosition) {
+		Set<Asset> filteredAsus = new LinkedHashSet<Asset>();
+		Set<Asset> filteredJsAsus = new LinkedHashSet<Asset>();
+		for (Asset asu : assets) {
 
 			AssetDomPosition assetPosition = asu.getDom() == null ? asu.getType().getDefaultDom() : asu.getDom();
 			if (assetPosition.equals(desiredPosition) && asu.getType().equals(AssetType.js)) {
@@ -199,7 +199,7 @@ public final class AssetUtils {
 		if (finalLocation.charAt(finalLocation.length() - 1) != '/') {
 			finalLocation.append("/");
 		}
-		finalLocation.append(asset.getCacheKey());
+		finalLocation.append(asset.getStorageKey());
 		finalLocation.append("/");
 		finalLocation.append(asset.getType().name());
 		finalLocation.append("/");
@@ -264,15 +264,17 @@ public final class AssetUtils {
 	 * </p>
 	 * <ul>
 	 * <li>{@code webapp}, {@code jar}, {@code webjar}, {@code classpath} and
-	 * <li>{@code api}: bundle name + asset name + asset type + current URI</li>
 	 * {@code remote}: bundle name + asset name + asset type</li>
+	 * <li>{@code api}: bundle name + asset name + asset type + current URI</li>
 	 * </ul>
 	 * 
 	 * @param asset
 	 *            The asset holding information used to generate the hash.
 	 * @return a MD5 hash.
 	 */
-	public static String generateCacheKey(Asset asset, HttpServletRequest request) {
+	public static String generateStorageKey(Asset asset, HttpServletRequest request) {
+
+		Validate.notNull(asset.getConfigLocationKey(), "The location key of the provided asset cannot be null");
 
 		StringBuilder keyContext = new StringBuilder();
 		keyContext.append(asset.getBundle());
@@ -284,6 +286,24 @@ public final class AssetUtils {
 		}
 
 		return DigestUtils.md5Digest(keyContext.toString());
+	}
+
+	public static AssetLocator getAssetLocator(Asset asset, Context context) {
+
+		String locationKey = asset.getConfigLocationKey();
+
+		Map<String, AssetLocator> locators = context.getAssetLocatorsMap();
+		if (!locators.containsKey(locationKey)) {
+			StringBuilder msg = new StringBuilder("The location key '");
+			msg.append(locationKey);
+			msg.append("' is not valid. Please choose a valid one among ");
+			msg.append(locators.keySet());
+			msg.append(".");
+			throw new DandelionException(msg.toString());
+		}
+
+		AssetLocator locator = locators.get(locationKey);
+		return locator;
 	}
 
 	/**

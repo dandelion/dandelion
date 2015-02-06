@@ -139,8 +139,8 @@ public class BundleStorage {
 				// current bundle
 				if (!assetAlreadyExists) {
 
-					LOG.trace("Adding {} '{}' ({}) to the bundle '{}'", asu.getType(), asu.getName(),
-							asu.getVersion(), bsuToAdd.getName());
+					LOG.trace("Adding {} '{}' ({}) to the bundle '{}'", asu.getType(), asu.getName(), asu.getVersion(),
+							bsuToAdd.getName());
 					bsuToAdd.getAssetStorageUnits().add(asu);
 				}
 			}
@@ -193,5 +193,22 @@ public class BundleStorage {
 	 */
 	public BundleDag getBundleDag() {
 		return bundleDag;
+	}
+
+	public void consolidateBundles(List<BundleStorageUnit> allBundles) {
+
+		for (BundleStorageUnit bsu : bundleDag.getVerticies()) {
+
+			for (BundleStorageUnit rawBsu : allBundles) {
+				if (rawBsu.getName().equalsIgnoreCase(bsu.getName())) {
+
+					bsu.setDependencies(rawBsu.getDependencies());
+					bsu.setAssetStorageUnits(rawBsu.getAssetStorageUnits());
+					bsu.setRelativePath(rawBsu.getRelativePath());
+					bsu.setOrigin(rawBsu.getOrigin());
+					break;
+				}
+			}
+		}
 	}
 }

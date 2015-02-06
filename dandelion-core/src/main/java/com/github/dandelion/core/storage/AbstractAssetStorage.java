@@ -33,8 +33,6 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import org.slf4j.Logger;
 
-import com.github.dandelion.core.utils.StringUtils;
-
 /**
  * <p>
  * Abstract asset storage in charge of manipulating actual implementations of
@@ -53,63 +51,63 @@ import com.github.dandelion.core.utils.StringUtils;
  */
 public abstract class AbstractAssetStorage implements AssetStorage {
 
-   private AtomicLong getCount;
-   private AtomicLong putCount;
-   private AtomicLong hitCount;
-   private AtomicLong missCount;
+	private AtomicLong getCount;
+	private AtomicLong putCount;
+	private AtomicLong hitCount;
+	private AtomicLong missCount;
 
-   public AbstractAssetStorage() {
-      super();
-      this.getCount = new AtomicLong(0);
-      this.putCount = new AtomicLong(0);
-      this.hitCount = new AtomicLong(0);
-      this.missCount = new AtomicLong(0);
-   }
+	public AbstractAssetStorage() {
+		super();
+		this.getCount = new AtomicLong(0);
+		this.putCount = new AtomicLong(0);
+		this.hitCount = new AtomicLong(0);
+		this.missCount = new AtomicLong(0);
+	}
 
-   protected abstract Logger getLogger();
+	protected abstract Logger getLogger();
 
-   @Override
-   public String get(String cacheKey) {
+	@Override
+	public StorageEntry get(String cacheKey) {
 
-      this.getCount.incrementAndGet();
-      String contents = doGet(cacheKey);
+		this.getCount.incrementAndGet();
+		StorageEntry element = doGet(cacheKey);
 
-      if (StringUtils.isBlank(contents)) {
-         this.missCount.incrementAndGet();
-         getLogger().trace("Storage miss for key \"{}\"", cacheKey);
-         return null;
-      }
+		if (element == null) {
+			this.missCount.incrementAndGet();
+			getLogger().trace("Storage miss for key \"{}\"", cacheKey);
+			return null;
+		}
 
-      this.hitCount.incrementAndGet();
-      getLogger().trace("Storage hit for key \"{}\"", cacheKey);
-      return contents;
-   }
+		this.hitCount.incrementAndGet();
+		getLogger().trace("Storage hit for key \"{}\"", cacheKey);
+		return element;
+	}
 
-   @Override
-   public void put(String cacheKey, String contents) {
-      this.putCount.incrementAndGet();
-      int newSize = doPut(cacheKey, contents);
-      getLogger().trace("Added storage entry for key \"{}\". New size is {}.", cacheKey, newSize);
-   }
+	@Override
+	public void put(String cacheKey, StorageEntry element) {
+		this.putCount.incrementAndGet();
+		int newSize = doPut(cacheKey, element);
+		getLogger().trace("Added storage entry for key \"{}\". New size is {}.", cacheKey, newSize);
+	}
 
-   @Override
-   public void remove(String cacheKey) {
+	@Override
+	public void remove(String cacheKey) {
 
-      doRemove(cacheKey);
-      getLogger().trace("Removed storage entry for key \"{}\"", cacheKey);
-   }
+		doRemove(cacheKey);
+		getLogger().trace("Removed storage entry for key \"{}\"", cacheKey);
+	}
 
-   @Override
-   public void clear() {
-      doClear();
-      getLogger().trace("Cleared storage");
-   }
+	@Override
+	public void clear() {
+		doClear();
+		getLogger().trace("Cleared storage");
+	}
 
-   protected abstract String doGet(String cacheKey);
+	protected abstract StorageEntry doGet(String cacheKey);
 
-   protected abstract int doPut(String cacheKey, String contents);
+	protected abstract int doPut(String cacheKey, StorageEntry element);
 
-   protected abstract void doRemove(String cacheKey);
+	protected abstract void doRemove(String cacheKey);
 
-   protected abstract void doClear();
+	protected abstract void doClear();
 }

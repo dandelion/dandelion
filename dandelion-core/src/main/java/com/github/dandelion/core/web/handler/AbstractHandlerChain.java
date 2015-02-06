@@ -59,7 +59,7 @@ public abstract class AbstractHandlerChain implements HandlerChain {
 	public final void doHandle(HandlerContext context) {
 
 		boolean shouldContinue = true;
-		
+
 		getLogger().trace("Checking applicability of {}", this.getClass().getSimpleName());
 		boolean isApplicable = isApplicable(context);
 		getLogger().trace("Handler {} is applicable: {}", this.getClass().getSimpleName(), isApplicable);
@@ -84,7 +84,8 @@ public abstract class AbstractHandlerChain implements HandlerChain {
 	 * 
 	 * @param request
 	 *            the request parameter
-	 * @return a boolean indicates whether this node handled the request
+	 * @return a boolean that indicates whether the handler chain should
+	 *         continue handling request or not.
 	 */
 	protected abstract boolean handle(HandlerContext context);
 
