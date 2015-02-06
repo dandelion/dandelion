@@ -31,7 +31,8 @@ package com.github.dandelion.extras.cache.ehcache;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.Collection;
 
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
@@ -41,8 +42,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.github.dandelion.core.Context;
-import com.github.dandelion.core.asset.Asset;
-import com.github.dandelion.core.cache.AbstractCache;
+import com.github.dandelion.core.cache.AbstractRequestCache;
+import com.github.dandelion.core.cache.CacheEntry;
 import com.github.dandelion.core.utils.StringUtils;
 import com.github.dandelion.core.utils.scanner.ResourceScanner;
 
@@ -83,9 +84,9 @@ import com.github.dandelion.core.utils.scanner.ResourceScanner;
  * @author Thibault Duchateau
  * @since 0.10.0
  */
-public class EhCacheAssetCache extends AbstractCache {
+public class EhCacheRequestCache extends AbstractRequestCache {
 
-	private static final Logger LOG = LoggerFactory.getLogger(EhCacheAssetCache.class);
+	private static final Logger LOG = LoggerFactory.getLogger(EhCacheRequestCache.class);
 
 	private Cache cache;
 
@@ -140,20 +141,29 @@ public class EhCacheAssetCache extends AbstractCache {
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
-	public Set<Asset> doGet(String cacheKey) {
+	public CacheEntry doGet(String cacheKey) {
 		Element element = cache.get(cacheKey);
-		return element == null ? null : (Set<Asset>) element.getObjectValue();
+		return (element == null ? null : (CacheEntry) element.getObjectValue());
 	}
 
 	@Override
-	public int doPut(String cacheKey, Set<Asset> assets) {
-		cache.put(new Element(cacheKey, assets));
+	protected int doPut(String cacheKey, CacheEntry cacheElement) {
+		cache.put(new Element(cacheKey, cacheElement));
 		return cache.getKeysNoDuplicateCheck().size();
 	}
 
 	@Override
 	public void doClear() {
 		cache.removeAll();
+	}
+
+	@Override
+	protected Collection<CacheEntry> doGetAll() {
+		Collection<Element> elements = cache.getAll(cache.getKeysNoDuplicateCheck()).values();
+		Collection<CacheEntry> cacheElements = new ArrayList<CacheEntry>();
+		for (Element e : elements) {
+			cacheElements.add((CacheEntry) e.getObjectValue());
+		}
+		return cacheElements;
 	}
 }
