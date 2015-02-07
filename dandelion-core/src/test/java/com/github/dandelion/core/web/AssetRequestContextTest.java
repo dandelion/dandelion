@@ -1,13 +1,12 @@
 package com.github.dandelion.core.web;
 
-import java.util.Arrays;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.mock.web.MockFilterConfig;
 import org.springframework.mock.web.MockHttpServletRequest;
 
 import com.github.dandelion.core.Context;
+import com.github.dandelion.core.config.DandelionConfig;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -88,8 +87,9 @@ public class AssetRequestContextTest {
 
    @Test
    public void should_initialize_excluded_bundles_from_context() {
-      Context context = new Context(new MockFilterConfig());
-      context.getConfiguration().setBundleExcludes(Arrays.asList("bundle1"));
+      MockFilterConfig filterConfig = new MockFilterConfig();
+      filterConfig.addInitParameter(DandelionConfig.BUNDLE_EXCLUDES.getName(), "bundle1");
+      Context context = new Context(filterConfig);
 
       request = new MockHttpServletRequest();
       request.setAttribute(WebConstants.DANDELION_CONTEXT_ATTRIBUTE, context);
@@ -102,8 +102,9 @@ public class AssetRequestContextTest {
 
    @Test
    public void should_initialize_excluded_js_from_context() {
-      Context context = new Context(new MockFilterConfig());
-      context.getConfiguration().setAssetJsExcludes(Arrays.asList("js1, js2"));
+      MockFilterConfig filterConfig = new MockFilterConfig();
+      filterConfig.addInitParameter(DandelionConfig.ASSET_JS_EXCLUDES.getName(), "js1, js2");
+      Context context = new Context(filterConfig);
 
       request = new MockHttpServletRequest();
       request.setAttribute(WebConstants.DANDELION_CONTEXT_ATTRIBUTE, context);

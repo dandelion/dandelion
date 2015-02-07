@@ -236,10 +236,6 @@ public class Configuration {
       return this.activeRawProfile;
    }
 
-   public void setActiveRawProfile(String activeProfile) {
-      this.activeRawProfile = activeProfile;
-   }
-
    public boolean isAssetMinificationEnabled() {
       return this.assetMinificationEnabled;
    }
@@ -254,14 +250,6 @@ public class Configuration {
 
    public boolean isToolBundleReloadingEnabled() {
       return this.toolBundleReloadingEnabled;
-   }
-
-   public void setToolBundleGraphEnabled(boolean toolBundleGraph) {
-      this.toolDebuggerEnabled = toolBundleGraph;
-   }
-
-   public void setToolBundleEnabledReloading(boolean toolBundleReloading) {
-      this.toolBundleReloadingEnabled = toolBundleReloading;
    }
 
    public boolean isCachingEnabled() {
@@ -324,36 +312,8 @@ public class Configuration {
       return this.monitoringJmxEnabled;
    }
 
-   public void setMonitoringJmxEnabled(boolean jmxEnabled) {
-      this.monitoringJmxEnabled = jmxEnabled;
-   }
-
-   public void setAssetMinificationEnabled(boolean assetMinificationEnabled) {
-      this.assetMinificationEnabled = assetMinificationEnabled;
-   }
-
-   public void setAssetLocationsResolutionStrategy(List<String> assetLocationsResolutionStrategy) {
-      this.assetLocationsResolutionStrategy = assetLocationsResolutionStrategy;
-   }
-
-   public void setAssetProcessors(List<String> assetProcessors) {
-      this.assetProcessors = assetProcessors;
-   }
-
-   public void setAssetJsExcludes(List<String> assetJsExcludes) {
-      this.assetJsExcludes = assetJsExcludes;
-   }
-
-   public void setAssetCssExcludes(List<String> assetCssExcludes) {
-      this.assetCssExcludes = assetCssExcludes;
-   }
-
    public String getAssetVersioningStrategy() {
       return assetVersioningStrategy;
-   }
-
-   public void setAssetVersioningStrategy(String assetVersioningStrategy) {
-      this.assetVersioningStrategy = assetVersioningStrategy;
    }
 
    public String getAssetStorage() {
@@ -364,48 +324,16 @@ public class Configuration {
       return this.cacheName;
    }
 
-   public void setCacheName(String cacheName) {
-      this.cacheName = cacheName;
-   }
-
-   public void setCacheMaxSize(int cacheMaxSize) {
-      this.cacheMaxSize = cacheMaxSize;
-   }
-
-   public void setCacheConfigurationLocation(String cacheConfigurationLocation) {
-      this.cacheConfigurationLocation = cacheConfigurationLocation;
-   }
-
-   public void setBundleIncludes(List<String> bundleIncludes) {
-      this.bundleIncludes = bundleIncludes;
-   }
-
-   public void setBundleExcludes(List<String> bundleExcludes) {
-      this.bundleExcludes = bundleExcludes;
-   }
-
    public String getAssetFixedVersionType() {
       return assetFixedVersionType;
-   }
-
-   public void setAssetFixedVersionType(String assetFixedVersionType) {
-      this.assetFixedVersionType = assetFixedVersionType;
    }
 
    public String getAssetFixedVersionValue() {
       return assetFixedVersionValue;
    }
 
-   public void setAssetFixedVersionValue(String assetFixedVersionValue) {
-      this.assetFixedVersionValue = assetFixedVersionValue;
-   }
-
    public String getAssetFixedVersionDatePattern() {
       return assetFixedVersionDatePattern;
-   }
-
-   public void setAssetFixedVersionDatePattern(String assetFixedVersionDateFormat) {
-      this.assetFixedVersionDatePattern = assetFixedVersionDateFormat;
    }
 
    public String getAssetVersioningMode() {
@@ -424,10 +352,6 @@ public class Configuration {
       return toolGzipEnabled;
    }
 
-   public void setToolGzipEnabled(boolean toolGzip) {
-      this.toolGzipEnabled = toolGzip;
-   }
-
    private String getProcessedAssetUrlPattern(String rawAssetUrlPattern) {
 
       StringBuilder processedAssetUrlPattern = new StringBuilder(rawAssetUrlPattern);
@@ -443,10 +367,6 @@ public class Configuration {
 
    public String getEncoding() {
       return encoding;
-   }
-
-   public void setEncoding(String encoding) {
-      this.encoding = encoding;
    }
 
    public Set<String> getToolGzipMimeTypes() {
