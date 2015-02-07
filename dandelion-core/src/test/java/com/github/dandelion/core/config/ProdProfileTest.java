@@ -82,7 +82,6 @@ public class ProdProfileTest {
       // Caching-related configurations
       assertThat(config.isCachingEnabled()).isEqualTo(Boolean.parseBoolean(DandelionConfig.CACHE.defaultProdValue()));
       assertThat(config.getCacheName()).isEqualTo(DandelionConfig.CACHE_NAME.defaultProdValue());
-      assertThat(config.getCacheManagerName()).isEqualTo(DandelionConfig.CACHE_MANAGER_NAME.defaultProdValue());
       assertThat(config.getCacheConfigurationLocation()).isEqualTo(
             DandelionConfig.CACHE_CONFIGURATION_LOCATION.defaultProdValue());
       assertThat(config.getCacheMaxSize()).isEqualTo(
@@ -129,7 +128,6 @@ public class ProdProfileTest {
       // Caching-related configurations
       assertThat(config.isCachingEnabled()).isEqualTo(Boolean.parseBoolean(DandelionConfig.CACHE.defaultProdValue()));
       assertThat(config.getCacheName()).isEqualTo(DandelionConfig.CACHE_NAME.defaultProdValue());
-      assertThat(config.getCacheManagerName()).isEqualTo(DandelionConfig.CACHE_MANAGER_NAME.defaultProdValue());
       assertThat(config.getCacheConfigurationLocation()).isEqualTo(
             DandelionConfig.CACHE_CONFIGURATION_LOCATION.defaultProdValue());
       assertThat(config.getCacheMaxSize()).isEqualTo(40); // OVERRIDEN
@@ -174,7 +172,6 @@ public class ProdProfileTest {
       // Caching-related configurations
       assertThat(config.isCachingEnabled()).isEqualTo(Boolean.parseBoolean(DandelionConfig.CACHE.defaultProdValue()));
       assertThat(config.getCacheName()).isEqualTo(DandelionConfig.CACHE_NAME.defaultProdValue());
-      assertThat(config.getCacheManagerName()).isEqualTo(DandelionConfig.CACHE_MANAGER_NAME.defaultProdValue());
       assertThat(config.getCacheConfigurationLocation()).isEqualTo(
             DandelionConfig.CACHE_CONFIGURATION_LOCATION.defaultProdValue());
       assertThat(config.getCacheMaxSize()).isEqualTo(
@@ -220,7 +217,6 @@ public class ProdProfileTest {
       // Caching-related configurations
       assertThat(config.isCachingEnabled()).isEqualTo(Boolean.parseBoolean(DandelionConfig.CACHE.defaultProdValue()));
       assertThat(config.getCacheName()).isEqualTo(DandelionConfig.CACHE_NAME.defaultProdValue());
-      assertThat(config.getCacheManagerName()).isEqualTo(DandelionConfig.CACHE_MANAGER_NAME.defaultProdValue());
       assertThat(config.getCacheConfigurationLocation()).isEqualTo(
             DandelionConfig.CACHE_CONFIGURATION_LOCATION.defaultProdValue());
       assertThat(config.getCacheMaxSize()).isEqualTo(20); // OVERRIDEN

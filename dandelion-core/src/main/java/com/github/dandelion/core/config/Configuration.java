@@ -89,7 +89,6 @@ public class Configuration {
    private boolean cachingEnabled;
    private String cacheName;
    private int cacheMaxSize;
-   private String cacheManagerName;
    private String cacheConfigurationLocation;
 
    // Bundle-related configurations
@@ -160,7 +159,6 @@ public class Configuration {
                DandelionConfig.CACHE_MAX_SIZE.getName(), DandelionConfig.CACHE_MAX_SIZE.defaultDevValue());
          this.cacheMaxSize = Integer.parseInt(DandelionConfig.CACHE_MAX_SIZE.defaultDevValue());
       }
-      this.cacheManagerName = readConfig(DandelionConfig.CACHE_MANAGER_NAME);
       this.cacheConfigurationLocation = readConfig(DandelionConfig.CACHE_CONFIGURATION_LOCATION);
 
       // Tooling-related configurations
@@ -290,10 +288,6 @@ public class Configuration {
       return this.cacheMaxSize;
    }
 
-   public String getCacheManagerName() {
-      return this.cacheManagerName;
-   }
-
    public String getCacheConfigurationLocation() {
       return this.cacheConfigurationLocation;
    }
@@ -376,10 +370,6 @@ public class Configuration {
 
    public void setCacheMaxSize(int cacheMaxSize) {
       this.cacheMaxSize = cacheMaxSize;
-   }
-
-   public void setCacheManagerName(String cacheManagerName) {
-      this.cacheManagerName = cacheManagerName;
    }
 
    public void setCacheConfigurationLocation(String cacheConfigurationLocation) {

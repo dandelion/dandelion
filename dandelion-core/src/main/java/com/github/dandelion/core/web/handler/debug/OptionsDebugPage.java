@@ -106,7 +106,6 @@ public class OptionsDebugPage extends AbstractDebugPage {
       options.add(option(DandelionConfig.CACHE.getName(), conf.isCachingEnabled()));
       options.add(option(DandelionConfig.CACHE_NAME.getName(), conf.getCacheName()));
       options.add(option(DandelionConfig.CACHE_MAX_SIZE.getName(), conf.getCacheMaxSize()));
-      options.add(option(DandelionConfig.CACHE_MANAGER_NAME.getName(), conf.getCacheManagerName()));
       options.add(option(DandelionConfig.CACHE_CONFIGURATION_LOCATION.getName(), conf.getCacheConfigurationLocation()));
 
       // Bundle-related options

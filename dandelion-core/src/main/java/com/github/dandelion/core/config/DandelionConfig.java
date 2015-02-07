@@ -45,36 +45,39 @@ import com.github.dandelion.core.web.DandelionServlet;
 public enum DandelionConfig {
 
    // Asset-related configurations
-   ASSET_MINIFICATION("asset.minification", "false", "true"), ASSET_LOCATIONS_RESOLUTION_STRATEGY(
-         "asset.locations.resolution.strategy", "webapp,webjar,classpath,jar,remote",
-         "webapp,webjar,classpath,jar,remote"), ASSET_PROCESSORS("asset.processors", "cssurlrewriting,jsmin,cssmin",
-         "cssurlrewriting,jsmin,cssmin"), ASSET_JS_EXCLUDES("asset.js.excludes", "", ""), ASSET_CSS_EXCLUDES(
-         "asset.css.excludes", "", ""), ASSET_URL_PATTERN("asset.url.pattern", DandelionServlet.DANDELION_ASSETS_URL,
-         DandelionServlet.DANDELION_ASSETS_URL), ASSET_STORAGE("asset.storage", "memory", "memory"),
+   ASSET_MINIFICATION("asset.minification", "false", "true"), 
+   ASSET_LOCATIONS_RESOLUTION_STRATEGY("asset.locations.resolution.strategy", "webapp,webjar,classpath,jar,remote", "webapp,webjar,classpath,jar,remote"), 
+   ASSET_PROCESSORS("asset.processors", "cssurlrewriting,jsmin,cssmin", "cssurlrewriting,jsmin,cssmin"), 
+   ASSET_JS_EXCLUDES("asset.js.excludes", "", ""), 
+   ASSET_CSS_EXCLUDES("asset.css.excludes", "", ""), 
+   ASSET_URL_PATTERN("asset.url.pattern", DandelionServlet.DANDELION_ASSETS_URL, DandelionServlet.DANDELION_ASSETS_URL), 
+   ASSET_STORAGE("asset.storage", "memory", "memory"),
 
    // Asset versioning
-   ASSET_VERSIONING_MODE("asset.versioning.mode", "auto", "auto"), ASSET_VERSIONING_STRATEGY(
-         "asset.versioning.strategy", "content", "content"), ASSET_FIXED_VERSION_TYPE("asset.fixed.version.type",
-         "string", "string"), ASSET_FIXED_VERSION_VALUE("asset.fixed.version.value", "UNDEFINED_VERSION",
-         "UNDEFINED_VERSION"), ASSET_FIXED_VERSION_DATEPATTERN("asset.fixed.version.datepattern", "yyyyMMdd",
-         "yyyyMMdd"),
+   ASSET_VERSIONING_MODE("asset.versioning.mode", "auto", "auto"), 
+   ASSET_VERSIONING_STRATEGY("asset.versioning.strategy", "content", "content"), 
+   ASSET_FIXED_VERSION_TYPE("asset.fixed.version.type", "string", "string"), 
+   ASSET_FIXED_VERSION_VALUE("asset.fixed.version.value", "UNDEFINED_VERSION", "UNDEFINED_VERSION"), 
+   ASSET_FIXED_VERSION_DATEPATTERN("asset.fixed.version.datepattern", "yyyyMMdd", "yyyyMMdd"),
 
    // Caching-related configurations
-   CACHE("cache", "false", "true"), CACHE_NAME("cache.name", "dandelionCache", "dandelionCache"), CACHE_MAX_SIZE(
-         "cache.max.size", "50", "50"), CACHE_MANAGER_NAME("cache.manager.name", "", ""), CACHE_CONFIGURATION_LOCATION(
-         "cache.configuration.location", "", ""),
+   CACHE("cache", "false", "true"), 
+   CACHE_NAME("cache.name", "dandelionCache", "dandelionCache"), 
+   CACHE_MAX_SIZE("cache.max.size", "500", "500"), 
+//   CACHE_MANAGER_NAME("cache.manager.name", "", ""), 
+   CACHE_CONFIGURATION_LOCATION("cache.configuration.location", "", ""),
 
    // Bundle-related configurations
-   BUNDLE_LOCATION("bundle.location", "", ""), BUNDLE_INCLUDES("bundle.includes", "", ""), BUNDLE_EXCLUDES(
-         "bundle.excludes", "", ""),
+   BUNDLE_LOCATION("bundle.location", "", ""), 
+   BUNDLE_INCLUDES("bundle.includes", "", ""), 
+   BUNDLE_EXCLUDES("bundle.excludes", "", ""),
 
    // Tooling-related configurations
-   TOOL_GZIP("tool.gzip", "false", "true"), TOOL_GZIP_MIME_TYPES(
-         "tool.gzip.mime.types",
-         "text/html,text/css,application/x-javascript,application/javascript,text/javascript,text/plain,text/xml,application/xhtml+xml,image/svg+xml",
-         "text/html,text/css,application/x-javascript,application/javascript,text/javascript,text/plain,text/xml,application/xhtml+xml,image/svg+xml"), TOOL_DEBUGGER(
-         "tool.debugger", "true", "false"), TOOL_ASSET_PRETTY_PRINTING("tool.asset.pretty.printing", "true", "false"), TOOL_BUNDLE_RELOADING(
-         "tool.bundle.reloading", "true", "false"),
+   TOOL_GZIP("tool.gzip", "false", "true"), 
+   TOOL_GZIP_MIME_TYPES("tool.gzip.mime.types", "text/html,text/css,application/x-javascript,application/javascript,text/javascript,text/plain,text/xml,application/xhtml+xml,image/svg+xml", "text/html,text/css,application/x-javascript,application/javascript,text/javascript,text/plain,text/xml,application/xhtml+xml,image/svg+xml"), 
+   TOOL_DEBUGGER("tool.debugger", "true", "false"), 
+   TOOL_ASSET_PRETTY_PRINTING("tool.asset.pretty.printing", "true", "false"), 
+   TOOL_BUNDLE_RELOADING("tool.bundle.reloading", "true", "false"),
 
    // Moniroting configurations
    @Beta

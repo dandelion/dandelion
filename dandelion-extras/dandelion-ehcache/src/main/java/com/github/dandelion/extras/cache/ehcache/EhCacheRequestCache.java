@@ -52,19 +52,7 @@ import com.github.dandelion.core.utils.scanner.ResourceScanner;
  * EhCache implementation of {@link Cache}.
  * </p>
  * <p>
- * The initialization of this cache has two requirements: obtain a
- * {@link CacheManager} instance and a {@code ehcache.xml} configuration file.
- * </p>
- * <p>
- * The {@link CacheManager} instance is obtained using the following strategy:
- * <ul>
- * <li>First tries to get an existing {@link CacheManager} using the
- * {@code cache.manager.name} configuration property.</li>
- * <li>If no {@link CacheManager} is configured, a default one is created.</li>
- * </ul>
- * <p>
- * Once the {@link CacheManager} obtained, then the configuration file is loaded
- * using the following strategy:
+ * The configuration file is loaded using the following strategy:
  * </p>
  * <ul>
  * <li>First checks if the {@code cache.configuration.location} configuration
@@ -104,34 +92,23 @@ public class EhCacheRequestCache extends AbstractRequestCache {
    public void initCache(Context context) {
       super.initCache(context);
 
-      CacheManager cacheManager = null;
-      String cacheManagerName = context.getConfiguration().getCacheManagerName();
+      InputStream stream = null;
 
-      // First try to get an existing CacheManager
-      if (StringUtils.isNotBlank(cacheManagerName)) {
-         cacheManager = CacheManager.getCacheManager(cacheManagerName);
-         LOG.warn("No cache manager found with the name '{}'. Dandelion will create one.", cacheManagerName);
-      }
+      String cacheConfigurationPath = context.getConfiguration().getCacheConfigurationLocation();
 
-      if (cacheManager == null) {
-         InputStream stream = null;
-
-         String cacheConfigurationPath = context.getConfiguration().getCacheConfigurationLocation();
-
-         if (StringUtils.isBlank(cacheConfigurationPath)) {
-            LOG.warn("The 'cache.configuration.location' configuration is not set. Dandelion will scan for any ehcache.xml file inside the classpath.");
-            try {
-               cacheConfigurationPath = ResourceScanner.findResourcePath("", "ehcache.xml");
-               LOG.debug("ehcache.xml file found: {}", cacheConfigurationPath);
-            }
-            catch (IOException e) {
-               LOG.warn("No ehcache.xml configuration file has been found. Dandelion will let EhCache use the default configuration.");
-            }
+      if (StringUtils.isBlank(cacheConfigurationPath)) {
+         LOG.warn("The 'cache.configuration.location' configuration is not set. Dandelion will scan for any ehcache.xml file inside the classpath.");
+         try {
+            cacheConfigurationPath = ResourceScanner.findResourcePath("", "ehcache.xml");
+            LOG.debug("ehcache.xml file found: {}", cacheConfigurationPath);
          }
-
-         stream = Thread.currentThread().getContextClassLoader().getResourceAsStream(cacheConfigurationPath);
-         cacheManager = stream == null ? CacheManager.create() : CacheManager.create(stream);
+         catch (IOException e) {
+            LOG.warn("No ehcache.xml configuration file has been found. Dandelion will let EhCache use the default configuration.");
+         }
       }
+
+      stream = Thread.currentThread().getContextClassLoader().getResourceAsStream(cacheConfigurationPath);
+      CacheManager cacheManager = stream == null ? CacheManager.create() : CacheManager.create(stream);
 
       if (!cacheManager.cacheExists(DANDELION_CACHE_NAME)) {
          cacheManager.addCache(DANDELION_CACHE_NAME);
