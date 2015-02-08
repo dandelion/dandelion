@@ -35,7 +35,7 @@ import org.springframework.mock.web.MockFilterConfig;
 import org.springframework.mock.web.MockHttpServletRequest;
 
 import com.github.dandelion.core.Context;
-import com.github.dandelion.core.utils.StringUtils;
+import com.github.dandelion.core.util.StringUtils;
 import com.github.dandelion.core.web.WebConstants;
 
 import static com.github.dandelion.core.asset.generator.js.jquery.JQueryContentPlaceholder.AFTER_ALL;

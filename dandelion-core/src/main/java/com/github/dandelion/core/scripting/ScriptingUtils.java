@@ -29,7 +29,7 @@
  */
 package com.github.dandelion.core.scripting;
 
-import com.github.dandelion.core.utils.ResourceUtils;
+import com.github.dandelion.core.util.ResourceUtils;
 
 public class ScriptingUtils {
 

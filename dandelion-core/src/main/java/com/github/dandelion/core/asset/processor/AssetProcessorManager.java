@@ -50,7 +50,7 @@ import com.github.dandelion.core.asset.Asset;
 import com.github.dandelion.core.asset.AssetType;
 import com.github.dandelion.core.asset.locator.AssetLocator;
 import com.github.dandelion.core.storage.StorageEntry;
-import com.github.dandelion.core.utils.AssetUtils;
+import com.github.dandelion.core.util.AssetUtils;
 
 /**
  * <p>

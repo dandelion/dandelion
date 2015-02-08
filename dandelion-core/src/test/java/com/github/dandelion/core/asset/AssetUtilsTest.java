@@ -5,7 +5,7 @@ import java.util.Set;
 
 import org.junit.Test;
 
-import com.github.dandelion.core.utils.AssetUtils;
+import com.github.dandelion.core.util.AssetUtils;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

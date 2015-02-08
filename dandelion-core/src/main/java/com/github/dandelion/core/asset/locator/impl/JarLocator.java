@@ -36,7 +36,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.github.dandelion.core.asset.locator.AbstractAssetLocator;
 import com.github.dandelion.core.storage.AssetStorageUnit;
-import com.github.dandelion.core.utils.ResourceUtils;
+import com.github.dandelion.core.util.ResourceUtils;
 
 /**
  * <p>

@@ -42,7 +42,7 @@ import org.xml.sax.helpers.DefaultHandler;
 import com.github.dandelion.core.asset.AssetType;
 import com.github.dandelion.core.storage.AssetStorageUnit;
 import com.github.dandelion.core.storage.BundleStorageUnit;
-import com.github.dandelion.core.utils.StringUtils;
+import com.github.dandelion.core.util.StringUtils;
 
 /**
  * <p>

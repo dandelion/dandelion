@@ -44,7 +44,7 @@ import com.github.dandelion.core.asset.AssetDomPosition;
 import com.github.dandelion.core.asset.AssetQuery;
 import com.github.dandelion.core.storage.AssetStorageUnit;
 import com.github.dandelion.core.storage.BundleStorageUnit;
-import com.github.dandelion.core.utils.ResourceUtils;
+import com.github.dandelion.core.util.ResourceUtils;
 import com.github.dandelion.core.web.AssetRequestContext;
 import com.github.dandelion.core.web.handler.HandlerContext;
 

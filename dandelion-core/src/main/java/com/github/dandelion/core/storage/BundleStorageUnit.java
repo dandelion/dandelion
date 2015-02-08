@@ -41,7 +41,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.github.dandelion.core.asset.AssetType;
 import com.github.dandelion.core.storage.support.BundleDag;
-import com.github.dandelion.core.utils.StringUtils;
+import com.github.dandelion.core.util.StringUtils;
 
 /**
  * <p>

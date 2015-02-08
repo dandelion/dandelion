@@ -44,8 +44,8 @@ import org.slf4j.LoggerFactory;
 import com.github.dandelion.core.Context;
 import com.github.dandelion.core.cache.AbstractRequestCache;
 import com.github.dandelion.core.cache.CacheEntry;
-import com.github.dandelion.core.utils.StringUtils;
-import com.github.dandelion.core.utils.scanner.ResourceScanner;
+import com.github.dandelion.core.util.StringUtils;
+import com.github.dandelion.core.util.scanner.ResourceScanner;
 
 /**
  * <p>

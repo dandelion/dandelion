@@ -35,6 +35,8 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
+import com.github.dandelion.core.util.Validate;
+
 public class ValidateTest {
 
    @Rule

@@ -39,7 +39,7 @@ import java.util.Map;
 import com.github.dandelion.core.asset.Asset;
 import com.github.dandelion.core.storage.AssetStorage;
 import com.github.dandelion.core.storage.StorageEntry;
-import com.github.dandelion.core.utils.ResourceUtils;
+import com.github.dandelion.core.util.ResourceUtils;
 import com.github.dandelion.core.web.handler.HandlerContext;
 
 /**

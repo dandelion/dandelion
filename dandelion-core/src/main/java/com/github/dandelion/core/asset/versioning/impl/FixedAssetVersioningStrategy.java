@@ -44,8 +44,8 @@ import com.github.dandelion.core.asset.Asset;
 import com.github.dandelion.core.asset.versioning.AbstractAssetVersioningStrategy;
 import com.github.dandelion.core.bundle.loader.BundleLoader;
 import com.github.dandelion.core.bundle.loader.impl.VendorBundleLoader;
-import com.github.dandelion.core.utils.EnumUtils;
-import com.github.dandelion.core.utils.StringUtils;
+import com.github.dandelion.core.util.EnumUtils;
+import com.github.dandelion.core.util.StringUtils;
 
 /**
  * <p>

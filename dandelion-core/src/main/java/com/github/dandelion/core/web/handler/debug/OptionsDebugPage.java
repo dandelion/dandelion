@@ -37,7 +37,7 @@ import java.util.Map;
 
 import com.github.dandelion.core.config.Configuration;
 import com.github.dandelion.core.config.DandelionConfig;
-import com.github.dandelion.core.utils.ResourceUtils;
+import com.github.dandelion.core.util.ResourceUtils;
 import com.github.dandelion.core.web.handler.HandlerContext;
 
 /**

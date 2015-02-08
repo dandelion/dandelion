@@ -32,8 +32,8 @@ package com.github.dandelion.core.asset.generator;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.github.dandelion.core.utils.StringBuilderUtils;
-import com.github.dandelion.core.utils.StringUtils;
+import com.github.dandelion.core.util.StringBuilderUtils;
+import com.github.dandelion.core.util.StringUtils;
 
 /**
  * <p>

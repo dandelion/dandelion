@@ -32,8 +32,8 @@ package com.github.dandelion.core.cache;
 import javax.servlet.http.HttpServletRequest;
 
 import com.github.dandelion.core.Context;
-import com.github.dandelion.core.utils.DigestUtils;
-import com.github.dandelion.core.utils.UrlUtils;
+import com.github.dandelion.core.util.DigestUtils;
+import com.github.dandelion.core.util.UrlUtils;
 
 /**
  * <p>

@@ -31,7 +31,7 @@ package com.github.dandelion.core.asset.versioning.impl;
 
 import com.github.dandelion.core.asset.Asset;
 import com.github.dandelion.core.asset.versioning.AbstractAssetVersioningStrategy;
-import com.github.dandelion.core.utils.DigestUtils;
+import com.github.dandelion.core.util.DigestUtils;
 
 /**
  * <p>

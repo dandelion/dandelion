@@ -42,7 +42,7 @@ import com.github.dandelion.core.bundle.loader.strategy.LoadingStrategy;
 import com.github.dandelion.core.bundle.loader.strategy.XmlBundleLoadingStrategy;
 import com.github.dandelion.core.storage.AssetStorageUnit;
 import com.github.dandelion.core.storage.BundleStorageUnit;
-import com.github.dandelion.core.utils.StringBuilderUtils;
+import com.github.dandelion.core.util.StringBuilderUtils;
 
 /**
  * <p>

@@ -44,9 +44,9 @@ import com.github.dandelion.core.asset.versioning.AssetVersioningStrategy;
 import com.github.dandelion.core.cache.RequestCache;
 import com.github.dandelion.core.storage.AssetStorageUnit;
 import com.github.dandelion.core.storage.StorageEntry;
-import com.github.dandelion.core.utils.AssetUtils;
-import com.github.dandelion.core.utils.PathUtils;
-import com.github.dandelion.core.utils.StringUtils;
+import com.github.dandelion.core.util.AssetUtils;
+import com.github.dandelion.core.util.PathUtils;
+import com.github.dandelion.core.util.StringUtils;
 
 /**
  * <p>

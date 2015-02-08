@@ -46,7 +46,7 @@ import org.slf4j.LoggerFactory;
 
 import com.github.dandelion.core.Context;
 import com.github.dandelion.core.DandelionException;
-import com.github.dandelion.core.utils.UrlUtils;
+import com.github.dandelion.core.util.UrlUtils;
 import com.github.dandelion.core.web.handler.AbstractHandlerChain;
 import com.github.dandelion.core.web.handler.HandlerContext;
 import com.github.dandelion.core.web.handler.cache.HttpHeader;

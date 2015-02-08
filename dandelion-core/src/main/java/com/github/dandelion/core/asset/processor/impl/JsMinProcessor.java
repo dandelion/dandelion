@@ -39,8 +39,8 @@ import com.github.dandelion.core.asset.processor.AbstractAssetProcessor;
 import com.github.dandelion.core.asset.processor.CompatibleAssetType;
 import com.github.dandelion.core.asset.processor.ProcessingContext;
 import com.github.dandelion.core.asset.processor.vendor.JSMin;
-import com.github.dandelion.core.utils.ReaderInputStream;
-import com.github.dandelion.core.utils.WriterOutputStream;
+import com.github.dandelion.core.util.ReaderInputStream;
+import com.github.dandelion.core.util.WriterOutputStream;
 
 /**
  * <p>

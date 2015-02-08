@@ -44,7 +44,7 @@ import com.github.dandelion.core.asset.AssetDomPosition;
 import com.github.dandelion.core.asset.AssetQuery;
 import com.github.dandelion.core.html.AbstractHtmlTag;
 import com.github.dandelion.core.storage.BundleStorage;
-import com.github.dandelion.core.utils.HtmlUtils;
+import com.github.dandelion.core.util.HtmlUtils;
 import com.github.dandelion.core.web.WebConstants;
 import com.github.dandelion.core.web.handler.AbstractHandlerChain;
 import com.github.dandelion.core.web.handler.HandlerContext;

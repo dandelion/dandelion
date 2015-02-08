@@ -35,8 +35,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.github.dandelion.core.config.Configuration;
-import com.github.dandelion.core.utils.DigestUtils;
-import com.github.dandelion.core.utils.Sha1Utils;
+import com.github.dandelion.core.util.DigestUtils;
+import com.github.dandelion.core.util.Sha1Utils;
 import com.github.dandelion.core.web.handler.HandlerContext;
 
 /**

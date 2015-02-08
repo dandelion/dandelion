@@ -33,6 +33,8 @@ import java.io.IOException;
 
 import org.junit.Test;
 
+import com.github.dandelion.core.util.scanner.ResourceScanner;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 import static org.assertj.core.util.Sets.newLinkedHashSet;

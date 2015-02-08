@@ -39,7 +39,7 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import com.github.dandelion.core.utils.UrlUtils;
+import com.github.dandelion.core.util.UrlUtils;
 import com.github.dandelion.core.web.WebConstants;
 import com.github.dandelion.core.web.handler.HandlerContext;
 

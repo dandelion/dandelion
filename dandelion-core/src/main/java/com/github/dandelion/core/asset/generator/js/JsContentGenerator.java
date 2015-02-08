@@ -32,7 +32,7 @@ package com.github.dandelion.core.asset.generator.js;
 import javax.servlet.http.HttpServletRequest;
 
 import com.github.dandelion.core.asset.generator.AssetContent;
-import com.github.dandelion.core.utils.StringBuilderUtils;
+import com.github.dandelion.core.util.StringBuilderUtils;
 
 /**
  * <p>

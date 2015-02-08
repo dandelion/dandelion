@@ -34,7 +34,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.github.dandelion.core.utils.ResourceUtils;
+import com.github.dandelion.core.util.ResourceUtils;
 import com.github.dandelion.core.web.handler.HandlerContext;
 
 public class CacheDebugPage extends AbstractDebugPage {

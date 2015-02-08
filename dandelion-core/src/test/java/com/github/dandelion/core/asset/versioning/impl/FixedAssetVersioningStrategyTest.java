@@ -38,7 +38,7 @@ import com.github.dandelion.core.Context;
 import com.github.dandelion.core.DandelionException;
 import com.github.dandelion.core.asset.versioning.AssetVersioningStrategy;
 import com.github.dandelion.core.config.DandelionConfig;
-import com.github.dandelion.core.utils.EnumUtils;
+import com.github.dandelion.core.util.EnumUtils;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

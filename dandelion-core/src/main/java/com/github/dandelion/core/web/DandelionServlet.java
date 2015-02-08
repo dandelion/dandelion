@@ -43,7 +43,7 @@ import org.slf4j.LoggerFactory;
 import com.github.dandelion.core.Context;
 import com.github.dandelion.core.asset.AssetType;
 import com.github.dandelion.core.cache.RequestCache;
-import com.github.dandelion.core.utils.AssetUtils;
+import com.github.dandelion.core.util.AssetUtils;
 
 /**
  * <p>

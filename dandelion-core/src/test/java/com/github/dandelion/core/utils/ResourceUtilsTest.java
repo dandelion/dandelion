@@ -33,6 +33,8 @@ package com.github.dandelion.core.utils;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 
+import com.github.dandelion.core.util.ResourceUtils;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class ResourceUtilsTest {

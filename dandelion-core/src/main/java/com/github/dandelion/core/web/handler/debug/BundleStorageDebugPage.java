@@ -42,7 +42,7 @@ import com.github.dandelion.core.bundle.loader.impl.DandelionBundleLoader;
 import com.github.dandelion.core.bundle.loader.impl.VendorBundleLoader;
 import com.github.dandelion.core.storage.BundleStorage;
 import com.github.dandelion.core.storage.BundleStorageUnit;
-import com.github.dandelion.core.utils.ResourceUtils;
+import com.github.dandelion.core.util.ResourceUtils;
 import com.github.dandelion.core.web.handler.HandlerContext;
 
 /**

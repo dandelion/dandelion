@@ -39,8 +39,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.github.dandelion.core.Context;
-import com.github.dandelion.core.utils.PropertiesUtils;
-import com.github.dandelion.core.utils.StringUtils;
+import com.github.dandelion.core.util.PropertiesUtils;
+import com.github.dandelion.core.util.StringUtils;
 
 /**
  * <p>

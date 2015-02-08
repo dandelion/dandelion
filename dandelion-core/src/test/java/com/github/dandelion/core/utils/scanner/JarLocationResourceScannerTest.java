@@ -37,6 +37,8 @@ import java.util.Set;
 
 import org.junit.Test;
 
+import com.github.dandelion.core.util.scanner.JarLocationResourceScanner;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class JarLocationResourceScannerTest {

@@ -35,7 +35,7 @@ import org.junit.After;
 import org.junit.Test;
 import org.springframework.mock.web.MockFilterConfig;
 
-import com.github.dandelion.core.utils.PropertiesUtils;
+import com.github.dandelion.core.util.PropertiesUtils;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

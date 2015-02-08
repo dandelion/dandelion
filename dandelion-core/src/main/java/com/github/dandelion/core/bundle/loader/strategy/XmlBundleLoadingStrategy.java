@@ -48,8 +48,8 @@ import com.github.dandelion.core.DandelionException;
 import com.github.dandelion.core.bundle.loader.support.BundleSaxHandler;
 import com.github.dandelion.core.storage.BundleStorageUnit;
 import com.github.dandelion.core.storage.support.BundleUtils;
-import com.github.dandelion.core.utils.BundleStorageLogBuilder;
-import com.github.dandelion.core.utils.scanner.ResourceScanner;
+import com.github.dandelion.core.util.BundleStorageLogBuilder;
+import com.github.dandelion.core.util.scanner.ResourceScanner;
 
 /**
  * 

@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import org.junit.Test;
 
 import com.github.dandelion.core.bundle.loader.BundleLoader;
+import com.github.dandelion.core.util.ServiceLoaderUtils;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

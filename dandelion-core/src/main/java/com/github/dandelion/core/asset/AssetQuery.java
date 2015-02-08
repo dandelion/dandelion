@@ -43,8 +43,8 @@ import com.github.dandelion.core.cache.RequestCache;
 import com.github.dandelion.core.cache.CacheEntry;
 import com.github.dandelion.core.storage.AssetStorageUnit;
 import com.github.dandelion.core.storage.BundleStorageUnit;
-import com.github.dandelion.core.utils.AssetUtils;
-import com.github.dandelion.core.utils.UrlUtils;
+import com.github.dandelion.core.util.AssetUtils;
+import com.github.dandelion.core.util.UrlUtils;
 import com.github.dandelion.core.web.AssetRequestContext;
 import com.github.dandelion.core.web.WebConstants;
 

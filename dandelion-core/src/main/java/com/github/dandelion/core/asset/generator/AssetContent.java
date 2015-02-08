@@ -31,7 +31,7 @@ package com.github.dandelion.core.asset.generator;
 
 import com.github.dandelion.core.asset.Asset;
 import com.github.dandelion.core.asset.AssetType;
-import com.github.dandelion.core.utils.StringUtils;
+import com.github.dandelion.core.util.StringUtils;
 
 /**
  * <p>

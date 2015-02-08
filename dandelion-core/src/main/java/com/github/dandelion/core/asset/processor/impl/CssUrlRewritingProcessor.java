@@ -45,7 +45,7 @@ import com.github.dandelion.core.asset.processor.AbstractAssetProcessor;
 import com.github.dandelion.core.asset.processor.CompatibleAssetType;
 import com.github.dandelion.core.asset.processor.ProcessingContext;
 import com.github.dandelion.core.asset.processor.support.CssUrlRewriter;
-import com.github.dandelion.core.utils.StringBuilderUtils;
+import com.github.dandelion.core.util.StringBuilderUtils;
 
 /**
  * <p>

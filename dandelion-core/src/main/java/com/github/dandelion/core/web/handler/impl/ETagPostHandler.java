@@ -34,7 +34,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.github.dandelion.core.utils.StringUtils;
+import com.github.dandelion.core.util.StringUtils;
 import com.github.dandelion.core.web.handler.AbstractHandlerChain;
 import com.github.dandelion.core.web.handler.HandlerContext;
 import com.github.dandelion.core.web.handler.cache.HttpHeader;

@@ -31,7 +31,7 @@ package com.github.dandelion.core.config;
 
 import java.util.Arrays;
 
-import com.github.dandelion.core.utils.StringUtils;
+import com.github.dandelion.core.util.StringUtils;
 
 /**
  * <p>

@@ -33,8 +33,8 @@ import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.github.dandelion.core.utils.PathUtils;
-import com.github.dandelion.core.utils.StringUtils;
+import com.github.dandelion.core.util.PathUtils;
+import com.github.dandelion.core.util.StringUtils;
 
 /**
  * <p>

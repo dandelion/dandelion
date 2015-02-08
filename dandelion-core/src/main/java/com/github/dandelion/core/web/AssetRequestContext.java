@@ -43,7 +43,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.github.dandelion.core.Context;
 import com.github.dandelion.core.storage.BundleStorageUnit;
-import com.github.dandelion.core.utils.StringUtils;
+import com.github.dandelion.core.util.StringUtils;
 
 /**
  * <p>

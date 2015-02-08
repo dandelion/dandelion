@@ -2,6 +2,8 @@ package com.github.dandelion.core.utils;
 
 import org.junit.Test;
 
+import com.github.dandelion.core.util.PathUtils;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class PathUtilsTest {
