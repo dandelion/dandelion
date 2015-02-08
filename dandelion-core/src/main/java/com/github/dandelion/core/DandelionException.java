@@ -50,18 +50,15 @@ public class DandelionException extends RuntimeException {
    private Map<String, Object> parameters = new LinkedHashMap<String, Object>();
 
    public DandelionException(String message, Throwable cause) {
-      super(message, cause);
-      // TODO Auto-generated constructor stub
+      super("Dandelion: " + message, cause);
    }
 
    public DandelionException(String message) {
-      super(message);
-      // TODO Auto-generated constructor stub
+      super("Dandelion: " + message);
    }
 
    public DandelionException(Throwable cause) {
       super(cause);
-      // TODO Auto-generated constructor stub
    }
 
    /**
