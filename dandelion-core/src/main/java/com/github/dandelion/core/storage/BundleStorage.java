@@ -125,6 +125,7 @@ public class BundleStorage {
                      existingAsu.setType(asu.getType());
                      existingAsu.setAttributes(asu.getAttributes());
                      existingAsu.setAttributesOnlyName(asu.getAttributesOnlyName());
+                     existingAsu.setCondition(asu.getCondition());
                      assetAlreadyExists = true;
                      break;
                   }

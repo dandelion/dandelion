@@ -64,6 +64,7 @@ public class BundleSaxHandler extends DefaultHandler {
    public static final String ATTR_NAME = "name";
    public static final String ATTR_VERSION = "version";
    public static final String ATTR_TYPE = "type";
+   public static final String ATTR_CONDITION = "confition";
    public static final String ATTR_KEY = "key";
 
    public static final String JAXP_SCHEMA_LANGUAGE = "http://java.sun.com/xml/jaxp/properties/schemaLanguage";
@@ -94,6 +95,9 @@ public class BundleSaxHandler extends DefaultHandler {
          asu.setVersion(attributes.getValue(ATTR_VERSION));
          if (StringUtils.isNotBlank(attributes.getValue(ATTR_TYPE))) {
             asu.setType(AssetType.valueOf(attributes.getValue(ATTR_TYPE)));
+         }
+         if (StringUtils.isNotBlank(attributes.getValue(ATTR_CONDITION))) {
+            asu.setCondition(attributes.getValue(ATTR_CONDITION));
          }
       }
       else if (qName.equalsIgnoreCase(EL_LOCATION)) {

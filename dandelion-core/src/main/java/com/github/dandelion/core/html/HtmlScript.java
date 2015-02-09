@@ -29,6 +29,8 @@
  */
 package com.github.dandelion.core.html;
 
+import com.github.dandelion.core.util.StringUtils;
+
 /**
  * Plain old HTML <code>script</code> tag.
  * 
@@ -36,18 +38,30 @@ package com.github.dandelion.core.html;
  */
 public class HtmlScript extends AbstractHtmlTag {
 
+   private static final String TAG = "script";
+
    /**
     * Plain old HTML <code>src</code> attribute.
     */
    private String src;
 
+   /**
+    * Condition to use in a conditionnal comment (IE 5 to 9).
+    */
+   private String condition;
+
    public HtmlScript() {
-      this.tag = "script";
+      this(null, null);
    }
 
    public HtmlScript(String src) {
-      this.tag = "script";
+      this(src, null);
+   }
+
+   public HtmlScript(String src, String condition) {
+      this.tag = TAG;
       this.src = src;
+      this.condition = condition;
    }
 
    @Override
@@ -63,5 +77,28 @@ public class HtmlScript extends AbstractHtmlTag {
 
    public void setSrc(String src) {
       this.src = src;
+   }
+
+   public String getCondition() {
+      return condition;
+   }
+
+   public void setCondition(String condition) {
+      this.condition = condition;
+   }
+
+   @Override
+   public StringBuilder toHtml() {
+      StringBuilder html = new StringBuilder();
+      if (StringUtils.isNotBlank(this.condition)) {
+         html.append("<!--[if ");
+         html.append(this.condition);
+         html.append("]>\n");
+      }
+      html.append(super.toHtml());
+      if (StringUtils.isNotBlank(this.condition)) {
+         html.append("\n<![endif]-->");
+      }
+      return html;
    }
 }

@@ -38,20 +38,21 @@ import com.github.dandelion.core.html.HtmlScript;
 /**
  * <p>
  * Collection of utilities to ease working with HTML tags.
+ * </p>
  * 
  * @author Thibault Duchateau
  * @since 0.2.0
  */
-public class HtmlUtils {
+public final class HtmlUtils {
 
    public static AbstractHtmlTag transformAsset(Asset asset) {
       AbstractHtmlTag tag;
       switch (asset.getType()) {
       case css:
-         tag = new HtmlLink(asset.getFinalLocation());
+         tag = new HtmlLink(asset.getFinalLocation(), asset.getCondition());
          break;
       case js:
-         tag = new HtmlScript(asset.getFinalLocation());
+         tag = new HtmlScript(asset.getFinalLocation(), asset.getCondition());
          break;
       default:
          tag = null;
@@ -61,5 +62,14 @@ public class HtmlUtils {
          tag.addAttributes(asset.getAttributes());
       }
       return tag;
+   }
+
+   /**
+    * <p>
+    * Suppress default constructor for noninstantiability.
+    * </p>
+    */
+   private HtmlUtils() {
+      throw new AssertionError();
    }
 }

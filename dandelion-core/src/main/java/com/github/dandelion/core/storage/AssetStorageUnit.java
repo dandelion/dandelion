@@ -108,6 +108,13 @@ public class AssetStorageUnit {
     */
    private Map<String, String> attributes;
 
+   /**
+    * <p>
+    * Condition to use in a conditionnal comment. (IE 5 to 9)
+    * </p>
+    */
+   private String condition;
+   
    private String[] attributesOnlyName;
 
    private String cacheKey;
@@ -291,6 +298,14 @@ public class AssetStorageUnit {
          Arrays.copyOf(attributesOnlyName, attributesOnlyName.length + 1);
          attributesOnlyName[attributesOnlyName.length] = attributeName;
       }
+   }
+
+   public String getCondition() {
+      return condition;
+   }
+
+   public void setCondition(String condition) {
+      this.condition = condition;
    }
 
    public String getBundle() {

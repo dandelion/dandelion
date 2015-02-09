@@ -102,6 +102,11 @@ public class Asset implements Serializable {
     */
    private String[] attributesOnlyName;
 
+   /**
+    * Condition to use in a conditionnal comment. (IE 5 to 9)
+    */
+   private String condition;
+
    // Internal attribute
 
    /**
@@ -170,6 +175,7 @@ public class Asset implements Serializable {
       this.attributesOnlyName = asu.getAttributesOnlyName();
       this.vendor = asu.isVendor();
       this.bundle = asu.getBundle();
+      this.condition = asu.getCondition();
    }
 
    public Asset(String name, String version, AssetType type, AssetDomPosition position) {
@@ -290,6 +296,14 @@ public class Asset implements Serializable {
          Arrays.copyOf(attributesOnlyName, attributesOnlyName.length + 1);
          attributesOnlyName[attributesOnlyName.length] = attributeName;
       }
+   }
+
+   public String getCondition() {
+      return condition;
+   }
+
+   public void setCondition(String condition) {
+      this.condition = condition;
    }
 
    public String getStorageKey() {

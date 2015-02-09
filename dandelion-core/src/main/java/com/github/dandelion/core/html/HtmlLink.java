@@ -29,6 +29,8 @@
  */
 package com.github.dandelion.core.html;
 
+import com.github.dandelion.core.util.StringUtils;
+
 /**
  * Plain old HTML <code>link</code> tag.
  * 
@@ -36,33 +38,37 @@ package com.github.dandelion.core.html;
  */
 public class HtmlLink extends AbstractHtmlTag {
 
+   private static final String TAG = "link";
+   private static final String REL = "stylesheet";
+
    /**
     * Plain old HTML <code>href</code> attribute.
     */
    private String href;
+
    /**
-    * Plain old HTML <code>rel</code> attribute (by default 'stylesheet').
+    * Condition to use in a conditionnal comment (IE 5 to 9).
     */
-   private String rel = "stylesheet";
+   private String condition;
 
    public HtmlLink() {
-      this.tag = "link";
+      this(null, null);
    }
 
    public HtmlLink(String href) {
-      this.tag = "link";
-      this.href = href;
+      this(href, null);
    }
 
-   public HtmlLink(String href, String rel) {
-      this(href);
-      this.rel = rel;
+   public HtmlLink(String href, String condition) {
+      this.tag = TAG;
+      this.href = href;
+      this.condition = condition;
    }
 
    @Override
    protected StringBuilder getHtmlAttributes() {
       StringBuilder html = super.getHtmlAttributes();
-      html.append(writeAttribute("rel", "stylesheet"));
+      html.append(writeAttribute("rel", REL));
       html.append(writeAttribute("href", this.href));
       return html;
    }
@@ -75,11 +81,18 @@ public class HtmlLink extends AbstractHtmlTag {
       this.href = href;
    }
 
-   public String getRel() {
-      return rel;
-   }
-
-   public void setRel(String rel) {
-      this.rel = rel;
+   @Override
+   public StringBuilder toHtml() {
+      StringBuilder html = new StringBuilder();
+      if (StringUtils.isNotBlank(this.condition)) {
+         html.append("<!--[if ");
+         html.append(this.condition);
+         html.append("]>\n");
+      }
+      html.append(super.toHtml());
+      if (StringUtils.isNotBlank(this.condition)) {
+         html.append("\n<![endif]-->");
+      }
+      return html;
    }
 }
