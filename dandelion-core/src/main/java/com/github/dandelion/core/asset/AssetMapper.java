@@ -125,7 +125,6 @@ public class AssetMapper {
       AssetLocator assetLocator = AssetUtils.getAssetLocator(asset, context);
 
       String location = assetLocator.getLocation(asu, request);
-      ;
       LOG.trace("Locator '{}' will be applied on the asset {}.", assetLocator.getClass().getSimpleName(), asu.toLog());
       asset.setProcessedConfigLocation(location);
 
@@ -195,9 +194,7 @@ public class AssetMapper {
     * 
     * @param asset
     *           The asset for which the final location is to be computed.
-    * @param location
-    *           The selected location.
-    * @param assetLocator
+    * @param locator
     *           The selected asset locator.
     * @return The final location of the asset.
     */
@@ -224,10 +221,7 @@ public class AssetMapper {
     * <li>or finally a version called <code>UNDEFINED_VERSION</code> that
     * indicates the versioning information is missing</li>
     * </ol>
-    * 
-    * @param asu
-    *           The asset storage unit definition coming from the bundle
-    *           definition.
+    *
     * @param asset
     *           The asset to extract the version from.
     * @return the version of the asset.
