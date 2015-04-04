@@ -87,7 +87,6 @@ public class XmlBundleLoadingStrategyTest {
             .asList("bundle-loading/xml/xml-strategy/bundle2.xml")));
 
       BundleStorageUnit bundle = bundles.get(0);
-      System.out.println(bundle);
       assertThat(bundle.getName()).isEqualTo("bundle2");
       assertThat(bundle.getDependencies()).isNull();
       assertThat(bundle.getAssetStorageUnitNames()).hasSize(1);

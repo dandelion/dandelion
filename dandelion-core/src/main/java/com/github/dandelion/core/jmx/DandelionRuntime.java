@@ -33,6 +33,8 @@ import javax.servlet.FilterConfig;
 
 import com.github.dandelion.core.Beta;
 import com.github.dandelion.core.Context;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * 
@@ -41,6 +43,9 @@ import com.github.dandelion.core.Context;
  */
 @Beta
 public class DandelionRuntime implements DandelionRuntimeMBean {
+   
+   private static final Logger LOG = LoggerFactory.getLogger(DandelionRuntime.class);
+
 
    private Context context;
 
@@ -50,15 +55,15 @@ public class DandelionRuntime implements DandelionRuntimeMBean {
 
    @Override
    public void reloadBundles() {
-      System.out.println("RELOADING!!!");
+      LOG.debug("RELOADING!!!");
       context.initBundleStorage();
-      System.out.println("Context reloaded");
+      LOG.debug("Context reloaded");
    }
 
    @Override
    public void clearCache() {
-      System.out.println("Clearing all cache");
+      LOG.debug("Clearing all cache");
       context.getCache().clear();
-      System.out.println("All caches cleared");
+      LOG.debug("All caches cleared");
    }
 }
