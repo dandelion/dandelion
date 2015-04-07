@@ -44,8 +44,13 @@ Add the following configuration to your `web.xml` file:
 <filter-mapping>
   <filter-name>dandelionFilter</filter-name>
   <url-pattern>/*</url-pattern>
+  <dispatcher>REQUEST</dispatcher> <1>
+  <dispatcher>FORWARD</dispatcher>
+  <dispatcher>INCLUDE</dispatcher>
+  <dispatcher>ERROR</dispatcher>
 </filter-mapping>
 ----
+<1> Note that all dispatcher types should be specified in order for the filter to work in any situation.
 
 * *Step 3: Configure the Dandelion servlet*
 
@@ -68,9 +73,9 @@ Add the following configuration to your `web.xml` file:
 
 * *Declare the taglib definition*
 
-Everywhere you want to request assets manually, you need to add the taglib definition in your JSP:
+Everywhere you want to include assets manually, you need to add the taglib definition in your JSP:
 
- <%@ taglib prefix="datatables" uri="http://github.com/dandelion" %>
+ <%@ taglib prefix="dandelion" uri="http://github.com/dandelion" %>
 
 === 3.3. Thymeleaf-based steps
 
