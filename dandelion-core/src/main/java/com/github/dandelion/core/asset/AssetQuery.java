@@ -39,14 +39,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.github.dandelion.core.Context;
-import com.github.dandelion.core.cache.RequestCache;
 import com.github.dandelion.core.cache.CacheEntry;
+import com.github.dandelion.core.cache.RequestCache;
 import com.github.dandelion.core.storage.AssetStorageUnit;
 import com.github.dandelion.core.storage.BundleStorageUnit;
 import com.github.dandelion.core.util.AssetUtils;
 import com.github.dandelion.core.util.UrlUtils;
 import com.github.dandelion.core.web.AssetRequestContext;
-import com.github.dandelion.core.web.WebConstants;
 
 /**
  * <p>
@@ -119,8 +118,7 @@ public class AssetQuery {
 
       LOG.debug("Performing query for the request \"{}\"", currentUri);
 
-      if (this.context.getConfiguration().isCachingEnabled()
-            && UrlUtils.doesNotContainParamater(request, WebConstants.DANDELION_DEBUGGER)) {
+      if (this.context.getConfiguration().isCachingEnabled()) {
          requestCacheKey = this.context.getCacheManager().generateRequestCacheKey(this.request);
          CacheEntry cacheElement = this.context.getCacheManager().getAssets(requestCacheKey);
          if (cacheElement != null) {
@@ -140,8 +138,7 @@ public class AssetQuery {
          // If caching is enabled, the assocation request<=>assets is cached
          // for
          // quicker future access
-         if (this.context.getConfiguration().isCachingEnabled()
-               && UrlUtils.doesNotContainParamater(request, WebConstants.DANDELION_DEBUGGER)) {
+         if (this.context.getConfiguration().isCachingEnabled()) {
             requestedAssets = context.getCacheManager()
                   .storeAssets(requestCacheKey, new CacheEntry(currentUri, requestedAssets)).getAssets();
          }

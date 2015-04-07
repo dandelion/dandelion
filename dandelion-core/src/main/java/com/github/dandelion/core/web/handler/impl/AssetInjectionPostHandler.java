@@ -116,6 +116,11 @@ public class AssetInjectionPostHandler extends AbstractHandlerChain {
          }
       }
 
+      // Not applicable when browsing the debug pages
+      if (request.getRequestURI().contains("ddl-debugger")) {
+         retval = false;
+      }
+
       return retval;
    }
 
