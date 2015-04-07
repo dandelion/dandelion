@@ -47,10 +47,10 @@ Note that all options are presented in the following format:
 |Comma-separated list of location keys. See the <<4-asset-locators, asset locators section>> for more information.
 
 |dev
-|webapp, webjar, jar, remote
+|webapp, webjar, classpath, jar, remote
 
 |prod
-|webapp, webjar, jar, remote
+|webapp, webjar, classpath, jar, remote
 
 .4+|[[opt-asset.processors]]*asset.processors*
 2+|List of asset processors globally enabled in the application
@@ -86,19 +86,19 @@ Note that all options are presented in the following format:
 |
 
 |prod
-|yes
-
-.4+|[[opt-asset.url.pattern]]*asset.url.pattern* TODO
-2+|Configure DataTables to use server-side processing. Note that the url attribute must be given in order to give DataTables a source to obtain the required data for each draw
-
-|Possible values
-|true \| false
-
-|Default dev
 |
 
-|Default prod
-|yes
+.4+|[[opt-asset.url.pattern]]*asset.url.pattern*
+2+|Servlet pattern to be used by the DandelionServlet to serve assets
+
+|Values
+|true \| false
+
+|dev
+|/dandelion-assets/
+
+|prod
+|/dandelion-assets/
 
 3+|*Versioning-related options*
 
@@ -115,43 +115,43 @@ Note that all options are presented in the following format:
 |auto
 
 .4+|[[opt-asset.versioning.strategy]]*asset.versioning.strategy*
-2+|Comma-separated list of CSS classes that should be applied to displayed rows. This sequence of CSS classes may be of any length, and DataTables will apply each class sequentially, looping when required.
+2+|Versioning strategy to be applied on assets when the versioning mode is `auto`
 
 |Values
 |content \| fixed
 
-|Default dev
+|dev
 |content
 
-|Default prod
+|prod
 |content
 
 .4+|[[opt-asset.fixed.version.type]]*asset.fixed.version.type*
-2+|Fixed version to be used for all assets when the `fixed` versioning is used
+2+|Type of fixed version to be used for all assets when the `fixed` versioning is selected
 
 |Values
-|number \| random \| date
+|string \| date
 
 |dev
-|
+|string
 
 |prod
-|
+|string
 
 .4+|[[opt-asset.fixed.version.value]]*asset.fixed.version.value*
-2+|Name of a theme to activate for the current table
+2+|Value of the version to be used for all assets when the `fixed` versioning is selected
 
 |Values
-|number \| random \| date
+|Any string when `asset.fixed.version.type` is set to `string`, a valid date format when `date` is selected
 
 |dev
-|
+|UNDEFINED_VERSION
 
 |prod
-|
+|UNDEFINED_VERSION
 
 .4+|[[opt-asset.fixed.version.datepattern]]*asset.fixed.version.datepattern*
-2+|Date pattern to be used when the `fixed` versioning strategy and the `date` type are specified
+2+|Date pattern to be used when the `fixed` versioning strategy and the `date` type are selected
 
 |Values
 |Any valid http://docs.oracle.com/javase/6/docs/api/java/text/SimpleDateFormat.html[date pattern]
@@ -164,76 +164,52 @@ Note that all options are presented in the following format:
 
 3+|*Caching-related options*
 
-.4+|[[opt-asset.caching]]*asset.caching* TODO
-2+|CSS class(es) to be applied to the container used for export links
+.4+|[[opt-asset.cache]]*cache*
+2+|Enable or disable caching
 
-|Possible values
-|
+|Values
+|true \| false
 
 |dev
-|
+|false
 
-|Default prod
-|yes
+|prod
+|true
 
 .4+|[[opt-cache.name]]*cache.name*
-2+|TODO
+2+|Name of the cache system to use
 
 |Values
-|Any string
+|The name of any available cache system
 
 |dev
-|
+|memory
 
 |prod
-|
+|memory
 
-.4+|[[opt-cache.asset.max.size]]*cache.asset.max.size*
-2+|Maximum number of asset/content entries stored in the configured cache system
-
-|Values
-|Any positive number
-
-|dev
-|50
-
-|prod
-|50
-
-.4+|[[opt-cache.request.max.size]]*cache.request.max.size*
+.4+|[[opt-cache.request.max.size]]*cache.max.size*
 2+|Maximum number of request/assets entries stored in the configured cache system
 
 |Values
 |Any positive number
 
 |dev
-|50
+|500
 
 |prod
-|50
-
-.4+|[[opt-cache.manager.name]]*cache.manager.name*
-2+|Java class name to use with filter-based exports in the XLS format
-
-|Values
-|Any class that implements com. github. dandelion. datatables. core. export. DatatablesExport
-
-|Default dev
-|
-
-|prod
-|
+|500
 
 .4+|[[opt-cache.configuration.location]]*cache.configuration.location*
-2+|TODO
+2+|Path to a configuration file used by a third-party cache system, e.g. ehcache.xml.
 
 |values
 |Any class that implements com. github. dandelion. datatables. core. export. DatatablesExport
 
-|Default dev
+|dev
 |
 
-|Default prod
+|prod
 |
 
 3+|*Bundle-related options*
@@ -272,7 +248,7 @@ Note that all options are presented in the following format:
 |
 
 |prod
-|yes
+|
 
 3+|*Tooling-related options*
 
@@ -353,7 +329,7 @@ Note that all options are presented in the following format:
 3+|*Misc configuration options*
 
 .4+|[[opt-encoding]]*encoding*
-2+| Encoding to be used by Dandelion TODO
+2+| Encoding to be used by Dandelion for several purposes: HTML injection, asset processing, ... 
 
 |Values
 |Any valid http://docs.oracle.com/javase/6/docs/api/java/nio/charset/Charset.html[charset] name
