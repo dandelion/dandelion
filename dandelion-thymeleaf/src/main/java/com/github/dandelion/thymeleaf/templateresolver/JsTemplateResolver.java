@@ -1,21 +1,21 @@
 /*
  * [The "BSD licence"]
- * Copyright (c) 2013-2015 Dandelion
+ * Copyright (c) 2013-2014 Dandelion
  * All rights reserved.
- * 
+ *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
  * are met:
- * 
+ *
  * 1. Redistributions of source code must retain the above copyright
  * notice, this list of conditions and the following disclaimer.
  * 2. Redistributions in binary form must reproduce the above copyright
  * notice, this list of conditions and the following disclaimer in the
  * documentation and/or other materials provided with the distribution.
- * 3. Neither the name of Dandelion nor the names of its contributors 
- * may be used to endorse or promote products derived from this software 
+ * 3. Neither the name of Dandelion nor the names of its contributors
+ * may be used to endorse or promote products derived from this software
  * without specific prior written permission.
- * 
+ *
  * THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
  * IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
  * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
@@ -27,49 +27,21 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.github.dandelion.core.web;
+package com.github.dandelion.thymeleaf.templateresolver;
+
+import org.thymeleaf.templateresolver.TemplateResolver;
+
+import com.github.dandelion.thymeleaf.resourceresolver.JsResourceResolver;
 
 /**
- * <p>
- * All web-related constants used in Dandelion.
- * </p>
  * 
  * @author Thibault Duchateau
- * @since 0.10.0
+ * @since 0.11.0
  */
-public final class WebConstants {
+public class JsTemplateResolver extends TemplateResolver {
 
-   /**
-    * Session attributes
-    */
-   public static final String DANDELION_SESSION_REQUESTATTRS = "dandelionRequestAttrs";
-
-   /**
-    * Request attributes
-    */
-   public static final String DANDELION_CONTEXT_ATTRIBUTE = "dandelionContext";
-   public static final String DANDELION_REQUEST_KEY = "dandelionRequestKey";
-
-   /**
-    * Request parameters
-    */
-   public static final String DANDELION_DEBUGGER = "ddl-debug";
-   public static final String DANDELION_DEBUGGER_PAGE = "ddl-debug-page";
-   public static final String DANDELION_RELOAD_BUNDLES = "ddl-reload-bundles";
-   public static final String DANDELION_CLEAR_STORAGE = "ddl-clear-storage";
-   public static final String DANDELION_CLEAR_CACHE = "ddl-clear-cache";
-
-   /**
-    * Request attributes/parameters
-    */
-   public static final String DANDELION_ASSET_FILTER_STATE = "dandelionAssetFilterState";
-
-   /**
-    * <p>
-    * Suppress default constructor for noninstantiability.
-    * </p>
-    */
-   private WebConstants() {
-      throw new AssertionError();
+   public JsTemplateResolver() {
+      super();
+      super.setResourceResolver(new JsResourceResolver());
    }
 }

@@ -31,6 +31,7 @@ package com.github.dandelion.core.web.handler.impl;
 
 import java.io.UnsupportedEncodingException;
 import java.util.Set;
+import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -44,7 +45,11 @@ import com.github.dandelion.core.asset.AssetDomPosition;
 import com.github.dandelion.core.asset.AssetQuery;
 import com.github.dandelion.core.html.AbstractHtmlTag;
 import com.github.dandelion.core.storage.BundleStorage;
+import com.github.dandelion.core.util.AssetUtils;
+import com.github.dandelion.core.util.DigestUtils;
 import com.github.dandelion.core.util.HtmlUtils;
+import com.github.dandelion.core.util.SessionUtils;
+import com.github.dandelion.core.web.RequestData;
 import com.github.dandelion.core.web.WebConstants;
 import com.github.dandelion.core.web.handler.AbstractHandlerChain;
 import com.github.dandelion.core.web.handler.HandlerContext;
@@ -127,6 +132,16 @@ public class AssetInjectionPostHandler extends AbstractHandlerChain {
    @Override
    public boolean handle(HandlerContext handlerContext) {
 
+      String requestKey = DigestUtils.md5Digest(UUID.randomUUID().toString());
+      RequestData requestData = new RequestData(handlerContext.getRequest());
+
+      // Stores request data in the corresponding session attribute for later
+      // use
+      SessionUtils.saveRequest(handlerContext.getRequest(), requestKey, requestData);
+
+      // Stores request idenfitier in the request attribute for later use
+      handlerContext.getRequest().setAttribute(WebConstants.DANDELION_REQUEST_KEY, requestKey);
+
       // Convert the response to a String in order to perform easier
       // replacements
       String html = new String(handlerContext.getResponseAsBytes());
@@ -149,6 +164,8 @@ public class AssetInjectionPostHandler extends AbstractHandlerChain {
       // Get all assets to be injected in the <body> section
       Set<Asset> assetsBody = new AssetQuery(handlerContext.getRequest(), handlerContext.getContext()).atPosition(
             AssetDomPosition.body).perform();
+
+      requestData.setMaxRequestCount(AssetUtils.filtersNotVendor(assetsBody).size());
 
       if (!assetsBody.isEmpty()) {
          StringBuilder htmlBody = new StringBuilder();

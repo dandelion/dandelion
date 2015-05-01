@@ -15,6 +15,7 @@ import com.github.dandelion.core.asset.Asset;
 import com.github.dandelion.core.asset.AssetType;
 import com.github.dandelion.core.storage.StorageEntry;
 import com.github.dandelion.core.util.AssetUtils;
+import com.github.dandelion.core.util.DigestUtils;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -46,6 +47,8 @@ public class AssetServletTest {
       asset.setConfigLocationKey("any-location-key");
       asset.setStorageKey(AssetUtils.generateStorageKey(asset, request));
       String contents = "CONTENT" + Math.random();
+
+      request.setAttribute(WebConstants.DANDELION_REQUEST_KEY, DigestUtils.md5Digest("anystring"));
 
       context.getAssetStorage().put(asset.getStorageKey(), new StorageEntry(asset, contents));
 

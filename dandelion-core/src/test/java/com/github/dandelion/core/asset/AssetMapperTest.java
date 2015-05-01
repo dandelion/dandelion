@@ -43,6 +43,7 @@ import com.github.dandelion.core.Context;
 import com.github.dandelion.core.DandelionException;
 import com.github.dandelion.core.config.DandelionConfig;
 import com.github.dandelion.core.storage.AssetStorageUnit;
+import com.github.dandelion.core.util.DigestUtils;
 import com.github.dandelion.core.web.WebConstants;
 
 import static java.util.Collections.singletonMap;
@@ -96,6 +97,7 @@ public class AssetMapperTest {
       request = new MockHttpServletRequest();
       request.setContextPath("/context");
       request.setAttribute(WebConstants.DANDELION_CONTEXT_ATTRIBUTE, context);
+      request.setAttribute(WebConstants.DANDELION_REQUEST_KEY, DigestUtils.md5Digest("anystring"));
       assetMapper = new AssetMapper(context, request);
 
       AssetStorageUnit asu = new AssetStorageUnit();
@@ -114,7 +116,7 @@ public class AssetMapperTest {
       assertThat(asset.getConfigLocation()).isEqualTo("locator/asset.js");
       assertThat(asset.getProcessedConfigLocation()).isEqualTo("locator/asset.js");
       assertThat(asset.getFinalLocation()).matches(
-            "/context/dandelion-assets/[a-f0-9]{32}/js/asset-name-any-version.js");
+            "/context/dandelion-assets/[a-f0-9]{32}/[a-f0-9]{32}/js/asset-name-any-version.js");
    }
 
    @Test
@@ -125,6 +127,7 @@ public class AssetMapperTest {
       request = new MockHttpServletRequest();
       request.setContextPath("/context");
       request.setAttribute(WebConstants.DANDELION_CONTEXT_ATTRIBUTE, context);
+      request.setAttribute(WebConstants.DANDELION_REQUEST_KEY, DigestUtils.md5Digest("anystring"));
       assetMapper = new AssetMapper(context, request);
 
       AssetStorageUnit asu = new AssetStorageUnit();
@@ -143,7 +146,7 @@ public class AssetMapperTest {
       assertThat(asset.getConfigLocation()).isEqualTo("locator/asset.js");
       assertThat(asset.getProcessedConfigLocation()).isEqualTo("locator/asset.js");
       assertThat(asset.getFinalLocation()).matches(
-            "/context/dandelion-assets/[a-f0-9]{32}/js/asset-name-any-version.js");
+            "/context/dandelion-assets/[a-f0-9]{32}/[a-f0-9]{32}/js/asset-name-any-version.js");
    }
 
    @Test
@@ -222,6 +225,7 @@ public class AssetMapperTest {
       request = new MockHttpServletRequest();
       request.setContextPath("/context");
       request.setAttribute(WebConstants.DANDELION_CONTEXT_ATTRIBUTE, context);
+      request.setAttribute(WebConstants.DANDELION_REQUEST_KEY, DigestUtils.md5Digest("anystring"));
       assetMapper = new AssetMapper(context, request);
 
       AssetStorageUnit asu = new AssetStorageUnit();
@@ -240,6 +244,6 @@ public class AssetMapperTest {
       assertThat(asset.getConfigLocationKey()).isEqualTo("classpath");
       assertThat(asset.getProcessedConfigLocation()).isEqualTo("locator/asset.js");
       assertThat(asset.getFinalLocation()).matches(
-            "/context/dandelion-assets/[a-f0-9]{32}/js/asset-name-[a-f0-9]{32}.js");
+            "/context/dandelion-assets/[a-f0-9]{32}/[a-f0-9]{32}/js/asset-name-[a-f0-9]{32}.js");
    }
 }

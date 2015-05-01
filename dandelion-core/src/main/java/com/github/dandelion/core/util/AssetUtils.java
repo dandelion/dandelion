@@ -192,6 +192,8 @@ public final class AssetUtils {
 
    public static String getAssetFinalLocation(HttpServletRequest request, Asset asset, String suffix) {
 
+      String requestKey = (String) request.getAttribute(WebConstants.DANDELION_REQUEST_KEY);
+      
       Context context = (Context) request.getAttribute(WebConstants.DANDELION_CONTEXT_ATTRIBUTE);
 
       StringBuilder finalLocation = new StringBuilder();
@@ -199,6 +201,8 @@ public final class AssetUtils {
       if (finalLocation.charAt(finalLocation.length() - 1) != '/') {
          finalLocation.append("/");
       }
+      finalLocation.append(requestKey);
+      finalLocation.append("/");
       finalLocation.append(asset.getStorageKey());
       finalLocation.append("/");
       finalLocation.append(asset.getType().name());
@@ -243,7 +247,7 @@ public final class AssetUtils {
       Context context = (Context) request.getAttribute(WebConstants.DANDELION_CONTEXT_ATTRIBUTE);
       String processedUrlPattern = context.getConfiguration().getAssetUrlPattern().startsWith("/") ? context
             .getConfiguration().getAssetUrlPattern().substring(1) : context.getConfiguration().getAssetUrlPattern();
-      Pattern p = Pattern.compile(processedUrlPattern + "([a-f0-9]{32})/");
+      Pattern p = Pattern.compile(processedUrlPattern + "[a-f0-9]{32}/([a-f0-9]{32})/");
       Matcher m = p.matcher(request.getRequestURL());
 
       String cacheKey = null;
@@ -254,6 +258,22 @@ public final class AssetUtils {
       return cacheKey;
    }
 
+   public static String extractRequestKeyFromRequest(HttpServletRequest request) {
+
+      Context context = (Context) request.getAttribute(WebConstants.DANDELION_CONTEXT_ATTRIBUTE);
+      String processedUrlPattern = context.getConfiguration().getAssetUrlPattern().startsWith("/") ? context
+            .getConfiguration().getAssetUrlPattern().substring(1) : context.getConfiguration().getAssetUrlPattern();
+      Pattern p = Pattern.compile(processedUrlPattern + "([a-f0-9]{32})/[a-f0-9]{32}/");
+      Matcher m = p.matcher(request.getRequestURL());
+
+      String cacheKey = null;
+      if (m.find()) {
+         cacheKey = m.group(1);
+      }
+
+      return cacheKey;
+   }
+   
    /**
     * <p>
     * Generates a MD5 hash using information of the provided {@link Asset}.
