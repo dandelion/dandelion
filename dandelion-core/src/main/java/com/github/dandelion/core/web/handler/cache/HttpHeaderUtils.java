@@ -36,7 +36,6 @@ import org.slf4j.LoggerFactory;
 
 import com.github.dandelion.core.config.Configuration;
 import com.github.dandelion.core.util.DigestUtils;
-import com.github.dandelion.core.util.Sha1Utils;
 import com.github.dandelion.core.web.handler.HandlerContext;
 
 /**
@@ -49,7 +48,7 @@ import com.github.dandelion.core.web.handler.HandlerContext;
  */
 public final class HttpHeaderUtils {
 
-   private static final Logger LOG = LoggerFactory.getLogger(Sha1Utils.class);
+   private static final Logger LOG = LoggerFactory.getLogger(HttpHeaderUtils.class);
 
    /**
     * <p>
@@ -72,6 +71,12 @@ public final class HttpHeaderUtils {
       Configuration configuration = context.getContext().getConfiguration();
 
       StringBuilder etagValue = new StringBuilder();
+
+      if (response == null || response.length == 0) {
+         LOG.warn("For some unknown reason, the response seems empty. The ETag won't be computed for this response.");
+         return etagValue.toString();
+      }
+
       try {
          etagValue.append("\"");
          etagValue.append(DigestUtils.md5Digest(new String(response, configuration.getEncoding())));
