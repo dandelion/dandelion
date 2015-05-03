@@ -49,7 +49,7 @@ import org.slf4j.LoggerFactory;
  * </p>
  * 
  * @author Thibault Duchateau
- * @since 0.11.0
+ * @since 1.0.0
  */
 public class JarLocationResourceScanner implements LocationResourceScanner {
 

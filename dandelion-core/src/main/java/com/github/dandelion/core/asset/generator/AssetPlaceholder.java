@@ -37,7 +37,7 @@ package com.github.dandelion.core.asset.generator;
  * 
  * @author Romain Lespinasse
  * @author Thibault Duchateau
- * @since 0.11.0
+ * @since 1.0.0
  * @see com.github.dandelion.core.asset.generator.AbstractAssetPlaceholderContent
  * @see com.github.dandelion.core.asset.generator.AbstractAssetPlaceholderContentGenerator
  */

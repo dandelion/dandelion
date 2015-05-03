@@ -42,7 +42,7 @@ import com.github.dandelion.core.web.WebConstants;
 /**
  * @author Romain Lespinasse
  * @author Thibault Duchateau
- * @since 0.11.0
+ * @since 1.0.0
  */
 public abstract class AbstractJsContentGenerator implements AssetContentGenerator {
 

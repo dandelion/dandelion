@@ -41,7 +41,7 @@ import com.github.dandelion.core.util.StringUtils;
  * 
  * @author Romain Lespinasse
  * @author Thibault Duchateau
- * @since 0.11.0
+ * @since 1.0.0
  */
 public class AssetContent {
 

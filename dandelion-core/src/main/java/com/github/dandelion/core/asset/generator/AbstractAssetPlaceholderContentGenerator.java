@@ -43,7 +43,7 @@ import org.slf4j.LoggerFactory;
  * 
  * @author Romain Lespinasse
  * @author Thibault Duchateau
- * @since 0.11.0
+ * @since 1.0.0
  */
 /**
  * 

@@ -38,7 +38,7 @@ import com.github.dandelion.core.asset.generator.AssetPlaceholder;
  * 
  * @author Romain Lespinasse
  * @author Thibault Duchateau
- * @since 0.11.0
+ * @since 1.0.0
  * @see com.github.dandelion.core.asset.generator.js.jquery.JQueryContent
  * @see com.github.dandelion.core.asset.generator.js.jquery.JQueryContentGenerator
  */

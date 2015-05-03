@@ -40,7 +40,7 @@ import com.github.dandelion.core.storage.BundleStorageUnit;
  * </p>
  * 
  * @author Thibault Duchateau
- * @since 0.11.0
+ * @since 1.0.0
  */
 public interface LoadingStrategy {
 

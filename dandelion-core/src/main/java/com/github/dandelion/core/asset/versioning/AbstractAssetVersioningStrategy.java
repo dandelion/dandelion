@@ -41,7 +41,7 @@ import com.github.dandelion.core.Context;
  * </p>
  * 
  * @author Thibault Duchateau
- * @since 0.11.0
+ * @since 1.0.0
  */
 public abstract class AbstractAssetVersioningStrategy implements AssetVersioningStrategy {
 

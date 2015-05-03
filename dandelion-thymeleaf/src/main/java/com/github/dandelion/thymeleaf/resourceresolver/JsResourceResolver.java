@@ -65,7 +65,7 @@ import com.github.dandelion.core.web.WebConstants;
  * </ol>
  * 
  * @author Thibault Duchateau
- * @since 0.11.0
+ * @since 1.0.0
  */
 public class JsResourceResolver implements IResourceResolver {
 

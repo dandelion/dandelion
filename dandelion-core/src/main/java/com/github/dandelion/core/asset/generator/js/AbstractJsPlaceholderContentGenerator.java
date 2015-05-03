@@ -44,7 +44,7 @@ import com.github.dandelion.core.scripting.ScriptingUtils;
 /**
  * @author Romain Lespinasse
  * @author Thibault Duchateau
- * @since 0.11.0
+ * @since 1.0.0
  */
 public abstract class AbstractJsPlaceholderContentGenerator<P extends AssetPlaceholder, C extends AbstractAssetPlaceholderContent<P>>
       extends AbstractAssetPlaceholderContentGenerator<P, C> {

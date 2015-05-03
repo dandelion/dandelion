@@ -45,7 +45,7 @@ import com.github.dandelion.core.DandelionException;
  * </p>
  * 
  * @author Thibault Duchateau
- * @since 0.11.0
+ * @since 1.0.0
  */
 public final class DigestUtils {
 

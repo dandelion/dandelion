@@ -38,7 +38,7 @@ import java.util.ServiceLoader;
  * Collection of utilities to ease working with {@link ServiceLoader}.
  * 
  * @author Thibault Duchateau
- * @since 0.11.0
+ * @since 1.0.0
  */
 public final class ServiceLoaderUtils {
 
