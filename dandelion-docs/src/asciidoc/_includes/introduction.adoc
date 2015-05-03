@@ -2,7 +2,7 @@
 
 === 1.1. What is Dandelion-Core?
 
-Dandelion-Core is the foundation of the Dandelion framework. It is mainly focused on static asset management (such as JavaScript or CSS), it includes the whole mechanics necessary to help developing web applications in JVM-based environments.
+Dandelion-Core is the foundation of the Dandelion framework. It includes the whole mechanics to handle static and dynamic web assets such as JavaScript or CSS.
 
 === 1.2. Features overview
 
@@ -20,8 +20,8 @@ All these topics will be addressed in this document.
 
 Dandelion-Core is mainly based on a http://docs.oracle.com/javaee/6/api/javax/servlet/Filter.html[Filter] which dynamically injects static assets into http://docs.oracle.com/javaee/6/api/javax/servlet/http/HttpServletResponse.html[HttpServletResponse]s, that is - HTML pages. Dandelion-Core is therefore considered as a _runtime solution_ (as opposed to _build time solutions_ provided by other frameworks/libraries).
 
-Dandelion-Core reads a set of bundle definitions, either embedded within existing components, directly provided by end-users or both, and represented in different formats (such as JSON or XML). Once these bundle definitions consumed, Dandelion-Core builds a directed acyclic graph of bundles (or _bundles graph_ later in this document) and attaches it to every requests made against the web application.
+Dandelion-Core reads a set of bundle definitions, either embedded within existing components, directly provided by end-users or both, and represented in the JSON format. Once these bundle definitions consumed, Dandelion-Core builds a directed acyclic graph of bundles (or _bundles graph_ later in this document) and binds it to every requests made against the web application.
 
 As soon as the end-user requests a bundle, using any of the provided ways (JSP taglib, http://www.thymeleaf.org/[Thymeleaf] dialect, ...), Dandelion-Core traverses the _bundle graph_ to extract all corresponding assets and then injects `<script>` ans `<link>` tags into the HTML page.
 
-Since Dandelion-Core have full control over the static assets, many actions can be performed such as asset versioning, browser caching, and many more.
+Since Dandelion-Core have full control over these assets, many actions can be performed such as asset versioning, browser caching, and many more.
