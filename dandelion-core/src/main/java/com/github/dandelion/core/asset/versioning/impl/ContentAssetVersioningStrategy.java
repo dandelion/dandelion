@@ -29,13 +29,19 @@
  */
 package com.github.dandelion.core.asset.versioning.impl;
 
+import java.util.UUID;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.github.dandelion.core.asset.Asset;
 import com.github.dandelion.core.asset.versioning.AbstractAssetVersioningStrategy;
 import com.github.dandelion.core.util.DigestUtils;
+import com.github.dandelion.core.util.StringUtils;
 
 /**
  * <p>
- * Versioning strategy that computes an HEX MD5 hash from the content of the
+ * Versioning strategy that computes an HEX MD5 hash from the contents of the
  * asset.
  * </p>
  * 
@@ -44,6 +50,8 @@ import com.github.dandelion.core.util.DigestUtils;
  */
 public class ContentAssetVersioningStrategy extends AbstractAssetVersioningStrategy {
 
+   private static final Logger LOG = LoggerFactory.getLogger(ContentAssetVersioningStrategy.class);
+
    @Override
    public String getName() {
       return "content";
@@ -51,9 +59,18 @@ public class ContentAssetVersioningStrategy extends AbstractAssetVersioningStrat
 
    @Override
    public String getAssetVersion(Asset asset) {
-      String content = getContext().getAssetStorage().get(asset.getStorageKey()).getContents();
-      String version = DigestUtils.md5Digest(content);
+      LOG.debug("Calculating version hash for the asset: {}", asset.toLog());
+      String contents = getContext().getAssetStorage().get(asset.getStorageKey()).getContents();
+
+      String version = null;
+      if (StringUtils.isBlank(contents)) {
+         LOG.warn("Asset {} has an empty contents. Using a random String for the hash", asset.toLog());
+         version = DigestUtils.md5Digest(UUID.randomUUID().toString());
+      }
+      else {
+         version = DigestUtils.md5Digest(contents);
+      }
+
       return version;
    }
-
 }

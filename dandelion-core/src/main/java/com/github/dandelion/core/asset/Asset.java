@@ -342,8 +342,10 @@ public class Asset implements Serializable {
       log.append(name);
       log.append("\" (type: ");
       log.append(type);
-      log.append(", version: ");
-      log.append(version);
+      log.append(", location: ");
+      log.append(configLocation);
+      log.append(", location key: ");
+      log.append(configLocationKey);
       log.append(")");
       return log.toString();
    }
