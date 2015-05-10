@@ -31,7 +31,6 @@ package com.github.dandelion.core.web.handler.impl;
 
 import java.io.UnsupportedEncodingException;
 import java.util.Set;
-import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -45,11 +44,7 @@ import com.github.dandelion.core.asset.AssetDomPosition;
 import com.github.dandelion.core.asset.AssetQuery;
 import com.github.dandelion.core.html.AbstractHtmlTag;
 import com.github.dandelion.core.storage.BundleStorage;
-import com.github.dandelion.core.util.AssetUtils;
-import com.github.dandelion.core.util.DigestUtils;
 import com.github.dandelion.core.util.HtmlUtils;
-import com.github.dandelion.core.util.SessionUtils;
-import com.github.dandelion.core.web.RequestData;
 import com.github.dandelion.core.web.WebConstants;
 import com.github.dandelion.core.web.handler.AbstractHandlerChain;
 import com.github.dandelion.core.web.handler.HandlerContext;
@@ -70,7 +65,9 @@ import com.github.dandelion.core.web.handler.HandlerContext;
 public class AssetInjectionPostHandler extends AbstractHandlerChain {
 
    private static final Logger LOG = LoggerFactory.getLogger(DebuggerPostHandler.class);
-
+   private static final String CLOSING_BODY_TAG = "</body>";
+   private static final String CLOSING_HEAD_TAG = "</head>";
+   
    @Override
    protected Logger getLogger() {
       return LOG;
@@ -132,16 +129,6 @@ public class AssetInjectionPostHandler extends AbstractHandlerChain {
    @Override
    public boolean handle(HandlerContext handlerContext) {
 
-      String requestKey = DigestUtils.md5Digest(UUID.randomUUID().toString());
-      RequestData requestData = new RequestData(handlerContext.getRequest());
-
-      // Stores request data in the corresponding session attribute for later
-      // use
-      SessionUtils.saveRequest(handlerContext.getRequest(), requestKey, requestData);
-
-      // Stores request idenfitier in the request attribute for later use
-      handlerContext.getRequest().setAttribute(WebConstants.DANDELION_REQUEST_KEY, requestKey);
-
       // Convert the response to a String in order to perform easier
       // replacements
       String html = new String(handlerContext.getResponseAsBytes());
@@ -157,15 +144,13 @@ public class AssetInjectionPostHandler extends AbstractHandlerChain {
             htmlHead.append(tag.toHtml());
             htmlHead.append('\n');
          }
-
-         html = html.replace("</head>", htmlHead + "\n</head>");
+         htmlHead.append(CLOSING_HEAD_TAG);
+         html = html.replace(CLOSING_HEAD_TAG, htmlHead);
       }
 
       // Get all assets to be injected in the <body> section
       Set<Asset> assetsBody = new AssetQuery(handlerContext.getRequest(), handlerContext.getContext()).atPosition(
             AssetDomPosition.body).perform();
-
-      requestData.setMaxRequestCount(AssetUtils.filtersNotVendor(assetsBody).size());
 
       if (!assetsBody.isEmpty()) {
          StringBuilder htmlBody = new StringBuilder();
@@ -174,7 +159,8 @@ public class AssetInjectionPostHandler extends AbstractHandlerChain {
             htmlBody.append(tag.toHtml());
             htmlBody.append('\n');
          }
-         html = html.replace("</body>", htmlBody + "</body>");
+         htmlBody.append(CLOSING_BODY_TAG);
+         html = html.replace(CLOSING_BODY_TAG, htmlBody);
       }
 
       // Once all requested assets injected, convert back to a byte array to
