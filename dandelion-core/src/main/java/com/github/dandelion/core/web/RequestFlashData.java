@@ -27,57 +27,61 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.github.dandelion.core.util;
+package com.github.dandelion.core.web;
 
+import java.io.Serializable;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import com.github.dandelion.core.web.RequestData;
-import com.github.dandelion.core.web.WebConstants;
-
 /**
+ * <p>
+ * Wrapper intended to store request attributes for limited time (120s by
+ * default).
+ * </p>
  * 
  * @author Thibault Duchateau
  * @since 1.0.0
  */
-public final class SessionUtils {
+public class RequestFlashData implements Serializable {
 
-   public static void saveRequest(HttpServletRequest request, String requestKey, RequestData requestData) {
-      getSessionAttribute(request).put(requestKey, requestData);
-   }
+   private static final long serialVersionUID = -1022931524402467694L;
+   private Map<String, Object> attributes;
+   private long expirationStartTime;
+   private int timeToLive;
 
-   public static RequestData getRequestData(HttpServletRequest request) {
-      String requestKey = AssetUtils.extractRequestKeyFromRequest(request);
-      RequestData rd = getSessionAttribute(request).get(requestKey);
-      return rd;
-   }
+   public RequestFlashData(HttpServletRequest request) {
 
-   public static void removeAttribute(HttpServletRequest request) {
-      String requestKey = AssetUtils.extractRequestKeyFromRequest(request);
-      getSessionAttribute(request).remove(requestKey);
-   }
+      this.expirationStartTime = System.currentTimeMillis();
+      this.timeToLive = 120;
 
-   @SuppressWarnings("unchecked")
-   public static Map<String, RequestData> getSessionAttribute(HttpServletRequest request) {
-      Map<String, RequestData> dandelionAttr = (Map<String, RequestData>) request.getSession().getAttribute(
-            WebConstants.DANDELION_SESSION_REQUESTATTRS);
-
-      if (dandelionAttr == null) {
-         dandelionAttr = new HashMap<String, RequestData>();
-         request.getSession().setAttribute(WebConstants.DANDELION_SESSION_REQUESTATTRS, dandelionAttr);
+      Map<String, Object> currentAttributes = new HashMap<String, Object>();
+      Enumeration<String> attrs = request.getAttributeNames();
+      while (attrs.hasMoreElements()) {
+         String attributeName = (String) attrs.nextElement();
+         currentAttributes.put(attributeName, request.getAttribute(attributeName));
       }
 
-      return dandelionAttr;
+      this.attributes = currentAttributes;
+   }
+
+   public Map<String, Object> getAttributes() {
+      return attributes;
    }
 
    /**
-    * <p>
-    * Suppress default constructor for noninstantiability.
-    * </p>
+    * Return whether this instance has expired depending on the amount of
+    * elapsed time since the instanciation.
     */
-   private SessionUtils() {
-      throw new AssertionError();
+   public boolean isExpired() {
+      return (this.expirationStartTime != 0 && (System.currentTimeMillis() - this.expirationStartTime > this.timeToLive * 1000));
+   }
+
+   @Override
+   public String toString() {
+      return "RequestData [attributes=" + attributes + ", expirationStartTime=" + expirationStartTime + ", timeToLive="
+            + timeToLive + "]";
    }
 }

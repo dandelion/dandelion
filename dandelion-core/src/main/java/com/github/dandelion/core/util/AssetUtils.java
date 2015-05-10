@@ -193,7 +193,7 @@ public final class AssetUtils {
    public static String getAssetFinalLocation(HttpServletRequest request, Asset asset, String suffix) {
 
       String requestKey = (String) request.getAttribute(WebConstants.DANDELION_REQUEST_KEY);
-      
+
       Context context = (Context) request.getAttribute(WebConstants.DANDELION_CONTEXT_ATTRIBUTE);
 
       StringBuilder finalLocation = new StringBuilder();
@@ -201,8 +201,10 @@ public final class AssetUtils {
       if (finalLocation.charAt(finalLocation.length() - 1) != '/') {
          finalLocation.append("/");
       }
-      finalLocation.append(requestKey);
-      finalLocation.append("/");
+      if (requestKey != null) {
+         finalLocation.append(requestKey);
+         finalLocation.append("/");
+      }
       finalLocation.append(asset.getStorageKey());
       finalLocation.append("/");
       finalLocation.append(asset.getType().name());
@@ -226,7 +228,6 @@ public final class AssetUtils {
     * configured {@link DandelionConfig#ASSET_URL_PATTERN}.
     * </p>
     * <p>
-    * <p>
     * For example, using {@code my-pattern} as a custom URL pattern and the
     * following request URL:
     * </p>
@@ -247,12 +248,27 @@ public final class AssetUtils {
       Context context = (Context) request.getAttribute(WebConstants.DANDELION_CONTEXT_ATTRIBUTE);
       String processedUrlPattern = context.getConfiguration().getAssetUrlPattern().startsWith("/") ? context
             .getConfiguration().getAssetUrlPattern().substring(1) : context.getConfiguration().getAssetUrlPattern();
-      Pattern p = Pattern.compile(processedUrlPattern + "[a-f0-9]{32}/([a-f0-9]{32})/");
-      Matcher m = p.matcher(request.getRequestURL());
+
+      Pattern patternWithRequestKey = Pattern.compile(".*" + processedUrlPattern + "[a-f0-9]{32}/[a-f0-9]{32}/.*");
+      Pattern patternWithoutRequestKey = Pattern.compile(".*" + processedUrlPattern + "[a-f0-9]{32}/.*");
+      Matcher matcherWithRequestKey = patternWithRequestKey.matcher(request.getRequestURI());
+      Matcher matcherWithoutRequestKey = patternWithoutRequestKey.matcher(request.getRequestURI());
+
+      Pattern capturingPattern = null;
+      Matcher capturingMatcher = null;
+      if (matcherWithRequestKey.matches()) {
+         capturingPattern = Pattern.compile(processedUrlPattern + "[a-f0-9]{32}/([a-f0-9]{32})/");
+         capturingMatcher = capturingPattern.matcher(request.getRequestURI());
+
+      }
+      else if (matcherWithoutRequestKey.matches()) {
+         capturingPattern = Pattern.compile(processedUrlPattern + "([a-f0-9]{32})/");
+         capturingMatcher = capturingPattern.matcher(request.getRequestURI());
+      }
 
       String cacheKey = null;
-      if (m.find()) {
-         cacheKey = m.group(1);
+      if (capturingMatcher.find()) {
+         cacheKey = capturingMatcher.group(1);
       }
 
       return cacheKey;
@@ -264,7 +280,7 @@ public final class AssetUtils {
       String processedUrlPattern = context.getConfiguration().getAssetUrlPattern().startsWith("/") ? context
             .getConfiguration().getAssetUrlPattern().substring(1) : context.getConfiguration().getAssetUrlPattern();
       Pattern p = Pattern.compile(processedUrlPattern + "([a-f0-9]{32})/[a-f0-9]{32}/");
-      Matcher m = p.matcher(request.getRequestURL());
+      Matcher m = p.matcher(request.getRequestURI());
 
       String cacheKey = null;
       if (m.find()) {
@@ -273,7 +289,7 @@ public final class AssetUtils {
 
       return cacheKey;
    }
-   
+
    /**
     * <p>
     * Generates a MD5 hash using information of the provided {@link Asset}.

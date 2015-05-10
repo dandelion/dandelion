@@ -88,6 +88,7 @@ public class OptionsDebugPage extends AbstractDebugPage {
       options.add(option(DandelionConfig.ASSET_LOCATIONS_RESOLUTION_STRATEGY.getName(),
             conf.getAssetLocationsResolutionStrategy()));
       options.add(option(DandelionConfig.ASSET_PROCESSORS.getName(), conf.getAssetProcessors()));
+      options.add(option(DandelionConfig.ASSET_JS_PROCESSING.getName() + " (Thymeleaf only)", conf.isAssetJsProcessingEnabled()));
       options.add(option(DandelionConfig.ASSET_JS_EXCLUDES.getName(), conf.getAssetJsExcludes()));
       options.add(option(DandelionConfig.ASSET_CSS_EXCLUDES.getName(), conf.getAssetCssExcludes()));
       options.add(option(DandelionConfig.ASSET_URL_PATTERN.getName(), conf.getAssetUrlPattern()));

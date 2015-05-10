@@ -42,8 +42,7 @@ import org.thymeleaf.context.WebContext;
 import com.github.dandelion.core.DandelionException;
 import com.github.dandelion.core.asset.Asset;
 import com.github.dandelion.core.util.AssetUtils;
-import com.github.dandelion.core.util.SessionUtils;
-import com.github.dandelion.core.web.RequestData;
+import com.github.dandelion.core.web.RequestFlashData;
 import com.github.dandelion.core.web.handler.AbstractHandlerChain;
 import com.github.dandelion.core.web.handler.HandlerContext;
 import com.github.dandelion.core.web.handler.cache.HttpHeader;
@@ -51,11 +50,12 @@ import com.github.dandelion.core.web.handler.cache.HttpHeaderUtils;
 import com.github.dandelion.thymeleaf.resourceresolver.JsResourceResolver;
 import com.github.dandelion.thymeleaf.templatemode.DandelionTemplateModeHandlers;
 import com.github.dandelion.thymeleaf.templateresolver.JsTemplateResolver;
+import com.github.dandelion.thymeleaf.util.SessionUtils;
 
 /**
  * <p>
- * Post-filtering request handler in charge of processing Javascript asset with
- * Thymeleaf expressions.
+ * Post-filtering request handler in charge of processing external Javascript
+ * assets with Thymeleaf expressions.
  * </p>
  * <p>
  * Only applies on "user assets" (i.e. non vendor).
@@ -64,14 +64,16 @@ import com.github.dandelion.thymeleaf.templateresolver.JsTemplateResolver;
  * @author Thibault Duchateau
  * @since 1.0.0
  */
-public class JsThymeleafPostHandler extends AbstractHandlerChain {
+public class ProcessJsPostHandler extends AbstractHandlerChain {
 
-   private static final Logger LOG = LoggerFactory.getLogger(JsThymeleafPostHandler.class);
+   private static final Logger LOG = LoggerFactory.getLogger(ProcessJsPostHandler.class);
 
    /**
     * Thymeleaf template engine.
     */
    private static TemplateEngine templateEngine;
+
+   private static Set<String> compatibleMimeTypes;
 
    /**
     * Initialisation of the template engine with the custom template mode.
@@ -84,6 +86,11 @@ public class JsThymeleafPostHandler extends AbstractHandlerChain {
       templateEngine = new TemplateEngine();
       templateEngine.addTemplateModeHandler(DandelionTemplateModeHandlers.DANDELION_JS);
       templateEngine.setTemplateResolver(templateResolver);
+
+      compatibleMimeTypes = new HashSet<String>();
+      compatibleMimeTypes.add("application/x-javascript");
+      compatibleMimeTypes.add("application/javascript");
+      compatibleMimeTypes.add("text/javascript");
    }
 
    @Override
@@ -98,7 +105,7 @@ public class JsThymeleafPostHandler extends AbstractHandlerChain {
 
    @Override
    public int getRank() {
-      return 1;
+      return 2;
    }
 
    @Override
@@ -107,18 +114,16 @@ public class JsThymeleafPostHandler extends AbstractHandlerChain {
       // Retrieves the content type from the filtered response
       String mimeType = handlerContext.getResponse().getContentType();
 
-      Set<String> compatible = new HashSet<String>();
-      compatible.add("application/x-javascript");
-      compatible.add("application/javascript");
-      compatible.add("text/javascript");
-      boolean compatibleMimeType = compatible.contains(mimeType);
+      boolean compatibleMimeType = compatibleMimeTypes.contains(mimeType);
 
       String servletUrlPattern = handlerContext.getContext().getConfiguration().getAssetUrlPattern()
             .replaceAll("/\\*", "");
       boolean matchesServletName = handlerContext.getRequest().getRequestURL().toString().contains(servletUrlPattern);
       LOG.trace("compatibleMimeType: {}, matchesServletName: {}", compatibleMimeType, matchesServletName);
 
-      return compatibleMimeType && matchesServletName;
+      boolean isJsProcessingEnabled = handlerContext.getContext().getConfiguration().isAssetJsProcessingEnabled();
+
+      return isJsProcessingEnabled && compatibleMimeType && matchesServletName;
    }
 
    @Override
@@ -128,20 +133,15 @@ public class JsThymeleafPostHandler extends AbstractHandlerChain {
       String cacheKey = AssetUtils.extractCacheKeyFromRequest(handlerContext.getRequest());
       Asset asset = handlerContext.getContext().getAssetStorage().get(cacheKey).getAsset();
 
+      // Update the current context with additional attributes
       WebContext ctx = new WebContext(handlerContext.getRequest(), handlerContext.getResponse(), handlerContext
             .getRequest().getServletContext(), handlerContext.getRequest().getLocale());
 
-      RequestData requestData = SessionUtils.getRequestData(handlerContext.getRequest());
+      RequestFlashData requestData = SessionUtils.getRequestData(handlerContext.getRequest());
 
-      // Once the request handled, let's increment a counter and check if the
-      // attribute can be removed from the session
-      requestData.incrementCount();
-      if (requestData.getRequestProcessingCount() >= requestData.getMaxRequestCount()) {
-         SessionUtils.removeAttribute(handlerContext.getRequest());
+      if (requestData != null) {
+         ctx.setVariables(requestData.getAttributes());
       }
-
-      // Transfer original request attributes to the Thymeleaf context
-      ctx.setVariables(requestData.getAttributes());
 
       // Process the Javascript asset
       String processed = templateEngine.process(asset.getName(), ctx);
@@ -161,6 +161,9 @@ public class JsThymeleafPostHandler extends AbstractHandlerChain {
       handlerContext.getResponse().setDateHeader(HttpHeader.EXPIRES.getName(), past.getTimeInMillis());
       handlerContext.getResponse().setHeader(HttpHeader.VARY.getName(), "Accept-Encoding");
 
+      // Clean session attributes
+      SessionUtils.cleanSessionAttributes(handlerContext.getRequest());
+
       // Override the response with the processed Javascript
       try {
          handlerContext.setResponseAsBytes(processed.getBytes(configuredEncoding));
@@ -169,6 +172,7 @@ public class JsThymeleafPostHandler extends AbstractHandlerChain {
          throw new DandelionException("Unable to encode the HTML page using the '" + configuredEncoding
                + "', which doesn't seem to be supported", e);
       }
+
       return false;
    }
 }

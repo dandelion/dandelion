@@ -73,6 +73,7 @@ public class Configuration {
    private boolean assetMinificationEnabled;
    private List<String> assetLocationsResolutionStrategy;
    private List<String> assetProcessors;
+   private boolean assetJsProcessingEnabled;
    private List<String> assetJsExcludes;
    private List<String> assetCssExcludes;
    private String assetUrlPattern;
@@ -135,6 +136,7 @@ public class Configuration {
       this.assetLocationsResolutionStrategy = PropertiesUtils
             .propertyAsList(readConfig(DandelionConfig.ASSET_LOCATIONS_RESOLUTION_STRATEGY));
       this.assetProcessors = PropertiesUtils.propertyAsList(readConfig(DandelionConfig.ASSET_PROCESSORS));
+      this.assetJsProcessingEnabled = Boolean.parseBoolean(readConfig(DandelionConfig.ASSET_JS_PROCESSING));
       this.assetJsExcludes = PropertiesUtils.propertyAsList(readConfig(DandelionConfig.ASSET_JS_EXCLUDES));
       this.assetCssExcludes = PropertiesUtils.propertyAsList(readConfig(DandelionConfig.ASSET_CSS_EXCLUDES));
       this.assetUrlPattern = getProcessedAssetUrlPattern(readConfig(DandelionConfig.ASSET_URL_PATTERN));
@@ -262,6 +264,10 @@ public class Configuration {
 
    public List<String> getAssetProcessors() {
       return this.assetProcessors;
+   }
+
+   public boolean isAssetJsProcessingEnabled() {
+      return assetJsProcessingEnabled;
    }
 
    public List<String> getAssetJsExcludes() {

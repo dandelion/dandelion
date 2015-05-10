@@ -1,6 +1,6 @@
 /*
  * [The "BSD licence"]
- * Copyright (c) 2013-2014 Dandelion
+ * Copyright (c) 2013-2015 Dandelion
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,61 +27,61 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.github.dandelion.core.web;
+package com.github.dandelion.thymeleaf.web.handler.impl;
 
-import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.github.dandelion.core.web.RequestFlashData;
+import com.github.dandelion.core.web.handler.AbstractHandlerChain;
+import com.github.dandelion.core.web.handler.HandlerContext;
+import com.github.dandelion.thymeleaf.util.SessionUtils;
 
 /**
+ * <p>
+ * Post-filtering request handler in charge of clearing the {@link HttpSession}
+ * from any Dandelion-related attributes.
+ * </p>
  * 
  * @author Thibault Duchateau
  * @since 1.0.0
  */
-public class RequestData {
+public class ClearSessionPostHandler extends AbstractHandlerChain {
 
-   private int maxRequestCount;
-   private int requestProcessingCount;
-   private Map<String, Object> attributes;
+   private static final Logger LOG = LoggerFactory.getLogger(ClearSessionPostHandler.class);
 
-   public RequestData(HttpServletRequest request) {
-
-      this.maxRequestCount = 0;
-      this.requestProcessingCount = 0;
-
-      Map<String, Object> currentAttributes = new HashMap<String, Object>();
-      Enumeration<String> attrs = request.getAttributeNames();
-      while (attrs.hasMoreElements()) {
-         String attributeName = (String) attrs.nextElement();
-         currentAttributes.put(attributeName, request.getAttribute(attributeName));
-      }
-      this.attributes = currentAttributes;
-   }
-
-   public Map<String, Object> getAttributes() {
-      return attributes;
-   }
-
-   public int getRequestProcessingCount() {
-      return requestProcessingCount;
-   }
-
-   public void setMaxRequestCount(int nbAssetBody) {
-      this.maxRequestCount = nbAssetBody;
-   }
-
-   public void incrementCount() {
-      this.requestProcessingCount++;
-   }
-
-   public int getMaxRequestCount() {
-      return maxRequestCount;
+   @Override
+   protected Logger getLogger() {
+      return LOG;
    }
 
    @Override
-   public String toString() {
-      return "RequestData [nbAssetBody=" + maxRequestCount + ", requestProcessingCount=" + requestProcessingCount + "]";
+   public boolean isAfterChaining() {
+      return true;
+   }
+
+   @Override
+   public int getRank() {
+      return 100;
+   }
+
+   @Override
+   public boolean isApplicable(HandlerContext handlerContext) {
+      return handlerContext.getContext().getConfiguration().isAssetJsProcessingEnabled();
+   }
+
+   @Override
+   public boolean handle(HandlerContext handlerContext) {
+
+      Map<String, RequestFlashData> attr = SessionUtils.getSessionAttributes(handlerContext.getRequest());
+      if (attr.values().isEmpty()) {
+         SessionUtils.removeSessionAttributes(handlerContext.getRequest());
+      }
+
+      return true;
    }
 }
