@@ -1,6 +1,6 @@
 /*
  * [The "BSD licence"]
- * Copyright (c) 2013-2015 Dandelion
+ * Copyright (c) 2013-2014 Dandelion
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,37 +27,37 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+package com.github.dandelion.core;
 
-package com.github.dandelion.core.bundle.loader.impl;
+import com.github.dandelion.core.bundle.loader.BundleLoader;
+import com.github.dandelion.core.bundle.loader.impl.DandelionBundleLoader;
+import com.github.dandelion.core.web.handler.debug.DebugMenu;
+import com.github.dandelion.core.web.handler.debug.StandardDebugMenu;
 
-import java.util.List;
+/**
+ * <p>
+ * Main Dandelion component which registers standard features.
+ * </p>
+ * 
+ * @author Thibault Duchateau
+ * @since 1.0.0
+ */
+public class CoreComponent implements Component {
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.github.dandelion.core.bundle.loader.AbstractBundleLoader;
-import com.github.dandelion.core.storage.BundleStorageUnit;
-
-public class ModuleAssetJsonLoader extends AbstractBundleLoader {
-
-   private static final Logger LOG = LoggerFactory.getLogger(ModuleAssetJsonLoader.class);
-
-   @Override
-   protected Logger getLogger() {
-      return LOG;
-   }
-
-   @Override
-   public String getPath() {
-      return "module";
-   }
+   public static final String COMPONENT_NAME = "ddl-core";
 
    @Override
    public String getName() {
-      return "module";
+      return COMPONENT_NAME;
    }
 
    @Override
-   protected void doCustomBundlePostProcessing(List<BundleStorageUnit> bundles) {
+   public BundleLoader getBundleLoader(Context context) {
+      return new DandelionBundleLoader(context, false);
+   }
+
+   @Override
+   public DebugMenu getDebugMenu() {
+      return new StandardDebugMenu();
    }
 }

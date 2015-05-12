@@ -103,7 +103,7 @@ public class DebuggerPostHandler extends AbstractHandlerChain {
          newResponse = responseAsString.getBytes(handlerContext.getContext().getConfiguration().getEncoding());
       }
       catch (Exception e) {
-         throw new DandelionException("An error occured when generating the \"" + debugPage + "\"debug page.", e);
+         throw new DandelionException("An error occured when generating the \"" + debugPage + "\" debug page.", e);
       }
 
       // The response is overriden with a new one containing the debug page

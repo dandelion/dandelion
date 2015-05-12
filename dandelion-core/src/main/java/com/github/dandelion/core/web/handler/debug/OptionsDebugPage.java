@@ -83,6 +83,9 @@ public class OptionsDebugPage extends AbstractDebugPage {
 
       List<Map<String, Object>> options = new ArrayList<Map<String, Object>>();
 
+      // Component-related options
+      options.add(option(DandelionConfig.COMPONENTS_STANDALONE.getName(), conf.getComponentsStandalone()));
+      
       // Asset-related options
       options.add(option(DandelionConfig.ASSET_MINIFICATION.getName(), conf.isAssetMinificationEnabled()));
       options.add(option(DandelionConfig.ASSET_LOCATIONS_RESOLUTION_STRATEGY.getName(),
@@ -118,6 +121,8 @@ public class OptionsDebugPage extends AbstractDebugPage {
       options.add(option(DandelionConfig.TOOL_GZIP.getName(), conf.isToolGzipEnabled()));
       options.add(option(DandelionConfig.TOOL_GZIP_MIME_TYPES.getName(), conf.getToolGzipMimeTypes()));
       options.add(option(DandelionConfig.TOOL_DEBUGGER.getName(), conf.isToolDebuggerEnabled()));
+      options.add(option(DandelionConfig.TOOL_ALERT_REPORTING.getName(), conf.isToolAlertReportingEnabled()));
+      options.add(option(DandelionConfig.TOOL_ALERT_REPORTING_MODE.getName(), conf.getToolAlertReportingMode()));
       options.add(option(DandelionConfig.TOOL_BUNDLE_RELOADING.getName(), conf.isToolBundleReloadingEnabled()));
 
       // Monitoring-related options

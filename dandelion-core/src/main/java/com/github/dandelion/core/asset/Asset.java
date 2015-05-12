@@ -35,7 +35,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.github.dandelion.core.asset.locator.AssetLocator;
-import com.github.dandelion.core.bundle.loader.impl.VendorBundleLoader;
 import com.github.dandelion.core.storage.AssetStorageUnit;
 
 /**

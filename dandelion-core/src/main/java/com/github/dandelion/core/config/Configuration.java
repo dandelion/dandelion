@@ -39,6 +39,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.github.dandelion.core.Context;
+import com.github.dandelion.core.reporting.ReportingType;
 import com.github.dandelion.core.util.PropertiesUtils;
 import com.github.dandelion.core.util.StringUtils;
 
@@ -69,6 +70,9 @@ public class Configuration {
    private String activeProfile;
    private String activeRawProfile;
 
+   // Component-related configurations
+   private List<String> componentsStandalone;
+   
    // Asset-related configurations
    private boolean assetMinificationEnabled;
    private List<String> assetLocationsResolutionStrategy;
@@ -99,6 +103,8 @@ public class Configuration {
 
    // Tooling-related configurations
    private boolean toolDebuggerEnabled;
+   private boolean toolAlertReportingEnabled;
+   private ReportingType toolAlertReportingMode;
    private boolean toolAssetPrettyPrintingEnabled;
    private boolean toolBundleReloadingEnabled;
    private boolean toolGzipEnabled;
@@ -131,6 +137,10 @@ public class Configuration {
       this.bundleIncludes = PropertiesUtils.propertyAsList(readConfig(DandelionConfig.BUNDLE_INCLUDES));
       this.bundleExcludes = PropertiesUtils.propertyAsList(readConfig(DandelionConfig.BUNDLE_EXCLUDES));
 
+      // Component-related configurations
+      this.componentsStandalone = PropertiesUtils
+            .propertyAsList(readConfig(DandelionConfig.COMPONENTS_STANDALONE));
+      
       // Assets-related configurations
       this.assetMinificationEnabled = Boolean.parseBoolean(readConfig(DandelionConfig.ASSET_MINIFICATION));
       this.assetLocationsResolutionStrategy = PropertiesUtils
@@ -165,6 +175,8 @@ public class Configuration {
 
       // Tooling-related configurations
       this.toolDebuggerEnabled = Boolean.parseBoolean(readConfig(DandelionConfig.TOOL_DEBUGGER));
+      this.toolAlertReportingEnabled = Boolean.parseBoolean(readConfig(DandelionConfig.TOOL_ALERT_REPORTING));
+      this.toolAlertReportingMode = ReportingType.valueOf(readConfig(DandelionConfig.TOOL_ALERT_REPORTING_MODE).toUpperCase());
       this.toolAssetPrettyPrintingEnabled = Boolean
             .parseBoolean(readConfig(DandelionConfig.TOOL_ASSET_PRETTY_PRINTING));
       this.toolBundleReloadingEnabled = Boolean.parseBoolean(readConfig(DandelionConfig.TOOL_BUNDLE_RELOADING));
@@ -238,12 +250,24 @@ public class Configuration {
       return this.activeRawProfile;
    }
 
+   public List<String> getComponentsStandalone() {
+      return componentsStandalone;
+   }
+
    public boolean isAssetMinificationEnabled() {
       return this.assetMinificationEnabled;
    }
 
    public boolean isToolDebuggerEnabled() {
       return this.toolDebuggerEnabled;
+   }
+
+   public boolean isToolAlertReportingEnabled() {
+      return toolAlertReportingEnabled;
+   }
+
+   public ReportingType getToolAlertReportingMode() {
+      return toolAlertReportingMode;
    }
 
    public boolean isToolAssetPrettyPrintingEnabled() {

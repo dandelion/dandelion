@@ -1,0 +1,35 @@
+<div class="page-header">
+  <h1>{{pageHeader}}</h1>
+</div>
+
+<p>This page reports all alerts corresponding to the current URI:</p>
+<h3>
+  <code>{{currentUri}}</code>
+</h3>
+
+<table id="alerts" class="table table-striped table-bordered" style="margin-top: 15px;">
+  <thead>
+    <tr>
+      <th>Alert type</th>
+      <th>Requested bundle</th>
+      <th>Suggested bundle</th>
+    </tr>
+  </thead>
+  <tbody>
+    {{#alerts}}
+    <tr>
+      <td>{{alertType}}</td>
+      <td>{{requestedBundle}}</td>
+      <td>{{#suggestions}}<span>Suggestion(s) found:</span>
+        <ul>
+          {{#suggestions}}
+          <li><a title="Click to toggle" onclick="toggle('{{suggestedBundle.bundle}}');">{{suggestedBundle.relativePath}}</a>
+            <div id="{{suggestedBundle.bundle}}" style="display: none;">
+              <pre style="margin-top: 5px;">{{suggestedRawBundle}}</pre>
+            </div></li> {{/suggestions}}
+        </ul>
+     {{/suggestions}}{{^suggestions}}No suggestion found{{/suggestions}}</td>
+    </tr>
+    {{/alerts}}
+  </tbody>
+</table>

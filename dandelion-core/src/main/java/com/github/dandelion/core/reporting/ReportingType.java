@@ -27,37 +27,32 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+package com.github.dandelion.core.reporting;
 
-package com.github.dandelion.core.bundle.loader.impl;
+/**
+ * 
+ * @author Thibault Duchateau
+ * @since 1.0.0
+ */
+public enum ReportingType {
 
-import java.util.List;
+   /**
+    * No alert will be reported.
+    */
+   NONE,
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+   /**
+    * An JavaScript error will be thrown in the browser console.
+    */
+   CONSOLE,
 
-import com.github.dandelion.core.bundle.loader.AbstractBundleLoader;
-import com.github.dandelion.core.storage.BundleStorageUnit;
+   /**
+    * A notification will be appear client-side.
+    */
+   NOTIFICATION,
 
-public class SubmoduleAssetJsonLoader extends AbstractBundleLoader {
-
-   private static final Logger LOG = LoggerFactory.getLogger(SubmoduleAssetJsonLoader.class);
-
-   @Override
-   protected Logger getLogger() {
-      return LOG;
-   }
-
-   @Override
-   public String getPath() {
-      return "module_with_submodule/submodule";
-   }
-
-   @Override
-   public String getName() {
-      return "submodule2";
-   }
-
-   @Override
-   protected void doCustomBundlePostProcessing(List<BundleStorageUnit> bundles) {
-   }
+   /**
+    * Same as CONSOLE + NOTIFICATION
+    */
+   ALL;
 }

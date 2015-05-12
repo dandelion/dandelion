@@ -28,7 +28,7 @@
         <thead>
           <tr>
             <th>Bundle</th>
-            <th>Type</th>
+            <th>Bundle loader</th>
             <th>Dependencies</th>
             <th>Path</th>
           </tr>
@@ -37,7 +37,7 @@
           {{#bundles}}
           <tr>
             <td>{{name}}</td>
-            <td class="text-center"><span class="label label-{{labelType}}">{{type}}</span></td>
+            <td class="text-center"><span class="label label-{{labelType}}">{{loader}}</span> <span class="label label-default">{{vendor}}</span></td>
             <td>{{dependencies}}</td>
             <td>{{relativePath}}</td>
           </tr>

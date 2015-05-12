@@ -10,12 +10,13 @@
   <div id="navbar" class="navbar-collapse collapse">
     <ul class="nav navbar-nav">
       <li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown"
-        role="button" aria-expanded="false">Quick actions<span class="caret"></span></a>
+        role="button" aria-expanded="false"><span class="glyphicon glyphicon-cog" aria-hidden="true"></span> Quick actions<span class="caret"></span></a>
         <ul class="dropdown-menu" role="menu">
           <li><a href="{{reloadBundleUrl}}">Reload bundle storage</a></li>
           <li><a href="{{clearStorageUrl}}">Clear asset storage</a></li>
           <li><a href="{{clearCacheUrl}}">Clear cache</a></li>
         </ul></li>
+        <li><a href="{{errorReportingUrl}}"><span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span> Alert reporting <span class="badge alert-danger">{{alertCount}}</span></a></li>
     </ul>
     <ul class="nav navbar-nav navbar-right">
       <li><a href="{{currentUri}}"><span class='glyphicon glyphicon-backward'></span> Back

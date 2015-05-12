@@ -30,7 +30,7 @@
 package com.github.dandelion.core.bundle.loader;
 
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -50,7 +50,7 @@ import com.github.dandelion.core.util.StringBuilderUtils;
  * </p>
  * <p>
  * The JSON definitions are scanned in the folder specified by the
- * {@link #getPath()} method.
+ * {@link #getScanningPath()} method.
  * </p>
  * 
  * @author Romain Lespinasse
@@ -59,21 +59,93 @@ import com.github.dandelion.core.util.StringBuilderUtils;
  */
 public abstract class AbstractBundleLoader implements BundleLoader {
 
-   protected Context context;
+   /**
+    * The Dandelion context.
+    */
+   protected final Context context;
+
+   /**
+    * Whether the bundle loader used in a standalone component.
+    */
+   protected final boolean usedStandalone;
+
+   public AbstractBundleLoader(Context context, boolean usedStandalone) {
+      this.context = context;
+      this.usedStandalone = usedStandalone;
+   }
+
+   /**
+    * @return the {@link Logger} bound to the actual implementation.
+    */
+   protected abstract Logger getLogger();
 
    @Override
-   public void initLoader(Context context) {
-      this.context = context;
+   public List<BundleStorageUnit> getVendorBundles() {
+
+      List<BundleStorageUnit> bundles = new ArrayList<BundleStorageUnit>();
+
+      if (!this.usedStandalone) {
+         bundles.addAll(loadVendorBundles());
+      }
+
+      // Bundle/asset post-processing
+      for (BundleStorageUnit bsu : bundles) {
+         bsu.setBundleLoaderOrigin(getName());
+         bsu.setVendor(true);
+         for (AssetStorageUnit asu : bsu.getAssetStorageUnits()) {
+            asu.setBundle(bsu.getName());
+            asu.setVendor(true);
+         }
+      }
+
+      return bundles;
    }
 
    @Override
-   public List<BundleStorageUnit> loadBundles() {
+   public List<BundleStorageUnit> getRegularBundles() {
+
+      List<BundleStorageUnit> bundles = new ArrayList<BundleStorageUnit>();
+      bundles.addAll(loadRegularBundles());
+
+      // Bundle/asset post-processing
+      for (BundleStorageUnit bsu : bundles) {
+         bsu.setBundleLoaderOrigin(getName());
+         for (AssetStorageUnit asu : bsu.getAssetStorageUnits()) {
+            asu.setBundle(bsu.getName());
+         }
+      }
+
+      return bundles;
+   }
+
+   private List<BundleStorageUnit> loadVendorBundles() {
+      getLogger().debug("Scanning vendor bundles in {}", getVendorBundlesPath());
+      return loadBundles(getVendorBundlesPath(), null);
+   }
+
+   private List<BundleStorageUnit> loadRegularBundles() {
+      Set<String> excludedPaths = new HashSet<String>();
+      excludedPaths.add(getVendorBundlesPath());
+      for (BundleLoader loader : context.getBundleLoaders()) {
+         if (loader instanceof AbstractBundleLoader) {
+            String path = ((AbstractBundleLoader) loader).getVendorBundlesPath();
+            if (!path.equalsIgnoreCase(getScanningPath())) {
+               excludedPaths.add(path);
+            }
+         }
+      }
+
+      getLogger().debug("Scanning vendor bundles in {}, by excluding {}", getRegularBundlesPath(), excludedPaths);
+      return loadBundles(getRegularBundlesPath(), excludedPaths);
+   }
+
+   private List<BundleStorageUnit> loadBundles(String bundleLocation, Set<String> excludedPaths) {
 
       List<BundleStorageUnit> bundles = new ArrayList<BundleStorageUnit>();
       LoadingStrategy jsonLoadingStrategy = new JsonBundleLoadingStrategy(context);
 
-      getLogger().debug("Scanning \"{}\" for JSON-formatted bundles...", getBundleLocation());
-      Set<String> resourcePaths = jsonLoadingStrategy.getResourcePaths(getBundleLocation(), getExcludedPaths());
+      getLogger().debug("Scanning \"{}\" for JSON-formatted bundles...", bundleLocation);
+      Set<String> resourcePaths = jsonLoadingStrategy.getResourcePaths(bundleLocation, excludedPaths);
       getLogger().debug("{} bundles selected", resourcePaths.size());
 
       if (!resourcePaths.isEmpty()) {
@@ -82,9 +154,9 @@ public abstract class AbstractBundleLoader implements BundleLoader {
       }
       else {
          getLogger().debug("No JSON-formatted bundle found in \"{}\". Trying with XML-formatted ones...",
-               getBundleLocation());
+               bundleLocation);
          LoadingStrategy xmlLoadingStrategy = new XmlBundleLoadingStrategy(context);
-         resourcePaths = xmlLoadingStrategy.getResourcePaths(getBundleLocation(), getExcludedPaths());
+         resourcePaths = xmlLoadingStrategy.getResourcePaths(bundleLocation, excludedPaths);
          if (!resourcePaths.isEmpty()) {
             List<BundleStorageUnit> bsus = xmlLoadingStrategy.mapToBundles(resourcePaths);
             bundles.addAll(bsus);
@@ -95,55 +167,32 @@ public abstract class AbstractBundleLoader implements BundleLoader {
       }
 
       if (resourcePaths.isEmpty()) {
-         getLogger().debug("No bundle found in {}", getBundleLocation());
+         getLogger().debug("No bundle found in {}", bundleLocation);
       }
-
-      getLogger().debug("Post processing bundles...");
-      postProcessBundles(bundles);
 
       return bundles;
    }
 
-   /**
-    * @return the {@link Logger} bound to the actual implementation.
-    */
-   protected abstract Logger getLogger();
-
-   /**
-    * @return the path in which the loader will scan for JSON files.
-    */
-   public abstract String getPath();
-
-   /**
-    * @return a set of paths to exclude during the resource scanning. Empty by
-    *         default.
-    */
-   public Set<String> getExcludedPaths() {
-      return Collections.emptySet();
+   private String getRegularBundlesPath() {
+      StringBuilder regularBundlesPath = new StringBuilder(getBundleBaseLocation());
+      regularBundlesPath.append(getScanningPath());
+      return regularBundlesPath.toString();
    }
 
-   private String getBundleLocation() {
+   private String getVendorBundlesPath() {
+      StringBuilder vendorBundlesPath = new StringBuilder(getBundleBaseLocation());
+      vendorBundlesPath.append(getScanningPath());
+      vendorBundlesPath.append("/vendor");
+      return vendorBundlesPath.toString();
+   }
+
+   private StringBuilder getBundleBaseLocation() {
 
       StringBuilder bundleBaseLocation = new StringBuilder(context.getConfiguration().getBundleLocation());
       if (StringBuilderUtils.isNotBlank(bundleBaseLocation)) {
-         bundleBaseLocation.append("/");
+         bundleBaseLocation.append('/');
       }
 
-      bundleBaseLocation.append(getPath());
-
-      return bundleBaseLocation.toString();
+      return bundleBaseLocation;
    }
-
-   @Override
-   public void postProcessBundles(List<BundleStorageUnit> bundles) {
-      for (BundleStorageUnit bsu : bundles) {
-         bsu.setOrigin(getName());
-         for (AssetStorageUnit asu : bsu.getAssetStorageUnits()) {
-            asu.setBundle(bsu.getName());
-         }
-      }
-      doCustomBundlePostProcessing(bundles);
-   }
-
-   protected abstract void doCustomBundlePostProcessing(List<BundleStorageUnit> bundles);
 }

@@ -38,8 +38,6 @@ import java.util.Map;
 import java.util.Set;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.github.dandelion.core.bundle.loader.impl.DandelionBundleLoader;
-import com.github.dandelion.core.bundle.loader.impl.VendorBundleLoader;
 import com.github.dandelion.core.storage.BundleStorage;
 import com.github.dandelion.core.storage.BundleStorageUnit;
 import com.github.dandelion.core.util.ResourceUtils;
@@ -88,11 +86,10 @@ public class BundleStorageDebugPage extends AbstractDebugPage {
                .entry("name", bsu.getName())
                .entry("dependencies", bsu.getDependencies())
                .entry("relativePath", bsu.getRelativePath())
-               .entry("type", bsu.getOrigin().equals(DandelionBundleLoader.LOADER_NAME) ? "user" : bsu.getOrigin())
-               .entry(
-                     "labelType",
-                     bsu.getOrigin().equals(DandelionBundleLoader.LOADER_NAME) ? "success" : bsu.getOrigin()
-                           .equalsIgnoreCase(VendorBundleLoader.LOADER_NAME) ? "primary" : "default").create());
+               .entry("loader", bsu.getBundleLoaderOrigin())
+               .entry("vendor", bsu.isVendor() ? "vendor" : "")
+               .entry("labelType", "success")
+               .create());
       }
 
       pageContext.put("number", context.getContext().getBundleStorage().getBundleDag().getVerticies().size());

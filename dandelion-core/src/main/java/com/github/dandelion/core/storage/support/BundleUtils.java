@@ -113,7 +113,7 @@ public final class BundleUtils {
 
          // Perform variable substitutions only if the user uses a
          // configuration file
-         if (context.getConfiguration().getProperties() != null) {
+         if (context != null && context.getConfiguration().getProperties() != null) {
             for (AssetStorageUnit asu : bsu.getAssetStorageUnits()) {
                Map<String, String> locations = asu.getLocations();
                for (Entry<String, String> locationEntry : asu.getLocations().entrySet()) {

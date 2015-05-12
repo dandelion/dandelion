@@ -27,53 +27,63 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.github.dandelion.core.bundle.loader.impl;
+package com.github.dandelion.core.web.handler.debug;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.io.IOException;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
-import com.github.dandelion.core.Context;
-import com.github.dandelion.core.bundle.loader.AbstractBundleLoader;
-import com.github.dandelion.core.storage.BundleStorageUnit;
+import javax.servlet.http.HttpServletRequest;
+
+import com.github.dandelion.core.asset.AssetQuery;
+import com.github.dandelion.core.reporting.Alert;
+import com.github.dandelion.core.util.ResourceUtils;
+import com.github.dandelion.core.web.handler.HandlerContext;
 
 /**
  * <p>
- * Bundle loader used to load {@link BundleStorageUnit}s defined by users inside
- * the {@code dandelion} folder (and all subfolders) of the classpath.
- * </p>
- * <p>
- * This loader is intended to load only "user bundles" and therefore all
- * scanning paths (handled by other loaders) are excluded from the resource
- * scanning.
+ * Debug page intended to report all existing alerts for the current
+ * {@link HttpServletRequest}.
  * </p>
  * 
- * @author Romain Lespinasse
  * @author Thibault Duchateau
- * @since 0.10.0
+ * @since 1.0.0
  */
-public class DandelionBundleLoader extends AbstractBundleLoader {
+public class AlertReportingDebugPage extends AbstractDebugPage {
 
-   public static final String LOADER_NAME = "dandelion";
-   public static final String SCANNING_PATH = "dandelion";
+   private static final String PAGE_ID = "alerts";
+   private static final String PAGE_NAME = "Alert reporting";
+   private static final String PAGE_LOCATION = "META-INF/resources/ddl-debugger/html/core-alert-reporting.html";
 
-   private static final Logger LOG = LoggerFactory.getLogger(DandelionBundleLoader.class);
-
-   public DandelionBundleLoader(Context context, boolean usedStandalone) {
-      super(context, usedStandalone);
+   @Override
+   public String getId() {
+      return PAGE_ID;
    }
 
    @Override
    public String getName() {
-      return LOADER_NAME;
+      return PAGE_NAME;
    }
 
    @Override
-   protected Logger getLogger() {
-      return LOG;
+   public String getTemplate(HandlerContext context) throws IOException {
+      return ResourceUtils.getContentFromInputStream(Thread.currentThread().getContextClassLoader()
+            .getResourceAsStream(PAGE_LOCATION));
+   }
+
+   protected Map<String, String> getCustomParameters(HandlerContext context) {
+      return Collections.emptyMap();
    }
 
    @Override
-   public String getScanningPath() {
-      return SCANNING_PATH;
+   protected Map<String, Object> getPageContext() {
+      Map<String, Object> pageContext = new HashMap<String, Object>();
+
+      Set<Alert> alerts = new AssetQuery(context.getRequest(), context.getContext()).alerts();
+      pageContext.put("alerts", alerts);
+
+      return pageContext;
    }
 }

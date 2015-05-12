@@ -42,16 +42,12 @@ import com.github.dandelion.core.Context;
 import com.github.dandelion.core.DandelionException;
 import com.github.dandelion.core.asset.Asset;
 import com.github.dandelion.core.asset.versioning.AbstractAssetVersioningStrategy;
-import com.github.dandelion.core.bundle.loader.BundleLoader;
-import com.github.dandelion.core.bundle.loader.impl.VendorBundleLoader;
 import com.github.dandelion.core.util.EnumUtils;
 import com.github.dandelion.core.util.StringUtils;
 
 /**
  * <p>
- * Versioning strategy that relies on a fixed version for all non-vendor assets,
- * i.e. assets loaded by all configured {@link BundleLoader} except the
- * {@link VendorBundleLoader}.
+ * Versioning strategy that relies on a fixed version for all non-vendor assets.
  * </p>
  * <p>
  * Some fixed version types already exist to ease the setup, such as

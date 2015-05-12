@@ -47,6 +47,7 @@ public class StandardDebugMenu implements DebugMenu {
       debugPages.add(new AssetStorageDebugPage());
       debugPages.add(new BundleStorageDebugPage());
       debugPages.add(new CacheDebugPage());
+      debugPages.add(new AlertReportingDebugPage());
       return debugPages;
    }
 }

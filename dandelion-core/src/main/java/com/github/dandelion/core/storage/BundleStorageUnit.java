@@ -69,7 +69,9 @@ public class BundleStorageUnit {
 
    private String relativePath;
 
-   private String origin;
+   private String bundleLoaderOrigin;
+
+   private boolean vendor;
 
    public BundleStorageUnit() {
    }
@@ -223,12 +225,20 @@ public class BundleStorageUnit {
       return isRoot() || isLeaf();
    }
 
-   public String getOrigin() {
-      return origin;
+   public String getBundleLoaderOrigin() {
+      return bundleLoaderOrigin;
    }
 
-   public void setOrigin(String origin) {
-      this.origin = origin;
+   public void setBundleLoaderOrigin(String bundleLoaderOrigin) {
+      this.bundleLoaderOrigin = bundleLoaderOrigin;
+   }
+
+   public boolean isVendor() {
+      return vendor;
+   }
+
+   public void setVendor(boolean vendor) {
+      this.vendor = vendor;
    }
 
    @Override

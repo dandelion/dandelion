@@ -29,6 +29,9 @@
  */
 package com.github.dandelion.core.storage;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -39,8 +42,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.github.dandelion.core.DandelionException;
+import com.github.dandelion.core.reporting.Alert;
+import com.github.dandelion.core.reporting.Alert.AlertType;
+import com.github.dandelion.core.reporting.Suggestion;
 import com.github.dandelion.core.storage.support.BundleDag;
+import com.github.dandelion.core.storage.support.BundleUtils;
 import com.github.dandelion.core.storage.support.TopologicalSorter;
+import com.github.dandelion.core.util.JsonUtils;
+import com.github.dandelion.core.util.ResourceUtils;
+import com.github.dandelion.core.util.scanner.ResourceScanner;
 
 /**
  * <p>
@@ -52,7 +62,8 @@ import com.github.dandelion.core.storage.support.TopologicalSorter;
  * <ul>
  * <li>check the consistency of {@link BundleStorageUnit}</li>
  * <li>build and fill the {@link BundleDag}</li>
- * <li>query the {@link BundleDag}</li>
+ * <li>query the {@link BundleDag} on the lookout for bundles</li>
+ * <li>query the {@link BundleDag} on the lookout for alerts</li>
  * </ul>
  * 
  * @author Thibault Duchateau
@@ -161,6 +172,16 @@ public class BundleStorage {
     */
    public Set<BundleStorageUnit> bundlesFor(String bundleName) {
       BundleStorageUnit bsu = bundleDag.getVertex(bundleName);
+      // if(bsu == null){
+      // System.out.println("=> " + bundleName + " : bsu null");
+      // }
+      // else if(bsu.getAssetStorageUnitNames() == null ||
+      // bsu.getAssetStorageUnitNames().isEmpty()) {
+      // System.out.println("=> " + bundleName + " : asus vide");
+      // }
+      // else {
+      // System.out.println("=> " + bundleName + " : bsu OK");
+      // }
 
       if (bsu != null) {
          Set<BundleStorageUnit> retval = null;
@@ -177,6 +198,91 @@ public class BundleStorage {
       }
 
       return Collections.emptySet();
+   }
+
+   public Set<Alert> alertsFor(String... requestedBundleNames) {
+
+      Set<Alert> errors = new HashSet<Alert>();
+
+      for (String requestedBundleName : requestedBundleNames) {
+         errors.addAll(alertsFor(requestedBundleName, requestedBundleNames));
+      }
+
+      return errors;
+   }
+
+   public Set<Alert> alertsFor(String requestedBundleName, String... requestedBundleNames) {
+      BundleStorageUnit bsu = bundleDag.getVertex(requestedBundleName);
+      Set<Alert> alerts = new HashSet<Alert>();
+      Alert alert = null;
+
+      // An alert is reported as "missing bundle" whether the requested bundle
+      // does not actually exist or if it has been added to the bundle storage
+      // via a dependency
+      if (bsu == null || bsu.getAssetStorageUnitNames() == null || bsu.getAssetStorageUnitNames().isEmpty()) {
+         alert = new Alert(requestedBundleName);
+         alert.setAlertType(AlertType.MISSING_BUNDLE);
+
+         alerts.addAll(findSuggestion(alert, alerts, requestedBundleName, requestedBundleNames));
+      }
+
+      if (alert != null) {
+         alerts.add(alert);
+      }
+
+      return alerts;
+   }
+
+   public Set<Alert> findSuggestion(Alert alert, Set<Alert> existingAlerts, String bundleName,
+         String... requestedBundleNames) {
+
+      Set<String> suggestions = null;
+      try {
+         LOG.trace("Scanning classpath for any suggestions with the name \"{}\" (exact match)", bundleName + ".json");
+         suggestions = ResourceScanner.findResourcePaths("dandelion", null, bundleName + ".json");
+      }
+      catch (IOException e) {
+         throw new DandelionException("Something went wrong while scanning files in \"/dandelion\"", e);
+      }
+
+      if (suggestions != null) {
+         for (String suggestion : suggestions) {
+
+            try {
+               Suggestion sug = new Suggestion();
+               String json = ResourceUtils.getContentFromInputStream(Thread.currentThread().getContextClassLoader()
+                     .getResourceAsStream(suggestion));
+
+               sug.setSuggestedRawBundle(json);
+
+               ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+               InputStream configFileStream = classLoader.getResourceAsStream(suggestion);
+               BundleStorageUnit suggestedBsu = null;
+               suggestedBsu = JsonUtils.read(configFileStream, BundleStorageUnit.class);
+               suggestedBsu.setRelativePath(suggestion);
+               BundleUtils.finalizeBundleConfiguration(suggestedBsu, null);
+
+               sug.setSuggestedBundle(suggestedBsu);
+               alert.addSuggestion(sug);
+
+               if (suggestedBsu != null && suggestedBsu.getDependencies() != null) {
+                  for (String dependency : suggestedBsu.getDependencies()) {
+                     if (!Arrays.asList(requestedBundleNames).contains(dependency)) {
+                        existingAlerts.addAll(alertsFor(dependency, requestedBundleNames));
+                     }
+                  }
+               }
+            }
+            catch (IOException e) {
+               throw new DandelionException("Unable to read JSON file at " + suggestion, e);
+            }
+         }
+      }
+      else {
+         LOG.trace("No suggestion found");
+      }
+
+      return existingAlerts;
    }
 
    public Set<BundleStorageUnit> bundlesFor(String... bundleNames) {
@@ -206,7 +312,8 @@ public class BundleStorage {
                bsu.setDependencies(rawBsu.getDependencies());
                bsu.setAssetStorageUnits(rawBsu.getAssetStorageUnits());
                bsu.setRelativePath(rawBsu.getRelativePath());
-               bsu.setOrigin(rawBsu.getOrigin());
+               bsu.setBundleLoaderOrigin(rawBsu.getBundleLoaderOrigin());
+               bsu.setVendor(rawBsu.isVendor());
                break;
             }
          }

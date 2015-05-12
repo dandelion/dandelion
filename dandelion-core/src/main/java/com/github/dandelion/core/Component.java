@@ -27,54 +27,52 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.github.dandelion.core.bundle.loader.impl;
+package com.github.dandelion.core;
 
-import java.util.List;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.github.dandelion.core.bundle.loader.AbstractBundleLoader;
-import com.github.dandelion.core.storage.AssetStorageUnit;
-import com.github.dandelion.core.storage.BundleStorageUnit;
+import com.github.dandelion.core.bundle.loader.BundleLoader;
+import com.github.dandelion.core.config.DandelionConfig;
+import com.github.dandelion.core.web.handler.debug.DebugMenu;
 
 /**
  * <p>
- * Bundle loader used to load bundles defined by users inside the
- * {@code dandelion/vendor} folder (and all subfolders) of the classpath.
+ * Interface for all Dandelion components.
  * </p>
+ * <p>
+ * A component must define:
+ * </p>
+ * <ul>
+ * <li>a logical <b>name</b> that is mainly used for logging purpose. It is also
+ * used to indicate whether the component must be used in standalone mode thanks
+ * to the {@link DandelionConfig#COMPONENTS_STANDALONE} configuration option</li>
+ * <li>a <b>bundle loader</b>, implementing the {@link BundleLoader} interface,
+ * that will tell Dandelion where to scan for bundles in the classpath</li>
+ * <li>(optional) a <b>debug menu</b>, implementing the {@link DebugMenu}
+ * interface, that will be automatically displayed in the Dandelion debugger</li>
+ * </ul>
  * 
  * @author Thibault Duchateau
- * @since 0.10.0
+ * @since 1.0.0
  */
-public class VendorBundleLoader extends AbstractBundleLoader {
+public interface Component {
 
-   private static final Logger LOG = LoggerFactory.getLogger(VendorBundleLoader.class);
+   /**
+    * @return the component name.
+    */
+   String getName();
 
-   public static final String LOADER_NAME = "vendor";
-   public static final String SCANNING_PATH = "dandelion/vendor";
+   /**
+    * <p>
+    * The {@link BundleLoader} used by the component.
+    * </p>
+    * 
+    * @param context
+    *           The Dandelion context.
+    * @return the bundle loader.
+    */
+   BundleLoader getBundleLoader(Context context);
 
-   @Override
-   public String getName() {
-      return LOADER_NAME;
-   }
-
-   @Override
-   public String getPath() {
-      return SCANNING_PATH;
-   }
-
-   @Override
-   protected Logger getLogger() {
-      return LOG;
-   }
-
-   @Override
-   protected void doCustomBundlePostProcessing(List<BundleStorageUnit> bundles) {
-      for (BundleStorageUnit bsu : bundles) {
-         for (AssetStorageUnit asu : bsu.getAssetStorageUnits()) {
-            asu.setVendor(true);
-         }
-      }
-   }
+   /**
+    * @return the debug menu of the component.
+    */
+   DebugMenu getDebugMenu();
 }

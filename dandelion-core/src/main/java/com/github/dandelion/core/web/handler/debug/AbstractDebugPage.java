@@ -34,11 +34,14 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.github.dandelion.core.asset.AssetQuery;
+import com.github.dandelion.core.reporting.Alert;
 import com.github.dandelion.core.util.UrlUtils;
 import com.github.dandelion.core.web.WebConstants;
 import com.github.dandelion.core.web.handler.HandlerContext;
@@ -121,6 +124,13 @@ public abstract class AbstractDebugPage implements DebugPage {
       StringBuilder reloadBundleUrl = new StringBuilder(currentUrlWithParams);
       UrlUtils.addParameter(reloadBundleUrl, WebConstants.DANDELION_RELOAD_BUNDLES);
       commonCtx.put("reloadBundleUrl", reloadBundleUrl);
+
+      StringBuilder alertReportingUrl = new StringBuilder(debuggerUrl);
+      UrlUtils.addParameter(alertReportingUrl, "ddl-debug-page", "alerts");
+      commonCtx.put("alertReportingUrl", alertReportingUrl);
+
+      Set<Alert> alerts = new AssetQuery(context.getRequest(), context.getContext()).alerts();
+      commonCtx.put("alertCount", alerts.size());
 
       List<Map<String, Object>> menusMap = new ArrayList<Map<String, Object>>();
       for (DebugMenu debugMenu : context.getContext().getDebugMenuMap().values()) {

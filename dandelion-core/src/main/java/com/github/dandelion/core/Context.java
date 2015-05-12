@@ -52,9 +52,8 @@ import com.github.dandelion.core.asset.processor.AssetProcessorManager;
 import com.github.dandelion.core.asset.versioning.AssetVersioningStrategy;
 import com.github.dandelion.core.bundle.loader.BundleLoader;
 import com.github.dandelion.core.bundle.loader.impl.DandelionBundleLoader;
-import com.github.dandelion.core.bundle.loader.impl.VendorBundleLoader;
-import com.github.dandelion.core.cache.RequestCache;
 import com.github.dandelion.core.cache.CacheManager;
+import com.github.dandelion.core.cache.RequestCache;
 import com.github.dandelion.core.cache.impl.MemoryRequestCache;
 import com.github.dandelion.core.config.Configuration;
 import com.github.dandelion.core.config.ConfigurationLoader;
@@ -93,6 +92,7 @@ public class Context {
 
    private static final Logger LOG = LoggerFactory.getLogger(Context.class);
 
+   private List<Component> components;
    private RequestCache requestCache;
    private Map<String, AssetProcessor> processorsMap;
    private Map<String, AssetVersioningStrategy> versioningStrategyMap;
@@ -101,7 +101,6 @@ public class Context {
    private List<BundleLoader> bundleLoaders;
    private AssetProcessorManager assetProcessorManager;
    private CacheManager assetCacheManager;
-
    private Map<String, AssetLocator> assetLocatorsMap;
    private BundleStorage bundleStorage;
    private AssetStorage assetStorage;
@@ -134,6 +133,7 @@ public class Context {
    public void init(FilterConfig filterConfig) {
 
       initConfiguration(filterConfig);
+      initComponents();
       initBundleLoaders();
       initAssetLocators();
       initRequestCache();
@@ -148,6 +148,20 @@ public class Context {
       initMBean(filterConfig);
       initHandlers();
       initDebugMenus();
+   }
+
+   public void initComponents() {
+      LOG.info("Scanning for components");
+
+      components = ServiceLoaderUtils.getProvidersAsList(Component.class);
+
+      Iterator<Component> i = components.iterator();
+      StringBuilder log = new StringBuilder(i.next().getName());
+      while (i.hasNext()) {
+         log.append(", ");
+         log.append(i.next().getName());
+      }
+      LOG.info("Found component(s): {}", log.toString());
    }
 
    /**
@@ -237,27 +251,25 @@ public class Context {
    public void initBundleLoaders() {
       LOG.info("Initializing bundle loaders");
 
-      ServiceLoader<BundleLoader> blServiceLoader = ServiceLoader.load(BundleLoader.class);
-
-      VendorBundleLoader vendorLoader = new VendorBundleLoader();
-      vendorLoader.initLoader(this);
-      DandelionBundleLoader dandelionLoader = new DandelionBundleLoader();
-      dandelionLoader.initLoader(this);
-
       bundleLoaders = new ArrayList<BundleLoader>();
 
-      // All vendor bundles must be loaded in first
-      bundleLoaders.add(vendorLoader);
-
-      // Then all bundles of the components present in the classpath
-      for (BundleLoader bl : blServiceLoader) {
-         bl.initLoader(this);
-         bundleLoaders.add(bl);
-         LOG.info("Found bundle loader: {}", bl.getName());
+      // First register all bundle loaders except DandelionBundleLoader
+      for (Component component : components) {
+         if (!component.getName().equalsIgnoreCase(CoreComponent.COMPONENT_NAME)) {
+            BundleLoader bundleLoader = component.getBundleLoader(this);
+            bundleLoaders.add(bundleLoader);
+            LOG.info("Found bundle loader: {}", bundleLoader.getName());
+         }
       }
 
-      // Finally all bundles created by users
-      bundleLoaders.add(dandelionLoader);
+      // Finally register the DandelionBundleLoader
+      for (Component component : components) {
+         if (component.getName().equalsIgnoreCase(CoreComponent.COMPONENT_NAME)) {
+            BundleLoader bundleLoader = component.getBundleLoader(this);
+            bundleLoaders.add(bundleLoader);
+            LOG.info("Found bundle loader: {}", bundleLoader.getName());
+         }
+      }
 
       Iterator<BundleLoader> i = bundleLoaders.iterator();
       StringBuilder log = new StringBuilder(i.next().getName());
@@ -383,11 +395,25 @@ public class Context {
       bundleStorage = new BundleStorage();
       List<BundleStorageUnit> allBundles = new ArrayList<BundleStorageUnit>();
 
+      // Vendor bundles
       for (BundleLoader bundleLoader : getBundleLoaders()) {
          LOG.debug("Loading bundles using the {}", bundleLoader.getClass().getSimpleName());
 
          // Load all bundles using the current BundleLoader
-         List<BundleStorageUnit> loadedBundles = bundleLoader.loadBundles();
+         List<BundleStorageUnit> loadedBundles = bundleLoader.getVendorBundles();
+         allBundles.addAll(loadedBundles);
+
+         LOG.debug("Found {} bundle{}: {}", loadedBundles.size(), loadedBundles.size() <= 1 ? "" : "s", loadedBundles);
+
+         bundleStorage.storeBundles(loadedBundles);
+      }
+
+      // Regular bundles
+      for (BundleLoader bundleLoader : getBundleLoaders()) {
+         LOG.debug("Loading bundles using the {}", bundleLoader.getClass().getSimpleName());
+
+         // Load all bundles using the current BundleLoader
+         List<BundleStorageUnit> loadedBundles = bundleLoader.getRegularBundles();
          allBundles.addAll(loadedBundles);
 
          LOG.debug("Found {} bundle{}: {}", loadedBundles.size(), loadedBundles.size() <= 1 ? "" : "s", loadedBundles);
@@ -519,13 +545,14 @@ public class Context {
    }
 
    public void initDebugMenus() {
-      List<DebugMenu> debugMenus = ServiceLoaderUtils.getProvidersAsList(DebugMenu.class);
 
       debugMenuMap = new HashMap<String, DebugMenu>();
       debugPageMap = new HashMap<String, DebugPage>();
-      for (DebugMenu debugMenu : debugMenus) {
-         debugMenuMap.put(debugMenu.getDisplayName().trim().toLowerCase(), debugMenu);
-         for (DebugPage debugPage : debugMenu.getPages()) {
+
+      for (Component component : components) {
+         DebugMenu componentDebugMenu = component.getDebugMenu();
+         debugMenuMap.put(componentDebugMenu.getDisplayName().trim().toLowerCase(), componentDebugMenu);
+         for (DebugPage debugPage : componentDebugMenu.getPages()) {
             debugPageMap.put(debugPage.getId(), debugPage);
          }
       }

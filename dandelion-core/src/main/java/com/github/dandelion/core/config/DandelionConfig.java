@@ -44,6 +44,9 @@ import com.github.dandelion.core.web.DandelionServlet;
  */
 public enum DandelionConfig {
 
+   // Component-related configurations
+   COMPONENTS_STANDALONE("components.standalone", "", ""),
+   
    // Asset-related configurations
    ASSET_MINIFICATION("asset.minification", "false", "true"), 
    ASSET_LOCATIONS_RESOLUTION_STRATEGY("asset.locations.resolution.strategy", "webapp,webjar,classpath,jar,remote", "webapp,webjar,classpath,jar,remote"), 
@@ -76,7 +79,9 @@ public enum DandelionConfig {
    // Tooling-related configurations
    TOOL_GZIP("tool.gzip", "false", "true"), 
    TOOL_GZIP_MIME_TYPES("tool.gzip.mime.types", "text/html,text/css,application/x-javascript,application/javascript,text/javascript,text/plain,text/xml,application/xhtml+xml,image/svg+xml", "text/html,text/css,application/x-javascript,application/javascript,text/javascript,text/plain,text/xml,application/xhtml+xml,image/svg+xml"), 
-   TOOL_DEBUGGER("tool.debugger", "true", "false"), 
+   TOOL_DEBUGGER("tool.debugger", "true", "false"),
+   TOOL_ALERT_REPORTING("tool.alert.reporting", "true", "true"),
+   TOOL_ALERT_REPORTING_MODE("tool.alert.reporting.mode", "all", "all"),
    TOOL_ASSET_PRETTY_PRINTING("tool.asset.pretty.printing", "true", "false"), 
    TOOL_BUNDLE_RELOADING("tool.bundle.reloading", "true", "false"),
 

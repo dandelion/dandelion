@@ -35,7 +35,6 @@ import java.util.Map;
 
 import com.github.dandelion.core.asset.AssetDomPosition;
 import com.github.dandelion.core.asset.AssetType;
-import com.github.dandelion.core.bundle.loader.impl.VendorBundleLoader;
 
 /**
  * <p>

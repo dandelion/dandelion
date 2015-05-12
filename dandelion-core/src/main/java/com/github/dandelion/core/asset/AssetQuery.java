@@ -41,6 +41,7 @@ import org.slf4j.LoggerFactory;
 import com.github.dandelion.core.Context;
 import com.github.dandelion.core.cache.CacheEntry;
 import com.github.dandelion.core.cache.RequestCache;
+import com.github.dandelion.core.reporting.Alert;
 import com.github.dandelion.core.storage.AssetStorageUnit;
 import com.github.dandelion.core.storage.BundleStorageUnit;
 import com.github.dandelion.core.util.AssetUtils;
@@ -149,6 +150,20 @@ public class AssetQuery {
       return filteredAssets;
    }
 
+   public Set<Alert> alerts() {
+
+      Set<Alert> errors = new HashSet<Alert>();
+      String currentUri = UrlUtils.getCurrentUri(request).toString();
+
+      LOG.debug("Checking errors for the request \"{}\"", currentUri);
+
+      String[] bundleNames = AssetRequestContext.get(this.request).getBundles(true);
+      errors.addAll(this.context.getBundleStorage().alertsFor(bundleNames));
+      
+      LOG.debug("-> Errors found: {}", errors.size());
+      return errors;
+   }
+   
    private Set<Asset> getFilteredAssets(Set<Asset> requestedAssets) {
 
       // First collect JS from the excluded bundles

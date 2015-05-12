@@ -27,46 +27,40 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+package com.github.dandelion.core.reporting;
 
-package com.github.dandelion.core.bundle.loader.impl;
-
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.github.dandelion.core.bundle.loader.AbstractBundleLoader;
 import com.github.dandelion.core.storage.BundleStorageUnit;
 
-public class ModuleWithSubmoduleAssetJsonLoader extends AbstractBundleLoader {
+/**
+ * 
+ * @author Thibault Duchateau
+ * @since 1.0.0
+ */
+public class Suggestion {
 
-   private static final Logger LOG = LoggerFactory.getLogger(ModuleWithSubmoduleAssetJsonLoader.class);
+   private String suggestedRawBundle;
+   private BundleStorageUnit suggestedBundle;
 
-   @Override
-   protected Logger getLogger() {
-      return LOG;
+   public String getSuggestedRawBundle() {
+      return suggestedRawBundle;
+   }
+
+   public void setSuggestedRawBundle(String suggestedRawBundle) {
+      this.suggestedRawBundle = suggestedRawBundle;
+   }
+
+   public BundleStorageUnit getSuggestedBundle() {
+      return suggestedBundle;
+   }
+
+   public void setSuggestedBundle(BundleStorageUnit suggestedBundle) {
+      this.suggestedBundle = suggestedBundle;
    }
 
    @Override
-   public String getPath() {
-      return "module_with_submodule";
+   public String toString() {
+      return "Suggestion [suggestedRawBundle=" + suggestedRawBundle + ", suggestedBundle=" + suggestedBundle + "]";
    }
-
-   @Override
-   public String getName() {
-      return "module_with_submodule";
-   }
-
-   @Override
-   public Set<String> getExcludedPaths() {
-      Set<String> excludedPaths = new HashSet<String>();
-      excludedPaths.add("module_with_submodule/submodule");
-      return excludedPaths;
-   }
-
-   @Override
-   protected void doCustomBundlePostProcessing(List<BundleStorageUnit> bundles) {
-   }
+   
+   
 }

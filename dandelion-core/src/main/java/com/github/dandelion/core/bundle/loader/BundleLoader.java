@@ -31,12 +31,11 @@ package com.github.dandelion.core.bundle.loader;
 
 import java.util.List;
 
-import com.github.dandelion.core.Context;
 import com.github.dandelion.core.storage.BundleStorageUnit;
 
 /**
  * <p>
- * SPI for all bundle loaders.
+ * Interface for all bundle loaders.
  * </p>
  * 
  * @author Romain Lespinasse
@@ -46,38 +45,34 @@ import com.github.dandelion.core.storage.BundleStorageUnit;
 public interface BundleLoader {
 
    /**
-    * <p>
-    * Initializes the loader by injecting the Dandelion {@link Context}.
-    * </p>
-    * 
-    * @param context
-    *           The Dandelion context.
-    */
-   void initLoader(Context context);
-
-   /**
     * @return the name of the loader, mainly used for logging.
     */
    String getName();
 
    /**
+    * @return the path used by the loader to scan for bundles in the classpath.
+    */
+   String getScanningPath();
+
+   /**
     * <p>
-    * Load bundles by scanning the classpath starting from the configured
-    * folder.
+    * Load the vendor bundles by scanning the classpath starting from the
+    * configured scanning path.
     * </p>
     * 
     * @return a list of {@link BundleStorageUnit} deserialized from the JSON
     *         files.
     */
-   List<BundleStorageUnit> loadBundles();
+   List<BundleStorageUnit> getVendorBundles();
 
    /**
     * <p>
-    * Allows to post-process the bundles once they have been loaded and parsed.
+    * Load the regular bundles by scanning the classpath starting from the
+    * configured scanning path.
     * </p>
     * 
-    * @param bundles
-    *           The loaded and parsed bundles.
+    * @return a list of {@link BundleStorageUnit} deserialized from the JSON
+    *         files.
     */
-   void postProcessBundles(List<BundleStorageUnit> bundles);
+   List<BundleStorageUnit> getRegularBundles();
 }
