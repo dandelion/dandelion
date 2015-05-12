@@ -67,6 +67,10 @@ body {
    background-color: #428bca;
 }
 
+.nav-header {
+   background-color: #dcdcdc;    
+}
+
 /*
  * Main content
  */
