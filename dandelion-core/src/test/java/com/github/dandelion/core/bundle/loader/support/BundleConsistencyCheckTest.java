@@ -1,7 +1,5 @@
 package com.github.dandelion.core.bundle.loader.support;
 
-import java.io.File;
-
 import org.hamcrest.CoreMatchers;
 import org.junit.After;
 import org.junit.Before;
@@ -13,7 +11,7 @@ import org.springframework.mock.web.MockFilterConfig;
 
 import com.github.dandelion.core.Context;
 import com.github.dandelion.core.DandelionException;
-import com.github.dandelion.core.config.StandardConfigurationLoader;
+import com.github.dandelion.core.config.DandelionConfig;
 
 // TODO move to loading strategy since required configuration is checked during the loading/parsing
 @Ignore
@@ -24,17 +22,14 @@ public class BundleConsistencyCheckTest {
 
    @Before
    public void setup() {
-      System.clearProperty(StandardConfigurationLoader.DANDELION_CONFIGURATION);
-      String path = new File("src/test/resources/bundle-loading/json/consistency-check/dandelion".replace("/",
-            File.separator)).getAbsolutePath();
-      System.setProperty(StandardConfigurationLoader.DANDELION_CONFIGURATION, path);
+      System.setProperty(DandelionConfig.BUNDLE_LOCATION.getName(), "bundle-loading/json/consistency-check");
    }
 
    @After
    public void teardown() {
-      System.clearProperty(StandardConfigurationLoader.DANDELION_CONFIGURATION);
+      System.clearProperty(DandelionConfig.BUNDLE_LOCATION.getName());
    }
-
+   
    @Test
    public void should_throw_an_exception_because_of_bundle_consistency() {
 
