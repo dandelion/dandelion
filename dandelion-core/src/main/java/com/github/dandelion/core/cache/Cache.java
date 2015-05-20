@@ -27,61 +27,69 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.github.dandelion.thymeleaf.web.handler.impl;
+package com.github.dandelion.core.cache;
 
-import java.util.Map;
-
-import javax.servlet.http.HttpSession;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.github.dandelion.core.web.RequestFlashData;
-import com.github.dandelion.core.web.handler.AbstractHandlerChain;
-import com.github.dandelion.core.web.handler.HandlerContext;
-import com.github.dandelion.thymeleaf.util.SessionUtils;
+import java.util.Set;
 
 /**
- * <p>
- * Post-filtering request handler in charge of clearing the {@link HttpSession}
- * from any Dandelion-related attributes.
- * </p>
  * 
  * @author Thibault Duchateau
  * @since 1.0.0
  */
-public class ClearSessionPostHandler extends AbstractHandlerChain {
+public interface Cache<K, V> {
 
-   private static final Logger LOG = LoggerFactory.getLogger(ClearSessionPostHandler.class);
+   /**
+    * <p>
+    * Insert a new value into the cache.
+    * </p>
+    * 
+    * @param key
+    *           the key of the new entry.
+    * @param value
+    *           the value to be cached.
+    */
+   void put(K key, V value);
 
-   @Override
-   protected Logger getLogger() {
-      return LOG;
-   }
+   /**
+    * <p>
+    * Retrieve a value from the cache.
+    * </p>
+    * 
+    * @param key
+    *           the key of the value to be retrieved.
+    * @return the retrieved value, or null if no value exists for the specified
+    *         key.
+    */
+   V get(K key);
 
-   @Override
-   public boolean isAfterChaining() {
-      return true;
-   }
+   /**
+    * <p>
+    * Clear the entire cache.
+    * </p>
+    */
+   void clear();
 
-   @Override
-   public int getRank() {
-      return 100;
-   }
+   /**
+    * <p>
+    * Clears a specific entry in the cache.
+    * </p>
+    * 
+    * @param key
+    *           the key of the entry to be cleared.
+    */
+   void clearKey(K key);
 
-   @Override
-   public boolean isApplicable(HandlerContext handlerContext) {
-      return handlerContext.getContext().getConfiguration().isAssetJsProcessingEnabled();
-   }
+   /**
+    * <p>
+    * Returns all the keys contained in this cache.
+    * </p>
+    *
+    * @return the complete set of cache keys.
+    */
+   Set<K> keySet();
 
-   @Override
-   public boolean handle(HandlerContext handlerContext) {
-
-      Map<String, RequestFlashData> attr = SessionUtils.getSessionAttributes(handlerContext.getRequest());
-      if (attr.values().isEmpty()) {
-         SessionUtils.removeSessionAttributes(handlerContext.getRequest());
-      }
-
-      return true;
-   }
+   /**
+    * @return the number of cached entries.
+    */
+   int size();
 }
