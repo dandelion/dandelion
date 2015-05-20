@@ -38,7 +38,7 @@ import javax.servlet.http.HttpServletRequest;
 
 /**
  * <p>
- * Wrapper intended to store request attributes for limited time (120s by
+ * Wrapper intended to store request attributes for limited time (30s by
  * default).
  * </p>
  * 
@@ -48,14 +48,14 @@ import javax.servlet.http.HttpServletRequest;
 public class RequestFlashData implements Serializable {
 
    private static final long serialVersionUID = -1022931524402467694L;
-   private Map<String, Object> attributes;
-   private long expirationStartTime;
-   private int timeToLive;
+   private final Map<String, Object> attributes;
+   private final long expirationStartTime;
+   private final int timeToLive;
 
    public RequestFlashData(HttpServletRequest request) {
 
       this.expirationStartTime = System.currentTimeMillis();
-      this.timeToLive = 120;
+      this.timeToLive = 30;
 
       Map<String, Object> currentAttributes = new HashMap<String, Object>();
       Enumeration<String> attrs = request.getAttributeNames();

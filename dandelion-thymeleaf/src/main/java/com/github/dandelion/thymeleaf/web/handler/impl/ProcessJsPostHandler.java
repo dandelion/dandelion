@@ -32,6 +32,7 @@ package com.github.dandelion.thymeleaf.web.handler.impl;
 import java.io.UnsupportedEncodingException;
 import java.util.Calendar;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
 import org.slf4j.Logger;
@@ -41,6 +42,7 @@ import org.thymeleaf.context.WebContext;
 
 import com.github.dandelion.core.DandelionException;
 import com.github.dandelion.core.asset.Asset;
+import com.github.dandelion.core.cache.Cache;
 import com.github.dandelion.core.util.AssetUtils;
 import com.github.dandelion.core.web.RequestFlashData;
 import com.github.dandelion.core.web.handler.AbstractHandlerChain;
@@ -50,7 +52,6 @@ import com.github.dandelion.core.web.handler.cache.HttpHeaderUtils;
 import com.github.dandelion.thymeleaf.resourceresolver.JsResourceResolver;
 import com.github.dandelion.thymeleaf.templatemode.DandelionTemplateModeHandlers;
 import com.github.dandelion.thymeleaf.templateresolver.JsTemplateResolver;
-import com.github.dandelion.thymeleaf.util.SessionUtils;
 
 /**
  * <p>
@@ -137,7 +138,9 @@ public class ProcessJsPostHandler extends AbstractHandlerChain {
       WebContext ctx = new WebContext(handlerContext.getRequest(), handlerContext.getResponse(), handlerContext
             .getRequest().getServletContext(), handlerContext.getRequest().getLocale());
 
-      RequestFlashData requestData = SessionUtils.getRequestData(handlerContext.getRequest());
+      // Retrieve the cached request attributes from cache
+      String requestKey = AssetUtils.extractRequestKeyFromRequest(handlerContext.getRequest());
+      RequestFlashData requestData = handlerContext.getContext().getRequestFlashDataCache().get(requestKey);
 
       if (requestData != null) {
          ctx.setVariables(requestData.getAttributes());
@@ -161,9 +164,16 @@ public class ProcessJsPostHandler extends AbstractHandlerChain {
       handlerContext.getResponse().setDateHeader(HttpHeader.EXPIRES.getName(), past.getTimeInMillis());
       handlerContext.getResponse().setHeader(HttpHeader.VARY.getName(), "Accept-Encoding");
 
-      // Clean session attributes
-      SessionUtils.cleanSessionAttributes(handlerContext.getRequest());
-
+      // Clean flash data cache
+      Cache<String, RequestFlashData> cache = handlerContext.getContext().getRequestFlashDataCache();
+      Iterator<String> iterator = cache.keySet().iterator();
+      while (iterator.hasNext()) {
+         String key = iterator.next();
+         if (cache.get(key).isExpired()) {
+            iterator.remove();
+         }
+      }
+      
       // Override the response with the processed Javascript
       try {
          handlerContext.setResponseAsBytes(processed.getBytes(configuredEncoding));

@@ -42,7 +42,6 @@ import com.github.dandelion.core.web.RequestFlashData;
 import com.github.dandelion.core.web.WebConstants;
 import com.github.dandelion.core.web.handler.AbstractHandlerChain;
 import com.github.dandelion.core.web.handler.HandlerContext;
-import com.github.dandelion.thymeleaf.util.SessionUtils;
 
 /**
  * <p>
@@ -95,8 +94,8 @@ public class SaveRequestPostHandler extends AbstractHandlerChain {
       // Create a new instance intended to be stored in session
       RequestFlashData requestData = new RequestFlashData(handlerContext.getRequest());
 
-      // Store request data in session for later use
-      SessionUtils.saveRequest(handlerContext.getRequest(), requestKey, requestData);
+      // Store request data in cache for later use
+      handlerContext.getContext().getRequestFlashDataCache().put(requestKey, requestData);
 
       // Store the generated request key as a request attribute for later use
       handlerContext.getRequest().setAttribute(WebConstants.DANDELION_REQUEST_KEY, requestKey);

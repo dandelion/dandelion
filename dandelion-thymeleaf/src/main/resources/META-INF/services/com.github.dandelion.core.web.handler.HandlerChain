@@ -1,4 +1,3 @@
 # Post-filtering request handlers
 com.github.dandelion.thymeleaf.web.handler.impl.SaveRequestPostHandler
 com.github.dandelion.thymeleaf.web.handler.impl.ProcessJsPostHandler
-com.github.dandelion.thymeleaf.web.handler.impl.ClearSessionPostHandler

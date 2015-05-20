@@ -52,8 +52,10 @@ import com.github.dandelion.core.asset.processor.AssetProcessorManager;
 import com.github.dandelion.core.asset.versioning.AssetVersioningStrategy;
 import com.github.dandelion.core.bundle.loader.BundleLoader;
 import com.github.dandelion.core.bundle.loader.impl.DandelionBundleLoader;
+import com.github.dandelion.core.cache.Cache;
 import com.github.dandelion.core.cache.CacheManager;
 import com.github.dandelion.core.cache.RequestCache;
+import com.github.dandelion.core.cache.StandardCache;
 import com.github.dandelion.core.cache.impl.MemoryRequestCache;
 import com.github.dandelion.core.config.Configuration;
 import com.github.dandelion.core.config.ConfigurationLoader;
@@ -65,9 +67,11 @@ import com.github.dandelion.core.storage.BundleStorage;
 import com.github.dandelion.core.storage.BundleStorageUnit;
 import com.github.dandelion.core.storage.impl.MemoryAssetStorage;
 import com.github.dandelion.core.util.ClassUtils;
+import com.github.dandelion.core.util.LibraryDetector;
 import com.github.dandelion.core.util.ServiceLoaderUtils;
 import com.github.dandelion.core.util.StringUtils;
 import com.github.dandelion.core.web.DandelionFilter;
+import com.github.dandelion.core.web.RequestFlashData;
 import com.github.dandelion.core.web.handler.HandlerChain;
 import com.github.dandelion.core.web.handler.debug.DebugMenu;
 import com.github.dandelion.core.web.handler.debug.DebugPage;
@@ -94,6 +98,7 @@ public class Context {
 
    private List<Component> components;
    private RequestCache requestCache;
+   private Cache<String, RequestFlashData> requestFlashDataCache;
    private Map<String, AssetProcessor> processorsMap;
    private Map<String, AssetVersioningStrategy> versioningStrategyMap;
    private AssetVersioningStrategy activeVersioningStrategy;
@@ -137,6 +142,7 @@ public class Context {
       initBundleLoaders();
       initAssetLocators();
       initRequestCache();
+      initRequestFlashDataCache();
       initAssetProcessors();
       initAssetVersioning();
 
@@ -282,7 +288,20 @@ public class Context {
 
    /**
     * <p>
-    * Initializes the service provider of {@link RequestCache} to use for
+    * Initialize the request flash data cache only if Thymeleaf is present in
+    * the classpath.
+    * </p>
+    */
+   public void initRequestFlashDataCache() {
+
+      if (LibraryDetector.isThymeleafAvailable()) {
+         requestFlashDataCache = new StandardCache<String, RequestFlashData>(100);
+      }
+   }
+
+   /**
+    * <p>
+    * Initialize the service provider of {@link RequestCache} to use for
     * caching.
     * </p>
     */
@@ -682,4 +701,7 @@ public class Context {
       return debugPageMap;
    }
 
+   public Cache<String, RequestFlashData> getRequestFlashDataCache() {
+      return requestFlashDataCache;
+   }
 }
