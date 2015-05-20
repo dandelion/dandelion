@@ -28,6 +28,7 @@
       <module>dandelion-thymeleaf</module>
       <module>dandelion-jsp</module>
       <module>dandelion-extras</module>
+      <module>dandelion-docs</module>
    </modules>
 
    <licenses>
