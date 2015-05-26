@@ -46,6 +46,24 @@
       <defaultGoal>process-resources</defaultGoal>
       <plugins>
          <plugin>
+            <groupId>de.saumya.mojo</groupId>
+            <artifactId>gem-maven-plugin</artifactId>
+            <version>1.0.5</version>
+            <configuration>
+               <!-- align JRuby version with AsciidoctorJ to avoid redundant downloading -->
+               <jrubyVersion>1.7.9</jrubyVersion>
+               <gemHome>${project.build.directory}/gems</gemHome>
+               <gemPath>${project.build.directory}/gems</gemPath>
+            </configuration>
+            <executions>
+               <execution>
+                  <goals>
+                     <goal>initialize</goal>
+                  </goals>
+               </execution>
+            </executions>
+         </plugin>
+         <plugin>
             <groupId>org.asciidoctor</groupId>
             <artifactId>asciidoctor-maven-plugin</artifactId>
             <version>${asciidoctor.version}</version>
@@ -108,7 +126,7 @@
                <dependency>
                   <groupId>org.asciidoctor</groupId>
                   <artifactId>asciidoctorj</artifactId>
-                  <version>1.5.1</version>
+                  <version>1.5.2</version>
                </dependency>
                <dependency>
                   <groupId>org.asciidoctor</groupId>
