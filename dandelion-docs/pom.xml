@@ -18,7 +18,7 @@
       <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
       <!-- Dependencies -->
-      <asciidoctor.version>1.5.0</asciidoctor.version>
+      <asciidoctor.version>1.5.2</asciidoctor.version>
       <asciidoctor-pdf.version>1.5.0.alpha.4</asciidoctor-pdf.version>
       <jruby.version>1.7.17</jruby.version>
 
@@ -71,21 +71,21 @@
                      </attributes>
                   </configuration>
                </execution>
-               <!-- <execution> -->
-               <!-- <id>output-pdf</id> -->
-               <!-- <phase>generate-resources</phase> -->
-               <!-- <goals> -->
-               <!-- <goal>process-asciidoc</goal> -->
-               <!-- </goals> -->
-               <!-- <configuration> -->
-               <!-- <backend>pdf</backend> -->
-               <!-- <requires> -->
-               <!-- <require>asciidoctor-pdf</require> -->
-               <!-- <require>asciidoctor-diagram</require> -->
-               <!-- </requires> -->
-               <!-- <sourceHighlighter>coderay</sourceHighlighter> -->
-               <!-- </configuration> -->
-               <!-- </execution> -->
+               <execution>
+                  <id>output-pdf</id>
+                  <phase>generate-resources</phase>
+                  <goals>
+                     <goal>process-asciidoc</goal>
+                  </goals>
+                  <configuration>
+                     <backend>pdf</backend>
+                     <requires>
+                        <require>asciidoctor-pdf</require>
+                        <require>asciidoctor-diagram</require>
+                     </requires>
+                     <sourceHighlighter>coderay</sourceHighlighter>
+                  </configuration>
+               </execution>
             </executions>
             <configuration>
                <sourceHighlighter>coderay</sourceHighlighter>
