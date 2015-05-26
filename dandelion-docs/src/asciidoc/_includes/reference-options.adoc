@@ -4,7 +4,7 @@ The table below lists all available <<12-configuration-options, configuration op
 
 Note that all options are presented in the following format:
 
-[cols="31,5,62"]
+[cols="31,5,64"]
 |===
 .4+|*option.name*
 2+|Description of the option
@@ -23,7 +23,7 @@ Note that all options are presented in the following format:
 ==== Reference
 
 .Configuration options reference
-[cols="31,5,62"]
+[cols="31,5,64"]
 |===
 
 3+|*Asset-related options*
