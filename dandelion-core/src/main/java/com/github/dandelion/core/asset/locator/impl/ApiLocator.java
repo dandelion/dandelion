@@ -34,6 +34,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.github.dandelion.core.asset.Asset;
 import com.github.dandelion.core.asset.generator.AssetContentGenerator;
 import com.github.dandelion.core.asset.locator.AbstractAssetLocator;
 import com.github.dandelion.core.storage.AssetStorageUnit;
@@ -75,7 +76,7 @@ public class ApiLocator extends AbstractAssetLocator {
    }
 
    @Override
-   protected String doGetContent(String location, Map<String, Object> parameters, HttpServletRequest request) {
+   protected String doGetContent(Asset asset, Map<String, Object> parameters, HttpServletRequest request) {
       return ((AssetContentGenerator) parameters.get(API_CONTENT_PARAM)).getAssetContent(request);
    }
 }

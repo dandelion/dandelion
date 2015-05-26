@@ -30,10 +30,15 @@
 
 package com.github.dandelion.core.asset.locator.impl;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Map;
 
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 
+import com.github.dandelion.core.DandelionException;
+import com.github.dandelion.core.asset.Asset;
 import com.github.dandelion.core.asset.locator.AbstractAssetLocator;
 import com.github.dandelion.core.storage.AssetStorageUnit;
 import com.github.dandelion.core.util.ResourceUtils;
@@ -42,12 +47,14 @@ import com.github.dandelion.core.util.UrlUtils;
 /**
  * <p>
  * Locator for assets that use {@code webapp} as a location key.
- * 
+ * </p>
  * <p>
  * Basically, a "webapp asset" is an asset stored inside the web application
  * folder.
+ * </p>
  * 
  * @author Romain Lespinasse
+ * @author Thibault Duchateau
  * @since 0.2.0
  */
 public class WebappLocator extends AbstractAssetLocator {
@@ -68,7 +75,28 @@ public class WebappLocator extends AbstractAssetLocator {
    }
 
    @Override
-   protected String doGetContent(String finalLocation, Map<String, Object> parameters, HttpServletRequest request) {
-      return ResourceUtils.getContentFromUrl(request, finalLocation, true);
+   protected String doGetContent(Asset asset, Map<String, Object> parameters, HttpServletRequest request) {
+
+      ServletContext sc = request.getServletContext();
+      InputStream in = null;
+      String contents = null;
+      try {
+         in = sc.getResourceAsStream(asset.getConfigLocation());
+         contents = ResourceUtils.getContentFromInputStream(in);
+      }
+      catch (IOException e) {
+         throw new DandelionException("The asset pointed at \"" + asset.getConfigLocation()
+               + "\" does not exist. Please correct its location before continuing.");
+      }
+      finally {
+         if (null != in)
+            try {
+               in.close();
+            }
+            catch (IOException ioe) {
+               // Should never happen
+            }
+      }
+      return contents;
    }
 }

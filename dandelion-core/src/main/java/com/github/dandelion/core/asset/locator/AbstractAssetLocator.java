@@ -117,7 +117,7 @@ public abstract class AbstractAssetLocator implements AssetLocator {
    public String getContent(Asset asset, HttpServletRequest request) {
 
       Map<String, Object> parameters = AssetRequestContext.get(request).getParameters(asset.getName());
-      String content = doGetContent(asset.getProcessedConfigLocation(), parameters, request);
+      String content = doGetContent(asset, parameters, request);
 
       // Apply variable replacement
       if (!parameters.isEmpty()) {
@@ -129,6 +129,6 @@ public abstract class AbstractAssetLocator implements AssetLocator {
       return content;
    }
 
-   protected abstract String doGetContent(String finalLocation, Map<String, Object> parameters,
+   protected abstract String doGetContent(Asset asset, Map<String, Object> parameters,
          HttpServletRequest request);
 }

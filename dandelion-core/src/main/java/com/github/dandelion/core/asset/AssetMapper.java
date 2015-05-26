@@ -127,6 +127,7 @@ public class AssetMapper {
       String location = assetLocator.getLocation(asu, request);
       LOG.trace("Locator '{}' will be applied on the asset {}.", assetLocator.getClass().getSimpleName(), asu.toLog());
       asset.setProcessedConfigLocation(location);
+      asset.setConfigLocation(asu.getLocations().get(locationKey));
 
       asset.setStorageKey(AssetUtils.generateStorageKey(asset, request));
 
@@ -146,7 +147,6 @@ public class AssetMapper {
 
       asset.setName(getName(asu, location));
       asset.setType(getType(asu, location));
-      asset.setConfigLocation(asu.getLocations().get(locationKey));
       asset.setVersion(getVersion(asset));
       asset.setFinalLocation(getFinalLocation(asset, assetLocator));
 

@@ -34,6 +34,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.github.dandelion.core.asset.Asset;
 import com.github.dandelion.core.asset.locator.AbstractAssetLocator;
 import com.github.dandelion.core.storage.AssetStorageUnit;
 import com.github.dandelion.core.util.ResourceUtils;
@@ -72,7 +73,7 @@ public class ClasspathLocator extends AbstractAssetLocator {
    }
 
    @Override
-   protected String doGetContent(String location, Map<String, Object> parameters, HttpServletRequest request) {
-      return ResourceUtils.getFileContentFromClasspath(location, false);
+   protected String doGetContent(Asset asset, Map<String, Object> parameters, HttpServletRequest request) {
+      return ResourceUtils.getFileContentFromClasspath(asset.getProcessedConfigLocation(), false);
    }
 }
