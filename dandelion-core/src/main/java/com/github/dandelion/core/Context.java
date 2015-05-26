@@ -316,7 +316,7 @@ public class Context {
          LOG.info("Found asset caching system: {}", ac.getCacheName());
       }
 
-      String desiredCacheName = configuration.getCacheName();
+      String desiredCacheName = configuration.getCacheName().toLowerCase().trim();
       if (StringUtils.isNotBlank(desiredCacheName)) {
          if (caches.containsKey(desiredCacheName)) {
             requestCache = caches.get(desiredCacheName);
@@ -330,12 +330,12 @@ public class Context {
 
       // If no caching system is detected, it defaults to memory caching
       if (requestCache == null) {
-         requestCache = new MemoryRequestCache();
+         requestCache = caches.get(MemoryRequestCache.CACHE_NAME);
       }
 
       requestCache.initCache(this);
 
-      LOG.info("Asset cache system initialized with: {}", requestCache.getCacheName());
+      LOG.info("Asset cache system initialized: {}", requestCache.getCacheName());
    }
 
    /**

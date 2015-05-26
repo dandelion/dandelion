@@ -30,6 +30,7 @@
 package com.github.dandelion.core.config;
 
 import com.github.dandelion.core.Beta;
+import com.github.dandelion.core.cache.impl.MemoryRequestCache;
 import com.github.dandelion.core.web.DandelionServlet;
 
 /**
@@ -66,9 +67,8 @@ public enum DandelionConfig {
 
    // Caching-related configurations
    CACHE("cache", "false", "true"), 
-   CACHE_NAME("cache.name", "dandelionCache", "dandelionCache"), 
+   CACHE_NAME("cache.name", MemoryRequestCache.CACHE_NAME, MemoryRequestCache.CACHE_NAME), 
    CACHE_MAX_SIZE("cache.max.size", "500", "500"), 
-//   CACHE_MANAGER_NAME("cache.manager.name", "", ""), 
    CACHE_CONFIGURATION_LOCATION("cache.configuration.location", "", ""),
 
    // Bundle-related configurations

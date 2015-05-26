@@ -54,6 +54,7 @@ import com.github.dandelion.core.cache.support.ConcurrentLruCache;
 public class MemoryRequestCache extends AbstractRequestCache {
 
    private static final Logger LOG = LoggerFactory.getLogger(MemoryRequestCache.class);
+   public static final String CACHE_NAME = "default";
 
    /**
     * The backend used to stored cache entries, based on the LRU policy.
@@ -73,7 +74,7 @@ public class MemoryRequestCache extends AbstractRequestCache {
 
    @Override
    public String getCacheName() {
-      return "default";
+      return CACHE_NAME;
    }
 
    @Override
