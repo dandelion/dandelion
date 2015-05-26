@@ -155,7 +155,7 @@ public class AssetQuery {
       Set<Alert> errors = new HashSet<Alert>();
       String currentUri = UrlUtils.getCurrentUri(request).toString();
 
-      LOG.debug("Checking errors for the request \"{}\"", currentUri);
+      LOG.debug("Checking for alerts for the request \"{}\"", currentUri);
 
       String[] bundleNames = AssetRequestContext.get(this.request).getBundles(true);
       errors.addAll(this.context.getBundleStorage().alertsFor(bundleNames));

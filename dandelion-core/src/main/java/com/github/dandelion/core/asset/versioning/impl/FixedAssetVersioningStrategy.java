@@ -52,7 +52,7 @@ import com.github.dandelion.core.util.StringUtils;
  * <p>
  * Some fixed version types already exist to ease the setup, such as
  * {@link FixedVersionType#DATE} in order to use a formatted date as version
- * number or {@link FixedVersionType#RANDOM} that uses {@code Math.random()}.
+ * number or {@link FixedVersionType#STRING}.
  * </p>
  * 
  * @author Thibault Duchateau

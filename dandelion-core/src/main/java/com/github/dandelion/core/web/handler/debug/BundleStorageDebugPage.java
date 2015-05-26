@@ -106,9 +106,6 @@ public class BundleStorageDebugPage extends AbstractDebugPage {
       for (BundleStorageUnit bsu : bsuRequest) {
          Map<String, Object> map = new HashMap<String, Object>();
          map.put("label", bsu.getName());
-         // map.put("assets",
-         // convertToD3Assets(bsu.getAssetStorageUnits(),
-         // new AssetMapper(context.getContext(), context.getRequest())));
          map.put("shape", "ellipse");
          String bundle = null;
          try {
