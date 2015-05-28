@@ -3,7 +3,6 @@ package com.github.dandelion.core.bundle.loader.support;
 import org.hamcrest.CoreMatchers;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -11,10 +10,9 @@ import org.springframework.mock.web.MockFilterConfig;
 
 import com.github.dandelion.core.Context;
 import com.github.dandelion.core.DandelionException;
+import com.github.dandelion.core.asset.locator.impl.ApiLocator;
 import com.github.dandelion.core.config.DandelionConfig;
 
-// TODO move to loading strategy since required configuration is checked during the loading/parsing
-@Ignore
 public class BundleConsistencyCheckTest {
 
    @Rule
@@ -22,7 +20,7 @@ public class BundleConsistencyCheckTest {
 
    @Before
    public void setup() {
-      System.setProperty(DandelionConfig.BUNDLE_LOCATION.getName(), "bundle-loading/json/consistency-check");
+      System.setProperty(DandelionConfig.BUNDLE_LOCATION.getName(), "bundle-loader/consistency-check");
    }
 
    @After
@@ -31,7 +29,7 @@ public class BundleConsistencyCheckTest {
    }
    
    @Test
-   public void should_throw_an_exception_because_of_bundle_consistency() {
+   public void should_throw_an_exception_because_of_bundle_inconsistency() {
 
       exception.expect(DandelionException.class);
 
@@ -56,6 +54,12 @@ public class BundleConsistencyCheckTest {
 
       exception.expectMessage(CoreMatchers.containsString("Missing extension"));
       exception.expectMessage("[missing-extension] The extension is required in all locations.");
+
+      exception.expectMessage(CoreMatchers.containsString("Missing type"));
+      exception.expectMessage("[bundle-with-error] Assets configured with the \"" + ApiLocator.LOCATION_KEY + "\" location key must have an explicit type");
+      
+      exception.expectMessage(CoreMatchers.containsString("Missing name"));
+      exception.expectMessage("[bundle-with-error] Assets configured with the \"" + ApiLocator.LOCATION_KEY + "\" location key must have an explicit name");
 
       new Context(new MockFilterConfig());
    }

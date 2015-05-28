@@ -29,7 +29,6 @@
  */
 package com.github.dandelion.core.storage.support;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -38,6 +37,7 @@ import org.slf4j.LoggerFactory;
 
 import com.github.dandelion.core.Context;
 import com.github.dandelion.core.asset.AssetType;
+import com.github.dandelion.core.asset.locator.impl.ApiLocator;
 import com.github.dandelion.core.storage.AssetStorageUnit;
 import com.github.dandelion.core.storage.BundleStorageUnit;
 import com.github.dandelion.core.util.BundleStorageLogBuilder;
@@ -58,32 +58,113 @@ public final class BundleUtils {
 
    /**
     * <p>
-    * Performs several initializations on {@link BundleStorageUnit} in order for
-    * them to be consistent before building the {@link BundleDag}.
+    * Performs several checks on the passed {@link BundleStorageUnit} and
+    * buffers errors in the {@link BundleStorageLogBuilder}.
     * </p>
     * 
-    * @param loadedBundles
-    * @param context
+    * @param bsu
+    *           The bundle to check.
+    * @param log
+    *           The builder in which errors are buffered.
+    * @return {@code true} is the bundle is valid, {@code false} otherwise.
     */
-   public static void finalizeBundleConfiguration(List<BundleStorageUnit> loadedBundles, Context context) {
+   public static boolean isValid(BundleStorageUnit bsu, BundleStorageLogBuilder log) {
 
-      LOG.debug("Finishing bundles configuration...");
+      boolean isValid = true;
 
-      for (BundleStorageUnit bsu : loadedBundles) {
-         finalizeBundleConfiguration(bsu, context);
+      // Check that the bundle contains at least one asset
+      if (bsu.getAssetStorageUnits() == null || bsu.getAssetStorageUnits().isEmpty()) {
+         log.error("- Empty bundle", "[" + bsu.getName() + "] The bundle \"" + bsu.getName()
+               + "\" is empty. You would better remove it.");
+         isValid = false;
       }
+
+      // Check that every asset of every bundle contains at least one
+      // locationKey/location pair because both name and type will be deducted
+      // from it
+      for (AssetStorageUnit asu : bsu.getAssetStorageUnits()) {
+
+         // Check locations
+         if (asu.getLocations().isEmpty()) {
+            log.error("- Missing asset location(s)", "[" + bsu.getName()
+                  + "] The bundle contain asset with no location whereas it is required.");
+            isValid = false;
+         }
+         else {
+            for (String locationKey : asu.getLocations().keySet()) {
+
+               String rawLocation = asu.getLocations().get(locationKey);
+
+               if (StringUtils.isBlank(locationKey)) {
+                  log.error(
+                        "- Missing location key",
+                        "["
+                              + bsu.getName()
+                              + "] One of the assets contained in this bundle has a location with no location key. Please correct it before continuing.");
+                  isValid = false;
+               }
+
+               if (StringUtils.isBlank(rawLocation)) {
+                  log.error("- Missing asset location", "[" + bsu.getName()
+                        + "] One of the assets contained in the bundle \"" + bsu.getName()
+                        + "\" has an empty location. Please correct it before continuing.");
+                  isValid = false;
+               }
+
+               // For all locations except api
+               if (!locationKey.toLowerCase().trim().equals(ApiLocator.LOCATION_KEY)) {
+                  // If the type is not explicitely declared, it must be
+                  // inferred from the location
+                  if (asu.getType() == null) {
+                     boolean extensionNotFound = true;
+                     for (AssetType assetType : AssetType.values()) {
+                        if (rawLocation.toLowerCase().endsWith("." + assetType.toString())) {
+                           extensionNotFound = false;
+                           break;
+                        }
+                     }
+                     if (extensionNotFound) {
+                        log.error("- Missing extension", "[" + bsu.getName()
+                              + "] The extension is required in all locations.");
+                        isValid = false;
+                     }
+                  }
+               }
+
+               // Special checks for api locations
+               if (locationKey.toLowerCase().trim().equals(ApiLocator.LOCATION_KEY)) {
+
+                  // The asset name is required
+                  if (StringUtils.isBlank(asu.getName())) {
+                     log.error("- Missing name", "[" + bsu.getName() + "] Assets configured with the \""
+                           + ApiLocator.LOCATION_KEY + "\" location key must have an explicit name");
+                     isValid = false;
+                  }
+
+                  // The asset type is required
+                  if (asu.getType() == null) {
+                     log.error("- Missing type", "[" + bsu.getName() + "] Assets configured with the \""
+                           + ApiLocator.LOCATION_KEY + "\" location key must have an explicit type");
+                     isValid = false;
+                  }
+               }
+            }
+         }
+      }
+
+      return isValid;
    }
 
    /**
     * <p>
     * Performs several initializations on {@link BundleStorageUnit} in order for
-    * them to be consistent before building the {@link BundleDag}.
+    * them to be consistent before feeding the {@link BundleDag}.
     * </p>
     * 
     * @param loadedBundles
     * @param context
     */
-   public static void finalizeBundleConfiguration(BundleStorageUnit bsu, Context context) {
+   public static void finalize(BundleStorageUnit bsu, Context context) {
 
       LOG.trace("Finalizing configuration of bundle \"{}\"", bsu);
 
@@ -98,6 +179,7 @@ public final class BundleUtils {
       if (bsu.getAssetStorageUnits() != null) {
 
          for (AssetStorageUnit asu : bsu.getAssetStorageUnits()) {
+
             String firstFoundLocation = asu.getLocations().values().iterator().next();
             if (StringUtils.isBlank(asu.getName())) {
                String extractedName = PathUtils.extractLowerCasedName(firstFoundLocation);
@@ -109,6 +191,12 @@ public final class BundleUtils {
                asu.setType(extractedType);
                LOG.trace("Type of the asset extracted from its first location: \"{}\"", extractedType);
             }
+            
+            for(Entry<String, String> entry : asu.getLocations().entrySet()) {
+               if(entry.getKey().toLowerCase().trim().equals(ApiLocator.LOCATION_KEY)) {
+                  asu.setGeneratorUid(entry.getValue().toLowerCase().trim());
+               }
+            }
          }
 
          // Perform variable substitutions only if the user uses a
@@ -119,70 +207,6 @@ public final class BundleUtils {
                for (Entry<String, String> locationEntry : asu.getLocations().entrySet()) {
                   locations.put(locationEntry.getKey(),
                         StringUtils.substitute(locationEntry.getValue(), context.getConfiguration().getProperties()));
-               }
-            }
-         }
-      }
-   }
-
-   public static void checkRequiredConfiguration(BundleStorageLogBuilder logBuilder,
-         BundleStorageUnit... bundleStorageUnits) {
-
-      // Check that the DAG contains no empty bundles
-      for (BundleStorageUnit bsu : bundleStorageUnits) {
-         if (bsu.getAssetStorageUnits() == null || bsu.getAssetStorageUnits().isEmpty()) {
-            logBuilder.error("- Empty bundle", "   [" + bsu.getName() + "] The bundle \"" + bsu.getName()
-                  + "\" is empty. You would better remove it.");
-         }
-      }
-
-      // Check that every asset of every bundle contains at least one
-      // locationKey/location pair because both name and type will be deducted
-      // from it
-
-      for (BundleStorageUnit bsu : bundleStorageUnits) {
-         for (AssetStorageUnit asu : bsu.getAssetStorageUnits()) {
-
-            // Check locations
-            if (asu.getLocations().isEmpty()) {
-               logBuilder.error("- Missing asset location(s)", "[" + bsu.getName()
-                     + "] The bundle contain asset with no location whereas it is required.");
-            }
-            else {
-               for (String locationKey : asu.getLocations().keySet()) {
-                  if (StringUtils.isBlank(locationKey)) {
-                     logBuilder
-                           .error(
-                                 "- Missing location key",
-                                 "["
-                                       + bsu.getName()
-                                       + "] One of the assets contained in this bundle has a location with no location key. Please correct it before continuing.");
-
-                  }
-               }
-
-               for (String location : asu.getLocations().values()) {
-                  if (StringUtils.isBlank(location)) {
-                     logBuilder.error("- Missing asset location", "[" + bsu.getName()
-                           + "] One of the assets contained in the bundle \"" + bsu.getName()
-                           + "\" has an empty location. Please correct it before continuing.");
-                  }
-                  else {
-                     // The asset type can be specified explicitely
-                     if (asu.getType() == null) {
-                        boolean extensionNotFound = true;
-                        for (AssetType assetType : AssetType.values()) {
-                           if (location.toLowerCase().endsWith("." + assetType.toString())) {
-                              extensionNotFound = false;
-                              break;
-                           }
-                        }
-                        if (extensionNotFound) {
-                           logBuilder.error("- Missing extension", "[" + bsu.getName()
-                                 + "] The extension is required in all locations.");
-                        }
-                     }
-                  }
                }
             }
          }

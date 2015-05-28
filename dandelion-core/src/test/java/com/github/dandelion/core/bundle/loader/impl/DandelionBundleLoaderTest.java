@@ -47,7 +47,7 @@ public class DandelionBundleLoaderTest {
 
    @Before
    public void setup() {
-      System.setProperty(DandelionConfig.BUNDLE_LOCATION.getName(), "bundle-loader");
+      System.setProperty(DandelionConfig.BUNDLE_LOCATION.getName(), "bundle-loader/loading-vendor-user");
    }
 
    @After
@@ -56,7 +56,7 @@ public class DandelionBundleLoaderTest {
    }
 
    @Test
-   public void shouldLoadRegularBundles() {
+   public void shouldLoadUserBundles() {
 
       BundleLoader dandelionBundleLoader = new DandelionBundleLoader(new Context(new MockFilterConfig()), false);
       List<BundleStorageUnit> bsus = dandelionBundleLoader.getRegularBundles();

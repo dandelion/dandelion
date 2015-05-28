@@ -137,6 +137,7 @@ public class BundleStorage {
                      existingAsu.setAttributes(asu.getAttributes());
                      existingAsu.setAttributesOnlyName(asu.getAttributesOnlyName());
                      existingAsu.setCondition(asu.getCondition());
+                     existingAsu.setGeneratorUid(asu.getGeneratorUid());
                      assetAlreadyExists = true;
                      break;
                   }
@@ -172,16 +173,6 @@ public class BundleStorage {
     */
    public Set<BundleStorageUnit> bundlesFor(String bundleName) {
       BundleStorageUnit bsu = bundleDag.getVertex(bundleName);
-      // if(bsu == null){
-      // System.out.println("=> " + bundleName + " : bsu null");
-      // }
-      // else if(bsu.getAssetStorageUnitNames() == null ||
-      // bsu.getAssetStorageUnitNames().isEmpty()) {
-      // System.out.println("=> " + bundleName + " : asus vide");
-      // }
-      // else {
-      // System.out.println("=> " + bundleName + " : bsu OK");
-      // }
 
       if (bsu != null) {
          Set<BundleStorageUnit> retval = null;
@@ -260,7 +251,7 @@ public class BundleStorage {
                BundleStorageUnit suggestedBsu = null;
                suggestedBsu = JsonUtils.read(configFileStream, BundleStorageUnit.class);
                suggestedBsu.setRelativePath(suggestion);
-               BundleUtils.finalizeBundleConfiguration(suggestedBsu, null);
+               BundleUtils.finalize(suggestedBsu, null);
 
                sug.setSuggestedBundle(suggestedBsu);
                alert.addSuggestion(sug);

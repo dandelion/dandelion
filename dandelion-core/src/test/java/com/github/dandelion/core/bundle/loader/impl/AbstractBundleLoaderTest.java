@@ -19,7 +19,7 @@ public class AbstractBundleLoaderTest {
 
    @Before
    public void setup() {
-      System.setProperty(DandelionConfig.BUNDLE_LOCATION.getName(), "bundle-loading/json/wrong-format");
+      System.setProperty(DandelionConfig.BUNDLE_LOCATION.getName(), "bundle-loader/wrong-format");
    }
 
    @After
@@ -34,10 +34,10 @@ public class AbstractBundleLoaderTest {
       exception.expectMessage("The bundle graph is not consistent for the following reasons:");
       exception
             .expectMessage(CoreMatchers
-                  .containsString("The file 'bundle-loading/json/wrong-format/dandelion/bundle-wrong-format1.json' is wrongly formatted"));
+                  .containsString("The file 'bundle-loader/wrong-format/dandelion/bundle-wrong-format1.json' is wrongly formatted"));
       exception
             .expectMessage(CoreMatchers
-                  .containsString("The file 'bundle-loading/json/wrong-format/dandelion/bundle-wrong-format2.json' is wrongly formatted"));
+                  .containsString("The file 'bundle-loader/wrong-format/dandelion/bundle-wrong-format2.json' is wrongly formatted"));
 
       new Context(new MockFilterConfig());
    }

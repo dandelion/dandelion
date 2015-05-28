@@ -49,6 +49,8 @@ import com.github.dandelion.core.bundle.loader.support.BundleSaxHandler;
 import com.github.dandelion.core.storage.BundleStorageUnit;
 import com.github.dandelion.core.storage.support.BundleUtils;
 import com.github.dandelion.core.util.BundleStorageLogBuilder;
+import com.github.dandelion.core.util.PathUtils;
+import com.github.dandelion.core.util.StringUtils;
 import com.github.dandelion.core.util.scanner.ResourceScanner;
 
 /**
@@ -123,10 +125,20 @@ public class XmlBundleLoadingStrategy implements LoadingStrategy {
             saxParser.parse(configFileStream, bundleSaxHandler);
             BundleStorageUnit bsu = bundleSaxHandler.getBsu();
             bsu.setRelativePath(resourcePath);
-            BundleUtils.checkRequiredConfiguration(bslb, bsu);
-            BundleUtils.finalizeBundleConfiguration(bsu, context);
-            LOG.debug("Parsed bundle \"{}\" ({})", bsu.getName(), bsu);
-            bundles.add(bsu);
+
+            // The name of the bundle is extracted from its path if not
+            // specified
+            if (StringUtils.isBlank(bsu.getName())) {
+               String extractedName = PathUtils.extractLowerCasedName(bsu.getRelativePath());
+               bsu.setName(extractedName);
+               LOG.trace("Name of the bundle extracted from its path: \"{}\"", extractedName);
+            }
+
+            if (BundleUtils.isValid(bsu, bslb)) {
+               BundleUtils.finalize(bsu, context);
+               LOG.trace("Parsed bundle \"{}\" ({})", bsu.getName(), bsu);
+               bundles.add(bsu);
+            }
          }
          catch (SAXException e) {
             e.printStackTrace();

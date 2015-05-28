@@ -123,6 +123,8 @@ public class Asset implements Serializable {
     */
    private boolean vendor;
 
+   private String generatorUid;
+   
    public Asset() {
    }
 
@@ -327,6 +329,14 @@ public class Asset implements Serializable {
 
    public void setBundle(String bundle) {
       this.bundle = bundle;
+   }
+
+   public String getGeneratorUid() {
+      return generatorUid;
+   }
+
+   public void setGeneratorUid(String generatorUid) {
+      this.generatorUid = generatorUid;
    }
 
    @Override

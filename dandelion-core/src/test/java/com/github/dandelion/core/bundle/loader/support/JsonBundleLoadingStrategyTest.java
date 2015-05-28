@@ -76,13 +76,13 @@ public class JsonBundleLoadingStrategyTest {
 
    @Test
    public void should_find_json_resource_paths() {
-      Set<String> resourcePaths = loadingStrategy.getResourcePaths("bundle-loading/json/json-strategy", null);
+      Set<String> resourcePaths = loadingStrategy.getResourcePaths("bundle-loader/json-strategy", null);
       assertThat(resourcePaths).hasSize(2);
    }
 
    @Test
    public void should_map_to_bundles_using_resource_paths() {
-      Set<String> resourcePaths = loadingStrategy.getResourcePaths("bundle-loading/json/json-strategy", null);
+      Set<String> resourcePaths = loadingStrategy.getResourcePaths("bundle-loader/json-strategy", null);
       List<BundleStorageUnit> bundles = loadingStrategy.mapToBundles(resourcePaths);
 
       assertThat(bundles).hasSize(2);
@@ -97,6 +97,6 @@ public class JsonBundleLoadingStrategyTest {
       exception.expect(DandelionException.class);
       exception.expectMessage(CoreMatchers.containsString("line: 5, column: 30"));
       loadingStrategy.mapToBundles(new HashSet<String>(Arrays
-            .asList("bundle-loading/json/wrong-format/dandelion/bundle-wrong-format1.json")));
+            .asList("bundle-loader/wrong-format/dandelion/bundle-wrong-format1.json")));
    }
 }

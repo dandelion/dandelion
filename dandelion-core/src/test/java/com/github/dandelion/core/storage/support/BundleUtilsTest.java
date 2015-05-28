@@ -46,6 +46,7 @@ import com.github.dandelion.core.Context;
 import com.github.dandelion.core.asset.AssetType;
 import com.github.dandelion.core.storage.AssetStorageUnit;
 import com.github.dandelion.core.storage.BundleStorageUnit;
+import com.github.dandelion.core.storage.support.BundleUtils;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -65,7 +66,7 @@ public class BundleUtilsTest {
       bsu.setRelativePath("some-relative-path/until/the/fileName.json");
       Context context = mock(Context.class, Mockito.RETURNS_DEEP_STUBS);
 
-      BundleUtils.finalizeBundleConfiguration(bsu, context);
+      BundleUtils.finalize(bsu, context);
 
       assertThat(bsu.getName()).isEqualTo("filename");
    }
@@ -85,7 +86,7 @@ public class BundleUtilsTest {
 
       Context context = mock(Context.class, Mockito.RETURNS_DEEP_STUBS);
 
-      BundleUtils.finalizeBundleConfiguration(bsu, context);
+      BundleUtils.finalize(bsu, context);
 
       assertThat(asu1.getName()).isEqualTo("some-asset");
       assertThat(asu1.getType()).isEqualTo(AssetType.js);
@@ -107,7 +108,7 @@ public class BundleUtilsTest {
 
       Context context = mock(Context.class, Mockito.RETURNS_DEEP_STUBS);
 
-      BundleUtils.finalizeBundleConfiguration(bsu, context);
+      BundleUtils.finalize(bsu, context);
 
       assertThat(asu1.getName()).isEqualTo("some-asset");
       assertThat(asu1.getType()).isEqualTo(AssetType.css);
@@ -132,7 +133,7 @@ public class BundleUtilsTest {
       Context context = mock(Context.class, Mockito.RETURNS_DEEP_STUBS);
       when(context.getConfiguration().getProperties()).thenReturn(properties);
 
-      BundleUtils.finalizeBundleConfiguration(bsu, context);
+      BundleUtils.finalize(bsu, context);
 
       assertThat(asu1.getLocations().get("locationKey")).isEqualTo("http://my-server/assets/js/some-asset.css");
    }
@@ -153,7 +154,7 @@ public class BundleUtilsTest {
       Context context = mock(Context.class, Mockito.RETURNS_DEEP_STUBS);
       when(context.getConfiguration().getProperties()).thenReturn(null);
 
-      BundleUtils.finalizeBundleConfiguration(bsu, context);
+      BundleUtils.finalize(bsu, context);
 
       assertThat(asu1.getLocations().get("locationKey")).isEqualTo("http://%SERVER%/assets/js/some-asset.css");
    }
@@ -176,6 +177,6 @@ public class BundleUtilsTest {
 
       exception.expect(IllegalArgumentException.class);
       exception.expectMessage("The supplied set of variables doesn't contain a variable named \"SERVER\"");
-      BundleUtils.finalizeBundleConfiguration(bsu, context);
+      BundleUtils.finalize(bsu, context);
    }
 }

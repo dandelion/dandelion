@@ -34,10 +34,12 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.github.dandelion.core.DandelionException;
 import com.github.dandelion.core.asset.Asset;
 import com.github.dandelion.core.asset.generator.AssetContentGenerator;
 import com.github.dandelion.core.asset.locator.AbstractAssetLocator;
 import com.github.dandelion.core.storage.AssetStorageUnit;
+import com.github.dandelion.core.web.AssetRequestContext;
 
 /**
  * <p>
@@ -53,7 +55,6 @@ import com.github.dandelion.core.storage.AssetStorageUnit;
  */
 public class ApiLocator extends AbstractAssetLocator {
 
-   public static final String API_CONTENT_PARAM = "API_CONTENT_PARAM";
    public static final String LOCATION_KEY = "api";
 
    public ApiLocator() {
@@ -77,6 +78,13 @@ public class ApiLocator extends AbstractAssetLocator {
 
    @Override
    protected String doGetContent(Asset asset, Map<String, Object> parameters, HttpServletRequest request) {
-      return ((AssetContentGenerator) parameters.get(API_CONTENT_PARAM)).getAssetContent(request);
+      AssetContentGenerator generator = AssetRequestContext.get(request).getGenerator(asset.getGeneratorUid());
+
+      if (generator == null) {
+         throw new DandelionException("No asset generator has been found in the request with the uid \""
+               + asset.getGeneratorUid() + "\". Ensure to call AssetRequestContext.get(request).addGenerator(\""
+               + asset.getGeneratorUid() + "\", ...);");
+      }
+      return generator.getAssetContent(request);
    }
 }

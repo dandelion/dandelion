@@ -130,6 +130,7 @@ public class AssetStorageUnit {
     */
    private boolean vendor;
 
+   private String generatorUid;
    /**
     * <p>
     * Required by Jackson for deserialization.
@@ -266,6 +267,14 @@ public class AssetStorageUnit {
 
    public void setVendor(boolean vendor) {
       this.vendor = vendor;
+   }
+
+   public String getGeneratorUid() {
+      return generatorUid;
+   }
+
+   public void setGeneratorUid(String generatorUid) {
+      this.generatorUid = generatorUid;
    }
 
    /**

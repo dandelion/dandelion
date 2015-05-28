@@ -42,49 +42,46 @@ import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 
 import com.github.dandelion.core.Context;
+import com.github.dandelion.core.asset.generator.AssetContentGenerator;
 import com.github.dandelion.core.storage.BundleStorageUnit;
 import com.github.dandelion.core.util.StringUtils;
+import com.github.dandelion.core.util.Validate;
 
 /**
  * <p>
- * Main user-side entry point for manipulating the assets graph associated to
- * the current {@link HttpServletRequest}.
- * 
+ * Main user-side entry point for manipulating the Dandelion context associated
+ * to the current {@link HttpServletRequest}.
+ * </p>
  * <p>
- * The assets graph can be manipulated in many ways:
+ * The context can be manipulated in many ways:
  * <ul>
  * <li>By adding/removing bundle(s) (using the bundle names) <br/>
- * For example:
- * 
  * <pre>
- * AssetRequestContext.get(request).addBundle(&quot;myBundle&quot;);
+ * AssetRequestContext
+ *    .get(request)
+ *    .addBundle(&quot;myBundle&quot;);
+ * AssetRequestContext
+ *    .get(request)
+ *    .addBundles(&quot;myBundle1&quot;, &quot;myBundle2&quot;);
  * </pre>
- * 
- * or
- * 
- * <pre>
- * AssetRequestContext.get(request).addBundles(&quot;myBundle1&quot;, &quot;myBundle2&quot;);
- * </pre>
- * 
  * </li>
  * <li>By excluding asset(s) (using the asset names) <br/>
- * For example:
- * 
  * <pre>
- * AssetRequestContext.get(request).addBundle(&quot;myBundle1&quot;).excludeAsset(&quot;assetName1&quot;);
+ * AssetRequestContext
+ *    .get(request)
+ *    .addBundle(&quot;myBundle1&quot;)
+ *    .excludeAsset(&quot;assetName1&quot;);
  * </pre>
- * 
  * </li>
- * <li>By parameterizing asset(s). <br/>
- * For example:
- * 
+ * <li>By configuring an {@link AssetContentGenerator}
  * <pre>
- * AssetRequestContext.get(request).addBundle(&quot;myBundle1&quot;).addParameter(&quot;assetName1&quot;, &quot;paramName1&quot;, &quot;paramValue1&quot;);
+ * AssetRequestContext
+ *    .get(request)
+ *    .addBundle(&quot;myBundle1&quot;)
+ *    .addGenerator(&quot;uid&quot;, generator);
  * </pre>
- * 
  * </li>
  * </ul>
- * </p>
  * 
  * @author Romain Lespinasse
  * @author Thibault Duchateau
@@ -93,25 +90,34 @@ import com.github.dandelion.core.util.StringUtils;
 public class AssetRequestContext {
 
    /**
-    * List of bundle to activate for the current request
+    * List of bundles to include in the current request.
     */
    private List<String> bundles;
 
    /**
-    * List of bundle to exclude from the current request
+    * List of bundles to exclude from the current request.
     */
    private List<String> excludedBundles;
 
    /**
-    * List of assets to exclude from the current request
+    * List of JavaScript assets to exclude from the current request.
     */
    private List<String> excludedJs;
+
+   /**
+    * List of CSS assets to exclude from the current request.
+    */
    private List<String> excludedCss;
 
    /**
-    * List of asset parameters
+    * Map of parameters that may be associated to an asset.
     */
    private Map<String, Map<String, Object>> parameters;
+
+   /**
+    * Map of generators that may be associated to an asset.
+    */
+   private Map<String, AssetContentGenerator> generators;
 
    /**
     * Private constructor.
@@ -122,16 +128,18 @@ public class AssetRequestContext {
       this.excludedJs = new ArrayList<String>();
       this.excludedCss = new ArrayList<String>();
       this.parameters = new HashMap<String, Map<String, Object>>();
+      this.generators = new HashMap<String, AssetContentGenerator>();
    }
 
    /**
     * <p>
     * Returns the {@link AssetRequestContext} associated to the passed
     * {@link ServletRequest}.
-    * 
+    * </p>
     * <p>
     * If it doesn't exist, a new instance is created and stored as a request
     * attribute.
+    * </p>
     * 
     * @param servletRequest
     *           The servlet request in which is stored the
@@ -140,8 +148,10 @@ public class AssetRequestContext {
     *         current servlet request.
     */
    public static AssetRequestContext get(ServletRequest servletRequest) {
+      
       Object attribute = servletRequest.getAttribute(AssetRequestContext.class.getCanonicalName());
       Context context = (Context) servletRequest.getAttribute(WebConstants.DANDELION_CONTEXT_ATTRIBUTE);
+      
       if (attribute == null || !(attribute instanceof AssetRequestContext)) {
          attribute = new AssetRequestContext();
          ((AssetRequestContext) attribute).addBundles(context.getConfiguration().getBundleIncludes());
@@ -155,8 +165,9 @@ public class AssetRequestContext {
 
    /**
     * <p>
-    * Adds the given comma-separated list of bundle to the current
+    * Adds the given comma-separated list of bundles to the current
     * {@link AssetRequestContext}.
+    * </p>
     * 
     * @param bundles
     *           A comma-separated list of bundles.
@@ -173,6 +184,7 @@ public class AssetRequestContext {
    /**
     * <p>
     * Adds the given bundle array to the current {@link AssetRequestContext}.
+    * </p>
     * 
     * @param bundles
     *           An array containing the bundle names.
@@ -187,6 +199,7 @@ public class AssetRequestContext {
     * <p>
     * Adds the given collection of bundles to the current
     * {@link AssetRequestContext}.
+    * </p>
     * 
     * @param bundles
     *           A collection of bundle names.
@@ -201,10 +214,12 @@ public class AssetRequestContext {
 
    /**
     * <p>
-    * Adds the given array of enum to the current {@link AssetRequestContext}.
+    * Adds the given array of enum to the current {@link AssetRequestContext}.*
+    * </p>
     * <p>
     * All enums are first processed by replacing "_" by "-" and by lowercasing
     * its value.
+    * </p>
     * 
     * @param bundles
     *           An array containing the enums.
@@ -234,6 +249,11 @@ public class AssetRequestContext {
     * <p>
     * Adds the given enum (representing a bundle name) to the current
     * {@link AssetRequestContext}.
+    * </p>
+    * <p>
+    * The passed enum is first processed by replacing "_" by "-" and by
+    * lowercasing its value.
+    * </p>
     * 
     * @param bundle
     *           The enum to add.
@@ -246,7 +266,6 @@ public class AssetRequestContext {
 
    /**
     * @return all bundle names stored in the current {@link AssetRequestContext}
-    *         .
     */
    public String[] getBundles(boolean withoutExcludedBundles) {
       List<String> bundles = new ArrayList<String>(this.bundles);
@@ -276,6 +295,7 @@ public class AssetRequestContext {
     * <p>
     * Adds the given collection of bundles to the current
     * {@link AssetRequestContext}.
+    * </p>
     * 
     * @param bundles
     *           A collection of bundle names.
@@ -396,6 +416,12 @@ public class AssetRequestContext {
       return addParameter(assetName, parameter, value, false);
    }
 
+   public AssetRequestContext addGenerator(String uid, AssetContentGenerator generator) {
+      Validate.notBlank(uid, "The generator uid cannot be blank");
+      generators.put(uid.toLowerCase().trim(), generator);
+      return this;
+   }
+
    /**
     * Add a parameter value on a specific asset name (as Object with toString())
     * 
@@ -467,6 +493,20 @@ public class AssetRequestContext {
          return Collections.emptyMap();
       }
       return parameters.get(assetName);
+   }
+
+   /**
+    * <p>
+    * Return the {@link AssetContentGenerator} corresponding to the passed uid.
+    * </p>
+    * 
+    * @param uid
+    *           The uid used to indentify the generator.
+    * @return the corresponding {@link AssetContentGenerator} or null if it
+    *         doesn't exist.
+    */
+   public AssetContentGenerator getGenerator(String uid) {
+      return generators.get(uid);
    }
 
    /**

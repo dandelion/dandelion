@@ -128,7 +128,7 @@ public class AssetMapper {
       LOG.trace("Locator '{}' will be applied on the asset {}.", assetLocator.getClass().getSimpleName(), asu.toLog());
       asset.setProcessedConfigLocation(location);
       asset.setConfigLocation(asu.getLocations().get(locationKey));
-
+      asset.setGeneratorUid(asu.getGeneratorUid());
       asset.setStorageKey(AssetUtils.generateStorageKey(asset, request));
 
       // Vendor assets are served as-is, no need to store them

@@ -76,18 +76,23 @@ public class ApiLocatorTest {
    @Test
    public void should_return_the_asset_contents() {
 
-      AssetRequestContext.get(request).addParameter("my-js", ApiLocator.API_CONTENT_PARAM, new AssetContentGenerator() {
-
+      final String contents = "/* generated content */";
+      
+      AssetRequestContext
+         .get(request)
+         .addGenerator("uid", new AssetContentGenerator() {
+         
          @Override
          public String getAssetContent(HttpServletRequest request) {
-            return "/* delegated content */";
+            return contents;
          }
       });
 
       Asset asset = new Asset();
       asset.setName("my-js");
-      asset.setProcessedConfigLocation("");
+      asset.setGeneratorUid("uid");
+
       String content = locator.getContent(asset, request);
-      assertThat(content).isEqualTo("/* delegated content */");
+      assertThat(content).isEqualTo(contents);
    }
 }
