@@ -38,7 +38,7 @@ import javax.servlet.http.HttpServletRequest;
 
 /**
  * <p>
- * Wrapper intended to store request attributes for limited time (30s by
+ * Wrapper intended to store request attributes for limited time (60s by
  * default).
  * </p>
  * 
@@ -55,7 +55,7 @@ public class RequestFlashData implements Serializable {
    public RequestFlashData(HttpServletRequest request) {
 
       this.expirationStartTime = System.currentTimeMillis();
-      this.timeToLive = 30;
+      this.timeToLive = 60;
 
       Map<String, Object> currentAttributes = new HashMap<String, Object>();
       Enumeration<String> attrs = request.getAttributeNames();
