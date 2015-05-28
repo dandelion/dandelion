@@ -50,7 +50,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class JQueryContentGeneratorTest {
 
-   private JQueryContentGenerator jQueryContentGenerator;
+   private JQueryJsContentGenerator jQueryContentGenerator;
    private JQueryContent jQueryContent;
    private MockHttpServletRequest request;
    private Context context;
@@ -58,7 +58,7 @@ public class JQueryContentGeneratorTest {
    @Before
    public void setup() {
       jQueryContent = new JQueryContent();
-      jQueryContentGenerator = new JQueryContentGenerator(jQueryContent);
+      jQueryContentGenerator = new JQueryJsContentGenerator(jQueryContent);
       context = new Context(new MockFilterConfig());
       request = new MockHttpServletRequest();
       request.setContextPath("/context");

@@ -48,7 +48,7 @@ public interface AssetContentGenerator {
    /**
     * <p>
     * Generates a string that will be used as a content for an {@link Asset}
-    * configured with the {@code delegate} location key.
+    * configured with the {@code api} location key.
     * </p>
     * 
     * <p>
@@ -59,7 +59,7 @@ public interface AssetContentGenerator {
     * @param request
     *           The {@link javax.servlet.http.HttpServletRequest} that may be
     *           used by generators.
-    * @return The code to be used as a content for the {@link Asset}.
+    * @return The code to be used as contents for the {@link Asset}.
     */
    public String getAssetContent(HttpServletRequest request);
 }

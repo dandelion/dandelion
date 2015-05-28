@@ -44,7 +44,7 @@ import com.github.dandelion.core.util.StringBuilderUtils;
  * @author Thibault Duchateau
  * @since 1.0.0
  */
-public class JsContentGenerator extends AbstractJsContentGenerator {
+public class RawJsContentGenerator extends AbstractJsContentGenerator {
 
    private AssetContent content;
 
@@ -52,7 +52,7 @@ public class JsContentGenerator extends AbstractJsContentGenerator {
     * @param content
     *           content for the asset
     */
-   public JsContentGenerator(AssetContent content) {
+   public RawJsContentGenerator(AssetContent content) {
       this.content = content;
    }
 

@@ -68,7 +68,7 @@ import static com.github.dandelion.core.asset.generator.js.jquery.JQueryContentP
  * 
  *    <b>[COMPONENT_CONFIGURATION]</b>
  * 
- *    <b>[AFTER_END_DOCUMENT_READY]</b>
+ *    <b>[BEFORE_END_DOCUMENT_READY]</b>
  * });
  * <b>[AFTER_END_DOCUMENT_READY]</b>
  * 
@@ -89,10 +89,10 @@ import static com.github.dandelion.core.asset.generator.js.jquery.JQueryContentP
  * @author Thibault Duchateau
  * @since 1.0.0
  */
-public class JQueryContentGenerator extends
+public class JQueryJsContentGenerator extends
       AbstractJsPlaceholderContentGenerator<JQueryContentPlaceholder, JQueryContent> {
 
-   public JQueryContentGenerator(JQueryContent content) {
+   public JQueryJsContentGenerator(JQueryContent content) {
       super(content);
    }
 

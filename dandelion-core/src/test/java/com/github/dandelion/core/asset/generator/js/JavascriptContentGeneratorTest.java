@@ -38,13 +38,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class JavascriptContentGeneratorTest {
 
-   private JsContentGenerator javascriptContentGenerator;
+   private RawJsContentGenerator javascriptContentGenerator;
    private AssetContent content;
 
    @Before
    public void setup() {
       content = new AssetContent();
-      javascriptContentGenerator = new JsContentGenerator(content);
+      javascriptContentGenerator = new RawJsContentGenerator(content);
    }
 
    @Test
