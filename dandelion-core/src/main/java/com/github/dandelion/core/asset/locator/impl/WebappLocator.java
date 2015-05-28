@@ -37,6 +37,9 @@ import java.util.Map;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.github.dandelion.core.DandelionException;
 import com.github.dandelion.core.asset.Asset;
 import com.github.dandelion.core.asset.locator.AbstractAssetLocator;
@@ -58,6 +61,8 @@ import com.github.dandelion.core.util.UrlUtils;
  * @since 0.2.0
  */
 public class WebappLocator extends AbstractAssetLocator {
+
+   private static final Logger LOG = LoggerFactory.getLogger(WebappLocator.class);
 
    public WebappLocator() {
       active = true;
@@ -81,12 +86,17 @@ public class WebappLocator extends AbstractAssetLocator {
       InputStream in = null;
       String contents = null;
       try {
+         LOG.trace("Reading the asset located at \"" + asset.getConfigLocation() + "\"");
          in = sc.getResourceAsStream(asset.getConfigLocation());
+         
+         if(in == null) {
+            throw new IOException();
+         }
          contents = ResourceUtils.getContentFromInputStream(in);
       }
       catch (IOException e) {
          throw new DandelionException("The asset pointed at \"" + asset.getConfigLocation()
-               + "\" does not exist. Please correct its location before continuing.");
+               + "\" does not exist. Please correct the \"" + asset.getBundle() + "\" bundle before continuing.", e);
       }
       finally {
          if (null != in)
