@@ -127,6 +127,12 @@ public class DandelionFilter implements Filter {
       ByteArrayResponseWrapper wrappedResponse = new ByteArrayResponseWrapper(response);
       filterChain.doFilter(request, wrappedResponse);
 
+      // In case of a redirect, no need to process the response. Moreover,
+      // getWritter may have allready been called.
+      if (wrappedResponse.isRedirect()) {
+         return;
+      }
+      
       // Extracts the response as a byte array so that it can be passed to the
       // post-handlers chain
       byte[] finalResponse = wrappedResponse.toByteArray();

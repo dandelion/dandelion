@@ -63,6 +63,8 @@ public class ByteArrayResponseWrapper extends HttpServletResponseWrapper {
     */
    private PrintWriter pw = new PrintWriter(baos);
 
+   private boolean isRedirect;
+   
    /**
     * ServletOutputStream that sits on top of byte-output stream.
     */
@@ -82,6 +84,13 @@ public class ByteArrayResponseWrapper extends HttpServletResponseWrapper {
       return pw;
    }
 
+   
+   @Override
+   public void sendRedirect(String location) throws IOException {
+      this.isRedirect = true;
+      super.sendRedirect(location);
+   }
+
    /**
     * <p>
     * Gets the content of the underlying byte-output stream.
@@ -94,6 +103,15 @@ public class ByteArrayResponseWrapper extends HttpServletResponseWrapper {
       pw.flush();
       return baos.toByteArray();
    }
+
+   public boolean isRedirect() {
+      return isRedirect;
+   }
+
+   public void setRedirect(boolean isRedirect) {
+      this.isRedirect = isRedirect;
+   }
+
 
    /**
     * <p>
