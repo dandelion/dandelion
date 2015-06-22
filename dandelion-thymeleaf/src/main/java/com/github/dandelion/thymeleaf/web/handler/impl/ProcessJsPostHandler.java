@@ -112,10 +112,10 @@ public class ProcessJsPostHandler extends AbstractHandlerChain {
    @Override
    public boolean isApplicable(HandlerContext handlerContext) {
 
-      // Retrieves the content type from the filtered response
+      // Retrieves the content type from the filtered response and remove
+      // charset if present
       String mimeType = handlerContext.getResponse().getContentType();
-
-      boolean compatibleMimeType = compatibleMimeTypes.contains(mimeType);
+      boolean compatibleMimeType = compatibleMimeTypes.contains(mimeType.split(";")[0]);
 
       String servletUrlPattern = handlerContext.getContext().getConfiguration().getAssetUrlPattern()
             .replaceAll("/\\*", "");
