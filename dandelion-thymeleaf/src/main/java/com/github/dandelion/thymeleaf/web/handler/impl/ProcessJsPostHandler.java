@@ -92,6 +92,9 @@ public class ProcessJsPostHandler extends AbstractHandlerChain {
       compatibleMimeTypes.add("application/x-javascript");
       compatibleMimeTypes.add("application/javascript");
       compatibleMimeTypes.add("text/javascript");
+      compatibleMimeTypes.add("text/ecmascript");
+      compatibleMimeTypes.add("application/ecmascript");
+      compatibleMimeTypes.add("text/jscript");
    }
 
    @Override
