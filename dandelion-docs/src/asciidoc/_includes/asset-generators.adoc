@@ -95,7 +95,7 @@ appendToAfterAll(String content)
 
 === 11.2. Binding a generator to an asset
 
-In order to use an asset generator, you need to configure an asset with a particular location, whose key is `api` (see <<_5_2_6_code_api_code_locator, `ApiLocator`>>)
+In order to use an asset generator, you need to configure an asset with a particular location, whose key is `api` (see <<5-2-4-code-jar-code-locator, `ApiLocator`>>)
 
 ./dandelion/any-bundle.json
 [source, json]

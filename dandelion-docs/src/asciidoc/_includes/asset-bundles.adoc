@@ -498,7 +498,7 @@ WARNING: Make sure you to follow both <<3-1-common-installation-steps, common>> 
 
 The <<b-1-code-ddl-bundle-code-attributes, `ddl:bundle*`>> attributes are designed for this purpose.
 
-You can include one or more bundles into the HTTP request by using the <<thymeleaf-bundle-includes, `ddl:bundle-includes`>> attribute on any HTML tag.
+You can include one or more bundles into the HTTP request by using the <<tml-bundle-includes, `ddl:bundle-includes`>> attribute on any HTML tag.
 
 ====== Example
 
@@ -512,7 +512,7 @@ You can include one or more bundles into the HTTP request by using the <<thymele
 </html>      
 ----
 
-In the same way, use the <<thymeleaf-bundle-excludes, `ddl:bundle-excludes`>> attribute to excludes bundle from the current request.
+In the same way, use the <<tml-bundle-excludes, `ddl:bundle-excludes`>> attribute to excludes bundle from the current request.
 
 ====== Example
 

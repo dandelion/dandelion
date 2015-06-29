@@ -58,7 +58,7 @@ Note that all options are presented in the following format:
 2+|Locations resolution strategy to be used when multiple locations are specified for an asset
 
 |Values
-|Comma-separated list of location keys. See the <<4-asset-locators, asset locators section>> for more information.
+|Comma-separated list of location keys. See the <<5-asset-locators, asset locators section>> for more information.
 
 |dev
 |webapp, webjar, classpath, jar, remote
@@ -226,7 +226,7 @@ Note that all options are presented in the following format:
 |prod
 |memory
 
-.4+|[[opt-cache.request.max.size]]*cache.max.size*
+.4+|[[opt-cache.max.size]]*cache.max.size*
 2+|Maximum number of request/assets entries stored in the configured cache system
 
 |Values

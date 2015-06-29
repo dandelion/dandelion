@@ -47,10 +47,10 @@ TIP: Both `ddl:bundle-includes` and `ddl:bundle-excludes` attributes can be used
 |===
 |Attribute |Description
 
-|[[jsp-bundle-includes]]*ddl:bundle-includes*
+|[[tml-bundle-includes]]*ddl:bundle-includes*
 |Comma-separated list of bundles to include in the current HTTP request
 
-|[[jsp-bundle-excludes]]*ddl:bundle-excludes*
+|[[tml-bundle-excludes]]*ddl:bundle-excludes*
 |Comma-separated list of bundles to exclude from the current HTTP request
 |===
 
@@ -101,9 +101,9 @@ TIP: As `ddl:bundle*` attributes, `ddl:asset*` attributes can be used on *any HT
 |===
 |Attribute |Description
 
-|[[jsp-asset-js-excludes]]*ddl:asset-js-excludes*
+|[[tml-asset-js-excludes]]*ddl:asset-js-excludes*
 |Comma-separated list of JS asset names to exclude from the current HTTP request
 
-|[[jsp-asset-css-excludes]]*ddl:asset-css-excludes*
+|[[tml-asset-css-excludes]]*ddl:asset-css-excludes*
 |Comma-separated list of CSS asset names to exclude from the current HTTP request
 |===

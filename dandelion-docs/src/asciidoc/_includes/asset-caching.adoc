@@ -1,7 +1,5 @@
 == 9. Asset caching
 
-TIP: pending...
-
 [quote, HTTP Caching in Optimizing Content Efficiency, https://developers.google.com/web/fundamentals/performance/optimizing-content-efficiency/http-caching]     
 Fetching something over the network is both slow and expensive: large responses require many roundtrips between the client and server, which delays when they are available and can be processed by the browser, and also incurs data costs for the visitor. As a result, the ability to cache and reuse previously fetched resources is a critical aspect of optimizing for performance.
 
@@ -28,7 +26,7 @@ As you can see, a new entry is added in the *request store* on a per-page level.
 
 As far as possible, Dandelion-Core helps the browser determine if and when it can reuse a previously fetched response. For this to happen, Dandelion-Core acts on server responses by specifying an explicit caching policy for each resource. 
 
-The caching policy is set through HTTP headers, whose value changes depending on the <<opt-asset.caching, `asset.caching`>> option.
+The caching policy is set through HTTP headers, whose value changes depending on the <<opt-asset.cache, `cache`>> option.
 
 NOTE: The caching policy of resources fetched from external locations, such as http://en.wikipedia.org/wiki/Content_delivery_network[CDNs], is delegated to the external servers.
 
@@ -64,7 +62,7 @@ This implementation uses two maps as stores, that use the http://en.wikipedia.or
 * The first one caches asset contents. 
 * The second one caches the association between a request URI and the requested assets
 
-The max element of each of them can be configured thanks to the <<opt-cache.asset.max.size, `cache.asset.max.size`>> and <<opt-cache.request.max.size, `cache.request.max.size`>> configuration options.
+The max element of each of them can be configured thanks to the <<opt-cache.max.size, `cache.max.size`>> configuration option.
 
 ==== 9.2.2. Ehcache
 
@@ -102,10 +100,7 @@ For this purpose, update your <<12-configuration-options, configuration options>
 cache.name=ehcache
 ----
 
-Moreover, some options allow you to configure the extra more precisely.
-
-* <<opt-cache.configuration.location, `cache.configuration.location`>>, which allows to specify the location of the `ehcache.xml` file.
-* <<opt-cache.manager.name, `cache.manager.name`>>, which allows to specify the name of the cache manager that Dandelion-Core will use.
+Moreover, note that you can specify the location of the `ehcache.xml` file using the <<opt-cache.configuration.location, `cache.configuration.location`>> configuration option.
 
 === 9.3. Plugging-in your own cache system
 

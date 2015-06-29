@@ -32,7 +32,7 @@ This strategy consists of generating a fingerprint for each asset, based on its 
 
 When the asset is static or infrequently changed, this provides an easy way to tell whether two versions of an asset are identical, even across different servers or deployment dates.
 
-When the asset content change, the fingerprint is updated. This will cause the remote clients to request a fresh copy of the asset. In combination with the right caching headers, this is the most powerful technique for better web performance. See the <<10-asset-caching, asset caching section>> for more information.
+When the asset content change, the fingerprint is updated. This will cause the remote clients to request a fresh copy of the asset. In combination with the right caching headers, this is the most powerful technique for better web performance. See the <<9-asset-caching, asset caching section>> for more information.
 
 This strategy is *selected by default*, but if you wish, you can explicitely specify it using the <<opt-asset.versioning.strategy, `asset.versioning.strategy`>> configuration option:
 

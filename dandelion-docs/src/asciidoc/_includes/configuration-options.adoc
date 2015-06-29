@@ -4,7 +4,7 @@ One of the key features of Dandelion-Core is that it is highly configurable. Ple
 
 === 12.1. Available options
 
-See the <<appendix-c-configuration-options-reference, configuration options reference>> for an exhaustive list of available options and their corresponding default value with both *dev* and *prod* <<10-1-built-in-profiles, profiles>>.
+See the <<appendix-c-configuration-options-reference, configuration options reference>> for an exhaustive list of available options and their corresponding default value with both *dev* and *prod* <<10-2-built-in-profiles, profiles>>.
 
 === 12.2. Reading configuration options
 

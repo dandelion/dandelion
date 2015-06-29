@@ -10,7 +10,7 @@ In order to activate a profile, specify the following System property in the ser
 
 For now, only system property-based activation is supported.
 
-TIP: At any moment, as long as the application is running, you can know which profile is active using the debugger. Read more about the <<13. Debugger, debugger>>
+TIP: At any moment, as long as the application is running, you can know which profile is active using the debugger. Read more about the <<13-2-live-debugger, debugger>>
 
 === 10.2. Built-in profiles
 
@@ -22,7 +22,7 @@ The main goal of the *dev* profile is to accelerate the development. As such, it
 
 All default *dev* features are listed in the <<Appendix C: Configuration options reference, configuration options reference>> but here follow some of them:
 
-* the Dandelion debugger is accessible, see the <<12-debugger, debugger section>> for more information
+* the Dandelion debugger is accessible, see the <<13-2-live-debugger, debugger section>> for more information
 * bundles can be re-scanned on-demand
 * a particular caching policy is applied thus preventing assets from being cached by browsers
 * all generated assets are pretty-printed, thus easing debugging
