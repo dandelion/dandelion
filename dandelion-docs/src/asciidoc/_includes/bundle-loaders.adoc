@@ -1,87 +1,42 @@
 == 8. Bundle loaders
 
+Bundles fall into two categories: *vendor* and *user*.
+All *vendor* bundles are supposed to reference vendor assets or libraries such as jQuery.
+*User* bundles are supposed to reference all other assets, in particular all assets developed and maintained for the deployed application.
+
+This disctinction is important because Dandelion doesn't behave in the same way with *vendor* and *user* bundles, especially in terms of versioning, processing and loading. 
+
 === 8.1. Introducing bundle loaders
 
 The main goals of bundle loaders are:
 
-* to scan for bundle definitions in the classpath (JSON format in first, then XML format)
-* to map each of the loaded files into a comprehensive format and feeds the <<#4-2-building-a-bundle-graph, bundle graph>>
+* to scan for bundle definitions (all `\*.json` files) in the classpath, *vendor* and *user* ones
+* to map each of the loaded files into a comprehensive format and feed the <<4-2-building-a-bundle-graph, bundle graph>>
 
-=== 8.1. Built-in loaders
+=== 8.2. Built-in loader
 
-Dandelion comes with two built-in bundle loaders: `DandelionBundleLoader` and `VendorBundleLoader`. They basically do the same job except the location where to scan for bundle definitions.
+Dandelion-Core comes with one built-in loader: `DandelionBundleLoader`. This bundle loader is focused on both `classpath_root/dandelion/vendor` and `classpath_root/dandelion` folders, respectively for *vendor* and *user* bundles.
 
-Note that they're all mutually exclusive, which means that a folder or subfolder will never be scanned twice.
+=== 8.3. Loading order
 
-==== 8.1.1. `VendorBundleLoader`
+Each bundle loader has several purposes, the most important of which is to load bundle in a particular order:
 
-This loader is intended to load vendor's librairies, such as http://jquery.com/[jQuery] or http://getbootstrap.com/[Bootstrap]. The only difference with the other built-in loader is that it scans for bundles inside the `dandelion/vendor` folder and all subfolders in the classpath.
+. First, all loaders are invoked to scan for *vendor bundles*, with the `DandelionBundleLoader` always acting in last
 
-Assuming the following https://maven.apache.org/[Maven] structure, the `VendorBundleLoader` will only pick up and load `jquery.json` and `bootstrap2.json` files.
+. Then, all loaders are invoked again but to scan for *user bundles*, again with the `DandelionBundleLoader` in last
 
-.Example with a Maven project
-[source, xml]
-----
-project-root
-|__ src
-   |__ main
-      |__ resources
-         |__ dandelion
-            |__ vendor
-               |__ jquery.json
-               |__ bootstap2.json
-            |__ foo.json <1>
-            |__ bar.json <1>
-----
-<1> Both `foo.json` and `bar.json` bundles won't be picked up by the `VendorBundleLoader` because they are outside of the `dandelion/vendor` folder
+This particular order ensures that vendor bundles are always loaded in first and may be easily overriden by user ones.
 
-All bundles loaded by this loader will be considered as *vendor bundles* in the rest of the documentation.
+==== Example
 
-==== 8.1.2. `DandelionBundleLoader`
+Let's assume that two bundle loaders are registered in the Dandelion context: `DandelionBundleLoader` and `CustomBundleLoader` (`classpath_root/dandelion/custom/vendor` / `classpath_root/dandelion/custom`). At startup, Dandelion-Core will apply the following sequence:
 
-Its role is to scan the classpath recursively for bundles, starting from the `dandelion` folder.
+. the `CustomBundleLoader` will scan for *vendor* bundles in its configured scanning path: `classpath_root/dandelion/custom/vendor`
+. the `DandelionBundleLoader` will scan for *vendor* bundles in its configured scanning path: `classpath_root/dandelion/vendor`
+. the `CustomBundleLoader` will scan for *user* bundles in its configured scanning path: `classpath_root/dandelion/custom`
+. the `DandelionBundleLoader` will scan for *user* bundles in its configured scanning path: `classpath_root/dandelion`
 
-Assuming the following https://maven.apache.org/[Maven] structure, the standard bundle loader will pick up and load `bundle1.json`, `bundle2.json` and `bundle3.json` files.
-
-.Example with a Maven project
-[source, xml]
-----
-project-root
-|__ src
-   |__ main
-      |__ resources
-         |__ dandelion
-            |__ vendor
-               |__ jquery.json <1>
-            |__ bundle1.json
-            |__ bundle2.json
-            |__ bundle3.json 
-----
-<1> The `jquery.json` bundle won't be picked up by the `DandelionBundleLoader` because all bundle loaders are mutually exclusive, i.e. they never scan the same location more than once.
-
-All bundles loaded by this loader will be considered as *user bundles* in the rest of the documentation.
-
-=== 8.2. Bundle loaders execution order
-
-At startup, Dandelion loads all bundles in a particular order:
-
-. First, by scanning for bundles using the `VendorBundleLoader`
-
-. Then, by scanning for bundles using all other loaders present in the classpath, i.e. classes that extends `AbstractBundleLoader`. All bundles loaded by these loaders will be considered as *component bundles* in the rest of the documentation.
-
-+
-For example, Dandelion-Datatables provides its own bundle loader, intended to load all bundles present in the `dandelion/datatables/` folder.
-
-. Finally by scanning for bundles using the `DandelionBundleLoader`
-
-+
-The *user bundles* are always loaded in last, for the purpose of allowing to override existing assets, e.g. coming from a *vendor bundle*.
-
-image::bundle-loaders-00.png[]
-
-NOTE: In a near or more distant future, Dandelion will provide a collection of components, which Dandelion-Datatables is already a part of. As Dandelion-Datatables, each component will provide its own collection of bundles (*vendor* and *component*).
-
-=== 8.3. Plugging-in your own component bundle loaders
+=== 8.4. Plugging-in your own bundle loader
 
 You may wish to write an extension that uses its own bundle loader, e.g. if you wish to scan for bundles somewhere else than in the classpath. Let's see here how to do it.
 
@@ -89,7 +44,7 @@ Dandelion intensively uses the http://docs.oracle.com/javase/tutorial/sound/SPI-
 
 So, in order to plug-in your own bundle loader, just follow these steps:
 
-. Create a class that extends `AbstractBundleLoader` (you can directly implement the `BundleLoader` interface but you better use the abstract class)
+. Create a class that extends `AbstractBundleLoader`
 
 +
 [source, java]
@@ -98,30 +53,32 @@ package com.foo.bundle.loader.impl;
 
 public class MyBundleLoader extends AbstractBundleLoader {
 
-  private static final Logger LOG = LoggerFactory.getLogger(MyBundleLoader.class);
-  
-  @Override 
-  protected Logger getLogger() {
-    return LOG;
-  }
+   private static final Logger LOG = LoggerFactory.getLogger(MyBundleLoader.class);
 
-  @Override
-  public String getName() {
-    return "my-bundle"; // <1>
-  }
+   public static final String LOADER_NAME = "custom-loader";
+   public static final String SCANNING_PATH = "dandelion/custom-path";
 
-  @Override
-  public String getPath() {
-    return "any path";
-  }
+   public DatatableBundleLoader(Context context, boolean isStandalone) {
+      super(context, isStandalone);
+   }
 
-  @Override
-  protected void doCustomBundlePostProcessing(List<BundleStorageUnit> bundles) {
-    // Perform here any post processing on bundles	
-  }
+   @Override
+   public String getName() {
+      return LOADER_NAME; <1>
+   }
+
+   @Override
+   protected Logger getLogger() {
+      return LOG;
+   }
+
+   @Override
+   public String getScanningPath() {
+      return SCANNING_PATH;
+   }
 }
 ----
-<1> The loader name is used for logging concerns only
+<1> The loader name is used for logging purpose only
 
 . In the `META-INF/services` folder, create a text file (UTF-8 encoded) using the following convention:
 

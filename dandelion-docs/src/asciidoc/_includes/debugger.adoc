@@ -1,29 +1,113 @@
-== 13. Debugger
+== 13. Debugging tools
 
-Dandelion comes with a debugging tool that can be especially useful during development.
+Dandelion-Core ships some live debugging tools that you may find useful during development.
 
-=== 13.1. Accessing the debugger
+=== 13.1. Alert reporting
 
-In order to access the debugger, append the following request parameter to the current URL: `ddl-debug`.
+Since Dandelion-Core relies on asset bundles, it is extremely important to have quick feedback on potential errors when inclucing bundles. Since the v1.0.0, Dandelion-Core has a basic alert reporting tool that help you debug as fast as possible.
 
-For example, if you're currently browsing the JSP starter sample at the URL: http://localhost:8080/datatables-jsp-starter/, just modify the URL as follows: http://localhost:8080/datatables-jsp-starter/?ddl-debug. 
+==== 13.1.1. Alert types
 
-As a consequence, Dandelion will override the response with the debugger and show information about the current request.
+For now, only missing bundle will be reported but it will be enhanced in future versions.
+
+==== 13.1.2. Reporting mode
+
+Several reporting modes are at your disposal:
+
+* *console*: any alert will be displayed in the JavaScript console of your browser
+* *notification*: a notification will be fired client-side
+* *all* (default in both *dev* and *prod* profiles): equivalent of *console* + *notification*
+* *none*: disables client-side alert reporting
+
+The choice is set via the <<opt-tool.alert.reporting.mode, `tool.alert.reporting.mode`>> configuration option.
+
+===== Example
+
+In order to report alerts in the JavaScript console only, modify the configuration file as follows:
+
+.dandelion/dandelion.properties
+[source, properties]
+----
+tool.alert.reporting.mode = console
+----
+
+NOTE: All alerts are reported in a dedicated debug page, inside the debugger. See the next section for more information.
+
+==== 13.1.3. Enabling/disabling alert reporting
+
+The reporting system can be enabled/disabled thanks to the <<opt-tool.alert.reporting, `tool.alert.reporting`>> configuration option.
+
+For example, in order to disable the reporting system, modify the configuration file as follows:
+
+.dandelion/dandelion.properties
+[source, properties]
+----
+tool.alert.reporting = false
+----
+
+=== 13.2. Live debugger
+
+In order to access the debugger, just append the following request parameter to the current URL: `ddl-debug`.
+
+For example, if you are browsing the JSP starter sample at the URL: http://localhost:8080/core-jsp-starter/, just modify the URL as follows: http://localhost:8080/core-jsp-starter/?ddl-debug. 
+
+As a consequence, Dandelion-Core will display the debugger and show information about the current request.
 
 image::debugger-home.png[]
 
-NOTE: access to the debugger can be disabled thanks to the <<opt-tool.debugger, `tool.debugger`>> configuration option.
+NOTE: Access to the debugger can be disabled thanks to the <<opt-tool.debugger, `tool.debugger`>> configuration option.
 
-=== 13.2. Debug pages
+The Dandelion debugger is composed of several _debug pages_, which are described below.
 
-The Dandelion debugger is composed of several _debug pages_. Each of them can be browsed using the left menu.
+==== 13.2.1. Current assets
 
-* *Bundles/assets*: reports all bundles/assets included in the current request in different formats
-* *Options*: lists all configuration options
-* *Cache store*: pending...
+This debug page allows you to understand how Dandelion-Core handles the included bundles. Several views are available:
 
-Moreover, each Dandelion component can contain additional pages that will be displayed in the same menu.
+* graph: shows in a graph view what bundles are included in the current request
+* table: shows the same in a table view
+* HTML: shows how Dandelion-Core will generate HTML markup and where tags are to be included
 
-=== 13.3. Plugging-in custom debug pages
+==== 13.2.2. Current options
 
-TIP: pending... 
+This debug page shows:
+
+* the active profile
+* all current active configuration options
+
+image::debugger-options.png[]
+
+==== 13.2.3. Asset storage
+
+This debug page shows all assets stored in the asset storage, and all related metadata: version, parent bundle, ...
+
+image::debugger-asset-storage.png[]
+
+==== 13.2.4. Bundle storage
+
+This debug page shows all bundles stored in the bundle storage. Two views are available:
+
+* a *graph* view
+
++
+image::debugger-bundle-storage-graph.png[]
+
+* a *tabular* view 
+
++
+image::debugger-bundle-storage-table.png[]
+
+Note that the tabular view also displays more metadata about bundles: the original bundle loader (note that a `vendor` tag is displayed for vendor bundles), all bundle dependencies and the bundle original path.
+
+==== 13.2.5. Cache store
+
+This debug page lets you visualize the contents of the cache store, that is all associations between request URIs and required assets.
+
+image::debugger-cache.png[]
+
+==== 13.2.6. Alert reporting
+
+This debug page lets you visualize all alerts reported by Dandelion-Core.
+
+image::debugger-alert-reporting.png[]
+
+Note that when a requested bundle doesn't exist in the bundle storage, Dandelion-Core checks whether any bundle exists with the same name. If so, all suggested bundles will be displayed in the last column.

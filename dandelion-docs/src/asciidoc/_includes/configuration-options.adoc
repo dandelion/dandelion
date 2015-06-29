@@ -1,18 +1,16 @@
 == 12. Configuration options
 
-NOTE: Pending
-
-One of the key features of Dandelion is that it is highly configurable. Plenty of options, with default values depending on the active <<10-profiles, profile>>, are at your disposal to configure the framework.
+One of the key features of Dandelion-Core is that it is highly configurable. Plenty of options, with default values depending on the active <<10-profiles, profile>>, are at your disposal to configure the framework.
 
 === 12.1. Available options
 
-See the <<appendix-c-configuration-options-reference, configuration options reference>> for an exhaustive list of available options and their corresponding default value with both `dev` and `prod` <<10-1-built-in-profiles, profiles>>.
+See the <<appendix-c-configuration-options-reference, configuration options reference>> for an exhaustive list of available options and their corresponding default value with both *dev* and *prod* <<10-1-built-in-profiles, profiles>>.
 
 === 12.2. Reading configuration options
 
 ==== 12.2.1. From classpath
 
-By default, Dandelion expects a file called `dandelion.properties` to be located in the `classpath-root/dandelion` folder.
+By default, Dandelion-Core expects a file called `dandelion.properties` to be located in the `classpath-root/dandelion` folder.
 
 .Example with a Maven project
 [source, xml]
@@ -30,50 +28,34 @@ IMPORTANT: Note that when a profile is explicitely activated, Dandelion will try
 
 ==== 12.2.2. From System property
 
-Dandelion can also load an externalized configuration file, using the `dandelion.configuration` System property.
+Dandelion-Core can also load an externalized configuration file, using the `dandelion.configuration` System property.
 
-If you wish to externalize the configuration file, 
-Let's say you have the following files:
+===== Example
+
+Let's consider the following structure:
 
 [source, xml]
 ----
 C:
 |__ Documents
    |__ MyApp
-      |__ datatables.properties
-      |__ datatables_FR.properties
-      |__ datatables_ES.properties
+      |__ dandelion.properties
 ----
 
-Just add `-Ddandelion.datatables.configuration="C:\Documents\MyApp\"` to the starting script of the application server.
+In order to read the externalized file, just add the `-Ddandelion.configuration` System property to the server starting script.
 
-NOTE: Note that when reading from an externalized file, you don't have to put the properties file under the `dandelion/` folder.
-
-
-==== 12.2.3. Loading strategy
-
-Any configuration option must be set in a file called <code>datatables.properties</code>. Dandelion-Datatables will load it thanks to the http://docs.oracle.com/javase/6/docs/api/java/util/ResourceBundle.html[ResourceBundle mechanism] and using the following strategy:
-
-* First, check if the `dandelion.datatables.configuration` system property is defined.
-
-+
-If it exists, Dandelion-Datatables attempts to convert the value to a URL and use it to load a resource bundle called `datatables.properties`
-
-* Then, if no system property is defined, Dandelion-Datatables tries to load the same resource bundle (called `datatables.properties`) from the `dandelion/datatables/` folder within the classpath.
-
-* If no `datatables.properties` file is found, the default configuration will be used
-
+NOTE: Note that when reading from an externalized file, you don't have to place the properties file under the `dandelion/` folder
 
 === 12.3. Setting configuration options
 
-Dandelion uses a very particular PropertySource order that is designed to allow sensible overriding of values, properties are considered in the the following order:
+All Dandelion configuration options can be set in different ways.
 
 ==== 12.3.1. Using properties
 
 .dandelion/dandelion.properties
 [source, properties]
 ----
-asset.minification=true
+tool.debugger=true
 ----
 
 ==== 12.3.2. Using filter initialization parameters
@@ -87,7 +69,7 @@ You can also set configuration options as initialization parameters of the `Dand
   <filter-name>dandelion</filter-name>
   <filter-class>com.github.dandelion.core.web.DandelionFilter</filter-class>
   <init-param>
-    <param-name>asset.minification</param-name>
+    <param-name>tool.debugger</param-name>
     <param-value>true</param-value>
   </init-param>
 </filter>
@@ -100,13 +82,13 @@ And finally as Java System properties:
 .Inside your server startup script
 [source, bash]
 ----
--Dasset.minification=true
+-Dtool.debugger=true
 ----
 
 [IMPORTANT] 
 ==== 
 Remember that the following precedence rule applies:
 
-*System property* > *filter init param* > *properties file*
+*System property* > *filter init param* > *property*
 ====
 

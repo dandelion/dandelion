@@ -1,11 +1,133 @@
 == 11. Asset generators
 
-TIP: Pending
+One of the great features of Dandelion-Core is the ability to generate code. This feature is particularly handy when developing components such as Dandelion-Datatables, which require some code to initialize a client-side library.
 
-=== 11.1. Raw JavaScript
+Dandelion-Core only generates JavaScript code for now, but in multiple flavours.
 
-TIP: Pending
+=== 11.1. JavaScript generators
 
-=== 11.2. jQuery
+==== 11.1.1. Vanilla (or raw) JavaScript
 
-TIP: Pending
+This is the most simple asset generator available. As its name suggests, this generator is handy when you need to generate raw JavaScript code.
+
+A basic built-in implementation is already available: `RawJsContentGenerator`:
+
+[source, java]
+----
+public class RawJsContentGenerator extends AbstractJsContentGenerator {
+
+   private AssetContent content;
+
+   public RawJsContentGenerator(AssetContent content) {
+      this.content = content;
+   }
+   
+   ...
+}
+----
+
+This implementation can be used as-is. If so, all you need is to instanciate `AssetContent` directly or to use a custom implementation where the contents of the asset must be returned by the `getContent()` method.
+
+===== Example
+
+[source, java]
+----
+public class CustomContent extends AssetContent {
+
+   @Override
+   public StringBuilder getContent() {
+      return "alert('I have been generated!')";
+   }
+}
+----
+
+Then, just pass the desired implementation of `AssetContent` when initializing the generator:
+
+[source, java]
+----
+...
+new RawJsContentGenerator(new CustomContent())
+...
+----
+
+==== 11.1.2. jQuery JavaScript
+
+Dandelion-Core also contains a generator specifically designed for jQuery. This generator uses different placeholders around the jQuery https://api.jquery.com/ready/[.ready()] event. Using this implementation will thus consist to fill the available placeholders with the desired JavaScript code.
+
+Below are all existing placeholders:
+
+.Available placeholders
+[source, javascript]
+----
+// Beginning of the generated Javascript code
+[BEFORE_ALL]
+ 
+[BEFORE_START_DOCUMENT_READY]
+
+$(document).ready(function() {
+   [AFTER_START_DOCUMENT_READY]
+ 
+   [COMPONENT_CONFIGURATION]
+ 
+   [BEFORE_END_DOCUMENT_READY]
+});
+
+[AFTER_END_DOCUMENT_READY]
+ 
+[AFTER_ALL]
+// End of the generated Javascript code
+----
+
+As for raw JavaScript, Dandelion-Core ships a built-in implementation: `JQueryJsContentGenerator`. You can already use this implementation by implementing your own `JQueryContent` class.
+
+The `JQueryContent` class contains all necessary utilities to fill the different placeholders:
+
+[source, java]
+----
+appendToBeforeAll(String content)
+appendToBeforeStartDocumentReady(String content)
+appendToAfterStartDocumentReady(String content)
+appendToComponentConfiguration(String content)
+appendToBeforeEndDocumentReady(String content)
+appendToAfterEndDocumentReady(String content)
+appendToAfterAll(String content) 
+----
+
+=== 11.2. Binding a generator to an asset
+
+In order to use an asset generator, you need to configure an asset with a particular location, whose key is `api` (see <<_5_2_6_code_api_code_locator, `ApiLocator`>>)
+
+./dandelion/any-bundle.json
+[source, json]
+----
+{
+  "assets": [
+    {
+      "name" : "generated", <1>
+      "type" : "js", <2>
+      "locations": {
+        "api": "uid"
+      }
+    }
+  ]
+}
+----
+<1> the `name` attribute will used by Dandelion to generate the final HTML markup
+<2> the `type` attribute tells Dandelion-Core what kind of asset is to be generated
+
+IMPORTANT: Both name and type are mandatory when using the `api` location key
+
+The most important part here is the configured location: `uid`. 
+
+Indeed, Dandelion-Core will look inside the current `HttpServletRequest` if an instance of `AssetRequestContext` is present. This utility is particularly useful to interact with the Dandelion context: include/exclude bundle, exclude assets AND configure asset generators.
+
+In order to configure an asset generator, use the `addGenerator(String uid, AssetContentGenerator generator)` method as follows:
+
+[source, java]
+----
+AssetRequestContext
+   .get(this.request)
+   .addGenerator("uid", any generator);
+----
+
+Finally, as soon as Dandelion-Core detects an `api` location key, it will look for a generator inside the current `AssetRequestContext` under the configured uid and invoke its `getAssetContent()` method.

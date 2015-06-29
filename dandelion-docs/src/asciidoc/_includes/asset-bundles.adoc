@@ -67,7 +67,8 @@ project-root
       |__ webapp
          |__ assets
             |__ js
-               |__ jquery.js <1>
+               |__ vendor
+                  |__ jquery.js <1>
                |__ app.js <2>
             |__ ...
 ----
@@ -76,25 +77,25 @@ project-root
 
 One representation could be the following:
 
-.jquery.json
+.dandelion/vendor/jquery.json
 [source, json]
 ----
 {  
   "assets":[  
     {  
       "locations":{  
-        "webapp":"/assets/js/jquery.js" <1>
+        "webapp":"/assets/js/vendor/jquery.js"
       }
     }
   ]
 }
 ----
 
-.main.json
+.dandelion/app.json
 [source, json]
 ----
 {  
-  "bundle" : "main", <1>
+  "bundle" : "app", <1>
   "dependencies" : ["jquery"], <2>
   "assets":[  
     {  
@@ -106,18 +107,13 @@ One representation could be the following:
 }
 ----	
 <1> The name of the bundle is explicitely declared here
-<2> `jquery` is the name of the above bundle, inferred from the file name `jquery.json`
+<2> `jquery` is the name of the first bundle above, inferred from the bundle file name `jquery.json`
 
 As soon as the `app` bundle is requested, all assets contained in the `jquery` bundle will be loaded before `app.js` since the `jquery` bundle is marked as dependent.
 
-==== 4.1.2. Possible representations
+==== 4.1.2. JSON representation
 
 All assets intented to be used in your web applications need to be known by Dandelion. As a consequence, you have to create bundles accordingly, in a declarative approach.
-
-Two formats are supported: JSON and XML.
-
-[discrete]
-===== 4.1.2.1. JSON representation
 
 Each bundle is basically a JSON file, located under the `classpath_root/dandelion` folder.
 
@@ -138,7 +134,7 @@ project-root
 
 Assume you want to use http://jquery.com/[jQuery] in your web application. One representation could be the following:
 
-.jquery.json
+.dandelion/vendor/jquery.json
 [source, json]
 ----
 {  
@@ -155,45 +151,9 @@ Assume you want to use http://jquery.com/[jQuery] in your web application. One r
 ----
 <1> the `jquery` asset is configured with the `remote` location key. This key is mapped to a particular asset locator used by Dandelion-Core to know the fetching strategy to use. Read more about <<5-asset-locators, asset locators>>.
 
-===== 4.1.2.2. XML representation
-
-Each bundle is basically a XML file, located under the `classpath_root/dandelion` folder.
-
-.Example with a Maven project
-[source, xml]
-----
-project-root
-|__ src
-   |__ main
-      |__ resources
-         |__ dandelion
-            |__ bundle1.xml
-            |__ bundle2.xml
-            |__ ...
-----
-
-===== Example
-
-The `jquery.xml` bundle could be written like this:
-
-.jquery.xml
-[source, xml]
-----
-<bundle>
-  <name>jquery</name>
-  <assets>
-    <asset name="jquery" version="1.11.0">
-      <locations>
-        <location key="remote">//cdnjs.cloudflare.com/ajax/libs/jquery/1.11.0/jquery.js</location>
-      </locations>
-    </asset>
-  </assets>
-</bundle>
-----
-
 ==== 4.1.3. Bundle loading
 
-Once the bundles created (whether JSON or XML), Dandelion will load them in a particular order, using _bundle loaders_. See the <<8-bundle-loaders, bundle loaders section>> for more information.
+Dandelion will load all bundle definitions in a particular order, using _bundle loaders_. See the <<8-bundle-loaders, bundle loaders section>> for more information.
 
 === 4.2. Building a bundle graph
 
@@ -209,14 +169,12 @@ The bundle graph is built implicitely, depending on the bundle definitions and s
 
 Assume the following bundles: `jquery`, `datatables` and `bootstrap2`.
 
-.jquery.json
+.dandelion/vendor/jquery.json
 [source, json]
 ----
 {
-  "bundle" : "jquery",
   "assets": [
     {
-      "name": "jquery",
       "version": "1.11.0",
       "locations": {
         "remote": "//cdnjs.cloudflare.com/ajax/libs/jquery/1.11.0/jquery.js"
@@ -226,22 +184,19 @@ Assume the following bundles: `jquery`, `datatables` and `bootstrap2`.
 }
 ----
 
-.datatables.json
+.dandelion/vendor/datatables.json
 [source, json]
 ----
 {
-  "bundle" : "datatables",
   "dependencies": [ "jquery" ],
   "assets": [
     {
-      "name": "datatables",
       "version": "1.9.4",
       "locations": {
         "remote": "//ajax.aspnetcdn.com/ajax/jquery.dataTables/1.9.4/jquery.dataTables.js"
       }
     }, 
     {
-      "name": "datatables",
       "version": "1.9.4",
       "locations": {
         "remote": "//ajax.aspnetcdn.com/ajax/jquery.dataTables/1.9.4/css/jquery.dataTables.css"
@@ -251,24 +206,20 @@ Assume the following bundles: `jquery`, `datatables` and `bootstrap2`.
 }
 ----
 
-.bootstrap2.json
+.dandelion/vendor/bootstrap2.json
 [source, json]
 ----
 {
-  "bundle" : "bootstrap2",
   "dependencies" : [ "jquery" ],
   "assets": [
     {
-      "name": "bootstrap2",
       "version": "2.3.2",
       "locations": {
         "remote": "//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.js"
       }
     },
     {
-      "name": "bootstrap2",
       "version": "2.3.2",
-      "type": "css",
       "locations": {
         "remote": "//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap.css"
       }
@@ -289,9 +240,9 @@ digraph g {
 
 As soon as the `bootstap2` bundle is requested, Dandelion will read the bundle graph and then return in the right order the following assets:
 
-. jquery.js
-. bootstrap.js
-. bootstrap.css
+* jquery.js
+* bootstrap.js
+* bootstrap.css
 
 And due to the default DOM position (see the <<4-1-1-definitions, asset definition>>), Dandelion will inject the requested assets into the HTML page as follows:
 
@@ -616,7 +567,7 @@ As a consequence, only the asset called `asset1` will appear in the HTML source 
 
 ==== 4.3.3. Using the API
 
-The bundle graph can also be accessed using the Dandelion API. This is how components, such as Dandelion-Datatables, interact with the bundle graph.
+The bundle graph can also be accessed using the Dandelion API. This is how components, such as Dandelion-Datatables, interact with it.
 
 The only requirement is that you have access to the `HttpServletRequest` API.
 

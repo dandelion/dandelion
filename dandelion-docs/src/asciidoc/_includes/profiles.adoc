@@ -1,37 +1,39 @@
-== 9. Profiles
-
-TIP: Pending
+== 10. Profiles
 
 Dandelion profiles provide a way to segregate parts of your configuration and make it only available in certain environments.
+
+=== 10.1 Profile activation
 
 In order to activate a profile, specify the following System property in the server startup script:
 
  -Ddandelion.profile.active=[profileName]
 
-=== 9.1. Built-in profiles
+For now, only system property-based activation is supported.
 
-All <<12-configuration-options, configuration options>> are created with two values, one for the built-in `dev` profile, another for the `prod` one. Each of these profiles are described below.
+TIP: At any moment, as long as the application is running, you can know which profile is active using the debugger. Read more about the <<13. Debugger, debugger>>
 
-==== 9.1.1. `dev` profile
+=== 10.2. Built-in profiles
 
-The main goal of the `dev` profile is to accelerate the development. As such, it is *active by default*.
+All existing <<12-configuration-options, configuration options>> are created with two values, one for the built-in *dev* profile, another for the *prod* one. Each of these profiles are described below.
 
-Here follow some of the features enabled with the `dev` profile:
+==== 10.2.1. *dev* profile
+
+The main goal of the *dev* profile is to accelerate the development. As such, it is *active by default*.
+
+All default *dev* features are listed in the <<Appendix C: Configuration options reference, configuration options reference>> but here follow some of them:
 
 * the Dandelion debugger is accessible, see the <<12-debugger, debugger section>> for more information
-* bundles can be reloaded on-demand thanks to a specific request parameter, see TODO
+* bundles can be re-scanned on-demand
 * a particular caching policy is applied thus preventing assets from being cached by browsers
 * all generated assets are pretty-printed, thus easing debugging
 
-See the <<appendix-c-configuration-options-reference, configuration options reference>> for the complete list of dev values.
+TIP: This profile can be activated thanks to different aliases: *dev* and *development*. 
 
-TIP: This profile can be activated thanks to different aliases: `dev` and `development`. 
+==== 10.2.2. *prod* profile
 
-==== 9.1.2. `prod` profile
+The *prod* profile is focused both on performance and security. That is why it should be active in a production environment.
 
-The `prod` profile is focused both on performance and security. That is why it should be active in a production environment.
-
-Here follow some of the features enabled with the `prod` profile:
+Here follow some of the features enabled with the *prod* profile:
 
 * specific HTTP headers are set in order to optimize load times (performance) 
 * asset minification is enabled (performance) 
@@ -40,40 +42,19 @@ Here follow some of the features enabled with the `prod` profile:
 * the debugger is no longer accessible (security)
 * bundle can't be reloaded any longer (security)
 
-See the <<appendix-c-configuration-options-reference, configuration options reference>> for the complete list of prod values.
+See the <<appendix-c-configuration-options-reference, configuration options reference>> for the complete list of *prod* values.
 
-TIP: This profile can be activated thanks to different aliases: `prod` and `production`. 
+TIP: This profile can be activated thanks to different aliases: *prod* and *production*. 
 
-=== 9.2. Custom profiles
+=== 10.3. Configuration subtitution
 
-You can of course define your own profiles. It is as simple as creating a new properties file under the `classpath_root/dandelion` folder, with a specific name: `dandelion_[profileName].properties`
+Note that profiles can also contain custom properties in order to use them in bundle definitions. This is particularly useful to handle deployments in multiple environments.
 
-WARNING: All options not explicitely declared in your own profile file will be read from the built-in `dev` profile.
-			
-.Example with a Maven project
-[source, xml]
-----
-project-root
-|__ src
-   |__ main
-      |__ resources
-         |__ dandelion
-            |__ dandelion_[profileName].properties 
-----
-
-Then, just activate it using the right system property:
-
- -Ddandelion.profile.active=[profileName]
-
-Note that you can also define your own properties in profiles and use them in bundle definitions with the following syntax:
-
- %PROPERTY%
-
-This is particularly useful when your application is to be deployed in multiple environments.
+All custom configurations will be substituted in bundles using the following syntax: `%CONFIGURATION_KEY%`
 
 ==== Example
 
-Consider the two following profiles: `qa` and `prod`.
+Consider the two following profiles: *qa* and *prod*.
 
 .dandelion/dandelion_qa.properties
 [source, xml]
@@ -99,9 +80,9 @@ tool.asset.pretty.printing=false
 media.server=https://prod-media.company.com/
 ----
 
-You can then make use of the custom property in your bundle definitions with the following format: `%property%`
+You can then make use of the custom property in your bundle definitions with the following format: `%media.server%`
 
-.any-bundle.json
+.dandelion/any-bundle.json
 [source, json]
 ----
 {  
@@ -116,4 +97,27 @@ You can then make use of the custom property in your bundle definitions with the
 }
 ----
 
-Dandelion will perform the variable substitution as soon as the application server starts.
+Dandelion will perform the configuration substitution as soon as the application server starts.
+
+=== 10.4. Custom profiles
+
+You can of course define your own profiles. It is as simple as creating a new properties file under the `classpath_root/dandelion` folder, with a specific name: `dandelion_[profileName].properties`
+
+NOTE: All options not explicitely declared in your own profile file will be read from the built-in *dev* profile.
+			
+.Example with a Maven project
+[source, xml]
+----
+project-root
+|__ src
+   |__ main
+      |__ resources
+         |__ dandelion
+            |__ dandelion_[profileName].properties 
+----
+
+Then, just activate it using the right system property:
+
+ -Ddandelion.profile.active=[profileName]
+
+WARNING: Except for the *dev* profile described ealier, as soon as a profile is activated, Dandelion-Core will read its configuration file at a specific location: `classpath_root/dandelion/dandelion_[profileName].properties`

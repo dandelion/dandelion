@@ -183,7 +183,7 @@ In order to plug-in your own asset processor, just follow these steps:
 package com.foo.asset.processor.impl;
 
 @CompatibleAssetType(types = AssetType.css) // <1>
-public class MyProcessor extends AbstractAssetLocator {
+public class MyProcessor extends AbstractAssetProcessor {
 
    @Override
    public String getProcessorKey() {

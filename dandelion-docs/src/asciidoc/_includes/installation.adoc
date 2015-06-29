@@ -28,7 +28,7 @@ Depending on the template engine you wish to use in your web application, add ei
 </dependency>
 ----
 
-NOTE: When using a build tool such as http://maven.apache.org/[Maven], the above dependencies are not explicitely needed when you directly use a component such as Dandelion-Datatables (TODO link), thanks to the transitive dependencies
+NOTE: When using a build tool such as http://maven.apache.org/[Maven], the above dependencies are not explicitely needed when you directly use a component such as Dandelion-Datatables, thanks to the transitive dependencies
 
 * *Step 2: Configure the Dandelion filter*
 
@@ -65,9 +65,10 @@ Add the following configuration to your `web.xml` file:
 </servlet>
 <servlet-mapping>
   <servlet-name>dandelionServlet</servlet-name>
-  <url-pattern>/dandelion-assets/*</url-pattern>
+  <url-pattern>/dandelion-assets/*</url-pattern> <1>
 </servlet-mapping>
 ----
+<1> Note that the URL pattern can be customized thanks to the <<opt-asset.url.pattern, `asset.url.pattern`>> config option
 
 === 3.2. JSP-based steps
 
@@ -115,6 +116,6 @@ templateEngine.addDialect(new DandelionDialect());
 This way you can benefit from some content assist in your favorite IDE:
 
 * Eclipse: see the http://www.thymeleaf.org/ecosystem.html#thymeleaf-extras-eclipse-plugin[Thymeleaf Eclipse plugin]
-* IntelliJ IDEA (upcoming): see the http://blog.jetbrains.com/idea/2014/09/intellij-idea-14-ships-advanced-coding-assistance-for-thymeleaf/[blog post]
+* IntelliJ IDEA: see this http://forum.thymeleaf.org/IntelliJ-IDEA-14-includes-Thymeleaf-support-td4028544.html[topic]
 
 WARNING: Using a wrong namespace will prevent the content assist from working correctly

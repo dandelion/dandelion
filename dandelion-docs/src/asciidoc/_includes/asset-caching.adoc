@@ -1,15 +1,17 @@
-== 10. Asset caching
+== 9. Asset caching
+
+TIP: pending...
 
 [quote, HTTP Caching in Optimizing Content Efficiency, https://developers.google.com/web/fundamentals/performance/optimizing-content-efficiency/http-caching]     
 Fetching something over the network is both slow and expensive: large responses require many roundtrips between the client and server, which delays when they are available and can be processed by the browser, and also incurs data costs for the visitor. As a result, the ability to cache and reuse previously fetched resources is a critical aspect of optimizing for performance.
 
-=== 10.1. Introducing asset caching
+=== 9.1. Introducing asset caching
 
 Caching is one of the key issues of Dandelion-Core. Caching is involved at multiples levels, from server-side core functionalities such as <<5-asset-locators, asset locators>> to client browsers thanks to HTTP headers.
 
 All caching mechanisms are described in this section.
 
-==== 10.1.1. Server-side caching
+==== 9.1.1. Server-side caching
 
 Server-side caching has two main purposes:
 
@@ -18,11 +20,11 @@ Server-side caching has two main purposes:
 
 See the following four steps to understand how it works:
 
-image::asset-caching.png[]
+image::asset-caching.png[Caching, align=center]
 
 As you can see, a new entry is added in the *request store* on a per-page level. This looks quite aggressive but works in all cases. More fine-tuned strategies will be available in future versions.
 
-==== 10.1.2. Browser caching
+==== 9.1.2. Browser caching
 
 As far as possible, Dandelion-Core helps the browser determine if and when it can reuse a previously fetched response. For this to happen, Dandelion-Core acts on server responses by specifying an explicit caching policy for each resource. 
 
@@ -44,11 +46,11 @@ The HTTP headers are set on all resources except those with the `text/html` cont
 
 NOTE: Note that asset caching is enabled by default in the `prod` profile and disabled by default in the `dev` one
 
-=== 10.2. Built-in server-side cache systems
+=== 9.2. Built-in server-side cache systems
 
 Dandelion-Core comes with two built-in server-side cache systems that are described below.
 
-==== 10.2.1. Memory
+==== 9.2.1. Memory
 
 Dandelion uses the _MemoryAssetCache_ service provider as the default implementation used for server-side caching.
 
@@ -64,7 +66,7 @@ This implementation uses two maps as stores, that use the http://en.wikipedia.or
 
 The max element of each of them can be configured thanks to the <<opt-cache.asset.max.size, `cache.asset.max.size`>> and <<opt-cache.request.max.size, `cache.request.max.size`>> configuration options.
 
-==== 10.2.2. Ehcache
+==== 9.2.2. Ehcache
 
 Alternatively, if you already use http://ehcache.org/[Ehcache] in your application, it can be handy to use it as a main cache system for Dandelion-Core.
 
@@ -105,7 +107,7 @@ Moreover, some options allow you to configure the extra more precisely.
 * <<opt-cache.configuration.location, `cache.configuration.location`>>, which allows to specify the location of the `ehcache.xml` file.
 * <<opt-cache.manager.name, `cache.manager.name`>>, which allows to specify the name of the cache manager that Dandelion-Core will use.
 
-=== 10.3. Plugging-in your own cache system
+=== 9.3. Plugging-in your own cache system
 
 Like most parts of the framework, Dandelion-Core provides an extension point allowing your to plug-in your own cache system thanks to the SPI mechanism.
 

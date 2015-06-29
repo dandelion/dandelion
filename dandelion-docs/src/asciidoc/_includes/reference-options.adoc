@@ -13,10 +13,10 @@ Note that all options are presented in the following format:
 |All possible values
 
 |dev
-|The default value set in the `dev` profile
+|The default value configured in the *dev* profile
 
 |prod
-|The default value set in the `prod` profile
+|The default value configured in the *prod* profile
 |===
 
 [discrete]
@@ -25,6 +25,20 @@ Note that all options are presented in the following format:
 .Configuration options reference
 [cols="31,5,64"]
 |===
+
+3+|*Component-related options*
+
+.4+|[[opt-components.standalone]]*components.standalone*
+2+|Allows components to be used standalone. If a component is used standalone, its corresponding bundle loader will be disabled. 
+
+|Values
+|Comma-separated list of component ids
+
+|dev
+|
+
+|prod
+|
 
 3+|*Asset-related options*
 
@@ -64,6 +78,18 @@ Note that all options are presented in the following format:
 |prod
 |cssurlrewriting, jsmin, cssmin
 
+.4+|[[opt-asset.js.processing]]*asset.js.processing* (Thymeleaf only)
+2+|Whether JavaScript assets should be processed with Thymeleaf expressions
+
+|Values
+|true \| false
+
+|dev
+|true
+
+|prod
+|true
+
 .4+|[[opt-asset.js.excludes]]*asset.js.excludes*
 2+|Comma-separated list of JavaScript assets to exclude from the current request
 
@@ -99,6 +125,18 @@ Note that all options are presented in the following format:
 
 |prod
 |/dandelion-assets/
+
+.4+|[[opt-asset.storage]]*asset.storage*
+2+|Name of the implementation to be used for the `AssetStorage`
+
+|Values
+|The name of the implementation of `AssetStorage` (returned by the `getName()` method)
+
+|dev
+|memory
+
+|prod
+|memory
 
 3+|*Versioning-related options*
 
@@ -287,6 +325,30 @@ Note that all options are presented in the following format:
 
 |prod
 |false
+
+.4+|[[opt-tool.alert.reporting]]*tool.alert.reporting*
+2+|Enable or disable alert reporting
+
+|Values
+|true \| false
+
+|dev
+|true
+
+|prod
+|false
+
+.4+|[[opt-tool.alert.reporting.mode]]*tool.alert.reporting.mode*
+2+|Mode of alert reporting
+
+|Values
+|console \| notification \| all \| none
+
+|dev
+|all
+
+|prod
+|all
 
 .4+|[[opt-tool.bundle.reloading]]*tool.bundle.reloading*
 2+|Allow or disallow bundle reloading
