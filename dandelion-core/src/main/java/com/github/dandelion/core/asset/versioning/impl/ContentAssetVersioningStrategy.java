@@ -36,6 +36,7 @@ import org.slf4j.LoggerFactory;
 
 import com.github.dandelion.core.asset.Asset;
 import com.github.dandelion.core.asset.versioning.AbstractAssetVersioningStrategy;
+import com.github.dandelion.core.storage.StorageEntry;
 import com.github.dandelion.core.util.DigestUtils;
 import com.github.dandelion.core.util.StringUtils;
 
@@ -60,8 +61,13 @@ public class ContentAssetVersioningStrategy extends AbstractAssetVersioningStrat
    @Override
    public String getAssetVersion(Asset asset) {
       LOG.debug("Calculating version hash for the asset: {}", asset.toLog());
-      String contents = getContext().getAssetStorage().get(asset.getStorageKey()).getContents();
+      StorageEntry storageEntry = getContext().getAssetStorage().get(asset.getStorageKey());
 
+      String contents = null;
+      if(storageEntry != null) {
+         contents = storageEntry.getContents();
+      }
+      
       String version = null;
       if (StringUtils.isBlank(contents)) {
          LOG.warn("Asset {} has an empty contents. Using a random String for the hash", asset.toLog());

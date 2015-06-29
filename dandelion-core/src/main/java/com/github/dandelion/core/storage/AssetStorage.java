@@ -53,12 +53,12 @@ public interface AssetStorage {
    /**
     * <p>
     * Gets the asset contents from the storage using the provided
-    * {@code cacheKey}.
+    * {@code storageKey}.
     * </p>
     * 
     * @param storageKey
     *           The key under which the asset contents is stored in the storage.
-    * @return the contents associated with the cache key.
+    * @return the contents associated with the storage key.
     */
    StorageEntry get(String storageKey);
 
