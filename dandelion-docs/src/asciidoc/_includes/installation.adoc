@@ -14,7 +14,7 @@ Depending on the template engine you wish to use in your web application, add ei
 <dependency>
   <groupId>com.github.dandelion</groupId>
   <artifactId>dandelion-jsp</artifactId>
-  <version>{ddl-version}</version>
+  <version>{project-version}</version>
 </dependency>
 ----
 
@@ -24,7 +24,7 @@ Depending on the template engine you wish to use in your web application, add ei
 <dependency>
   <groupId>com.github.dandelion</groupId>
   <artifactId>dandelion-thymeleaf</artifactId>
-  <version>{ddl-version}</version>
+  <version>{project-version}</version>
 </dependency>
 ----
 

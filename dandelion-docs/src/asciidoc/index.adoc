@@ -1,12 +1,7 @@
-= Dandelion {project-version} Documentation
+= Dandelion-Core {project-version} Documentation
 Thibault Duchateau <https://github.com/tduchateau[@tduchateau]>
 
-:description: This guide describes the basic structure of an AsciiDoc document, how to create your first AsciiDoc document, how to add other structural elements such as lists, block quotes and source code, and how to convert an AsciiDoc document to HTML, DocBook and PDF.
-:keywords: AsciiDoc, Asciidoctor, syntax, reference, learn, how to, writers, authors
-:imagesdir: images
 :include-dir: _includes
-:homepage: http://dandelion.github.io/dandelion
-:ddl-version: {project-version}
 
 include::{include-dir}/introduction.adoc[]
 

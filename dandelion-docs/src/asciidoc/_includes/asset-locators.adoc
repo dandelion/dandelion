@@ -271,7 +271,7 @@ This locator is bundled in the _dandelion-webjars_ extra since it brings a new d
 <dependency>
   <groupId>com.github.dandelion</groupId>
   <artifactId>dandelion-webjars</artifactId>
-  <version>{ddl-version}</version>
+  <version>{project-version}</version>
 </dependency>
 ----
 
@@ -443,7 +443,7 @@ project-root
       |__ resources
          |__ META-INF
             |__ services
-               |__ com.github.dandelion.core.asset.locator.spi.AssetLocator
+               |__ com.github.dandelion.core.asset.locator.AssetLocator
 ----
  
 +
