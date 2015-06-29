@@ -44,6 +44,7 @@ import com.github.dandelion.core.DandelionException;
 import com.github.dandelion.core.asset.Asset;
 import com.github.dandelion.core.cache.Cache;
 import com.github.dandelion.core.util.AssetUtils;
+import com.github.dandelion.core.util.StringUtils;
 import com.github.dandelion.core.web.RequestFlashData;
 import com.github.dandelion.core.web.handler.AbstractHandlerChain;
 import com.github.dandelion.core.web.handler.HandlerContext;
@@ -118,7 +119,7 @@ public class ProcessJsPostHandler extends AbstractHandlerChain {
       // Retrieves the content type from the filtered response and remove
       // charset if present
       String mimeType = handlerContext.getResponse().getContentType();
-      boolean compatibleMimeType = compatibleMimeTypes.contains(mimeType.split(";")[0]);
+      boolean compatibleMimeType = StringUtils.isNotBlank(mimeType) && compatibleMimeTypes.contains(mimeType.split(";")[0]);
 
       String servletUrlPattern = handlerContext.getContext().getConfiguration().getAssetUrlPattern()
             .replaceAll("/\\*", "");
