@@ -347,7 +347,6 @@
             <configuration>
                <aggregate>true</aggregate>
                <doctitle>${project.name} (${project.version})</doctitle>
-               <stylesheetfile>src/main/javadoc/stylesheet.css</stylesheetfile>
                <docfilessubdirs>true</docfilessubdirs>
             </configuration>
             <executions>
