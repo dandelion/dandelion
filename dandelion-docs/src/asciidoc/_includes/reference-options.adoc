@@ -118,7 +118,7 @@ Note that all options are presented in the following format:
 2+|Servlet pattern to be used by the DandelionServlet to serve assets
 
 |Values
-|true \| false
+|Any valid URL pattern
 
 |dev
 |/dandelion-assets/
