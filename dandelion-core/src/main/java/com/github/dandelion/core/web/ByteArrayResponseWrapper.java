@@ -33,7 +33,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 
-import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
 
@@ -63,20 +62,14 @@ public class ByteArrayResponseWrapper extends HttpServletResponseWrapper {
     */
    private PrintWriter pw = new PrintWriter(baos);
 
-   private boolean isRedirect;
-   
    /**
-    * ServletOutputStream that sits on top of byte-output stream.
+    * Flag which indicates if the current response is part of a redirect
+    * scenario.
     */
-   private ServletOutputStream sos = new ByteArrayServletStream(baos);
+   private boolean isRedirect;
 
    public ByteArrayResponseWrapper(HttpServletResponse response) {
       super(response);
-   }
-
-   @Override
-   public ServletOutputStream getOutputStream() throws IOException {
-      return sos;
    }
 
    @Override
@@ -84,7 +77,6 @@ public class ByteArrayResponseWrapper extends HttpServletResponseWrapper {
       return pw;
    }
 
-   
    @Override
    public void sendRedirect(String location) throws IOException {
       this.isRedirect = true;
@@ -106,33 +98,5 @@ public class ByteArrayResponseWrapper extends HttpServletResponseWrapper {
 
    public boolean isRedirect() {
       return isRedirect;
-   }
-
-   public void setRedirect(boolean isRedirect) {
-      this.isRedirect = isRedirect;
-   }
-
-
-   /**
-    * <p>
-    * New specific byte-output stream intended to store the passed stream in a
-    * byte array.
-    * </p>
-    * 
-    * @author Thibault Duchateau
-    * @since 0.10.1
-    */
-   private class ByteArrayServletStream extends ServletOutputStream {
-
-      private ByteArrayOutputStream baos;
-
-      private ByteArrayServletStream(ByteArrayOutputStream baos) {
-         this.baos = baos;
-      }
-
-      @Override
-      public void write(int param) throws IOException {
-         baos.write(param);
-      }
    }
 }

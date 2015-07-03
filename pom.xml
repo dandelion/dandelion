@@ -9,7 +9,7 @@
 
    <groupId>com.github.dandelion</groupId>
    <artifactId>dandelion</artifactId>
-   <version>1.0.1-SNAPSHOT</version>
+   <version>1.0.2-SNAPSHOT</version>
    <packaging>pom</packaging>
    <name>Dandelion</name>
    <description>
@@ -49,7 +49,7 @@
       <jsp-api.version>2.2</jsp-api.version>
       <servlet-api.version>3.0.1</servlet-api.version>
       <slf4j-api.version>1.7.5</slf4j-api.version>
-      <thymeleaf.version>2.1.1.RELEASE</thymeleaf.version>
+      <thymeleaf.version>2.1.4.RELEASE</thymeleaf.version>
       <webjars-locator.version>0.23</webjars-locator.version>
       <yui-compressor.version>2.4.7</yui-compressor.version>
       <commons-io.version>2.4</commons-io.version>
@@ -347,7 +347,6 @@
             <configuration>
                <aggregate>true</aggregate>
                <doctitle>${project.name} (${project.version})</doctitle>
-               <stylesheetfile>src/main/javadoc/stylesheet.css</stylesheetfile>
                <docfilessubdirs>true</docfilessubdirs>
             </configuration>
             <executions>

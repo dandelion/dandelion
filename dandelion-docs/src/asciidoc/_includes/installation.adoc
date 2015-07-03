@@ -74,7 +74,7 @@ Add the following configuration to your `web.xml` file:
 
 * *Declare the taglib definition*
 
-Everywhere you want to include assets manually, you need to add the taglib definition in your JSP:
+Anywhere you wish to use the taglib, declare it in the JSP:
 
  <%@ taglib prefix="dandelion" uri="http://github.com/dandelion" %>
 
