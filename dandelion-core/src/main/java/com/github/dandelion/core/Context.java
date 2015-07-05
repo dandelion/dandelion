@@ -570,9 +570,11 @@ public class Context {
 
       for (Component component : components) {
          DebugMenu componentDebugMenu = component.getDebugMenu();
-         debugMenuMap.put(componentDebugMenu.getDisplayName().trim().toLowerCase(), componentDebugMenu);
-         for (DebugPage debugPage : componentDebugMenu.getPages()) {
-            debugPageMap.put(debugPage.getId(), debugPage);
+         if (componentDebugMenu != null) {
+            debugMenuMap.put(componentDebugMenu.getDisplayName().trim().toLowerCase(), componentDebugMenu);
+            for (DebugPage debugPage : componentDebugMenu.getPages()) {
+               debugPageMap.put(debugPage.getId(), debugPage);
+            }
          }
       }
    }
