@@ -43,7 +43,7 @@ In cases where multiple locations are configured for a single asset, Dandelion u
 
 The default resolution strategy is defined as follows:
 
- asset.locations.resolution.strategy = webapp, webjar, classpath, jar, remote
+ asset.locations.resolution.strategy = webapp, webjar, classpath, jar, file, remote
 
 Here is what happens:
 
@@ -51,6 +51,7 @@ Here is what happens:
 . If not, if a `webjar` location key is defined, the corresponding location will be selected and processed
 . If not, the same for the `classpath` location key 
 . If not, the same for the `jar` location key
+. If not, the same for the `file` location key
 . If not, the same for the `remote` location key
 . If none of the above is specified, an exception will be thrown.
 
@@ -130,7 +131,7 @@ By default, Dandelion will generate the following client-side HTML markup:
 
 ==== 5.2.2. `classpath` locator
 
-The `classpath` should be used whenever you need to load an asset stored in the classpath.
+The `classpath` locator should be used whenever you need to load an asset stored in the classpath.
 
 |===
 | *Location key* | `classpath`
@@ -393,6 +394,41 @@ Finally, by default, Dandelion will generate the following client-side HTML mark
 ----
 
 NOTE: This locator is the best entry point to write Dandelion components (such as Dandelion-Datatables)
+
+==== 5.2.7. `file` locator
+
+The `file` locator should be used whenever you need to load an asset stored in the local file system.
+
+|===
+| *Location key* | `file`
+| *Corresponding value* | Absolute path of the asset
+|===
+
+[discrete]
+==== Example
+
+Assuming the asset is stored in the `/usr/local/app/assets/app.js`, the asset declaration should look like:
+
+.dandelion/app.json
+[source, json]
+----
+{
+  "assets": [
+    {
+      "locations": {
+        "file": "/usr/local/app/assets/app.js"
+      }
+    }
+  ]
+}
+----
+
+By default, Dandelion will generate the following client-side HTML markup:
+
+[source, html]
+----
+<script src="/[contextPath]/dandelion-assets/[storageKey]/js/app-[versionKey].js"></script>
+----
 
 === 5.3. Plugging-in your own asset locator
 
