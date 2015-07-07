@@ -61,10 +61,10 @@ Note that all options are presented in the following format:
 |Comma-separated list of location keys. See the <<5-asset-locators, asset locators section>> for more information.
 
 |dev
-|webapp, webjar, classpath, jar, remote
+|webapp, webjar, classpath, jar, file, remote
 
 |prod
-|webapp, webjar, classpath, jar, remote
+|webapp, webjar, classpath, jar, file, remote
 
 .4+|[[opt-asset.processors]]*asset.processors*
 2+|List of asset processors globally enabled in the application

@@ -342,6 +342,10 @@ public final class PathUtils {
          // Get last token, this after the last "/"
          tmpAssetName = location.substring(location.lastIndexOf('/') + 1, location.length());
       }
+      else if (location != null && location.contains("\\")) {
+         // Get last token, this after the last "\"
+         tmpAssetName = location.substring(location.lastIndexOf('\\') + 1, location.length());
+      }
       else {
          tmpAssetName = location;
       }
