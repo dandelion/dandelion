@@ -39,6 +39,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.github.dandelion.core.DandelionException;
+import com.github.dandelion.core.util.ClassUtils;
 import com.github.dandelion.core.util.LibraryDetector;
 import com.github.dandelion.core.util.StringUtils;
 import com.github.dandelion.core.util.scanner.jboss.JBossVFS2UrlResolver;
@@ -48,15 +49,15 @@ import com.github.dandelion.core.util.scanner.websphere.WebSphereUrlResolver;
 
 /**
  * <p>
- * Utility class used as a facade for searching for resources in the classpath.
+ * Scans for resources within the classpath.
  * </p>
  * 
  * @author Thibault Duchateau
  * @since 0.10.0
  */
-public final class ResourceScanner {
+public final class ClasspathResourceScanner {
 
-   private static final Logger LOG = LoggerFactory.getLogger(ResourceScanner.class);
+   private static final Logger LOG = LoggerFactory.getLogger(ClasspathResourceScanner.class);
 
    /**
     * <p>
@@ -74,11 +75,8 @@ public final class ResourceScanner {
     * @param nameFilter
     *           The name of the resource to look for.
     * @return The logical path of the resource if found, otherwise {@code null}
-    *         .
-    * @throws IOException
-    *            if something goes wrong during the scanning.
     */
-   public static String findResourcePath(String location, String nameFilter) throws IOException {
+   public static String findResourcePath(String location, String nameFilter) {
       Set<String> resourcePaths = scanForResourcePaths(location, null, nameFilter, null, null);
       if (resourcePaths.isEmpty()) {
          return null;
@@ -102,11 +100,8 @@ public final class ResourceScanner {
     * @param nameFilter
     *           The name of the resource to look for.
     * @return A set of resource paths that match the given conditions.
-    * @throws IOException
-    *            if something goes wrong during the scanning.
     */
-   public static Set<String> findResourcePaths(String location, Set<String> excludedPaths, String nameFilter)
-         throws IOException {
+   public static Set<String> findResourcePaths(String location, Set<String> excludedPaths, String nameFilter) {
       return scanForResourcePaths(location, excludedPaths, nameFilter, null, null);
    }
 
@@ -126,11 +121,9 @@ public final class ResourceScanner {
     * @param suffixFilter
     *           The suffix condition to be applied on the resource name.
     * @return A set of resource paths that match the given conditions.
-    * @throws IOException
-    *            if something goes wrong during the scanning.
     */
    public static Set<String> findResourcePaths(String location, Set<String> excludedPaths, String prefixFilter,
-         String suffixFilter) throws IOException {
+         String suffixFilter) {
       return scanForResourcePaths(location, excludedPaths, null, prefixFilter, suffixFilter);
    }
 
@@ -153,36 +146,40 @@ public final class ResourceScanner {
     * @param suffixFilter
     *           The suffix condition to be applied on the resource name.
     * @return A set of resource paths that match the given conditions.
-    * @throws IOException
-    *            if something goes wrong during the scanning.
     * @throws DandelionException
     *            if the URL protocol used to access the resource is not
     *            supported.
     */
    private static Set<String> scanForResourcePaths(String location, Set<String> excludedPaths, String nameFilter,
-         String prefixFilter, String suffixFilter) throws IOException {
+         String prefixFilter, String suffixFilter) {
 
       LOG.trace("Scanning for resources at '{}'...", location);
 
       Set<String> resourcePaths = new HashSet<String>();
 
-      Enumeration<URL> urls = Thread.currentThread().getContextClassLoader().getResources(location);
+      Enumeration<URL> urls;
+      try {
+         urls = ClassUtils.getDefaultClassLoader().getResources(location);
+         while (urls.hasMoreElements()) {
 
-      while (urls.hasMoreElements()) {
+            URL url = urls.nextElement();
+            LOG.trace("Found URL: {} (protocol:{})", url.getPath(), url.getProtocol());
 
-         URL url = urls.nextElement();
-         LOG.trace("Found URL: {} (protocol:{})", url.getPath(), url.getProtocol());
+            UrlResolver urlResolver = createUrlResolver(url.getProtocol());
+            LOG.trace("Resolving URL \"{}\" with the resolver {}", url.getPath(), urlResolver.getClass()
+                  .getSimpleName());
 
-         UrlResolver urlResolver = createUrlResolver(url.getProtocol());
-         LOG.trace("Resolving URL \"{}\" with the resolver {}", url.getPath(), urlResolver.getClass().getSimpleName());
+            URL resolvedUrl = urlResolver.toStandardUrl(url);
+            LOG.trace("Resolved URL: \"{}\"", resolvedUrl.getPath());
 
-         URL resolvedUrl = urlResolver.toStandardUrl(url);
-         LOG.trace("Resolved URL: \"{}\"", resolvedUrl.getPath());
+            String protocol = resolvedUrl.getProtocol();
+            LocationResourceScanner classPathLocationScanner = createLocationScanner(protocol);
 
-         String protocol = resolvedUrl.getProtocol();
-         LocationResourceScanner classPathLocationScanner = createLocationScanner(protocol);
-
-         resourcePaths.addAll(classPathLocationScanner.findResourcePaths(location, resolvedUrl));
+            resourcePaths.addAll(classPathLocationScanner.findResourcePaths(location, resolvedUrl));
+         }
+      }
+      catch (IOException e) {
+         LOG.warn("Unable to scan within the location: {}", location);
       }
 
       LOG.trace("{} resources found before filtering", resourcePaths.size());
@@ -371,7 +368,7 @@ public final class ResourceScanner {
     * Suppress default constructor for noninstantiability.
     * </p>
     */
-   private ResourceScanner() {
+   private ClasspathResourceScanner() {
       throw new AssertionError();
    }
 }

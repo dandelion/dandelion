@@ -51,6 +51,7 @@ import com.github.dandelion.core.asset.processor.AssetProcessor;
 import com.github.dandelion.core.asset.processor.AssetProcessorManager;
 import com.github.dandelion.core.asset.versioning.AssetVersioningStrategy;
 import com.github.dandelion.core.bundle.loader.BundleLoader;
+import com.github.dandelion.core.bundle.loader.ExtraLoader;
 import com.github.dandelion.core.bundle.loader.impl.DandelionBundleLoader;
 import com.github.dandelion.core.cache.Cache;
 import com.github.dandelion.core.cache.CacheManager;
@@ -96,6 +97,7 @@ public class Context {
 
    private static final Logger LOG = LoggerFactory.getLogger(Context.class);
 
+   private final FilterConfig filterConfig;
    private List<Component> components;
    private RequestCache requestCache;
    private Cache<String, RequestFlashData> requestFlashDataCache;
@@ -104,6 +106,7 @@ public class Context {
    private AssetVersioningStrategy activeVersioningStrategy;
    private List<AssetProcessor> activeProcessors;
    private List<BundleLoader> bundleLoaders;
+   private List<ExtraLoader> extraLoaders;
    private AssetProcessorManager assetProcessorManager;
    private CacheManager assetCacheManager;
    private Map<String, AssetLocator> assetLocatorsMap;
@@ -124,22 +127,21 @@ public class Context {
     *           The servlet filter configuration.
     */
    public Context(FilterConfig filterConfig) {
-      init(filterConfig);
+      this.filterConfig = filterConfig;
+      init();
    }
 
    /**
     * <p>
     * Performs all the required initializations of the Dandelion context.
     * </p>
-    * 
-    * @param filterConfig
-    *           The servlet filter configuration.
     */
-   public void init(FilterConfig filterConfig) {
+   public void init() {
 
-      initConfiguration(filterConfig);
+      initConfiguration(this.filterConfig);
       initComponents();
       initBundleLoaders();
+      initExtraLoaders();
       initAssetLocators();
       initRequestCache();
       initRequestFlashDataCache();
@@ -151,7 +153,7 @@ public class Context {
 
       initBundleStorage();
       initAssetStorage();
-      initMBean(filterConfig);
+      initMBean(this.filterConfig);
       initHandlers();
       initDebugMenus();
    }
@@ -288,6 +290,33 @@ public class Context {
 
    /**
     * <p>
+    * Initializes all {@link ExtraLoader}s, intended to feed the bundle graph
+    * using generated bundles.
+    * </p>
+    */
+   public void initExtraLoaders() {
+      LOG.info("Initializing extra loaders");
+
+      this.extraLoaders = new ArrayList<ExtraLoader>();
+
+      ServiceLoader<ExtraLoader> extraLoaders = ServiceLoader.load(ExtraLoader.class);
+
+      for (ExtraLoader extraLoader : extraLoaders) {
+         extraLoader.init(this);
+         this.extraLoaders.add(extraLoader);
+      }
+
+      Iterator<ExtraLoader> i = this.extraLoaders.iterator();
+      StringBuilder log = new StringBuilder(i.next().getName());
+      while (i.hasNext()) {
+         log.append(", ");
+         log.append(i.next().getName());
+      }
+      LOG.info("Extra loaders initialized: {}", log.toString());
+   }
+
+   /**
+    * <p>
     * Initialize the request flash data cache only if Thymeleaf is present in
     * the classpath.
     * </p>
@@ -413,6 +442,22 @@ public class Context {
 
       bundleStorage = new BundleStorage();
       List<BundleStorageUnit> allBundles = new ArrayList<BundleStorageUnit>();
+
+      // Extra vendor bundles
+      if (this.getConfiguration().isBundleExtraLoaderEnabled()) {
+         for (ExtraLoader extraLoader : this.extraLoaders) {
+            LOG.debug("Loading bundles using the {}", extraLoader.getClass().getSimpleName());
+
+            List<BundleStorageUnit> loadedBundles = extraLoader.getExtraBundles();
+            allBundles.addAll(loadedBundles);
+
+            LOG.debug("Found {} bundle{}: {}", loadedBundles.size(), loadedBundles.size() <= 1 ? "" : "s",
+                  loadedBundles);
+         }
+      }
+      else {
+         LOG.debug("Bundle extra loader is disabled");
+      }
 
       // Vendor bundles
       for (BundleLoader bundleLoader : getBundleLoaders()) {
@@ -590,6 +635,10 @@ public class Context {
             LOG.error("An exception occured while unregistering the DandelionRuntimeMBean", e);
          }
       }
+   }
+
+   public FilterConfig getFilterConfig() {
+      return filterConfig;
    }
 
    /**

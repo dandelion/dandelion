@@ -51,7 +51,7 @@ import com.github.dandelion.core.storage.support.BundleUtils;
 import com.github.dandelion.core.util.BundleStorageLogBuilder;
 import com.github.dandelion.core.util.PathUtils;
 import com.github.dandelion.core.util.StringUtils;
-import com.github.dandelion.core.util.scanner.ResourceScanner;
+import com.github.dandelion.core.util.scanner.ClasspathResourceScanner;
 
 /**
  * 
@@ -96,17 +96,7 @@ public class XmlBundleLoadingStrategy implements LoadingStrategy {
 
    @Override
    public Set<String> getResourcePaths(String bundleLocation, Set<String> excludedPaths) {
-
-      Set<String> resourcePaths = null;
-
-      try {
-         resourcePaths = ResourceScanner.findResourcePaths(bundleLocation, excludedPaths, null, ".xml");
-      }
-      catch (IOException e) {
-         throw new DandelionException("Something went wrong when scanning files in " + bundleLocation, e);
-      }
-
-      return resourcePaths;
+      return ClasspathResourceScanner.findResourcePaths(bundleLocation, excludedPaths, null, ".xml");
    }
 
    @Override
