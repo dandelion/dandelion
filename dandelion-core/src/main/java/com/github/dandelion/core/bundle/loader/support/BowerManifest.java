@@ -27,46 +27,74 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+package com.github.dandelion.core.bundle.loader.support;
 
-package com.github.dandelion.core.asset.locator.impl;
-
+import java.util.List;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
-
-import com.github.dandelion.core.asset.Asset;
-import com.github.dandelion.core.asset.locator.AbstractAssetLocator;
-import com.github.dandelion.core.storage.AssetStorageUnit;
-import com.github.dandelion.core.util.ResourceUtils;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 /**
  * <p>
- * Locator for asset fetched remotely.
+ * Simple bean annotated with Jackson annotations to deserialize a Bower
+ * manifest.
  * </p>
  * 
  * @author Thibault Duchateau
- * @since 0.10.0
+ * @since 1.1.0
  */
-public class RemoteLocator extends AbstractAssetLocator {
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class BowerManifest {
 
-   public static final String LOCATION_KEY = "remote";
-   
-   public RemoteLocator() {
-      this.active = true;
+   private String name;
+   private String version;
+   private String description;
+   private List<String> main;
+   private Map<String, String> dependencies;
+
+   public String getName() {
+      return name;
+   }
+
+   public void setName(String name) {
+      this.name = name;
+   }
+
+   public String getVersion() {
+      return version;
+   }
+
+   public void setVersion(String version) {
+      this.version = version;
+   }
+
+   public String getDescription() {
+      return description;
+   }
+
+   public void setDescription(String description) {
+      this.description = description;
+   }
+
+   public List<String> getMain() {
+      return main;
+   }
+
+   public void setMain(List<String> main) {
+      this.main = main;
+   }
+
+   public Map<String, String> getDependencies() {
+      return dependencies;
+   }
+
+   public void setDependencies(Map<String, String> dependencies) {
+      this.dependencies = dependencies;
    }
 
    @Override
-   public String getLocationKey() {
-      return LOCATION_KEY;
-   }
-
-   @Override
-   public String doGetLocation(AssetStorageUnit asu, HttpServletRequest request) {
-      return asu.getLocations().get(getLocationKey());
-   }
-
-   @Override
-   protected String doGetContent(Asset asset, Map<String, Object> parameters, HttpServletRequest request) {
-      return ResourceUtils.getContentFromUrl(request, asset.getProcessedConfigLocation(), true);
+   public String toString() {
+      return "BowerConfiguration [name=" + name + ", version=" + version + ", description=" + description + ", main="
+            + main + ", dependencies=" + dependencies + "]";
    }
 }

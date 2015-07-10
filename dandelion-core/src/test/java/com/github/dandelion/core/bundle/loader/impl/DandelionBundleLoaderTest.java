@@ -33,10 +33,12 @@ import java.util.List;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.springframework.mock.web.MockFilterConfig;
 
 import com.github.dandelion.core.Context;
+import com.github.dandelion.core.GlobalOptionsRule;
 import com.github.dandelion.core.bundle.loader.BundleLoader;
 import com.github.dandelion.core.config.DandelionConfig;
 import com.github.dandelion.core.storage.BundleStorageUnit;
@@ -45,6 +47,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class DandelionBundleLoaderTest {
 
+   @Rule
+   public GlobalOptionsRule options = new GlobalOptionsRule();
+   
    @Before
    public void setup() {
       System.setProperty(DandelionConfig.BUNDLE_LOCATION.getName(), "bundle-loader/loading-vendor-user");

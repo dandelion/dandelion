@@ -27,46 +27,44 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+package com.github.dandelion.core.bundle.loader.support;
 
-package com.github.dandelion.core.asset.locator.impl;
+import java.util.List;
 
-import java.util.Map;
+import org.junit.Rule;
+import org.junit.Test;
+import org.springframework.mock.web.MockFilterConfig;
 
-import javax.servlet.http.HttpServletRequest;
-
-import com.github.dandelion.core.asset.Asset;
-import com.github.dandelion.core.asset.locator.AbstractAssetLocator;
+import com.github.dandelion.core.Context;
+import com.github.dandelion.core.GlobalOptionsRule;
+import com.github.dandelion.core.asset.AssetType;
 import com.github.dandelion.core.storage.AssetStorageUnit;
-import com.github.dandelion.core.util.ResourceUtils;
+import com.github.dandelion.core.storage.BundleStorageUnit;
 
-/**
- * <p>
- * Locator for asset fetched remotely.
- * </p>
- * 
- * @author Thibault Duchateau
- * @since 0.10.0
- */
-public class RemoteLocator extends AbstractAssetLocator {
+import static org.assertj.core.api.Assertions.assertThat;
 
-   public static final String LOCATION_KEY = "remote";
-   
-   public RemoteLocator() {
-      this.active = true;
-   }
+public class BowerPreLoaderTest {
 
-   @Override
-   public String getLocationKey() {
-      return LOCATION_KEY;
-   }
+   @Rule
+   public GlobalOptionsRule options = new GlobalOptionsRule();
 
-   @Override
-   public String doGetLocation(AssetStorageUnit asu, HttpServletRequest request) {
-      return asu.getLocations().get(getLocationKey());
-   }
+   @Test
+   public void should_map_the_bower_component_to_a_bundleStorageUnit() {
 
-   @Override
-   protected String doGetContent(Asset asset, Map<String, Object> parameters, HttpServletRequest request) {
-      return ResourceUtils.getContentFromUrl(request, asset.getProcessedConfigLocation(), true);
+      BowerPreLoader bower = new BowerPreLoader();
+      bower.init(new Context(new MockFilterConfig()));
+      List<BundleStorageUnit> bsus = bower.getBundlesFromClasspath("extra-loader");
+      assertThat(bsus).hasSize(1);
+
+      BundleStorageUnit bsu = bsus.iterator().next();
+      assertThat(bsu.getName()).isEqualTo("jquery");
+      assertThat(bsu.getAssetStorageUnits()).hasSize(1);
+      AssetStorageUnit asu = bsu.getAssetStorageUnits().iterator().next();
+      assertThat(asu.getName()).isEqualTo("jquery");
+      assertThat(asu.getVersion()).isEqualTo("2.1.4");
+      assertThat(asu.getType()).isEqualTo(AssetType.js);
+      assertThat(asu.getLocations()).hasSize(1);
+      assertThat(asu.getLocations()).containsKey("webapp");
+      assertThat(asu.getLocations()).containsValue("/extra-loaderjquery/dist/jquery.js");
    }
 }

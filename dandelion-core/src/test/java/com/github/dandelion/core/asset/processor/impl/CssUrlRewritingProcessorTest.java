@@ -33,8 +33,10 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.Writer;
 
+import org.junit.Rule;
 import org.junit.Test;
 
+import com.github.dandelion.core.GlobalOptionsRule;
 import com.github.dandelion.core.asset.processor.AssetProcessor;
 import com.github.dandelion.core.util.ResourceUtils;
 
@@ -44,6 +46,9 @@ public class CssUrlRewritingProcessorTest extends AbstractProcessorTest {
 
    private AssetProcessor assetProcessor = new CssUrlRewritingProcessor();
 
+   @Rule
+   public GlobalOptionsRule options = new GlobalOptionsRule();
+   
    @Test
    public void should_rewrite_image_url_in_css() {
       Writer writer = new StringWriter();

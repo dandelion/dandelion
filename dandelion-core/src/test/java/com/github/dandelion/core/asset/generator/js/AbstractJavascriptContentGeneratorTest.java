@@ -30,11 +30,13 @@
 package com.github.dandelion.core.asset.generator.js;
 
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.springframework.mock.web.MockFilterConfig;
 import org.springframework.mock.web.MockHttpServletRequest;
 
 import com.github.dandelion.core.Context;
+import com.github.dandelion.core.GlobalOptionsRule;
 import com.github.dandelion.core.asset.generator.AssetContentGenerator;
 import com.github.dandelion.core.config.DandelionConfig;
 import com.github.dandelion.core.web.WebConstants;
@@ -48,6 +50,9 @@ public class AbstractJavascriptContentGeneratorTest {
    private MockFilterConfig filterConfig;
    private Context context;
 
+   @Rule
+   public GlobalOptionsRule options = new GlobalOptionsRule();
+   
    @Before
    public void setup() {
       javascriptGenerator = new FakeJavascriptContentGenerator();

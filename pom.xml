@@ -61,7 +61,7 @@
       <jetty.test.version>7.6.13.v20130916</jetty.test.version>
       <junit.version>4.11</junit.version>
       <phantomjsdriver.version>1.0.3</phantomjsdriver.version>
-      <spring-test.version>3.2.2.RELEASE</spring-test.version>
+      <spring-test.version>3.2.14.RELEASE</spring-test.version>
       <assertj.version>1.7.0</assertj.version>
       <mockito.version>1.10.8</mockito.version>
       <powermock.version>1.5.6</powermock.version>

@@ -5,12 +5,14 @@ import java.io.IOException;
 import javax.servlet.ServletException;
 
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.springframework.mock.web.MockFilterConfig;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
 import com.github.dandelion.core.Context;
+import com.github.dandelion.core.GlobalOptionsRule;
 import com.github.dandelion.core.asset.Asset;
 import com.github.dandelion.core.asset.AssetType;
 import com.github.dandelion.core.storage.StorageEntry;
@@ -27,6 +29,9 @@ public class AssetServletTest {
    private MockHttpServletResponse response;
    private Context context;
 
+   @Rule
+   public GlobalOptionsRule options = new GlobalOptionsRule();
+   
    @Before
    public void setup() {
       context = new Context(new MockFilterConfig());

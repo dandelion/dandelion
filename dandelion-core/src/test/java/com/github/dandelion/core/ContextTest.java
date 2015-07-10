@@ -29,6 +29,7 @@
  */
 package com.github.dandelion.core;
 
+import org.junit.Rule;
 import org.junit.Test;
 import org.springframework.mock.web.MockFilterConfig;
 
@@ -36,8 +37,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class ContextTest {
 
+   @Rule
+   public GlobalOptionsRule options = new GlobalOptionsRule();
+   
    @Test
    public void should_load_the_context() {
+
       Context context = new Context(new MockFilterConfig());
 
       // SPI

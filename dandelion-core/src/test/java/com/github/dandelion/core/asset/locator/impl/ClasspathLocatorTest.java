@@ -38,6 +38,7 @@ import org.springframework.mock.web.MockFilterConfig;
 import org.springframework.mock.web.MockHttpServletRequest;
 
 import com.github.dandelion.core.Context;
+import com.github.dandelion.core.GlobalOptionsRule;
 import com.github.dandelion.core.asset.Asset;
 import com.github.dandelion.core.storage.AssetStorageUnit;
 import com.github.dandelion.core.web.WebConstants;
@@ -51,6 +52,9 @@ public class ClasspathLocatorTest {
    private ClasspathLocator locator = new ClasspathLocator();
    private MockHttpServletRequest request;
 
+   @Rule
+   public GlobalOptionsRule options = new GlobalOptionsRule();
+   
    @Rule
    public ExpectedException exception = ExpectedException.none();
 

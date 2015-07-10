@@ -27,46 +27,66 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+package com.github.dandelion.core;
 
-package com.github.dandelion.core.asset.locator.impl;
+import org.junit.rules.TestRule;
+import org.junit.runner.Description;
+import org.junit.runners.model.Statement;
 
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
-import com.github.dandelion.core.asset.Asset;
-import com.github.dandelion.core.asset.locator.AbstractAssetLocator;
-import com.github.dandelion.core.storage.AssetStorageUnit;
-import com.github.dandelion.core.util.ResourceUtils;
+import com.github.dandelion.core.config.DandelionConfig;
 
 /**
  * <p>
- * Locator for asset fetched remotely.
+ * Custom {@link TestRule} used to initialize global Dandelion options.
+ * </p>
+ * <p>
+ * Usage: put this in a test class to activate the rule
  * </p>
  * 
+ * <pre>
+ * &#064;Rule
+ * public GlobalOptionsRule options = new GlobalOptionsRule();
+ * </pre>
+ * 
  * @author Thibault Duchateau
- * @since 0.10.0
+ * @since 1.1.0
  */
-public class RemoteLocator extends AbstractAssetLocator {
+public class GlobalOptionsRule implements TestRule {
 
-   public static final String LOCATION_KEY = "remote";
-   
-   public RemoteLocator() {
-      this.active = true;
+   public Statement apply(Statement base, Description description) {
+      return statement(base);
    }
 
-   @Override
-   public String getLocationKey() {
-      return LOCATION_KEY;
+   private Statement statement(final Statement base) {
+      return new Statement() {
+         @Override
+         public void evaluate() throws Throwable {
+            before();
+            try {
+               base.evaluate();
+            }
+            finally {
+               after();
+            }
+         }
+      };
    }
 
-   @Override
-   public String doGetLocation(AssetStorageUnit asu, HttpServletRequest request) {
-      return asu.getLocations().get(getLocationKey());
+   /**
+    * Override to set up your specific external resource.
+    *
+    * @throws if
+    *            setup fails (which will disable {@code after}
+    */
+   protected void before() throws Throwable {
+      System.setProperty(DandelionConfig.BUNDLE_PRE_LOADERS.getName(), "false");
    }
 
-   @Override
-   protected String doGetContent(Asset asset, Map<String, Object> parameters, HttpServletRequest request) {
-      return ResourceUtils.getContentFromUrl(request, asset.getProcessedConfigLocation(), true);
+   /**
+    * Override to tear down your specific external resource.
+    */
+   protected void after() {
+      System.clearProperty(DandelionConfig.BUNDLE_PRE_LOADERS.getName());
    }
+
 }

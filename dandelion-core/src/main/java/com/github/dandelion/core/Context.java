@@ -51,7 +51,7 @@ import com.github.dandelion.core.asset.processor.AssetProcessor;
 import com.github.dandelion.core.asset.processor.AssetProcessorManager;
 import com.github.dandelion.core.asset.versioning.AssetVersioningStrategy;
 import com.github.dandelion.core.bundle.loader.BundleLoader;
-import com.github.dandelion.core.bundle.loader.ExtraLoader;
+import com.github.dandelion.core.bundle.loader.PreLoader;
 import com.github.dandelion.core.bundle.loader.impl.DandelionBundleLoader;
 import com.github.dandelion.core.cache.Cache;
 import com.github.dandelion.core.cache.CacheManager;
@@ -106,7 +106,7 @@ public class Context {
    private AssetVersioningStrategy activeVersioningStrategy;
    private List<AssetProcessor> activeProcessors;
    private List<BundleLoader> bundleLoaders;
-   private List<ExtraLoader> extraLoaders;
+   private List<PreLoader> extraLoaders;
    private AssetProcessorManager assetProcessorManager;
    private CacheManager assetCacheManager;
    private Map<String, AssetLocator> assetLocatorsMap;
@@ -290,23 +290,23 @@ public class Context {
 
    /**
     * <p>
-    * Initializes all {@link ExtraLoader}s, intended to feed the bundle graph
+    * Initializes all {@link PreLoader}s, intended to feed the bundle graph
     * using generated bundles.
     * </p>
     */
    public void initExtraLoaders() {
       LOG.info("Initializing extra loaders");
 
-      this.extraLoaders = new ArrayList<ExtraLoader>();
+      this.extraLoaders = new ArrayList<PreLoader>();
 
-      ServiceLoader<ExtraLoader> extraLoaders = ServiceLoader.load(ExtraLoader.class);
+      ServiceLoader<PreLoader> extraLoaders = ServiceLoader.load(PreLoader.class);
 
-      for (ExtraLoader extraLoader : extraLoaders) {
+      for (PreLoader extraLoader : extraLoaders) {
          extraLoader.init(this);
          this.extraLoaders.add(extraLoader);
       }
 
-      Iterator<ExtraLoader> i = this.extraLoaders.iterator();
+      Iterator<PreLoader> i = this.extraLoaders.iterator();
       StringBuilder log = new StringBuilder(i.next().getName());
       while (i.hasNext()) {
          log.append(", ");
@@ -444,8 +444,8 @@ public class Context {
       List<BundleStorageUnit> allBundles = new ArrayList<BundleStorageUnit>();
 
       // Extra vendor bundles
-      if (this.getConfiguration().isBundleExtraLoaderEnabled()) {
-         for (ExtraLoader extraLoader : this.extraLoaders) {
+      if (this.getConfiguration().isBundlePreLoaderEnabled()) {
+         for (PreLoader extraLoader : this.extraLoaders) {
             LOG.debug("Loading bundles using the {}", extraLoader.getClass().getSimpleName());
 
             List<BundleStorageUnit> loadedBundles = extraLoader.getExtraBundles();

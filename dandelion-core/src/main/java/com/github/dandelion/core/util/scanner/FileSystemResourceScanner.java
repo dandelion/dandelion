@@ -196,7 +196,7 @@ public final class FileSystemResourceScanner {
 
       if (excludedPaths != null) {
          for (String excludedFolder : excludedPaths) {
-            if (resourcePath.startsWith(excludedFolder)) {
+            if (resourcePath.contains(excludedFolder)) {
                return false;
             }
          }

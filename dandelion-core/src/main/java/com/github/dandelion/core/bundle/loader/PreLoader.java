@@ -27,46 +27,40 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+package com.github.dandelion.core.bundle.loader;
 
-package com.github.dandelion.core.asset.locator.impl;
+import java.util.List;
 
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
-import com.github.dandelion.core.asset.Asset;
-import com.github.dandelion.core.asset.locator.AbstractAssetLocator;
-import com.github.dandelion.core.storage.AssetStorageUnit;
-import com.github.dandelion.core.util.ResourceUtils;
+import com.github.dandelion.core.Context;
+import com.github.dandelion.core.storage.BundleStorageUnit;
 
 /**
  * <p>
- * Locator for asset fetched remotely.
+ * Common interface for all pre loaders. Pre-loaders are used to load bundles
+ * and add them to the bundle graph before other regular {@link BundleLoader}s.
  * </p>
  * 
  * @author Thibault Duchateau
- * @since 0.10.0
+ * @since 1.1.0
  */
-public class RemoteLocator extends AbstractAssetLocator {
+public interface PreLoader {
 
-   public static final String LOCATION_KEY = "remote";
-   
-   public RemoteLocator() {
-      this.active = true;
-   }
+   /**
+    * <p>
+    * Initializes the extra loader using the Dandelion context and possibly
+    * custom components.
+    * </p>
+    */
+   void init(Context context);
 
-   @Override
-   public String getLocationKey() {
-      return LOCATION_KEY;
-   }
+   /**
+    * @return the name of the extra loader.
+    */
+   String getName();
 
-   @Override
-   public String doGetLocation(AssetStorageUnit asu, HttpServletRequest request) {
-      return asu.getLocations().get(getLocationKey());
-   }
-
-   @Override
-   protected String doGetContent(Asset asset, Map<String, Object> parameters, HttpServletRequest request) {
-      return ResourceUtils.getContentFromUrl(request, asset.getProcessedConfigLocation(), true);
-   }
+   /**
+    * @return a list of {@link BundleStorageUnit} that will be added to the
+    *         bundle graph at the application startup.
+    */
+   List<BundleStorageUnit> getExtraBundles();
 }
