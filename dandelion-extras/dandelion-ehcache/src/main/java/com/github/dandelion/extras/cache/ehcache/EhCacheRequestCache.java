@@ -29,7 +29,6 @@
  */
 package com.github.dandelion.extras.cache.ehcache;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -45,7 +44,7 @@ import com.github.dandelion.core.Context;
 import com.github.dandelion.core.cache.AbstractRequestCache;
 import com.github.dandelion.core.cache.CacheEntry;
 import com.github.dandelion.core.util.StringUtils;
-import com.github.dandelion.core.util.scanner.ResourceScanner;
+import com.github.dandelion.core.util.scanner.ClasspathResourceScanner;
 
 /**
  * <p>
@@ -98,13 +97,8 @@ public class EhCacheRequestCache extends AbstractRequestCache {
 
       if (StringUtils.isBlank(cacheConfigurationPath)) {
          LOG.warn("The 'cache.configuration.location' configuration is not set. Dandelion will scan for any ehcache.xml file inside the classpath.");
-         try {
-            cacheConfigurationPath = ResourceScanner.findResourcePath("", "ehcache.xml");
-            LOG.debug("ehcache.xml file found: {}", cacheConfigurationPath);
-         }
-         catch (IOException e) {
-            LOG.warn("No ehcache.xml configuration file has been found. Dandelion will let EhCache use the default configuration.");
-         }
+         cacheConfigurationPath = ClasspathResourceScanner.findResourcePath("", "ehcache.xml");
+         LOG.debug("ehcache.xml file found: {}", cacheConfigurationPath);
       }
 
       stream = Thread.currentThread().getContextClassLoader().getResourceAsStream(cacheConfigurationPath);

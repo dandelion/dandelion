@@ -50,7 +50,7 @@ import com.github.dandelion.core.storage.support.BundleUtils;
 import com.github.dandelion.core.storage.support.TopologicalSorter;
 import com.github.dandelion.core.util.JsonUtils;
 import com.github.dandelion.core.util.ResourceUtils;
-import com.github.dandelion.core.util.scanner.ResourceScanner;
+import com.github.dandelion.core.util.scanner.ClasspathResourceScanner;
 
 /**
  * <p>
@@ -227,14 +227,8 @@ public class BundleStorage {
    public Set<Alert> findSuggestion(Alert alert, Set<Alert> existingAlerts, String bundleName,
          String... requestedBundleNames) {
 
-      Set<String> suggestions = null;
-      try {
-         LOG.trace("Scanning classpath for any suggestions with the name \"{}\" (exact match)", bundleName + ".json");
-         suggestions = ResourceScanner.findResourcePaths("dandelion", null, bundleName + ".json");
-      }
-      catch (IOException e) {
-         throw new DandelionException("Something went wrong while scanning files in \"/dandelion\"", e);
-      }
+      LOG.trace("Scanning classpath for any suggestions with the name \"{}\" (exact match)", bundleName + ".json");
+      Set<String> suggestions = ClasspathResourceScanner.findResourcePaths("dandelion", null, bundleName + ".json");
 
       if (suggestions != null) {
          for (String suggestion : suggestions) {
