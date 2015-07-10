@@ -29,10 +29,12 @@
  */
 package com.github.dandelion.core.asset.versioning.impl;
 
+import org.junit.Rule;
 import org.junit.Test;
 import org.springframework.mock.web.MockFilterConfig;
 
 import com.github.dandelion.core.Context;
+import com.github.dandelion.core.GlobalOptionsRule;
 import com.github.dandelion.core.asset.versioning.AssetVersioningStrategy;
 import com.github.dandelion.core.config.DandelionConfig;
 
@@ -40,6 +42,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class CustomAssetVersioningStrategyTest {
 
+   @Rule
+   public GlobalOptionsRule options = new GlobalOptionsRule();
+   
    @Test
    public void should_return_a_version_based_on_a_custom_strategy() {
 

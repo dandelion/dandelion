@@ -38,6 +38,7 @@ import org.springframework.mock.web.MockFilterConfig;
 import org.springframework.mock.web.MockHttpServletRequest;
 
 import com.github.dandelion.core.Context;
+import com.github.dandelion.core.GlobalOptionsRule;
 import com.github.dandelion.core.storage.AssetStorageUnit;
 import com.github.dandelion.core.web.WebConstants;
 
@@ -52,6 +53,9 @@ public class WebappLocatorTest {
    private String CONTEXT_RELATIVE_URL = "/assets/js/my.js";
    private String CONTEXT_ABSOLUTE_URL = "http://my-domain.com/context/assets/js/my.js";
 
+   @Rule
+   public GlobalOptionsRule options = new GlobalOptionsRule();
+   
    @Rule
    public ExpectedException exception = ExpectedException.none();
 

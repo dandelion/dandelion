@@ -40,6 +40,7 @@ import org.springframework.mock.web.MockFilterConfig;
 import org.springframework.mock.web.MockHttpServletRequest;
 
 import com.github.dandelion.core.Context;
+import com.github.dandelion.core.GlobalOptionsRule;
 import com.github.dandelion.core.asset.Asset;
 import com.github.dandelion.core.asset.generator.AssetContentGenerator;
 import com.github.dandelion.core.storage.AssetStorageUnit;
@@ -54,7 +55,10 @@ public class ApiLocatorTest {
 
    private ApiLocator locator = new ApiLocator();
    private MockHttpServletRequest request;
-
+   
+   @Rule
+   public GlobalOptionsRule options = new GlobalOptionsRule();
+   
    @Rule
    public ExpectedException exception = ExpectedException.none();
 

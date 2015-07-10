@@ -75,7 +75,8 @@ public enum DandelionConfig {
    BUNDLE_LOCATION("bundle.location", "", ""), 
    BUNDLE_INCLUDES("bundle.includes", "", ""), 
    BUNDLE_EXCLUDES("bundle.excludes", "", ""),
-
+   BUNDLE_PRE_LOADERS("bundle.pre.loaders", "true", "true"),
+   
    // Tooling-related configurations
    TOOL_GZIP("tool.gzip", "false", "true"), 
    TOOL_GZIP_MIME_TYPES("tool.gzip.mime.types", "text/html,text/css,application/x-javascript,application/javascript,text/javascript,text/plain,text/xml,application/xhtml+xml,image/svg+xml", "text/html,text/css,application/x-javascript,application/javascript,text/javascript,text/plain,text/xml,application/xhtml+xml,image/svg+xml"), 
@@ -89,6 +90,9 @@ public enum DandelionConfig {
    @Beta
    MONITORING_JMX("monitoring.jmx", "false", "false"),
 
+   // Package manager configurations
+   BOWER_COMPONENTS_LOCATION("bower.components.location", "", ""),
+   
    // Misc configurations
    ENCODING("encoding", "UTF-8", "UTF-8");
 

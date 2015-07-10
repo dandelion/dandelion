@@ -34,11 +34,13 @@ import java.util.Set;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.springframework.mock.web.MockFilterConfig;
 import org.springframework.mock.web.MockHttpServletRequest;
 
 import com.github.dandelion.core.Context;
+import com.github.dandelion.core.GlobalOptionsRule;
 import com.github.dandelion.core.config.StandardConfigurationLoader;
 import com.github.dandelion.core.web.AssetRequestContext;
 import com.github.dandelion.core.web.WebConstants;
@@ -50,6 +52,9 @@ public class AssetQueryTest {
    private MockHttpServletRequest request;
    private Context context;
 
+   @Rule
+   public GlobalOptionsRule options = new GlobalOptionsRule();
+   
    @Before
    public void setup() {
       System.clearProperty(StandardConfigurationLoader.DANDELION_CONFIGURATION);

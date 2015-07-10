@@ -53,13 +53,15 @@ import com.github.dandelion.core.util.ResourceUtils;
  */
 public class ClasspathLocator extends AbstractAssetLocator {
 
+   public static final String LOCATION_KEY = "classpath";
+   
    public ClasspathLocator() {
       active = true;
    }
 
    @Override
    public String getLocationKey() {
-      return "classpath";
+      return LOCATION_KEY;
    }
 
    @Override

@@ -50,9 +50,11 @@ import com.github.dandelion.core.util.ResourceUtils;
  */
 public class JarLocator extends AbstractAssetLocator {
 
+   public static final String LOCATION_KEY = "jar";
+   
    @Override
    public String getLocationKey() {
-      return "jar";
+      return LOCATION_KEY;
    }
 
    @Override
