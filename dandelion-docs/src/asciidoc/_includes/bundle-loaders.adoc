@@ -1,48 +1,252 @@
 == 8. Bundle loaders
 
-Bundles fall into two categories: *vendor* and *user*.
+Bundles fall into two categories: *vendor* and *regular*.
 All *vendor* bundles are supposed to reference vendor assets or libraries such as jQuery.
-*User* bundles are supposed to reference all other assets, in particular all assets developed and maintained for the deployed application.
+*Regular* bundles are supposed to reference all other assets, in particular all assets developed and maintained by yourself for your application.
 
-This disctinction is important because Dandelion doesn't behave in the same way with *vendor* and *user* bundles, especially in terms of versioning, processing and loading. 
+This disctinction is important because Dandelion doesn't behave in the same way with *vendor* and *regular* bundles, especially in terms of versioning, processing and loading. 
 
 === 8.1. Introducing bundle loaders
 
 The main goals of bundle loaders are:
 
-* to scan for bundle definitions (all `\*.json` files) in the classpath, *vendor* and *user* ones
+* to scan for bundle definitions (all `\*.json` files) in the classpath, *vendor* and *regular* ones
 * to map each of the loaded files into a comprehensive format and feed the <<4-2-building-a-bundle-graph, bundle graph>>
 
-=== 8.2. Built-in loader
+Since v1.1.0, new _pre-loaders_ have been introduced, particularly to provide integration with package managers such as http://bower.io/[Bower].
 
-Dandelion-Core comes with one built-in loader: `DandelionBundleLoader`. This bundle loader is focused on both `classpath_root/dandelion/vendor` and `classpath_root/dandelion` folders, respectively for *vendor* and *user* bundles.
+=== 8.2. Loading order
 
-=== 8.3. Loading order
+All loaders and pre-loaders are invoked in particular order which is described below:
 
-Each bundle loader has several purposes, the most important of which is to load bundle in a particular order:
+image::bundle-loaders.png[Bundle loaders, align=center]
 
-. First, all loaders are invoked to scan for *vendor bundles*, with the `DandelionBundleLoader` always acting in last
+. All pre-loaders are invoked first. Pre-loaders will scan for all components downloaded using package managers and convert all these components as *vendor* bundles. Note that all pre-loaders can be disabled thanks to the <<opt-bundle.pre.loaders, `bundle.pre.loaders`>> option.
 
-. Then, all loaders are invoked again but to scan for *user bundles*, again with the `DandelionBundleLoader` in last
+. Then, all bundle loaders are invoked to scan for *vendor* bundles, with the built-in `DandelionBundleLoader` always acting in last
 
-This particular order ensures that vendor bundles are always loaded in first and may be easily overriden by user ones.
+. Finally, all bundle loaders are invoked again but to scan for *regular* bundles, again with the built-in `DandelionBundleLoader` in last
+
+This particular order ensures that vendor bundles are always loaded in first and may be easily overriden by end-users using custom bundles.
 
 ==== Example
 
-Let's assume that two bundle loaders are registered in the Dandelion context: `DandelionBundleLoader` and `CustomBundleLoader` (`classpath_root/dandelion/custom/vendor` / `classpath_root/dandelion/custom`). At startup, Dandelion-Core will apply the following sequence:
+Let's assume that two bundle loaders are registered in the Dandelion context: `DandelionBundleLoader` (registered by default) and `CustomBundleLoader` (`classpath_root/dandelion/custom/vendor` / `classpath_root/dandelion/custom`). At the application startup, Dandelion-Core will apply the following sequence:
 
 . the `CustomBundleLoader` will scan for *vendor* bundles in its configured scanning path: `classpath_root/dandelion/custom/vendor`
 . the `DandelionBundleLoader` will scan for *vendor* bundles in its configured scanning path: `classpath_root/dandelion/vendor`
-. the `CustomBundleLoader` will scan for *user* bundles in its configured scanning path: `classpath_root/dandelion/custom`
-. the `DandelionBundleLoader` will scan for *user* bundles in its configured scanning path: `classpath_root/dandelion`
+. the `CustomBundleLoader` will scan for *regular* bundles in its configured scanning path: `classpath_root/dandelion/custom`
+. the `DandelionBundleLoader` will scan for *regular* bundles in its configured scanning path: `classpath_root/dandelion`
 
-=== 8.4. Plugging-in your own bundle loader
+=== 8.3. Bower integration
 
-You may wish to write an extension that uses its own bundle loader, e.g. if you wish to scan for bundles somewhere else than in the classpath. Let's see here how to do it.
+Starting from Dandelion-Core v1.1.0, Dandelion provides an integration with http://bower.io/[Bower components]. The integration consists in scanning the downloaded `bower_components` folder for all `bower.json` manifests. Once scanned, all manifests are automatically converted into *vendor* bundles.
 
-Dandelion intensively uses the http://docs.oracle.com/javase/tutorial/sound/SPI-intro.html[Service Provider Interface] mechanism introduced in Java 6.
+==== 8.3.1. Location of the `bower_components` folder
 
-So, in order to plug-in your own bundle loader, just follow these steps:
+Dandelion-Core resolves the location of the `bower_components` folder (the path in which installed components are saved) using the following strategy:
+
+. First, it checks if the <<opt-bower.components.location, `bower.components.location`>> option is set in the <<12-configuration-options, configuration file>>.
+
++
+[source, properties]
+----
+bower.components.location = bower_components <1>
+----
+<1> The location here refers to a folder within the web application directory. But it can be configured.
+
+. Then, if no <<opt-bower.components.location, `bower.components.location`>> option is set, Dandelion-Core scans for a `bower_components` folder within the web application directory, starting from the root
+
+. Finally, if no `bower_components` folder is found within the web application, scans for it within the classpath
+
+==== 8.3.2. Conversion of `bower.json` files
+
+Once the `bower_components` folder located, Dandelion-Core can start scanning for `bower.json` files. Each of these files will be automatically converted into a *vendor* bundle by applying a simple mapping:
+
+|===
+bower.json specification| Dandelion bundle specification
+
+|http://bower.io/docs/creating-packages/#name[`name`] |<<spec-bundle-bundle, `bundle`>>
+|http://bower.io/docs/creating-packages/#version[`version`] |<<spec-asset-version, `version`>> attribute of each asset
+|http://bower.io/docs/creating-packages/#main[`main`] |<<spec-bundle-assets, `assets`>>
+|http://bower.io/docs/creating-packages/#dependencies[`dependencies`] |<<spec-bundle-dependencies, `dependencies`>>
+|===
+
+For example, assuming the following Bower component for DataTables:
+
+[source, json]
+----
+{
+    "name": "datatables",
+    "version": "1.10.7",
+    "main": [
+        "media/js/jquery.dataTables.js",
+        "media/css/jquery.dataTables.css",
+        "media/images/sort_asc.png",
+        "media/images/sort_asc_disabled.png",
+        "media/images/sort_both.png",
+        "media/images/sort_desc.png",
+        "media/images/sort_desc_disabled.png"
+    ],
+    "dependencies": {
+        "jquery": ">=1.7.0"
+    },
+    "license": "MIT",
+    "keywords": [
+        "jquery",
+        "datatables",
+        "table",
+        "javascript",
+        "library"
+    ],
+    "ignore": [
+        "/.*",
+        "examples",
+        "media/unit_testing",
+        "composer.json",
+        "dataTables.jquery.json",
+        "package.json"
+    ]
+}
+----
+
+Dandelion-Core will map it to the following *vendor* bundle:
+
+[source, json]
+----
+{
+  "dependencies" : ["jquery"] <1>
+  "bundle" : "datatables", <2>
+  "assets" : [ <3>
+    { 
+      "version" : "1.10.7",
+      "locations" : {
+         "webapp" : "/bower_components/media/js/jquery.dataTables.js" <4>
+      }
+    },
+    { 
+      "version" : "1.10.7",
+      "locations" : {
+         "webapp" : "/bower_components/media/css/jquery.dataTables.css" <4>
+      }
+    }
+   ]
+}
+----
+<1> The dependency here corresponds to the `dependencies` attribute of the Bower component
+<2> Both Bower component's name and bundle's name match
+<3> One asset per `main` item, filtering only JavaScript and CSS assets
+<4> Here the `webapp` location key is used because we consider that the `bower_components` folder has been scanned within the web application directory
+
+==== 8.3.3. Examples
+
+Assuming the following structure:
+
+.Example with a Maven project
+[source, xml]
+----
+project-root
+|__ src
+   |__ main
+      |__ webapp <1>
+         |__ assets
+            |__ bower_components
+----
+<1> The `src/main/webapp` folder of Maven projects is considered as the web application root directory
+
+You can either explicitely tells Dandelion where lives the Bower folder, by using the <<opt-bower.components.location, `bower.components.location`>> option as follows...
+
+.dandelion/dandelion.properties
+[source, properties]
+----
+bower.components.location = /assets/bower_components
+----
+
+... or you can simply let Dandelion use the scanning strategy (TODO LIEN) and the `bower_components` folder will be scanned.
+
+Now, let's assume the following structure:
+
+.Example with a Maven project
+[source, xml]
+----
+project-root
+|__ src
+   |__ main
+      |__ resources <1>
+         |__ assets
+            |__ bower_components
+----
+<1> In other words, you prefer to save the Bower folder within the classpath.
+
+Once again, you can explicitely indicates Dandelion-Core where the Bower folder lives using the <<opt-bower.components.location, `bower.components.location`>> option...
+
+.dandelion/dandelion.properties
+[source, properties]
+----
+bower.components.location = classpath:assets/bower_components <1>
+----
+<1> Note the usage of the `classpath:` prefix, which tells Dandelion the configured resource lives in the classpath
+
+... or you can simply let Dandelion use the scanning strategy (TODO LIEN) and the `bower_components` folder will be scanned too!
+
+TIP: Both `classpath:` and `file:` prefix are supported. With the `file:` prefix, you must specify the absolute path of the `bower_components` folder.
+
+=== 8.4. Extending bundle loaders
+
+You may wish to write an extension that uses its own bundle loader, e.g. if you wish to scan for bundles somewhere else than in the classpath. You might also need to use your own pre-loader. Let's see here how to do it.
+
+==== 8.4.1. Plugging-in your own bundle pre-loader
+
+In order to plug-in your own bundle pre-loader, follow these steps:
+
+. Create a class that extends `AbstractBundlePreLoader`:
+
++
+[source, java]
+----
+package com.foo.bundle.loader.impl;
+
+public class FooPreLoader extends AbstractBundlePreLoader {
+
+   @Override
+   public String getName() {
+      return "the-name-of-the-preloader"; <1>
+   }
+
+   @Override
+   public List<BundleStorageUnit> getExtraBundles() {
+      // Grab bundles and convert them into BundleStorageUnit
+      return null;
+   }
+}
+----
+<1> This name is mainly used for logging purpose
+
+. In the `META-INF/services` folder, create a text file (UTF-8 encoded) using the following convention:
+
++
+.Example with a Maven project
+[source, xml]
+----
+project-root
+|__ src
+   |__ main
+      |__ resources
+         |__ META-INF
+            |__ services
+               |__ com.github.dandelion.core.bundle.loader.PreLoader
+----
+
++
+Inside this file, just add the fully qualified name of your own implementation. For example:
+
+ com.foo.bundle.loader.impl.FooPreLoader
+
+And that's all! Thanks to the SPI mechanism, Dandelion will automatically pick up your implementation on the next server restart.
+
+==== 8.4.2. Plugging-in your own bundle loader
+
+In order to plug-in your own bundle loader, follow these steps:
 
 . Create a class that extends `AbstractBundleLoader`
 

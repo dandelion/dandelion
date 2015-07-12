@@ -288,6 +288,18 @@ Note that all options are presented in the following format:
 |prod
 |
 
+.4+|[[opt-bundle.pre.loaders]]*bundle.pre.loaders*
+2+|Enable/disable all pre-loaders. See the <<8-2-loading-order, bundle loader>> section.
+
+|Values
+|true \| false
+
+|dev
+|true
+
+|prod
+|true
+
 3+|*Tooling-related options*
 
 .4+|[[opt-tool.gzip]]*tool.gzip*
@@ -387,6 +399,20 @@ Note that all options are presented in the following format:
 
 |prod
 |false
+
+3+|*Package managers-related options*
+
+.4+|[[opt-bower.components.location]]*bower.components.location*
+2+|Location of the `bower_components` folder. See the <<8-4-bower-integration, Bower integration>> section. 
+
+|Values
+|Any location, either without prefix (scanning within the web app root directory), or with a `classpath:` prefix (scanning within classpath) or with a `file:` prefix (scanning within the file system)
+
+|dev
+|
+
+|prod
+|
 
 3+|*Misc configuration options*
 
