@@ -10,10 +10,14 @@ import org.springframework.mock.web.MockFilterConfig;
 
 import com.github.dandelion.core.Context;
 import com.github.dandelion.core.DandelionException;
+import com.github.dandelion.core.GlobalOptionsRule;
 import com.github.dandelion.core.config.DandelionConfig;
 
 public class AbstractBundleLoaderTest {
 
+   @Rule
+   public GlobalOptionsRule options = new GlobalOptionsRule();
+   
    @Rule
    public ExpectedException exception = ExpectedException.none();
 

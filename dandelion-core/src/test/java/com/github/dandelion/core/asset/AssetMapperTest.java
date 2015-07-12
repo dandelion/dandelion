@@ -41,6 +41,7 @@ import org.springframework.mock.web.MockHttpServletRequest;
 
 import com.github.dandelion.core.Context;
 import com.github.dandelion.core.DandelionException;
+import com.github.dandelion.core.GlobalOptionsRule;
 import com.github.dandelion.core.config.DandelionConfig;
 import com.github.dandelion.core.storage.AssetStorageUnit;
 import com.github.dandelion.core.util.DigestUtils;
@@ -55,7 +56,10 @@ public class AssetMapperTest {
    private AssetMapper assetMapper;
    private MockHttpServletRequest request;
    private Context context;
-
+   
+   @Rule
+   public GlobalOptionsRule options = new GlobalOptionsRule();
+   
    @Rule
    public ExpectedException exception = ExpectedException.none();
 

@@ -1,11 +1,13 @@
 package com.github.dandelion.core.web;
 
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.springframework.mock.web.MockFilterConfig;
 import org.springframework.mock.web.MockHttpServletRequest;
 
 import com.github.dandelion.core.Context;
+import com.github.dandelion.core.GlobalOptionsRule;
 import com.github.dandelion.core.config.DandelionConfig;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -14,6 +16,9 @@ public class AssetRequestContextTest {
 
    private MockHttpServletRequest request;
 
+   @Rule
+   public GlobalOptionsRule options = new GlobalOptionsRule();
+   
    @Before
    public void setup() {
       request = new MockHttpServletRequest();

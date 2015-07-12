@@ -29,9 +29,6 @@
  */
 package com.github.dandelion.extras.webjar.asset.locator;
 
-import static java.util.Collections.singletonMap;
-import static org.assertj.core.api.Assertions.assertThat;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.mock.web.MockFilterConfig;
@@ -40,6 +37,10 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import com.github.dandelion.core.Context;
 import com.github.dandelion.core.storage.AssetStorageUnit;
 import com.github.dandelion.core.web.WebConstants;
+
+import static java.util.Collections.singletonMap;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class WebjarLocatorTest {
 

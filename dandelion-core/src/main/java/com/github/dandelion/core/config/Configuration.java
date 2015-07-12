@@ -72,7 +72,7 @@ public class Configuration {
 
    // Component-related configurations
    private List<String> componentsStandalone;
-   
+
    // Asset-related configurations
    private boolean assetMinificationEnabled;
    private List<String> assetLocationsResolutionStrategy;
@@ -100,6 +100,7 @@ public class Configuration {
    private String bundleLocation;
    private List<String> bundleIncludes;
    private List<String> bundleExcludes;
+   private boolean bundlePreLoaderEnabled;
 
    // Tooling-related configurations
    private boolean toolDebuggerEnabled;
@@ -112,6 +113,9 @@ public class Configuration {
 
    // Monitoring configuration
    private boolean monitoringJmxEnabled;
+
+   // Package manager configurations
+   private String bowerComponentsLocation;
 
    // Misc configurations
    private String encoding;
@@ -136,11 +140,11 @@ public class Configuration {
       this.bundleLocation = readConfig(DandelionConfig.BUNDLE_LOCATION);
       this.bundleIncludes = PropertiesUtils.propertyAsList(readConfig(DandelionConfig.BUNDLE_INCLUDES));
       this.bundleExcludes = PropertiesUtils.propertyAsList(readConfig(DandelionConfig.BUNDLE_EXCLUDES));
-
-      // Component-related configurations
-      this.componentsStandalone = PropertiesUtils
-            .propertyAsList(readConfig(DandelionConfig.COMPONENTS_STANDALONE));
+      this.bundlePreLoaderEnabled = Boolean.parseBoolean(readConfig(DandelionConfig.BUNDLE_PRE_LOADERS));
       
+      // Component-related configurations
+      this.componentsStandalone = PropertiesUtils.propertyAsList(readConfig(DandelionConfig.COMPONENTS_STANDALONE));
+
       // Assets-related configurations
       this.assetMinificationEnabled = Boolean.parseBoolean(readConfig(DandelionConfig.ASSET_MINIFICATION));
       this.assetLocationsResolutionStrategy = PropertiesUtils
@@ -176,12 +180,16 @@ public class Configuration {
       // Tooling-related configurations
       this.toolDebuggerEnabled = Boolean.parseBoolean(readConfig(DandelionConfig.TOOL_DEBUGGER));
       this.toolAlertReportingEnabled = Boolean.parseBoolean(readConfig(DandelionConfig.TOOL_ALERT_REPORTING));
-      this.toolAlertReportingMode = ReportingType.valueOf(readConfig(DandelionConfig.TOOL_ALERT_REPORTING_MODE).toUpperCase());
+      this.toolAlertReportingMode = ReportingType.valueOf(readConfig(DandelionConfig.TOOL_ALERT_REPORTING_MODE)
+            .toUpperCase());
       this.toolAssetPrettyPrintingEnabled = Boolean
             .parseBoolean(readConfig(DandelionConfig.TOOL_ASSET_PRETTY_PRINTING));
       this.toolBundleReloadingEnabled = Boolean.parseBoolean(readConfig(DandelionConfig.TOOL_BUNDLE_RELOADING));
       this.toolGzipEnabled = Boolean.parseBoolean(readConfig(DandelionConfig.TOOL_GZIP));
       this.toolGzipMimeTypes = PropertiesUtils.propertyAsSet(readConfig(DandelionConfig.TOOL_GZIP_MIME_TYPES));
+
+      // Package manager configurations
+      this.bowerComponentsLocation = readConfig(DandelionConfig.BOWER_COMPONENTS_LOCATION);
 
       // Monitoring configurations
       this.monitoringJmxEnabled = Boolean.parseBoolean(readConfig(DandelionConfig.MONITORING_JMX));
@@ -401,5 +409,13 @@ public class Configuration {
 
    public Set<String> getToolGzipMimeTypes() {
       return toolGzipMimeTypes;
+   }
+
+   public String getBowerComponentsLocation() {
+      return bowerComponentsLocation;
+   }
+
+   public boolean isBundlePreLoaderEnabled() {
+      return bundlePreLoaderEnabled;
    }
 }

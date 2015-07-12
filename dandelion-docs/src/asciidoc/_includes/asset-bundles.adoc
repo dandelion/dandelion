@@ -14,15 +14,15 @@ More formally, a _bundle_ is defined as follows:
 |===
 |Attribute |Description |Required
 
-|`name`
+|[[spec-bundle-bundle]]`bundle`
 |Name of the bundle
 |No. Can be inffered from the file name.
 
-|`dependencies`
+|[[spec-bundle-dependencies]]`dependencies`
 |Set of bundles that need to be loaded before
 |No
 
-|`assets`
+|[[spec-bundle-assets]]`assets`
 |Set of assets that compose the bundle
 |Yes
 |===
@@ -33,23 +33,23 @@ And an _asset_ is defined as follows:
 |===
 |Attribute |Description |Required
 
-|`name`
+|[[spec-asset-name]]`name`
 |Name of the asset
 |No. Can be inferred from the first found location. 
 
-|`version`
+|[[spec-asset-version]]`version`
 |Version of the asset
 |No
 
-|`type`
+|[[spec-asset-type]]`type`
 |Type of the asset, among `js` or `css`
 |No. Can be inferred from the extension specified in the first found location
 
-|`locations`
+|[[spec-asset-locations]]`locations`
 |Map of location key / location pairs that provides information about how to fetch the asset
 |Yes
 
-|`dom`
+|[[spec-asset-dom]]`dom`
 |Desired position in the DOM, among `body` or `head`
 |No. By default `body` for JS and `head` for CSS
 |===

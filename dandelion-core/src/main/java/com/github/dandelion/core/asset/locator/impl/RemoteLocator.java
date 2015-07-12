@@ -49,13 +49,15 @@ import com.github.dandelion.core.util.ResourceUtils;
  */
 public class RemoteLocator extends AbstractAssetLocator {
 
+   public static final String LOCATION_KEY = "remote";
+   
    public RemoteLocator() {
       this.active = true;
    }
 
    @Override
    public String getLocationKey() {
-      return "remote";
+      return LOCATION_KEY;
    }
 
    @Override

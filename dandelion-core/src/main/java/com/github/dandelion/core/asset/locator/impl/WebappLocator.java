@@ -63,14 +63,15 @@ import com.github.dandelion.core.util.UrlUtils;
 public class WebappLocator extends AbstractAssetLocator {
 
    private static final Logger LOG = LoggerFactory.getLogger(WebappLocator.class);
-
+   public static final String LOCATION_KEY = "webapp";
+   
    public WebappLocator() {
       active = true;
    }
 
    @Override
    public String getLocationKey() {
-      return "webapp";
+      return LOCATION_KEY;
    }
 
    @Override

@@ -30,8 +30,10 @@
 package com.github.dandelion.core.asset.generator.js;
 
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 
+import com.github.dandelion.core.GlobalOptionsRule;
 import com.github.dandelion.core.asset.generator.AssetContent;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -41,6 +43,9 @@ public class JavascriptContentGeneratorTest {
    private RawJsContentGenerator javascriptContentGenerator;
    private AssetContent content;
 
+   @Rule
+   public GlobalOptionsRule options = new GlobalOptionsRule();
+   
    @Before
    public void setup() {
       content = new AssetContent();

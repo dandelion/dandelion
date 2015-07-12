@@ -34,8 +34,10 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.Writer;
 
+import org.junit.Rule;
 import org.junit.Test;
 
+import com.github.dandelion.core.GlobalOptionsRule;
 import com.github.dandelion.core.asset.processor.AssetProcessor;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -44,6 +46,9 @@ public class JsMinProcessorTest extends AbstractProcessorTest {
 
    private AssetProcessor assetProcessor = new JsMinProcessor();
 
+   @Rule
+   public GlobalOptionsRule options = new GlobalOptionsRule();
+   
    @Test
    public void should_minifiy_js() throws IOException {
       Writer writer = new StringWriter();
