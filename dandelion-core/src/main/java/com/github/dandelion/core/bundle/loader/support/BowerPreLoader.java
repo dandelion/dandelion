@@ -46,7 +46,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.dandelion.core.Context;
 import com.github.dandelion.core.asset.locator.impl.ClasspathLocator;
 import com.github.dandelion.core.asset.locator.impl.WebappLocator;
-import com.github.dandelion.core.bundle.loader.PreLoader;
+import com.github.dandelion.core.bundle.loader.AbstractBundlePreLoader;
 import com.github.dandelion.core.config.DandelionConfig;
 import com.github.dandelion.core.storage.AssetStorageUnit;
 import com.github.dandelion.core.storage.BundleStorageUnit;
@@ -67,7 +67,7 @@ import com.github.dandelion.core.util.scanner.WebResourceScanner;
  * @author Thibault Duchateau
  * @since 1.1.0
  */
-public class BowerPreLoader implements PreLoader {
+public class BowerPreLoader extends AbstractBundlePreLoader {
 
    private static final Logger LOG = LoggerFactory.getLogger(BowerPreLoader.class);
 
@@ -75,18 +75,12 @@ public class BowerPreLoader implements PreLoader {
    private static final String BOWER_MANIFEST_FILENAME = "bower.json";
 
    /**
-    * The Dandelion context.
-    */
-   private Context context;
-
-   /**
     * The mapper used to read Bower manifests (bower.json).
     */
    private ObjectMapper mapper;
 
-   @Override
    public void init(Context context) {
-      this.context = context;
+      super.init(context);
       this.mapper = new ObjectMapper();
       this.mapper.configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true);
    }
@@ -247,12 +241,12 @@ public class BowerPreLoader implements PreLoader {
             Map<String, String> locations = new HashMap<String, String>();
             switch (locationType) {
             case classpath:
-               locations.put(ClasspathLocator.LOCATION_KEY, bowerComponentsLocation.replace("classpath:", "")
-                     + bowerConf.getName() + "/" + mainAsset);
+               locations.put(ClasspathLocator.LOCATION_KEY,
+                     bowerComponentsLocation.replace("classpath:", "") + bowerConf.getName() + "/" + mainAsset);
                break;
             case file:
-               locations.put("file", bowerComponentsLocation.replace("file:", "") + bowerConf.getName() + "/"
-                     + mainAsset);
+               locations.put("file",
+                     bowerComponentsLocation.replace("file:", "") + bowerConf.getName() + "/" + mainAsset);
                break;
             case webapp:
                String processedLocation = !bowerComponentsLocation.startsWith("/") ? "/" + bowerComponentsLocation
