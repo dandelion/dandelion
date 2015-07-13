@@ -56,30 +56,26 @@ import com.github.dandelion.core.util.Validate;
  * The context can be manipulated in many ways:
  * <ul>
  * <li>By adding/removing bundle(s) (using the bundle names) <br/>
+ * 
  * <pre>
- * AssetRequestContext
- *    .get(request)
- *    .addBundle(&quot;myBundle&quot;);
- * AssetRequestContext
- *    .get(request)
- *    .addBundles(&quot;myBundle1&quot;, &quot;myBundle2&quot;);
+ * AssetRequestContext.get(request).addBundle(&quot;myBundle&quot;);
+ * AssetRequestContext.get(request).addBundles(&quot;myBundle1&quot;, &quot;myBundle2&quot;);
  * </pre>
+ * 
  * </li>
  * <li>By excluding asset(s) (using the asset names) <br/>
+ * 
  * <pre>
- * AssetRequestContext
- *    .get(request)
- *    .addBundle(&quot;myBundle1&quot;)
- *    .excludeAsset(&quot;assetName1&quot;);
+ * AssetRequestContext.get(request).addBundle(&quot;myBundle1&quot;).excludeAsset(&quot;assetName1&quot;);
  * </pre>
+ * 
  * </li>
  * <li>By configuring an {@link AssetContentGenerator}
+ * 
  * <pre>
- * AssetRequestContext
- *    .get(request)
- *    .addBundle(&quot;myBundle1&quot;)
- *    .addGenerator(&quot;uid&quot;, generator);
+ * AssetRequestContext.get(request).addBundle(&quot;myBundle1&quot;).addGenerator(&quot;uid&quot;, generator);
  * </pre>
+ * 
  * </li>
  * </ul>
  * 
@@ -120,6 +116,16 @@ public class AssetRequestContext {
    private Map<String, AssetContentGenerator> generators;
 
    /**
+    * Placeholder used by Dandelion when it injects CSS assets.
+    */
+   private String cssPlaceholder;
+
+   /**
+    * Placeholder used by Dandelion when it injects JavaScript assets.
+    */
+   private String jsPlaceholder;
+
+   /**
     * Private constructor.
     */
    private AssetRequestContext() {
@@ -148,10 +154,10 @@ public class AssetRequestContext {
     *         current servlet request.
     */
    public static AssetRequestContext get(ServletRequest servletRequest) {
-      
+
       Object attribute = servletRequest.getAttribute(AssetRequestContext.class.getCanonicalName());
       Context context = (Context) servletRequest.getAttribute(WebConstants.DANDELION_CONTEXT_ATTRIBUTE);
-      
+
       if (attribute == null || !(attribute instanceof AssetRequestContext)) {
          attribute = new AssetRequestContext();
          ((AssetRequestContext) attribute).addBundles(context.getConfiguration().getBundleIncludes());
@@ -479,6 +485,50 @@ public class AssetRequestContext {
     */
    public AssetRequestContext addParameter(Object assetName, String parameter, Object value, boolean replaceIfExists) {
       return addParameter(assetName.toString(), parameter, value, replaceIfExists);
+   }
+
+   /**
+    * <p>
+    * Configures a placeholder for JavaScript injection.
+    * </p>
+    * 
+    * @param jsPlaceholderName
+    *           The placeholder added to the page thanks to the JSP taglib or
+    *           the Thymeleaf dialect.
+    * @return the current instance of {@link AssetRequestContext}.
+    */
+   public AssetRequestContext setJsPlaceholder(String jsPlaceholderName) {
+      this.jsPlaceholder = jsPlaceholderName;
+      return this;
+   }
+
+   /**
+    * <p>
+    * Configures a placeholder for CSS injection.
+    * </p>
+    * 
+    * @param cssPlaceholderName
+    *           The placeholder added to the page thanks to the JSP taglib or
+    *           the Thymeleaf dialect.
+    * @return the current instance of {@link AssetRequestContext}.
+    */
+   public AssetRequestContext setCssPlaceholder(String cssPlaceholderName) {
+      this.cssPlaceholder = cssPlaceholderName;
+      return this;
+   }
+
+   /**
+    * @return the configured placeholder used for JavaScript injection.
+    */
+   public String getJsPlaceholder() {
+      return this.jsPlaceholder;
+   }
+
+   /**
+    * @return the configured placeholder used for CSS injection.
+    */
+   public String getCssPlaceholder() {
+      return this.cssPlaceholder;
    }
 
    /**

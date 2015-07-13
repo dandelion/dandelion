@@ -42,8 +42,10 @@ import com.github.dandelion.thymeleaf.util.ArgumentsUtil;
 import com.github.dandelion.thymeleaf.util.AttributesUtil;
 
 /**
+ * <p>
  * Attribute processor for all attributes present in {@link AssetAttributeNames}
  * .
+ * </p>
  * 
  * @author Romain Lespinasse
  * @author Thibault Duchateau
@@ -71,13 +73,15 @@ public class AssetAttrProcessor extends DandelionAttrProcessor {
             AssetAttributeNames.values());
 
       HttpServletRequest request = ArgumentsUtil.getWebContext(arguments).getHttpServletRequest();
-      AssetRequestContext context = AssetRequestContext.get(request);
+      AssetRequestContext arc = AssetRequestContext.get(request);
       switch (assetsAttributeName) {
       case JS_EXCLUDES:
-         context.excludeJs(element.getAttributeValue(attributeName));
+         arc.excludeJs(element.getAttributeValue(attributeName));
          break;
       case CSS_EXCLUDES:
-         context.excludeCss(element.getAttributeValue(attributeName));
+         arc.excludeCss(element.getAttributeValue(attributeName));
+         break;
+      default:
          break;
       }
 
