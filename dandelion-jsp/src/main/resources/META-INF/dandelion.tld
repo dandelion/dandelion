@@ -31,7 +31,7 @@
 <taglib xmlns="http://java.sun.com/xml/ns/j2ee"
         version="2.0">
    <description>Taglib for Dandelion JSP module</description>
-   <tlib-version>100</tlib-version>
+   <tlib-version>110</tlib-version>
    <short-name>dandelion</short-name>
    <uri>http://github.com/dandelion</uri>
    
@@ -113,6 +113,33 @@
          </description>
          <name>cssExcludes</name>
          <required>false</required>
+         <rtexprvalue>true</rtexprvalue>
+      </attribute>
+   </tag>
+   
+   <tag>
+      <description>
+      <![CDATA[
+         <p>The <dandelion:placeholder> tag allows you to configure placeholders for the asset injection.</p>
+      ]]>
+      </description>
+      <name>placeholder</name>
+      <tag-class>com.github.dandelion.jsp.tag.PlaceholderTag</tag-class>
+      <body-content>empty</body-content>
+      <attribute>
+         <description>
+         <![CDATA[
+            <p>Type of placeholder to configure.</p>
+            <p>
+            <ul>
+            <li>Required: <b>no</b></li>
+            <li>Possible values: <b>js|css</b></li>
+            </ul>
+            </p>
+         ]]>
+         </description>
+         <name>type</name>
+         <required>true</required>
          <rtexprvalue>true</rtexprvalue>
       </attribute>
    </tag>

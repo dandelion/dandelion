@@ -39,4 +39,22 @@
          ]]>
       </documentation>
    </attribute-processor>
+   
+   <attribute-processor name="placeholder-include">
+      <restrictions tags="-html"/>
+      <documentation>
+         <![CDATA[
+            <p>Placeholder used to tell Dandelion where to inject the corresponding assets. Assets will be injected into the corresponding element.</p>
+         ]]>
+      </documentation>
+   </attribute-processor>
+   
+   <attribute-processor name="placeholder-replace">
+      <restrictions tags="-html"/>
+      <documentation>
+         <![CDATA[
+            <p>Placeholder used to tell Dandelion where to inject the corresponding assets. Assets will replace the corresponding element.</p>
+         ]]>
+      </documentation>
+   </attribute-processor>
 </dialect>
