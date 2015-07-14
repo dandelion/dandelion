@@ -4,7 +4,7 @@ Dandelion-Core ships some live debugging tools that you may find useful during d
 
 === 13.1. Alert reporting
 
-Since Dandelion-Core relies on asset bundles, it is extremely important to have quick feedback on potential errors when inclucing bundles. Since the v1.0.0, Dandelion-Core has a basic alert reporting tool that help you debug as fast as possible.
+Since Dandelion-Core relies on asset bundles, it is extremely important to have quick feedback on potential errors when including bundles. Since the v1.0.0, Dandelion-Core has a basic alert reporting tool that will help you to debug as fast as possible.
 
 ==== 13.1.1. Alert types
 
