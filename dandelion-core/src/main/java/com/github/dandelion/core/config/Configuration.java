@@ -34,6 +34,7 @@ import java.util.Properties;
 import java.util.Set;
 
 import javax.servlet.FilterConfig;
+import javax.servlet.http.HttpServletRequest;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -141,7 +142,7 @@ public class Configuration {
       this.bundleIncludes = PropertiesUtils.propertyAsList(readConfig(DandelionConfig.BUNDLE_INCLUDES));
       this.bundleExcludes = PropertiesUtils.propertyAsList(readConfig(DandelionConfig.BUNDLE_EXCLUDES));
       this.bundlePreLoaderEnabled = Boolean.parseBoolean(readConfig(DandelionConfig.BUNDLE_PRE_LOADERS));
-      
+
       // Component-related configurations
       this.componentsStandalone = PropertiesUtils.propertyAsList(readConfig(DandelionConfig.COMPONENTS_STANDALONE));
 
@@ -180,8 +181,8 @@ public class Configuration {
       // Tooling-related configurations
       this.toolDebuggerEnabled = Boolean.parseBoolean(readConfig(DandelionConfig.TOOL_DEBUGGER));
       this.toolAlertReportingEnabled = Boolean.parseBoolean(readConfig(DandelionConfig.TOOL_ALERT_REPORTING));
-      this.toolAlertReportingMode = ReportingType.valueOf(readConfig(DandelionConfig.TOOL_ALERT_REPORTING_MODE)
-            .toUpperCase());
+      this.toolAlertReportingMode = ReportingType
+            .valueOf(readConfig(DandelionConfig.TOOL_ALERT_REPORTING_MODE).toUpperCase());
       this.toolAssetPrettyPrintingEnabled = Boolean
             .parseBoolean(readConfig(DandelionConfig.TOOL_ASSET_PRETTY_PRINTING));
       this.toolBundleReloadingEnabled = Boolean.parseBoolean(readConfig(DandelionConfig.TOOL_BUNDLE_RELOADING));
@@ -258,54 +259,100 @@ public class Configuration {
       return this.activeRawProfile;
    }
 
+   /**
+    * @return the list of all components that are used standalone.
+    */
    public List<String> getComponentsStandalone() {
       return componentsStandalone;
    }
 
+   /**
+    * @return {@code true} is the asset minification is enabled, {@code false}
+    *         otherwise.
+    */
    public boolean isAssetMinificationEnabled() {
       return this.assetMinificationEnabled;
    }
 
+   /**
+    * @return {@code true} if the debugger is accessible, {@code false}
+    *         otherwise.
+    */
    public boolean isToolDebuggerEnabled() {
       return this.toolDebuggerEnabled;
    }
 
+   /**
+    * @return {@code true} if alert reporting is enabled, {@code false}
+    *         otherwise.
+    */
    public boolean isToolAlertReportingEnabled() {
       return toolAlertReportingEnabled;
    }
 
+   /**
+    * @return the reporting type if alert reporting is enabled
+    */
    public ReportingType getToolAlertReportingMode() {
       return toolAlertReportingMode;
    }
 
+   /**
+    * @return {@code true} if generated asset are automatically pretty printed,
+    *         {@code false} otherwise.
+    */
    public boolean isToolAssetPrettyPrintingEnabled() {
       return toolAssetPrettyPrintingEnabled;
    }
 
+   /**
+    * @return {@code true} if bundle reloading is enabled, {@code false}
+    *         otherwise.
+    */
    public boolean isToolBundleReloadingEnabled() {
       return this.toolBundleReloadingEnabled;
    }
 
+   /**
+    * @return {@code true} if caching is enabled, {@code false} otherwise.
+    */
    public boolean isCachingEnabled() {
       return this.cachingEnabled;
    }
 
+   /**
+    * @return the asset location resolution strategy, in the form of an ordered
+    *         list of location keys.
+    */
    public List<String> getAssetLocationsResolutionStrategy() {
       return this.assetLocationsResolutionStrategy;
    }
 
+   /**
+    * @return the list of all enabled asset processors.
+    */
    public List<String> getAssetProcessors() {
       return this.assetProcessors;
    }
 
+   /**
+    * @return {@code true} if the processing of JavaScript assets is enabled,
+    *         {@code false} otherwise. (Thymeleaf only).
+    */
    public boolean isAssetJsProcessingEnabled() {
       return assetJsProcessingEnabled;
    }
 
+   /**
+    * @return the list of all excluded JavaScript assets.
+    */
    public List<String> getAssetJsExcludes() {
       return this.assetJsExcludes;
    }
 
+   /**
+    * @return the list of all excluded CSS assets.
+    */
    public List<String> getAssetCssExcludes() {
       return this.assetCssExcludes;
    }
@@ -322,10 +369,18 @@ public class Configuration {
       return this.bundleLocation;
    }
 
+   /**
+    * @return the name of all bundles included in the {@link HttpServletRequest}
+    *         .
+    */
    public List<String> getBundleIncludes() {
       return this.bundleIncludes;
    }
 
+   /**
+    * @return the name of all bundles excluded from the
+    *         {@link HttpServletRequest}.
+    */
    public List<String> getBundleExcludes() {
       return this.bundleExcludes;
    }
