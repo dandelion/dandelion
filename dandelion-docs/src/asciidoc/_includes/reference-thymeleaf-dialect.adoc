@@ -107,3 +107,73 @@ TIP: As `ddl:bundle*` attributes, `ddl:asset*` attributes can be used on *any HT
 |[[tml-asset-css-excludes]]*ddl:asset-css-excludes*
 |Comma-separated list of CSS asset names to exclude from the current HTTP request
 |===
+
+=== B.3. `ddl:placeholder*` attributes
+
+The `ddl:placeholder*` allows you to configure custom placeholders where Dandelion-core will use to perform assets injection.
+
+[discrete]
+==== Usage
+
+By default, Dandelion-Core injects `<script>` tags at the end of the `<body>` section and `<link>` tags at the end of the `<head>` section. But in the example below, the injection is performed where the `<ddl:placeholder*>` attributes are used.
+
+[source, html]
+----
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/web/thymeleaf/layout"
+      xmlns:ddl="http://www.thymeleaf.org/dandelion">
+<head>
+  <title layout:title-pattern="$DECORATOR_TITLE - $CONTENT_TITLE">App</title>
+  
+  <style ddl:placeholder-replace="css"/> <1>
+  
+  <div layout:fragments="styles">
+    <p>optional style and link tags</p>
+  </div>
+</head>
+<body>
+  <div th:include="common/fragments/main-menu :: top-menu">Top Menu</div>
+  
+  <div layout:fragment="content" class="container">
+    <p>Page content goes here</p>
+  </div>
+
+  <div ddl:placeholder-include="js"> <2>
+    <p>Dandelion injects script tags here</p>
+  </div>
+
+  <div layout:fragment="scripts">
+    <p>optional script tags</p>
+  </div>
+</body>
+</html>
+----
+<1> Dandelion-Core will inject all `<link>` tags by replacing the `<style>` tag
+<2> Here Dandelion-Core will inject all `<script>` tags inside the `div`
+
+[NOTE]
+====
+A few rules need apply:
+
+* The same placeholder type can be used only once per page
+* Only `js` and `css` are allowed in the `type` attribute
+====
+
+[discrete]
+==== Reference
+
+.`ddl:placeholder*` attributes reference
+[cols="2,8,5"]
+|===
+|Attribute |Description |Possible values
+
+|[[tml-placeholder-include]]*ddl:placeholder-include*
+|Placeholder where to inject the specified asset type. Assets will be injected into the corresponding element.
+|`js` \| `css`
+
+|[[tml-placeholder-replace]]*ddl:placeholder-replace*
+|Placeholder where to inject the specified asset type. Assets will replace the corresponding element.
+|`js` \| `css`
+|===
