@@ -1,0 +1,211 @@
+== 14. Request/response handlers
+
+As briefly explained in the <<1-3-overall-functioning, introduction>>, Dandelion-Core is mainly based on a http://docs.oracle.com/javaee/6/api/javax/servlet/Filter.html[servlet filter]: `DandelionFilter`. As most of existing filters, it is used to preprocess requests and postprocess responses, but in a modular manner that will be described in this section. 
+
+=== 14.1. Pre-handlers, post-handlers and handler chain
+
+The `DandelionFilter` does not directly processes requests and responses but delegates to a set of handlers. As the http://www.oracle.com/technetwork/java/filters-137243.html[filter chain of the Servlet API], Dandelion-Core builds a handler chain at startup, which provides the same kind of mechanism as filters but for invoking a series of handlers, in a particular order.
+
+A good sketch is better than words: 
+
+image::handlers.png[Handler chain, align=center]
+
+Note however that handlers fall into two categories:
+
+* *pre-handlers*: in charge of preprocessing requests
+* *post-handlers*: in charge of postprocessing responses
+
+Each handler has its own role, which will be detailed in the next section.
+
+=== 14.2. Built-in pre-handlers
+
+==== 14.2.1. `ReloadBundlePreHandler`
+
+[cols="3,^1,10a,10"]
+|===
+|Type |Rank |Condition(s) |Role
+
+|Pre-handler 
+|0 
+|* <<opt-tool.bundle.reloading, `tool.bundle.reloading`>> enabled
+* `ddl-reload-bundles` present as a request parameter
+|Reset the internal bundle storage by scanning all bundles and feed the bundle graph
+|===
+
+Note that the <<13-2-live-debugger, debugger>> has a _Quick actions_ menu that trigger the bundle reloading using the above parameter.
+
+==== 14.2.2. `ClearCachePreHandler`
+
+[cols="3,^1,10a,10"]
+|===
+|Type |Rank |Condition(s) |Role
+
+|Pre-handler 
+|0 
+|* <<opt-tool.debugger, `tool.debugger`>> enabled
+* `ddl-clear-cache` present as a request parameter
+|Clear the configured <<9-2-built-in-server-side-cache-systems, cache system>>
+|===
+
+==== 14.2.3. `ClearStoragePreHandler`
+
+[cols="3,^1,10a,10"]
+|===
+|Type |Rank |Condition(s) |Role
+
+|Pre-handler 
+|0 
+|* <<opt-tool.debugger, `tool.debugger`>> enabled
+* `ddl-clear-storage` present as a request parameter
+|Clear the configured asset storage system
+|===
+
+NOTE: Note that the rank of built-in pre-handlers doesn't matter, since they're all used to perform one shot actions.
+
+=== 14.3. Built-in post-handlers
+
+==== 14.3.1. `ETagPostHandler`
+
+[cols="3,^1,10a,10"]
+|===
+|Type |Rank |Condition(s) |Role
+
+|Pre-handler 
+|10 
+|All content types except `text/html`
+|Sends a HTTP 304 (NOT MODIFIED) if the request ETag equals the response ETag, thus saving bandwith (not server performance)
+|===
+
+==== 14.3.2. `AssetInjectionPostHandler`
+
+[cols="3,^1,10a,10"]
+|===
+|Type |Rank |Condition(s) |Role
+
+|Pre-handler 
+|20
+|`text/html` content type only
+|Perform the asset injection within HTTP responses
+|===
+
+==== 14.3.3. `GzipCompressionPostHandler`
+
+[cols="3,^1,10a,10"]
+|===
+|Type |Rank |Condition(s) |Role
+
+|Pre-handler 
+|30 
+|* <<opt-tool.gzip, `tool.gzip`>> enabled
+* The brower must accept the gzip encoding
+* The response is not commited
+* The request is not an `INCLUDE`
+* The content type must be compatible*
+|Compress text-based resources using GZIP
+|===
+
+*Compatible content types: `text/html`, `text/css`, `application/x-javascript`, `application/javascript`, `text/javascript`, `text/plain`, `text/xml`, `application/xhtml+xml`, `image/svg+xml`
+
+==== 14.3.4. `ReportAlertPostHandler`
+
+[cols="3,^1,10a,10"]
+|===
+|Type |Rank |Condition(s) |Role
+
+|Pre-handler 
+|30
+|* <<opt-tool.alert.reporting, `tool.alert.reporting`>> enabled
+* `text/html` content type only
+|Update the response with potential <<13-1-alert-reporting, alerts>>
+|===
+
+==== 14.3.5. `CacheHeaderPostHandler`
+
+[cols="3,^1,10a,10"]
+|===
+|Type |Rank |Condition(s) |Role
+
+|Pre-handler 
+|40 
+|All content types except `text/html`
+|Position HTTP headers on responses
+|===
+
+==== 14.3.6. `DebuggerPostHandler`
+
+[cols="3,^1,10a,10"]
+|===
+|Type |Rank |Condition(s) |Role
+
+|Pre-handler 
+|50 
+|* <<opt-tool.debugger, `tool.debugger`>> enabled
+* `text/html` content type only
+|Override the response with the <<13-2-live-debugger, live debugger>>
+|===
+
+=== 14.4. Plugging-in your own handler
+
+In order to plug-in your own handler, follow these steps:
+
+. Create a class that extends `AbstractHandlerChain`
+
++
+[source, java]
+----
+package com.foo.handler.impl;
+
+   @Override
+   public boolean isAfterChaining() {
+      // true for post-handlers, false for pre-handlers 
+      return false; <1>
+   }
+
+   @Override
+   public int getRank() {
+      return 0; <2>
+   }
+
+   @Override
+   public boolean isApplicable(HandlerContext context) {
+      return false; <3>
+   }
+
+   @Override
+   protected Logger getLogger() {
+      return null; <4>
+   }
+
+   @Override
+   protected boolean handle(HandlerContext context) {
+      // Processes the request/response
+      return false; <5>
+   }
+----
+<1> This handler is considered as a pre-handler
+<2> Set the rank with which the handler will be executed in the chain
+<3> Configure the conditions under which this handler applies
+<4> Return the logger if you need logging
+<5> Perform the request processing here. The return value is a boolean that indicates whether the handler chain should continue handling the request/response or not
+
+. In the `META-INF/services` folder, create a text file (UTF-8 encoded) using the following convention:
+
++
+.Example with a Maven project
+[source, xml]
+----
+project-root
+|__ src
+   |__ main
+      |__ resources
+         |__ META-INF
+            |__ services
+               |__ com.github.dandelion.core.web.handler.HandlerChain
+----
+
++
+Inside this file, just add the fully qualified name of your own implementation. For example:
+
+ com.foo.handler.impl.MyHandler
+
+And that's all! Thanks to the SPI mechanism, Dandelion will automatically pick up your implementation and insert it in the handler chain at the position defined by its rank.
