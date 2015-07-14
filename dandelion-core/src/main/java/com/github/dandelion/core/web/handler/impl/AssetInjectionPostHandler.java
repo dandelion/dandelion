@@ -45,6 +45,8 @@ import com.github.dandelion.core.asset.AssetQuery;
 import com.github.dandelion.core.html.AbstractHtmlTag;
 import com.github.dandelion.core.storage.BundleStorage;
 import com.github.dandelion.core.util.HtmlUtils;
+import com.github.dandelion.core.util.StringUtils;
+import com.github.dandelion.core.web.AssetRequestContext;
 import com.github.dandelion.core.web.WebConstants;
 import com.github.dandelion.core.web.handler.AbstractHandlerChain;
 import com.github.dandelion.core.web.handler.HandlerContext;
@@ -56,7 +58,8 @@ import com.github.dandelion.core.web.handler.HandlerContext;
  * <ul>
  * <li>querying the {@link BundleStorage} on the lookout for included bundles or
  * assets</li>
- * <li>injecting the assets found in the {@link HttpServletResponse}</li>
+ * <li>injecting the assets found in the {@link HttpServletResponse} into
+ * configured placeholders</li>
  * </ul>
  * 
  * @author Thibault Duchateau
@@ -67,7 +70,7 @@ public class AssetInjectionPostHandler extends AbstractHandlerChain {
    private static final Logger LOG = LoggerFactory.getLogger(DebuggerPostHandler.class);
    private static final String CLOSING_BODY_TAG = "</body>";
    private static final String CLOSING_HEAD_TAG = "</head>";
-   
+
    @Override
    protected Logger getLogger() {
       return LOG;
@@ -129,13 +132,16 @@ public class AssetInjectionPostHandler extends AbstractHandlerChain {
    @Override
    public boolean handle(HandlerContext handlerContext) {
 
+      // Retrieve the AssetRequestContext from the request
+      AssetRequestContext arc = AssetRequestContext.get(handlerContext.getRequest());
+
       // Convert the response to a String in order to perform easier
       // replacements
       String html = new String(handlerContext.getResponseAsBytes());
 
       // Get all assets to be injected in the <head> section
-      Set<Asset> assetsHead = new AssetQuery(handlerContext.getRequest(), handlerContext.getContext()).atPosition(
-            AssetDomPosition.head).perform();
+      Set<Asset> assetsHead = new AssetQuery(handlerContext.getRequest(), handlerContext.getContext())
+            .atPosition(AssetDomPosition.head).perform();
 
       if (!assetsHead.isEmpty()) {
          StringBuilder htmlHead = new StringBuilder();
@@ -144,13 +150,24 @@ public class AssetInjectionPostHandler extends AbstractHandlerChain {
             htmlHead.append(tag.toHtml());
             htmlHead.append('\n');
          }
-         htmlHead.append(CLOSING_HEAD_TAG);
-         html = html.replace(CLOSING_HEAD_TAG, htmlHead);
+
+         String cssPlaceholder = arc.getCssPlaceholder();
+
+         // Assets are injected in the desired placeholder
+         if (StringUtils.isNotBlank(cssPlaceholder)) {
+            html = html.replace(cssPlaceholder, htmlHead);
+         }
+         // Assets are injected in the default placeholder: at the end of the
+         // <head> tag
+         else {
+            htmlHead.append(CLOSING_HEAD_TAG);
+            html = html.replace(CLOSING_HEAD_TAG, htmlHead);
+         }
       }
 
       // Get all assets to be injected in the <body> section
-      Set<Asset> assetsBody = new AssetQuery(handlerContext.getRequest(), handlerContext.getContext()).atPosition(
-            AssetDomPosition.body).perform();
+      Set<Asset> assetsBody = new AssetQuery(handlerContext.getRequest(), handlerContext.getContext())
+            .atPosition(AssetDomPosition.body).perform();
 
       if (!assetsBody.isEmpty()) {
          StringBuilder htmlBody = new StringBuilder();
@@ -159,8 +176,19 @@ public class AssetInjectionPostHandler extends AbstractHandlerChain {
             htmlBody.append(tag.toHtml());
             htmlBody.append('\n');
          }
-         htmlBody.append(CLOSING_BODY_TAG);
-         html = html.replace(CLOSING_BODY_TAG, htmlBody);
+
+         String jsPlaceholder = arc.getJsPlaceholder();
+
+         // Assets are injected in the desired placeholder
+         if (StringUtils.isNotBlank(jsPlaceholder)) {
+            html = html.replace(jsPlaceholder, htmlBody);
+         }
+         // Assets are injected in the default placeholder: at the end of the
+         // <body> tag
+         else {
+            htmlBody.append(CLOSING_BODY_TAG);
+            html = html.replace(CLOSING_BODY_TAG, htmlBody);
+         }
       }
 
       // Once all requested assets injected, convert back to a byte array to

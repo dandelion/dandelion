@@ -29,6 +29,8 @@ include::{include-dir}/configuration-options.adoc[]
  
 include::{include-dir}/debugger.adoc[]
 
+include::{include-dir}/handlers.adoc[]
+
 include::{include-dir}/reference-jsp-taglib.adoc[]
 
 include::{include-dir}/reference-thymeleaf-dialect.adoc[]

@@ -29,54 +29,39 @@
  */
 package com.github.dandelion.thymeleaf.dialect;
 
-import java.util.HashSet;
-import java.util.Set;
-
-import org.thymeleaf.dialect.AbstractDialect;
-import org.thymeleaf.processor.IProcessor;
-
-import com.github.dandelion.thymeleaf.processor.AssetAttrProcessor;
-import com.github.dandelion.thymeleaf.processor.BundleAttrProcessor;
-import com.github.dandelion.thymeleaf.processor.PlaceholderAttrProcessor;
+import com.github.dandelion.thymeleaf.util.AttributeName;
 
 /**
  * <p>
- * Thymeleaf Dialect for Dandelion.
+ * Attributes used by the {@link DandelionDialect} when dealing with
+ * placeholders.
  * </p>
  * 
- * @author Romain Lespinasse
  * @author Thibault Duchateau
+ * @since 1.1.0
  */
-public class DandelionDialect extends AbstractDialect {
+public enum PlaceholderAttributeNames implements AttributeName {
 
-   public static final String DIALECT_PREFIX = "ddl";
-   public static final String LAYOUT_NAMESPACE = "http://www.thymeleaf.org/dandelion";
-   public static final int HIGHEST_PRECEDENCE = 3500;
+   /**
+    * Configures a placeholder used by Dandelion to inject assets inside the
+    * current element.
+    */
+   PLACEHOLDER_INCLUDE("placeholder-include"),
 
-   public String getPrefix() {
-      return DIALECT_PREFIX;
-   }
+   /**
+    * Configures a placeholder used by Dandelion to inject assets as a
+    * replacement for the current element.
+    */
+   PLACEHOLDER_REPLACE("placeholder-replace");
 
-   public boolean isLenient() {
-      return false;
+   private String attribute;
+
+   private PlaceholderAttributeNames(String attribute) {
+      this.attribute = attribute;
    }
 
    @Override
-   public Set<IProcessor> getProcessors() {
-      final Set<IProcessor> processors = new HashSet<IProcessor>();
-
-      for (AssetAttributeNames attr : AssetAttributeNames.values()) {
-         processors.add(new AssetAttrProcessor(attr.getAttribute()));
-      }
-
-      for (BundleAttributeNames attr : BundleAttributeNames.values()) {
-         processors.add(new BundleAttrProcessor(attr.getAttribute()));
-      }
-
-      for (PlaceholderAttributeNames attr : PlaceholderAttributeNames.values()) {
-         processors.add(new PlaceholderAttrProcessor(attr.getAttribute()));
-      }
-
-      return processors;
+   public String getAttribute() {
+      return attribute;
    }
 }

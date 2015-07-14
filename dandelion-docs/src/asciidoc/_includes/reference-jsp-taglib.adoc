@@ -83,3 +83,50 @@ And in order to exclude one CSS asset from the current HTTP request, use the `cs
 |[[jsp-asset-cssExcludes]]*cssExcludes*
 |Comma-separated list of CSS asset names to exclude from the current HTTP request
 |===
+
+=== A.3. `<dandelion:placeholder>` tag
+
+The `<dandelion:placeholder>` tag allows you to configure custom placeholders where Dandelion-core will use to perform assets injection.
+
+[discrete]
+==== Usage
+
+By default, Dandelion-Core injects `<script>` tags at the end of the `<body>` section and `<link>` tags at the end of the `<head>` section. But in the example below, the injection is performed where the `<dandelion:placeholder>` tag is used.
+
+[source, xml]
+----
+<%@ taglib prefix="dandelion" uri="http://github.com/dandelion" %>
+<html>
+  <head>
+    ...
+  </head>
+  <body>
+    ...
+    <div> 
+      <dandelion:placeholder type="js" /> <1>
+    </div>
+  </body>
+</html>
+----
+<1> Since the `type` attribute is set to `js`, all JavaScript assets will be included in the surrounding `div`
+
+[NOTE]
+====
+A few rules need apply:
+
+* The same placeholder type can be used only once per page
+* Only `js` and `css` are allowed in the `type` attribute
+====
+
+[discrete]
+==== Reference
+
+.`<dandelion:placeholder>` tag reference
+[cols="2,8,5"]
+|===
+|Attribute |Description |Possible values
+
+|[[jsp-placeholder-type]]*type*
+|Type of placeholder to configure (*_Required_*)
+|`js` \| `css`
+|===
