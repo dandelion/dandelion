@@ -64,7 +64,7 @@ bower.components.location = bower_components <1>
 Once the `bower_components` folder located, Dandelion-Core can start scanning for `bower.json` files. Each of these files will be automatically converted into a *vendor* bundle by applying a simple mapping:
 
 |===
-bower.json specification| Dandelion bundle specification
+|bower.json specification| Dandelion bundle specification
 
 |http://bower.io/docs/creating-packages/#name[`name`] |<<spec-bundle-bundle, `bundle`>>
 |http://bower.io/docs/creating-packages/#version[`version`] |<<spec-asset-version, `version`>> attribute of each asset
