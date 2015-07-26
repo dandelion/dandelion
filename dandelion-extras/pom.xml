@@ -17,6 +17,5 @@
    <modules>
       <module>dandelion-webjars</module>
       <module>dandelion-ehcache</module>
-      <module>dandelion-bower</module>
    </modules>
 </project>
