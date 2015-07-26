@@ -64,7 +64,24 @@ NOTE: Note that the rank of built-in pre-handlers doesn't matter, since they're 
 
 === 14.3. Built-in post-handlers
 
-==== 14.3.1. `ETagPostHandler`
+==== 14.3.1. `ProcessJsPostHandler` (Thymeleaf only)
+
+[cols="3,^1,10a,10"]
+|===
+|Type |Rank |Condition(s) |Role
+
+|Post-handler 
+|2 
+|* <<opt-asset.js.processing, `asset.js.processing`>> enabled
+* The content type must be compatible*
+|Processes any Thymeleaf expression in JavaScript assets. Note that request attributes are also made available when processing the assets
+|===
+
+*Compatible content types: `application/x-javascript`, `application/javascript`, `text/javascript`, `text/ecmascript`, `application/ecmascript`, `text/jscript`
+
+This handler is automatically registered when using Thymeleaf.
+
+==== 14.3.2. `ETagPostHandler`
 
 [cols="3,^1,10a,10"]
 |===
@@ -76,7 +93,7 @@ NOTE: Note that the rank of built-in pre-handlers doesn't matter, since they're 
 |Sends a HTTP 304 (NOT MODIFIED) if the request ETag equals the response ETag, thus saving bandwith (not server performance)
 |===
 
-==== 14.3.2. `AssetInjectionPostHandler`
+==== 14.3.3. `AssetInjectionPostHandler`
 
 [cols="3,^1,10a,10"]
 |===
@@ -88,7 +105,7 @@ NOTE: Note that the rank of built-in pre-handlers doesn't matter, since they're 
 |Perform the asset injection within HTTP responses
 |===
 
-==== 14.3.3. `GzipCompressionPostHandler`
+==== 14.3.4. `GzipCompressionPostHandler`
 
 [cols="3,^1,10a,10"]
 |===
@@ -106,7 +123,7 @@ NOTE: Note that the rank of built-in pre-handlers doesn't matter, since they're 
 
 *Compatible content types: `text/html`, `text/css`, `application/x-javascript`, `application/javascript`, `text/javascript`, `text/plain`, `text/xml`, `application/xhtml+xml`, `image/svg+xml`
 
-==== 14.3.4. `ReportAlertPostHandler`
+==== 14.3.5. `ReportAlertPostHandler`
 
 [cols="3,^1,10a,10"]
 |===
@@ -119,7 +136,7 @@ NOTE: Note that the rank of built-in pre-handlers doesn't matter, since they're 
 |Update the response with potential <<13-1-alert-reporting, alerts>>
 |===
 
-==== 14.3.5. `CacheHeaderPostHandler`
+==== 14.3.6. `CacheHeaderPostHandler`
 
 [cols="3,^1,10a,10"]
 |===
@@ -131,7 +148,7 @@ NOTE: Note that the rank of built-in pre-handlers doesn't matter, since they're 
 |Position HTTP headers on responses
 |===
 
-==== 14.3.6. `DebuggerPostHandler`
+==== 14.3.7. `DebuggerPostHandler`
 
 [cols="3,^1,10a,10"]
 |===
