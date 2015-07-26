@@ -39,7 +39,6 @@ import org.slf4j.Logger;
 import com.github.dandelion.core.Context;
 import com.github.dandelion.core.bundle.loader.strategy.JsonBundleLoadingStrategy;
 import com.github.dandelion.core.bundle.loader.strategy.LoadingStrategy;
-import com.github.dandelion.core.bundle.loader.strategy.XmlBundleLoadingStrategy;
 import com.github.dandelion.core.storage.AssetStorageUnit;
 import com.github.dandelion.core.storage.BundleStorageUnit;
 import com.github.dandelion.core.util.StringBuilderUtils;
@@ -151,19 +150,6 @@ public abstract class AbstractBundleLoader implements BundleLoader {
       if (!resourcePaths.isEmpty()) {
          List<BundleStorageUnit> bsus = jsonLoadingStrategy.mapToBundles(resourcePaths);
          bundles.addAll(bsus);
-      }
-      else {
-         getLogger().debug("No JSON-formatted bundle found in \"{}\". Trying with XML-formatted ones...",
-               bundleLocation);
-         LoadingStrategy xmlLoadingStrategy = new XmlBundleLoadingStrategy(context);
-         resourcePaths = xmlLoadingStrategy.getResourcePaths(bundleLocation, excludedPaths);
-         if (!resourcePaths.isEmpty()) {
-            List<BundleStorageUnit> bsus = xmlLoadingStrategy.mapToBundles(resourcePaths);
-            bundles.addAll(bsus);
-         }
-         else {
-            getLogger().debug("No XML-formatted bundle found in \"{}\"");
-         }
       }
 
       if (resourcePaths.isEmpty()) {
