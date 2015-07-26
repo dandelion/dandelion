@@ -110,7 +110,7 @@ TIP: As `ddl:bundle*` attributes, `ddl:asset*` attributes can be used on *any HT
 
 === B.3. `ddl:placeholder*` attributes
 
-The `ddl:placeholder*` allows you to configure custom placeholders where Dandelion-core will use to perform assets injection.
+The `ddl:placeholder*` allows you to configure custom placeholders that Dandelion-core will use to perform assets injection.
 
 [discrete]
 ==== Usage

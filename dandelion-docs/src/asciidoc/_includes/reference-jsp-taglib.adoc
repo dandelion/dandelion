@@ -86,7 +86,7 @@ And in order to exclude one CSS asset from the current HTTP request, use the `cs
 
 === A.3. `<dandelion:placeholder>` tag
 
-The `<dandelion:placeholder>` tag allows you to configure custom placeholders where Dandelion-core will use to perform assets injection.
+The `<dandelion:placeholder>` tag allows you to configure custom placeholders that Dandelion-core will use to perform assets injection.
 
 [discrete]
 ==== Usage
