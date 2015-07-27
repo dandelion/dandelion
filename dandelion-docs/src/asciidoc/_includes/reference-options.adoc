@@ -403,7 +403,7 @@ Note that all options are presented in the following format:
 3+|*Package managers-related options*
 
 .4+|[[opt-bower.components.location]]*bower.components.location*
-2+|Location of the `bower_components` folder. See the <<8-4-bower-integration, Bower integration>> section. 
+2+|Location of the `bower_components` folder. See the <<8-3-bower-integration, Bower integration>> section. 
 
 |Values
 |Any location, either without prefix (scanning within the web app root directory), or with a `classpath:` prefix (scanning within classpath) or with a `file:` prefix (scanning within the file system)
