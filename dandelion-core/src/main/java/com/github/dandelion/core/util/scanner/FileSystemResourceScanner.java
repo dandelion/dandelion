@@ -50,7 +50,9 @@ import com.github.dandelion.core.util.StringUtils;
 public final class FileSystemResourceScanner {
 
    private static final Logger LOG = LoggerFactory.getLogger(FileSystemResourceScanner.class);
-
+   
+   public final static String PREFIX = "file:";
+   
    /**
     * <p>
     * Finds the path of all resources that match the given conditions by

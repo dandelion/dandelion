@@ -246,8 +246,9 @@ public final class AssetUtils {
    public static String extractCacheKeyFromRequest(HttpServletRequest request) {
 
       Context context = (Context) request.getAttribute(WebConstants.DANDELION_CONTEXT_ATTRIBUTE);
-      String processedUrlPattern = context.getConfiguration().getAssetUrlPattern().startsWith("/") ? context
-            .getConfiguration().getAssetUrlPattern().substring(1) : context.getConfiguration().getAssetUrlPattern();
+      String processedUrlPattern = context.getConfiguration().getAssetUrlPattern().startsWith("/")
+            ? context.getConfiguration().getAssetUrlPattern().substring(1)
+            : context.getConfiguration().getAssetUrlPattern();
 
       Pattern patternWithRequestKey = Pattern.compile(".*" + processedUrlPattern + "[a-f0-9]{32}/[a-f0-9]{32}/.*");
       Pattern patternWithoutRequestKey = Pattern.compile(".*" + processedUrlPattern + "[a-f0-9]{32}/.*");
@@ -277,8 +278,9 @@ public final class AssetUtils {
    public static String extractRequestKeyFromRequest(HttpServletRequest request) {
 
       Context context = (Context) request.getAttribute(WebConstants.DANDELION_CONTEXT_ATTRIBUTE);
-      String processedUrlPattern = context.getConfiguration().getAssetUrlPattern().startsWith("/") ? context
-            .getConfiguration().getAssetUrlPattern().substring(1) : context.getConfiguration().getAssetUrlPattern();
+      String processedUrlPattern = context.getConfiguration().getAssetUrlPattern().startsWith("/")
+            ? context.getConfiguration().getAssetUrlPattern().substring(1)
+            : context.getConfiguration().getAssetUrlPattern();
       Pattern p = Pattern.compile(processedUrlPattern + "([a-f0-9]{32})/[a-f0-9]{32}/");
       Matcher m = p.matcher(request.getRequestURI());
 
@@ -340,6 +342,32 @@ public final class AssetUtils {
 
       AssetLocator locator = locators.get(locationKey);
       return locator;
+   }
+
+   /**
+    * <p>
+    * Extracts the extension from the provided asset name.
+    * </p>
+    * <p>
+    * 
+    * <pre>
+    * AssetUtils.getExtension("jquery.js")            = "js"
+    * AssetUtils.getExtension("dataTables.jquery.js") = "js"
+    * AssetUtils.getExtension(null)                   = null
+    * AssetUtils.getExtension("")                     = null
+    * AssetUtils.getExtension("jquery")               = null
+    * </pre>
+    * </p>
+    * 
+    * @param assetName
+    *           The name of the asset to extract the extension from.
+    * @return the extension.
+    */
+   public static String getExtension(String assetName) {
+      if (StringUtils.isNotBlank(assetName) && assetName.lastIndexOf('.') != -1) {
+         return assetName.substring(assetName.lastIndexOf('.') + 1);
+      }
+      return null;
    }
 
    /**
