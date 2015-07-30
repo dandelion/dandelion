@@ -144,16 +144,21 @@ public class BowerPreLoader extends AbstractBundlePreLoader {
       resourcePaths = FileSystemResourceScanner.findResourcePaths(rootLocation.replace("file:", ""),
             BOWER_MANIFEST_FILENAME);
 
-      for (String resourcePath : resourcePaths) {
+      for (String bowerManifest : resourcePaths) {
          try {
-            URL bowerManifestUrl = new URL("file:" + resourcePath);
+            URL bowerManifestUrl = new URL(FileSystemResourceScanner.PREFIX + bowerManifest);
             BowerManifest bowerConf = mapper.readValue(bowerManifestUrl, BowerManifest.class);
-            LOG.debug("Bower component found: \"{}\"", bowerConf.getName());
 
-            BundleStorageUnit bsu = mapToBundle(bowerConf, rootLocation);
-            BundleUtils.finalize(bsu, this.context);
-            LOG.trace("Parsed bundle \"{}\" ({})", bsu.getName(), bsu);
-            bundles.add(bsu);
+            if (bowerConf.getMain() != null) {
+               LOG.debug("Bower component found: \"{}\"", bowerConf.getName());
+               BundleStorageUnit bsu = mapToBundle(bowerConf, rootLocation);
+               BundleUtils.finalize(bsu, this.context);
+               LOG.trace("Parsed bundle \"{}\" ({})", bsu.getName(), bsu);
+               bundles.add(bsu);
+            }
+            else {
+               LOG.debug("No \"main\" parameter was found in the \"{}\" file", bowerManifest);
+            }
          }
          catch (IOException e) {
             LOG.warn("Unable to convert the \"{}\" Bower component to a bundle", e);
@@ -180,12 +185,17 @@ public class BowerPreLoader extends AbstractBundlePreLoader {
          try {
             URL bowerManifestUrl = classLoader.getResource(bowerManifest);
             BowerManifest bowerConf = mapper.readValue(bowerManifestUrl, BowerManifest.class);
-            LOG.debug("Bower component found: \"{}\"", bowerConf.getName());
 
-            BundleStorageUnit bsu = mapToBundle(bowerConf, rootLocation);
-            BundleUtils.finalize(bsu, this.context);
-            LOG.trace("Parsed bundle \"{}\" ({})", bsu.getName(), bsu);
-            bundles.add(bsu);
+            if (bowerConf.getMain() != null) {
+               LOG.debug("Bower component found: \"{}\"", bowerConf.getName());
+               BundleStorageUnit bsu = mapToBundle(bowerConf, rootLocation);
+               BundleUtils.finalize(bsu, this.context);
+               LOG.trace("Parsed bundle \"{}\" ({})", bsu.getName(), bsu);
+               bundles.add(bsu);
+            }
+            else {
+               LOG.debug("No \"main\" parameter was found in the \"{}\" file", bowerManifest);
+            }
          }
          catch (IOException e) {
             LOG.warn("Unable to convert the \"{}\" Bower component to a bundle", e);
@@ -201,16 +211,21 @@ public class BowerPreLoader extends AbstractBundlePreLoader {
       Set<String> resourcePaths = null;
       resourcePaths = WebResourceScanner.findResourcePaths(this.context.getFilterConfig().getServletContext(),
             rootLocation, BOWER_MANIFEST_FILENAME);
-      for (String resourcePath : resourcePaths) {
+      for (String bowerManifest : resourcePaths) {
          try {
-            URL bowerManifestUrl = this.context.getFilterConfig().getServletContext().getResource(resourcePath);
+            URL bowerManifestUrl = this.context.getFilterConfig().getServletContext().getResource(bowerManifest);
             BowerManifest bowerConf = mapper.readValue(bowerManifestUrl, BowerManifest.class);
-            LOG.debug("Bower component found: \"{}\"", bowerConf.getName());
 
-            BundleStorageUnit bsu = mapToBundle(bowerConf, rootLocation);
-            BundleUtils.finalize(bsu, this.context);
-            LOG.trace("Parsed bundle \"{}\" ({})", bsu.getName(), bsu);
-            bundles.add(bsu);
+            if (bowerConf.getMain() != null) {
+               LOG.debug("Bower component found: \"{}\"", bowerConf.getName());
+               BundleStorageUnit bsu = mapToBundle(bowerConf, rootLocation);
+               BundleUtils.finalize(bsu, this.context);
+               LOG.trace("Parsed bundle \"{}\" ({})", bsu.getName(), bsu);
+               bundles.add(bsu);
+            }
+            else {
+               LOG.debug("No \"main\" parameter was found in the \"{}\" file", bowerManifest);
+            }
          }
          catch (IOException e) {
             LOG.warn("Unable to convert the \"{}\" Bower component to a bundle", e);
