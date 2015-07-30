@@ -104,9 +104,6 @@ public class CacheHeaderPostHandler extends AbstractHandlerChain {
 
          httpResponse.setHeader(HttpHeader.CACHE_CONTROL.getName(), "no-cache, no-store");
 
-         httpResponse.setHeader(HttpHeader.ETAG.getName(),
-               HttpHeaderUtils.computeETag(handlerContext.getResponseAsBytes(), handlerContext));
-
          Calendar past = Calendar.getInstance();
          past.add(Calendar.YEAR, -1);
          httpResponse.setDateHeader(HttpHeader.EXPIRES.getName(), past.getTimeInMillis());
