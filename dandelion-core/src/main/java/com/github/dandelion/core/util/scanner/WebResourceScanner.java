@@ -164,7 +164,12 @@ public final class WebResourceScanner {
    private static void doScanForResourcePaths(ServletContext servletContext, String rootLocation,
          Set<String> resourcePaths) {
 
-      for (String resourcePath : servletContext.getResourcePaths(rootLocation)) {
+      LOG.trace("Scanning resourcePaths: " + rootLocation);
+      Set<String> paths = servletContext.getResourcePaths(rootLocation);
+      if (paths == null || paths.size() == 0) {
+         return;
+      }
+      for (String resourcePath : paths) {
 
          resourcePaths.add(resourcePath);
 
