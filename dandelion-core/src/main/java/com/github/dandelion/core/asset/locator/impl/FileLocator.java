@@ -51,9 +51,11 @@ import com.github.dandelion.core.util.ResourceUtils;
  */
 public class FileLocator extends AbstractAssetLocator {
 
+   public static final String LOCATION_KEY = "file";
+
    @Override
    public String getLocationKey() {
-      return "file";
+      return LOCATION_KEY;
    }
 
    @Override

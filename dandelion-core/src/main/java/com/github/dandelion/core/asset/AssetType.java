@@ -32,6 +32,14 @@ package com.github.dandelion.core.asset;
 import static com.github.dandelion.core.asset.AssetDomPosition.body;
 import static com.github.dandelion.core.asset.AssetDomPosition.head;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import javax.servlet.http.HttpServletRequest;
+
 /**
  * <p>
  * Types of an asset. Currently, only stylesheets and scripts are supported.
@@ -53,10 +61,12 @@ public enum AssetType {
 
    private String contentType;
    private AssetDomPosition defaultDom;
+   private String[] extensions;
 
-   private AssetType(String contentType, AssetDomPosition defaultDom) {
+   private AssetType(String contentType, AssetDomPosition defaultDom, String... extensions) {
       this.contentType = contentType;
       this.defaultDom = defaultDom;
+      this.extensions = extensions;
    }
 
    public String getContentType() {
@@ -65,6 +75,39 @@ public enum AssetType {
 
    public AssetDomPosition getDefaultDom() {
       return defaultDom;
+   }
+
+   public String[] getExtensions() {
+      return extensions;
+   }
+
+   /**
+    * @return all asset extensions supported by Dandelion.
+    */
+   public static List<String> getCompatibleExtensions() {
+      List<String> retval = new ArrayList<String>();
+      for (AssetType assetType : values()) {
+         Collections.addAll(retval, assetType.getExtensions());
+      }
+      return retval;
+   }
+
+   public static AssetType extractFromRequest(HttpServletRequest request) {
+
+      Pattern p = Pattern.compile("/[a-f0-9]{32}/(.*)/");
+      Matcher m = p.matcher(request.getRequestURL());
+
+      String assetType = null;
+      if (m.find()) {
+         assetType = m.group(1);
+      }
+
+      for (AssetType type : values()) {
+         if (assetType.toLowerCase().endsWith(type.name())) {
+            return type;
+         }
+      }
+      return null;
    }
 
    public static AssetType extractFromAssetLocation(String assetLocation) {

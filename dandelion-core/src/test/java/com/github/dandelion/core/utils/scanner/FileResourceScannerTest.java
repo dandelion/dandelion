@@ -48,21 +48,21 @@ public class FileResourceScannerTest {
 
    @Test
    public void should_return_an_empty_set_because_of_wrong_name() {
-      String rootLocation = new File("src/test/resources/extra-loader".replace("/", File.separator)).getAbsolutePath();
+      String rootLocation = new File("src/test/resources/pre-loader".replace("/", File.separator)).getAbsolutePath();
       assertThat(FileSystemResourceScanner.findResourcePaths(rootLocation, "bowerrrrr.json")).hasSize(0);
    }
 
    @Test
    public void should_filter_resources_by_name() {
-      String rootLocation = new File("src/test/resources/extra-loader".replace("/", File.separator)).getAbsolutePath();
+      String rootLocation = new File("src/test/resources/pre-loader".replace("/", File.separator)).getAbsolutePath();
       assertThat(FileSystemResourceScanner.findResourcePaths(rootLocation, "bower.json")).hasSize(1);
    }
 
    @Test
    public void should_filter_resources_by_excluded_paths() {
-      String rootLocation = new File("src/test/resources/extra-loader".replace("/", File.separator)).getAbsolutePath();
+      String rootLocation = new File("src/test/resources/pre-loader".replace("/", File.separator)).getAbsolutePath();
       Set<String> excludedPaths = new HashSet<String>();
-      excludedPaths.add("extra-loader");
+      excludedPaths.add("pre-loader");
       assertThat(FileSystemResourceScanner.findResourcePaths(rootLocation, "bower.json", excludedPaths)).hasSize(0);
    }
 }

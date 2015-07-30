@@ -1,10 +1,13 @@
-package com.github.dandelion.core.asset;
+package com.github.dandelion.core.utils;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
 
 import org.junit.Test;
 
+import com.github.dandelion.core.asset.Asset;
+import com.github.dandelion.core.asset.AssetDomPosition;
+import com.github.dandelion.core.asset.AssetType;
 import com.github.dandelion.core.util.AssetUtils;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -67,5 +70,14 @@ public class AssetUtilsTest {
 
       assertThat(AssetUtils.filtersByDomPosition(asus, AssetDomPosition.body)).extracting("name").contains("name1",
             "name2");
+   }
+
+   @Test
+   public void should_return_the_asset_extension() {
+
+      assertThat(AssetUtils.getExtension("jquery.js")).isEqualTo("js");
+      assertThat(AssetUtils.getExtension("dataTables.jquery.js")).isEqualTo("js");
+      assertThat(AssetUtils.getExtension("jquery")).isNull();
+      assertThat(AssetUtils.getExtension("")).isNull();
    }
 }

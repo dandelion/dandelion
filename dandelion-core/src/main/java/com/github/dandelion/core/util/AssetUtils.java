@@ -412,6 +412,32 @@ public final class AssetUtils {
 
    /**
     * <p>
+    * Extracts the extension from the provided asset name.
+    * </p>
+    * <p>
+    * 
+    * <pre>
+    * AssetUtils.getExtension("jquery.js")            = "js"
+    * AssetUtils.getExtension("dataTables.jquery.js") = "js"
+    * AssetUtils.getExtension(null)                   = null
+    * AssetUtils.getExtension("")                     = null
+    * AssetUtils.getExtension("jquery")               = null
+    * </pre>
+    * </p>
+    * 
+    * @param assetName
+    *           The name of the asset to extract the extension from.
+    * @return the extension.
+    */
+   public static String getExtension(String assetName) {
+      if (StringUtils.isNotBlank(assetName) && assetName.lastIndexOf('.') != -1) {
+         return assetName.substring(assetName.lastIndexOf('.') + 1);
+      }
+      return null;
+   }
+
+   /**
+    * <p>
     * Suppress default constructor for noninstantiability.
     * </p>
     */

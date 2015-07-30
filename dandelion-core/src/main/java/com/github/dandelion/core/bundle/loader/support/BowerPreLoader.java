@@ -43,14 +43,16 @@ import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.dandelion.core.Context;
+import com.github.dandelion.core.asset.AssetType;
 import com.github.dandelion.core.asset.locator.impl.ClasspathLocator;
+import com.github.dandelion.core.asset.locator.impl.FileLocator;
 import com.github.dandelion.core.asset.locator.impl.WebappLocator;
 import com.github.dandelion.core.bundle.loader.AbstractBundlePreLoader;
 import com.github.dandelion.core.config.DandelionConfig;
 import com.github.dandelion.core.storage.AssetStorageUnit;
 import com.github.dandelion.core.storage.BundleStorageUnit;
 import com.github.dandelion.core.storage.support.BundleUtils;
+import com.github.dandelion.core.util.AssetUtils;
 import com.github.dandelion.core.util.ClassUtils;
 import com.github.dandelion.core.util.PathUtils;
 import com.github.dandelion.core.util.StringUtils;
@@ -63,31 +65,36 @@ import com.github.dandelion.core.util.scanner.WebResourceScanner;
  * Extra loader intended to scan for Bower components and convert the Bower
  * manifests into {@link BundleStorageUnit}.
  * </p>
+ * <p>
+ * Note that bower.json files that do not contain a {@code main} parameter won't
+ * be loaded.
+ * </p>
  * 
  * @author Thibault Duchateau
  * @since 1.1.0
+ * @see DandelionConfig#BOWER_COMPONENTS_LOCATION
  */
 public class BowerPreLoader extends AbstractBundlePreLoader {
 
    private static final Logger LOG = LoggerFactory.getLogger(BowerPreLoader.class);
-
    private static final String BOWER_COMPONENTS_FOLDER = "bower_components";
    private static final String BOWER_MANIFEST_FILENAME = "bower.json";
+
+   public static final String PRELOADER_NAME = "bower";
 
    /**
     * The mapper used to read Bower manifests (bower.json).
     */
-   private ObjectMapper mapper;
+   private final ObjectMapper mapper;
 
-   public void init(Context context) {
-      super.init(context);
+   public BowerPreLoader() {
       this.mapper = new ObjectMapper();
       this.mapper.configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true);
    }
 
    @Override
    public String getName() {
-      return "bower";
+      return PRELOADER_NAME;
    }
 
    @Override
@@ -141,8 +148,8 @@ public class BowerPreLoader extends AbstractBundlePreLoader {
 
       List<BundleStorageUnit> bundles = new ArrayList<BundleStorageUnit>();
       Set<String> resourcePaths = null;
-      resourcePaths = FileSystemResourceScanner.findResourcePaths(rootLocation.replace("file:", ""),
-            BOWER_MANIFEST_FILENAME);
+      resourcePaths = FileSystemResourceScanner
+            .findResourcePaths(rootLocation.replace(FileSystemResourceScanner.PREFIX, ""), BOWER_MANIFEST_FILENAME);
 
       for (String bowerManifest : resourcePaths) {
          try {
@@ -176,8 +183,8 @@ public class BowerPreLoader extends AbstractBundlePreLoader {
          return bundles;
       }
 
-      resourcePaths = ClasspathResourceScanner.findResourcePaths(rootLocation.replace("classpath:", ""), null,
-            BOWER_MANIFEST_FILENAME);
+      resourcePaths = ClasspathResourceScanner.findResourcePaths(
+            rootLocation.replace(ClasspathResourceScanner.PREFIX, ""), null, BOWER_MANIFEST_FILENAME);
 
       ClassLoader classLoader = ClassUtils.getDefaultClassLoader();
 
@@ -247,7 +254,10 @@ public class BowerPreLoader extends AbstractBundlePreLoader {
       }
       for (String mainAsset : bowerConf.getMain()) {
 
-         if (mainAsset.endsWith("css") || mainAsset.endsWith("js")) {
+         String extension = AssetUtils.getExtension(mainAsset.toLowerCase());
+
+         if (AssetType.getCompatibleExtensions().contains(extension)) {
+
             AssetStorageUnit asu = new AssetStorageUnit();
             asu.setName(PathUtils.extractLowerCasedName(mainAsset));
             asu.setVersion(bowerConf.getVersion());
@@ -257,11 +267,13 @@ public class BowerPreLoader extends AbstractBundlePreLoader {
             switch (locationType) {
             case classpath:
                locations.put(ClasspathLocator.LOCATION_KEY,
-                     bowerComponentsLocation.replace("classpath:", "") + bowerConf.getName() + "/" + mainAsset);
+                     bowerComponentsLocation.replace(ClasspathResourceScanner.PREFIX, "") + bowerConf.getName() + "/"
+                           + mainAsset);
                break;
             case file:
-               locations.put("file",
-                     bowerComponentsLocation.replace("file:", "") + bowerConf.getName() + "/" + mainAsset);
+               locations.put(FileLocator.LOCATION_KEY,
+                     bowerComponentsLocation.replace(FileSystemResourceScanner.PREFIX, "") + bowerConf.getName() + "/"
+                           + mainAsset);
                break;
             case webapp:
                String processedLocation = !bowerComponentsLocation.startsWith("/") ? "/" + bowerComponentsLocation
@@ -274,6 +286,9 @@ public class BowerPreLoader extends AbstractBundlePreLoader {
             }
             asu.setLocations(locations);
             asus.add(asu);
+         }
+         else {
+            LOG.debug("The asset type is not supported yet (\"{}\"", extension);
          }
       }
 
@@ -296,10 +311,10 @@ public class BowerPreLoader extends AbstractBundlePreLoader {
     * @return the location type.
     */
    public LocationType resolveLocationType(String bowerComponentsLocation) {
-      if (bowerComponentsLocation.startsWith("classpath:")) {
+      if (bowerComponentsLocation.startsWith(ClasspathResourceScanner.PREFIX)) {
          return LocationType.classpath;
       }
-      else if (bowerComponentsLocation.startsWith("file:")) {
+      else if (bowerComponentsLocation.startsWith(FileSystemResourceScanner.PREFIX)) {
          return LocationType.file;
       }
       else {
