@@ -160,6 +160,7 @@ public class BowerPreLoader extends AbstractBundlePreLoader {
                LOG.debug("Bower component found: \"{}\"", bowerConf.getName());
                BundleStorageUnit bsu = mapToBundle(bowerConf, rootLocation);
                BundleUtils.finalize(bsu, this.context);
+               bsu.setRelativePath(bowerManifestUrl.toString());
                LOG.trace("Parsed bundle \"{}\" ({})", bsu.getName(), bsu);
                bundles.add(bsu);
             }
@@ -197,6 +198,7 @@ public class BowerPreLoader extends AbstractBundlePreLoader {
                LOG.debug("Bower component found: \"{}\"", bowerConf.getName());
                BundleStorageUnit bsu = mapToBundle(bowerConf, rootLocation);
                BundleUtils.finalize(bsu, this.context);
+               bsu.setRelativePath(bowerManifestUrl.toString());
                LOG.trace("Parsed bundle \"{}\" ({})", bsu.getName(), bsu);
                bundles.add(bsu);
             }
@@ -226,6 +228,7 @@ public class BowerPreLoader extends AbstractBundlePreLoader {
             if (bowerConf.getMain() != null) {
                LOG.debug("Bower component found: \"{}\"", bowerConf.getName());
                BundleStorageUnit bsu = mapToBundle(bowerConf, rootLocation);
+               bsu.setRelativePath(bowerManifestUrl.toString());
                BundleUtils.finalize(bsu, this.context);
                LOG.trace("Parsed bundle \"{}\" ({})", bsu.getName(), bsu);
                bundles.add(bsu);
@@ -247,8 +250,10 @@ public class BowerPreLoader extends AbstractBundlePreLoader {
       Set<AssetStorageUnit> asus = new HashSet<AssetStorageUnit>();
       LocationType locationType = resolveLocationType(bowerComponentsLocation);
       BundleStorageUnit bsu = new BundleStorageUnit();
-
+      bsu.setBundleLoaderOrigin(getName());
+      bsu.setVendor(true);
       bsu.setName(bowerConf.getName());
+      
       if (bowerConf.getDependencies() != null) {
          bsu.setDependencies(new ArrayList<String>(bowerConf.getDependencies().keySet()));
       }
@@ -261,6 +266,7 @@ public class BowerPreLoader extends AbstractBundlePreLoader {
             AssetStorageUnit asu = new AssetStorageUnit();
             asu.setName(PathUtils.extractLowerCasedName(mainAsset));
             asu.setVersion(bowerConf.getVersion());
+            asu.setBundle(bsu.getName());
             asu.setVendor(true);
 
             Map<String, String> locations = new HashMap<String, String>();
