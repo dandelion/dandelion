@@ -33,12 +33,14 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
+ * <p>
  * Abstract superclass for all HTML tags.
+ * </p>
  * 
  * @author Thibault Duchateau
  * @since 0.2.0
  */
-public abstract class AbstractHtmlTag {
+public abstract class AbstractHtmlTag implements HtmlTag {
 
    /**
     * Plain old HTML <code>id</code> attribute.
@@ -63,19 +65,12 @@ public abstract class AbstractHtmlTag {
    protected Map<String, String> attributes;
    private String[] attributesOnlyName;
 
-   public static final char CLASS_SEPARATOR = ' ';
-   public static final char STYLE_SEPARATOR = ';';
-
    /**
     * Tag label.
     */
    protected String tag;
 
-   /**
-    * Render the tag in HTML code.
-    * 
-    * @return the HTML code corresponding to the tag.
-    */
+   @Override
    public StringBuilder toHtml() {
       StringBuilder html = new StringBuilder();
       html.append(getHtmlOpeningTag());
@@ -95,20 +90,20 @@ public abstract class AbstractHtmlTag {
 
    protected StringBuilder getHtmlAttributes() {
       StringBuilder html = new StringBuilder();
-      html.append(writeAttribute("id", this.id));
-      html.append(writeAttribute("class", this.cssClass));
-      html.append(writeAttribute("style", this.cssStyle));
+      html.append(writeAttribute(ATTR_ID, this.id));
+      html.append(writeAttribute(ATTR_CLASS, this.cssClass));
+      html.append(writeAttribute(ATTR_STYLE, this.cssStyle));
       return html;
    }
 
    protected StringBuilder getDynamicHtmlAttributes() {
 
       // If no dynamicAttributes set, return empty StringBuilder
-      if (dynamicAttributes == null) {
+      if (this.dynamicAttributes == null) {
          return new StringBuilder();
       }
       StringBuilder html = new StringBuilder();
-      for (Map.Entry<String, String> attribute : dynamicAttributes.entrySet()) {
+      for (Map.Entry<String, String> attribute : this.dynamicAttributes.entrySet()) {
          html.append(writeAttribute(attribute.getKey(), attribute.getValue()));
       }
       return html;
@@ -210,13 +205,6 @@ public abstract class AbstractHtmlTag {
       this.cssStyle.append(cssStyle);
    }
 
-   /**
-    * Render the tag in HTML code.
-    * 
-    * @return the HTML code corresponding to the tag.
-    */
-   // public abstract String toHtml();
-
    public void addAttributes(Map<String, String> attributes) {
       this.attributes = attributes;
    }
@@ -227,8 +215,8 @@ public abstract class AbstractHtmlTag {
 
    protected String attributesToHtml() {
       StringBuilder html = new StringBuilder();
-      if (attributes != null) {
-         for (Map.Entry<String, String> attribute : attributes.entrySet()) {
+      if (this.attributes != null) {
+         for (Map.Entry<String, String> attribute : this.attributes.entrySet()) {
             html.append(" ");
             html.append(attribute.getKey());
             html.append("=\"");
@@ -241,8 +229,8 @@ public abstract class AbstractHtmlTag {
 
    public String attributesOnlyNameToHtml() {
       StringBuilder html = new StringBuilder();
-      if (attributesOnlyName != null) {
-         for (String attribute : attributesOnlyName) {
+      if (this.attributesOnlyName != null) {
+         for (String attribute : this.attributesOnlyName) {
             html.append(" ");
             html.append(attribute);
          }
