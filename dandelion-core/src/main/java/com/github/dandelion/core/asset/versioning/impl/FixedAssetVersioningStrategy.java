@@ -35,6 +35,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -131,7 +133,7 @@ public class FixedAssetVersioningStrategy extends AbstractAssetVersioningStrateg
    }
 
    @Override
-   public String getAssetVersion(Asset asset) {
+   public String getAssetVersion(Asset asset, HttpServletRequest request) {
       return this.fixedVersion;
    }
 }

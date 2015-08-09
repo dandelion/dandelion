@@ -31,6 +31,8 @@ package com.github.dandelion.core.asset.versioning.impl;
 
 import java.util.UUID;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -59,13 +61,13 @@ public class ContentAssetVersioningStrategy extends AbstractAssetVersioningStrat
    }
 
    @Override
-   public String getAssetVersion(Asset asset) {
+   public String getAssetVersion(Asset asset, HttpServletRequest request) {
       LOG.debug("Calculating version hash for the asset: {}", asset.toLog());
       StorageEntry storageEntry = getContext().getAssetStorage().get(asset.getStorageKey());
 
       String contents = null;
       if(storageEntry != null) {
-         contents = storageEntry.getContents();
+         contents = storageEntry.resolveContents(request);
       }
       
       String version = null;

@@ -1,3 +1,4 @@
 com.github.dandelion.core.asset.processor.impl.JsMinProcessor
+com.github.dandelion.core.asset.processor.impl.JsSemiColonProcessor
 com.github.dandelion.core.asset.processor.impl.CssMinProcessor
 com.github.dandelion.core.asset.processor.impl.CssUrlRewritingProcessor

@@ -47,6 +47,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.github.dandelion.core.asset.locator.AssetLocator;
+import com.github.dandelion.core.asset.merging.AssetMergingStrategy;
 import com.github.dandelion.core.asset.processor.AssetProcessor;
 import com.github.dandelion.core.asset.processor.AssetProcessorManager;
 import com.github.dandelion.core.asset.versioning.AssetVersioningStrategy;
@@ -104,6 +105,8 @@ public class Context {
    private Map<String, AssetProcessor> processorsMap;
    private Map<String, AssetVersioningStrategy> versioningStrategyMap;
    private AssetVersioningStrategy activeVersioningStrategy;
+   private Map<String, AssetMergingStrategy> mergingStrategyMap;
+   private AssetMergingStrategy activeMergingStrategy;
    private List<AssetProcessor> activeProcessors;
    private List<BundleLoader> bundleLoaders;
    private List<PreLoader> extraLoaders;
@@ -146,6 +149,7 @@ public class Context {
       initRequestCache();
       initRequestFlashDataCache();
       initAssetProcessors();
+      initAssetMergingStrategy();
       initAssetVersioning();
 
       assetProcessorManager = new AssetProcessorManager(this);
@@ -238,6 +242,33 @@ public class Context {
          else {
             throw new DandelionException("The desired asset versioning strategy (" + desiredVersioningStrategy
                   + ") hasn't been found among the available ones: " + versioningStrategyMap.keySet());
+         }
+      }
+   }
+
+   public void initAssetMergingStrategy() {
+      LOG.info("Initializing asset merging strategy");
+
+      List<AssetMergingStrategy> availableStrategies = ServiceLoaderUtils
+            .getProvidersAsList(AssetMergingStrategy.class);
+
+      this.mergingStrategyMap = new HashMap<String, AssetMergingStrategy>();
+
+      for (AssetMergingStrategy strategy : availableStrategies) {
+         LOG.info("Found asset merging strategy: {}", strategy.getName());
+         this.mergingStrategyMap.put(strategy.getName(), strategy);
+      }
+
+      String desiredMergingStrategy = configuration.getAssetMergingStrategy().toLowerCase().trim();
+      if (StringUtils.isNotBlank(desiredMergingStrategy)) {
+         if (this.mergingStrategyMap.containsKey(desiredMergingStrategy)) {
+            this.activeMergingStrategy = mergingStrategyMap.get(desiredMergingStrategy);
+            LOG.info("Selected asset merging strategy: {}", activeMergingStrategy.getName());
+            this.activeMergingStrategy.init(this);
+         }
+         else {
+            throw new DandelionException("The desired asset merging strategy (" + desiredMergingStrategy
+                  + ") hasn't been found among the available ones: " + mergingStrategyMap.keySet());
          }
       }
    }
@@ -405,10 +436,11 @@ public class Context {
       ServiceLoader<AssetProcessor> apServiceLoader = ServiceLoader.load(AssetProcessor.class);
 
       processorsMap = new HashMap<String, AssetProcessor>();
+
       activeProcessors = new ArrayList<AssetProcessor>();
 
       for (AssetProcessor ape : apServiceLoader) {
-         processorsMap.put(ape.getProcessorKey().toLowerCase().trim(), ape);
+         processorsMap.put(ape.getName().toLowerCase().trim(), ape);
          LOG.info("Found asset processor: {}", ape.getClass().getSimpleName());
       }
 
@@ -418,7 +450,7 @@ public class Context {
          for (String assetProcessorKey : configuration.getAssetProcessors()) {
             if (processorsMap.containsKey(assetProcessorKey)) {
                activeProcessors.add(processorsMap.get(assetProcessorKey));
-               LOG.info("Processor enabled: {}", processorsMap.get(assetProcessorKey).getProcessorKey());
+               LOG.info("Processor enabled: {}", processorsMap.get(assetProcessorKey).getName());
             }
          }
       }
@@ -572,8 +604,8 @@ public class Context {
       int index = 1;
       do {
 
-         LOG.info("Pre-handler ({}/{}) {} (rank: {})", index, preHandlers.size(),
-               preHandler.getClass().getSimpleName(), preHandler.getRank());
+         LOG.info("Pre-handler ({}/{}) {} (rank: {})", index, preHandlers.size(), preHandler.getClass().getSimpleName(),
+               preHandler.getRank());
 
          if (preHandlerIterator.hasNext()) {
             HandlerChain next = preHandlerIterator.next();
@@ -592,8 +624,8 @@ public class Context {
       index = 1;
       do {
 
-         LOG.info("Post-handler ({}/{}) {} (rank: {})", index, postHandlers.size(), postHandler.getClass()
-               .getSimpleName(), postHandler.getRank());
+         LOG.info("Post-handler ({}/{}) {} (rank: {})", index, postHandlers.size(),
+               postHandler.getClass().getSimpleName(), postHandler.getRank());
 
          if (postHandlerIterator.hasNext()) {
             HandlerChain next = postHandlerIterator.next();
@@ -712,6 +744,13 @@ public class Context {
     */
    public boolean isProdProfileEnabled() {
       return Profile.DEFAULT_PROD_PROFILE.equals(this.configuration.getActiveProfile());
+   }
+
+   /**
+    * @return the active {@link AssetMergingStrategy}.
+    */
+   public AssetMergingStrategy getActiveMergingStrategy() {
+      return this.activeMergingStrategy;
    }
 
    /**

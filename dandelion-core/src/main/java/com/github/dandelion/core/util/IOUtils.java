@@ -27,35 +27,48 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.github.dandelion.core.asset.versioning.impl;
+package com.github.dandelion.core.util;
 
-import org.junit.Rule;
-import org.junit.Test;
-import org.springframework.mock.web.MockFilterConfig;
+import java.io.IOException;
+import java.io.Reader;
 
-import com.github.dandelion.core.Context;
-import com.github.dandelion.core.GlobalOptionsRule;
-import com.github.dandelion.core.asset.versioning.AssetVersioningStrategy;
-import com.github.dandelion.core.config.DandelionConfig;
+/**
+ * <p>
+ * Collection of utilities to ease working with I/O.
+ * </p>
+ * 
+ * @author Thibault Duchateau
+ * @since 2.0.0
+ */
+public class IOUtils {
 
-import static org.assertj.core.api.Assertions.assertThat;
+   /**
+    * <p>
+    * Converts the passed {@link Reader} to a String.
+    * </p>
+    * 
+    * @param reader
+    *           the source Reader.
+    * @return the contents of the Reader.
+    * @throws IOException
+    *            ff an I/O error occurs.
+    */
+   public static String toString(Reader reader) throws IOException {
+      int intValueOfChar;
+      String targetString = "";
+      while ((intValueOfChar = reader.read()) != -1) {
+         targetString += (char) intValueOfChar;
+      }
+      reader.close();
+      return targetString;
+   }
 
-public class CustomAssetVersioningStrategyTest {
-
-   @Rule
-   public GlobalOptionsRule options = new GlobalOptionsRule();
-   
-   @Test
-   public void should_return_a_version_based_on_a_custom_strategy() {
-
-      MockFilterConfig filterConfig = new MockFilterConfig();
-      filterConfig.addInitParameter(DandelionConfig.ASSET_VERSIONING_MODE.getName(), "auto");
-      filterConfig.addInitParameter(DandelionConfig.ASSET_VERSIONING_STRATEGY.getName(), "my-strategy");
-      Context dandelionContext = new Context(filterConfig);
-
-      AssetVersioningStrategy strategy = new MyVersioningStrategy();
-      strategy.init(dandelionContext);
-
-      assertThat(strategy.getAssetVersion(null, null)).isEqualTo(strategy.getAssetVersion(null, null));
+   /**
+    * <p>
+    * Suppress default constructor for noninstantiability.
+    * </p>
+    */
+   private IOUtils() {
+      throw new AssertionError();
    }
 }

@@ -131,6 +131,10 @@ public class AssetStorageUnit {
    private boolean vendor;
 
    private String generatorUid;
+   
+   private boolean processing = true;
+   private String[] processors;
+   
    /**
     * <p>
     * Required by Jackson for deserialization.
@@ -275,6 +279,22 @@ public class AssetStorageUnit {
 
    public void setGeneratorUid(String generatorUid) {
       this.generatorUid = generatorUid;
+   }
+
+   public boolean isProcessing() {
+      return processing;
+   }
+
+   public void setProcessing(boolean processing) {
+      this.processing = processing;
+   }
+
+   public String[] getProcessors() {
+      return processors;
+   }
+
+   public void setProcessors(String[] processors) {
+      this.processors = processors;
    }
 
    /**

@@ -100,7 +100,7 @@ public class FixedAssetVersioningStrategyTest {
       AssetVersioningStrategy strategy = new FixedAssetVersioningStrategy();
       strategy.init(dandelionContext);
 
-      assertThat(strategy.getAssetVersion(null)).isEqualTo("42");
+      assertThat(strategy.getAssetVersion(null, null)).isEqualTo("42");
    }
 
    @Test
@@ -116,7 +116,7 @@ public class FixedAssetVersioningStrategyTest {
       AssetVersioningStrategy strategy = new FixedAssetVersioningStrategy();
       strategy.init(dandelionContext);
 
-      assertThat(strategy.getAssetVersion(null)).isEqualTo("20141124");
+      assertThat(strategy.getAssetVersion(null, null)).isEqualTo("20141124");
    }
 
    @Test
@@ -133,7 +133,7 @@ public class FixedAssetVersioningStrategyTest {
       AssetVersioningStrategy strategy = new FixedAssetVersioningStrategy();
       strategy.init(dandelionContext);
 
-      assertThat(strategy.getAssetVersion(null)).isEqualTo("2015");
+      assertThat(strategy.getAssetVersion(null, null)).isEqualTo("2015");
    }
 
    @Test

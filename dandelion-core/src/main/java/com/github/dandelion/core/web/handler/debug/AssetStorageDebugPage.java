@@ -33,18 +33,25 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import com.github.dandelion.core.asset.Asset;
+import com.github.dandelion.core.asset.processor.AssetProcessor;
+import com.github.dandelion.core.asset.processor.AssetProcessorPipelineFactory;
 import com.github.dandelion.core.storage.AssetStorage;
+import com.github.dandelion.core.storage.MultiAssetEntry;
+import com.github.dandelion.core.storage.SingleAssetEntry;
 import com.github.dandelion.core.storage.StorageEntry;
 import com.github.dandelion.core.util.ResourceUtils;
+import com.github.dandelion.core.util.StringUtils;
 import com.github.dandelion.core.web.handler.HandlerContext;
 
 /**
  * <p>
- * Debug page inteded to browse the {@link AssetStorage}.
+ * Debug page intended to show the content of the configured
+ * {@link AssetStorage}.
  * </p>
  * 
  * @author Thibault Duchateau
@@ -68,8 +75,8 @@ public class AssetStorageDebugPage extends AbstractDebugPage {
 
    @Override
    public String getTemplate(HandlerContext context) throws IOException {
-      return ResourceUtils.getContentFromInputStream(Thread.currentThread().getContextClassLoader()
-            .getResourceAsStream(PAGE_LOCATION));
+      return ResourceUtils.getContentFromInputStream(
+            Thread.currentThread().getContextClassLoader().getResourceAsStream(PAGE_LOCATION));
    }
 
    @Override
@@ -78,19 +85,58 @@ public class AssetStorageDebugPage extends AbstractDebugPage {
 
       AssetStorage storage = context.getContext().getAssetStorage();
 
-      Collection<StorageEntry> storageElements = storage.getAll();
+      Collection<StorageEntry> storageEntries = storage.getAll();
 
       List<Map<String, Object>> options = new ArrayList<Map<String, Object>>();
 
-      for (StorageEntry storageElement : storageElements) {
-         Asset asset = storageElement.getAsset();
-         String storageKey = asset.getStorageKey();
-         options.add(new MapBuilder<String, Object>().entry("name", asset.getName()).entry("type", asset.getType())
-               .entry("version", asset.getVersion()).entry("bundle", asset.getBundle())
-               .entry("locationKey", asset.getConfigLocationKey()).entry("rawLocation", asset.getConfigLocation())
-               .entry("finalLocation", asset.getFinalLocation()).entry("storageKey", asset.getStorageKey())
-               .entry("contents", storage.contains(storageKey) ? storage.get(storageKey).getContents() : "Not fetched")
-               .entry("presentInStorage", storage.contains(storageKey)).entry("version", asset.getVersion()).create());
+      for (StorageEntry storageEntry : storageEntries) {
+         if (storageEntry instanceof SingleAssetEntry) {
+            SingleAssetEntry singleEntry = (SingleAssetEntry) storageEntry;
+            Asset asset = singleEntry.getAsset();
+
+            Map<String, Object> option = new MapBuilder<String, Object>().entry("name", asset.getName())
+                  .entry("type", asset.getType()).entry("version", asset.getVersion())
+                  .entry("bundle", asset.getBundle()).entry("locationKey", asset.getConfigLocationKey())
+                  .entry("rawLocation", asset.getConfigLocation()).entry("type", "SingleAsset")
+                  .entry("isSingleEntry", true).entry("finalLocation", asset.getFinalLocation())
+                  .entry("storageKey", asset.getStorageKey()).entry("processing", asset.isProcessing())
+                  .entry("version", asset.getVersion()).create();
+
+            if (StringUtils.isNotBlank(singleEntry.getContents())) {
+               option.put("contentsFetched", true);
+               option.put("contents", singleEntry.getContents());
+            }
+            else {
+               option.put("contentsFetched", false);
+            }
+
+            List<AssetProcessor> processors = new AssetProcessorPipelineFactory(context.getContext())
+                  .resolveProcessorPipeline(asset);
+            if (processors != null) {
+               StringBuilder sb = new StringBuilder();
+               Iterator<AssetProcessor> processorIterator = processors.iterator();
+               while (processorIterator.hasNext()) {
+                  sb.append(processorIterator.next().getName());
+                  if (processorIterator.hasNext()) {
+                     sb.append("&nbsp;&#10141;&nbsp;");
+                  }
+               }
+               option.put("processors", sb.toString());
+            }
+
+            options.add(option);
+         }
+         else if (storageEntry instanceof MultiAssetEntry) {
+            MultiAssetEntry multiEntry = (MultiAssetEntry) storageEntry;
+            Asset merge = multiEntry.getMerge();
+
+            Map<String, Object> option = new MapBuilder<String, Object>().entry("name", merge.getName())
+                  .entry("type", merge.getType()).entry("version", merge.getVersion()).entry("type", "MultiAsset")
+                  .entry("isSingleEntry", false).entry("finalLocation", merge.getFinalLocation())
+                  .entry("storageKey", merge.getStorageKey()).entry("version", merge.getVersion()).create();
+
+            options.add(option);
+         }
       }
 
       pageContext.put("impl", storage.getClass().getName());

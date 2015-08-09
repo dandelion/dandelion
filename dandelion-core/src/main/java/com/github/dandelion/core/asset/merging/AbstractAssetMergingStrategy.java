@@ -27,63 +27,74 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.github.dandelion.core.asset.processor;
+package com.github.dandelion.core.asset.merging;
 
-import java.io.Reader;
-import java.io.StringReader;
-import java.io.StringWriter;
-import java.io.Writer;
-import java.util.List;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.github.dandelion.core.Context;
 import com.github.dandelion.core.asset.Asset;
 import com.github.dandelion.core.storage.SingleAssetEntry;
+import com.github.dandelion.core.util.DigestUtils;
+import com.github.dandelion.core.util.StringUtils;
 
 /**
  * <p>
- * System in charge of discovering and manipulating all implementations of
- * {@link AssetProcessor} available in the classpath.
+ * Abstract base class for all merging strategies.
+ * </p>
+ * <p>
+ * It is recommended for extensions to extend this class instead of
+ * {@link AssetMergingStrategy}.
  * </p>
  * 
  * @author Thibault Duchateau
- * @author Romain Lespinasse
- * @since 0.10.0
+ * @since 2.0.0
  */
-public final class AssetProcessorManager {
+public abstract class AbstractAssetMergingStrategy implements AssetMergingStrategy {
 
-   private static final Logger LOG = LoggerFactory.getLogger(AssetProcessorManager.class);
-
+   protected static final String MERGED_ASSET_NAME = "merged";
+   
    /**
     * The Dandelion context.
     */
-   private final Context context;
+   protected Context context;
 
-   private final AssetProcessorPipelineFactory pipelineFactory;
-   
-   public AssetProcessorManager(Context context) {
+   @Override
+   public void init(Context context) {
       this.context = context;
-      this.pipelineFactory = new AssetProcessorPipelineFactory(context);
    }
 
-   public void process(Asset asset, String contents, HttpServletRequest request) {
-      List<AssetProcessor> processors = pipelineFactory.resolveProcessorPipeline(asset);
-      ProcessingContext processingContext = new ProcessingContext(context, asset, request);
-      
-      Reader assetReader = new StringReader(contents);
-      Writer assetWriter = null;
+   /**
+    * @return the name of the merged asset.
+    */
+   protected String getMergedAssetName() {
+      return MERGED_ASSET_NAME;
+   }
 
-      for (AssetProcessor assetProcessor : processors) {
-         LOG.debug("Applying processor {} on {}", assetProcessor.getName(), asset.toLog());
-         assetWriter = new StringWriter();
-         assetProcessor.process(assetReader, assetWriter, processingContext);
-         assetReader = new StringReader(assetWriter.toString());
+   /**
+    * <p>
+    * Computes the version to be used in the final location of the merged
+    * assets.
+    * </p>
+    * 
+    * @param assets
+    *           The assets to be merged.
+    * @param request
+    *           The current requets.
+    * @return The version hash corresponding to all provided assets.
+    */
+   public String getVersion(Set<Asset> assets, HttpServletRequest request) {
+
+      StringBuilder sb = new StringBuilder();
+      for (Asset asset : assets) {
+         SingleAssetEntry entry = (SingleAssetEntry) this.context.getAssetStorage().get(asset.getStorageKey());
+         String contents = entry.resolveContents(request);
+         if (StringUtils.isNotBlank(contents)) {
+            sb.append(contents);
+         }
       }
-      
-      context.getAssetStorage().put(asset.getStorageKey(), new SingleAssetEntry(asset, assetWriter.toString()));
+
+      return DigestUtils.md5Digest(sb.toString());
    }
 }

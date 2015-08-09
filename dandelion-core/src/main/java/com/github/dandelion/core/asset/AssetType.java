@@ -29,11 +29,6 @@
  */
 package com.github.dandelion.core.asset;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import javax.servlet.http.HttpServletRequest;
-
 import static com.github.dandelion.core.asset.AssetDomPosition.body;
 import static com.github.dandelion.core.asset.AssetDomPosition.head;
 
@@ -47,7 +42,14 @@ import static com.github.dandelion.core.asset.AssetDomPosition.head;
  */
 public enum AssetType {
 
-   css("text/css", head), js("application/javascript", body);
+   // Raw CSS
+   css("text/css", head), 
+   
+   // Less
+   less("text/css", head),
+   
+   // Raw JavaScript
+   js("application/javascript", body);
 
    private String contentType;
    private AssetDomPosition defaultDom;
@@ -63,24 +65,6 @@ public enum AssetType {
 
    public AssetDomPosition getDefaultDom() {
       return defaultDom;
-   }
-
-   public static AssetType extractFromRequest(HttpServletRequest request) {
-
-      Pattern p = Pattern.compile("/[a-f0-9]{32}/(.*)/");
-      Matcher m = p.matcher(request.getRequestURL());
-
-      String assetType = null;
-      if (m.find()) {
-         assetType = m.group(1);
-      }
-
-      for (AssetType type : values()) {
-         if (assetType.toLowerCase().endsWith(type.name())) {
-            return type;
-         }
-      }
-      return null;
    }
 
    public static AssetType extractFromAssetLocation(String assetLocation) {

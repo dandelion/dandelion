@@ -54,7 +54,7 @@ import com.github.dandelion.core.util.WriterOutputStream;
 public class JsMinProcessor extends AbstractAssetProcessor {
 
    @Override
-   public String getProcessorKey() {
+   public String getName() {
       return "jsmin";
    }
 

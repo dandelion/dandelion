@@ -29,6 +29,8 @@
  */
 package com.github.dandelion.core.asset.versioning;
 
+import javax.servlet.http.HttpServletRequest;
+
 import com.github.dandelion.core.Context;
 import com.github.dandelion.core.asset.Asset;
 
@@ -58,13 +60,16 @@ public interface AssetVersioningStrategy {
    String getName();
 
    /**
+    * 
     * <p>
     * Returns the asset version.
     * </p>
     * 
     * @param asset
     *           The asset for which the version is to be retrieved.
+    * @param request
+    *           The current request.
     * @return the asset version.
     */
-   String getAssetVersion(Asset asset);
+   String getAssetVersion(Asset asset, HttpServletRequest request);
 }

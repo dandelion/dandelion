@@ -50,7 +50,7 @@ import com.github.dandelion.core.asset.processor.vendor.CssCompressor;
 public class CssMinProcessor extends AbstractAssetProcessor {
 
    @Override
-   public String getProcessorKey() {
+   public String getName() {
       return "cssmin";
    }
 

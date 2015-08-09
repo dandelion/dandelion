@@ -27,35 +27,64 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.github.dandelion.core.asset.versioning.impl;
+package com.github.dandelion.core.asset.merging;
 
-import org.junit.Rule;
-import org.junit.Test;
-import org.springframework.mock.web.MockFilterConfig;
+import java.util.Set;
+
+import javax.servlet.http.HttpServletRequest;
 
 import com.github.dandelion.core.Context;
-import com.github.dandelion.core.GlobalOptionsRule;
-import com.github.dandelion.core.asset.versioning.AssetVersioningStrategy;
+import com.github.dandelion.core.asset.Asset;
 import com.github.dandelion.core.config.DandelionConfig;
+import com.github.dandelion.core.storage.AssetStorage;
 
-import static org.assertj.core.api.Assertions.assertThat;
+/**
+ * <p>
+ * SPI for an asset merging strategy.
+ * </p>
+ * <p>
+ * It is recommended for extensions to extend
+ * {@link AbstractAssetMergingStrategy} instead of this interface.
+ * </p>
+ * 
+ * @author Thibault Duchateau
+ * @since 2.0.0
+ * @see DandelionConfig#ASSET_MERGING_STRATEGY
+ */
+public interface AssetMergingStrategy {
 
-public class CustomAssetVersioningStrategyTest {
+   /**
+    * @return the name of the strategy.
+    */
+   String getName();
 
-   @Rule
-   public GlobalOptionsRule options = new GlobalOptionsRule();
-   
-   @Test
-   public void should_return_a_version_based_on_a_custom_strategy() {
+   /**
+    * <p>
+    * Initiliazes the merging strategy by injecting the Dandelion context.
+    * </p>
+    * 
+    * @param context
+    *           The Dandelion context.
+    */
+   void init(Context context);
 
-      MockFilterConfig filterConfig = new MockFilterConfig();
-      filterConfig.addInitParameter(DandelionConfig.ASSET_VERSIONING_MODE.getName(), "auto");
-      filterConfig.addInitParameter(DandelionConfig.ASSET_VERSIONING_STRATEGY.getName(), "my-strategy");
-      Context dandelionContext = new Context(filterConfig);
-
-      AssetVersioningStrategy strategy = new MyVersioningStrategy();
-      strategy.init(dandelionContext);
-
-      assertThat(strategy.getAssetVersion(null, null)).isEqualTo(strategy.getAssetVersion(null, null));
-   }
+   /**
+    * <p>
+    * Actually performs 2 steps:
+    * </p>
+    * <ol>
+    * <li>Prepare the {@link AssetStorage} with all required assets. The set of
+    * assets will change depending on the actual implementation of the strategy
+    * </li>
+    * <li>Build the set of assets that will be displayed in the HTML source code
+    * </li>
+    * </ol>
+    * 
+    * @param assets
+    *           All assets needed in the HTML page.
+    * @param request
+    *           The current request.
+    * @return the set of assets that will be displayed client-side.
+    */
+   public Set<Asset> prepareStorageAndGet(Set<Asset> assets, HttpServletRequest request);
 }

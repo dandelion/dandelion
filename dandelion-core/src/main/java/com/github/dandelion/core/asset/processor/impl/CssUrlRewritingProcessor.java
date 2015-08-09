@@ -93,7 +93,7 @@ public class CssUrlRewritingProcessor extends AbstractAssetProcessor {
    private CssUrlRewriter urlRewriter = new CssUrlRewriter();
 
    @Override
-   public String getProcessorKey() {
+   public String getName() {
       return "cssurlrewriting";
    }
 

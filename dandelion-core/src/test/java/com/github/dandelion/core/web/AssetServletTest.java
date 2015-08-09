@@ -15,7 +15,7 @@ import com.github.dandelion.core.Context;
 import com.github.dandelion.core.GlobalOptionsRule;
 import com.github.dandelion.core.asset.Asset;
 import com.github.dandelion.core.asset.AssetType;
-import com.github.dandelion.core.storage.StorageEntry;
+import com.github.dandelion.core.storage.SingleAssetEntry;
 import com.github.dandelion.core.util.AssetUtils;
 import com.github.dandelion.core.util.DigestUtils;
 
@@ -55,7 +55,7 @@ public class AssetServletTest {
 
       request.setAttribute(WebConstants.DANDELION_REQUEST_KEY, DigestUtils.md5Digest("anystring"));
 
-      context.getAssetStorage().put(asset.getStorageKey(), new StorageEntry(asset, contents));
+      context.getAssetStorage().put(asset.getStorageKey(), new SingleAssetEntry(asset, contents));
 
       String finalLocation = AssetUtils.getAssetFinalLocation(request, asset, "");
       request.setRequestURI(finalLocation);

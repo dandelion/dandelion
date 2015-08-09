@@ -77,12 +77,19 @@ public class Configuration {
    // Asset-related configurations
    private boolean assetMinificationEnabled;
    private List<String> assetLocationsResolutionStrategy;
+   private boolean assetProcessingEnabled;
    private List<String> assetProcessors;
+   private List<String> assetJsProcessors;
+   private List<String> assetCssProcessors;
+   private List<String> assetLessProcessors;
    private boolean assetJsProcessingEnabled;
    private List<String> assetJsExcludes;
    private List<String> assetCssExcludes;
    private String assetUrlPattern;
    private String assetStorage;
+
+   // Asset merging configurations
+   private String assetMergingStrategy;
 
    // Asset versioning configurations
    private String assetVersioningMode;
@@ -150,12 +157,19 @@ public class Configuration {
       this.assetMinificationEnabled = Boolean.parseBoolean(readConfig(DandelionConfig.ASSET_MINIFICATION));
       this.assetLocationsResolutionStrategy = PropertiesUtils
             .propertyAsList(readConfig(DandelionConfig.ASSET_LOCATIONS_RESOLUTION_STRATEGY));
+      this.assetProcessingEnabled = Boolean.parseBoolean(readConfig(DandelionConfig.ASSET_PROCESSING));
       this.assetProcessors = PropertiesUtils.propertyAsList(readConfig(DandelionConfig.ASSET_PROCESSORS));
+      this.assetJsProcessors = PropertiesUtils.propertyAsList(readConfig(DandelionConfig.ASSET_JS_PROCESSORS));
+      this.assetCssProcessors = PropertiesUtils.propertyAsList(readConfig(DandelionConfig.ASSET_CSS_PROCESSORS));
+      this.assetLessProcessors = PropertiesUtils.propertyAsList(readConfig(DandelionConfig.ASSET_LESS_PROCESSORS));
       this.assetJsProcessingEnabled = Boolean.parseBoolean(readConfig(DandelionConfig.ASSET_JS_PROCESSING));
       this.assetJsExcludes = PropertiesUtils.propertyAsList(readConfig(DandelionConfig.ASSET_JS_EXCLUDES));
       this.assetCssExcludes = PropertiesUtils.propertyAsList(readConfig(DandelionConfig.ASSET_CSS_EXCLUDES));
       this.assetUrlPattern = getProcessedAssetUrlPattern(readConfig(DandelionConfig.ASSET_URL_PATTERN));
       this.assetStorage = readConfig(DandelionConfig.ASSET_STORAGE);
+      
+      // Asset merging
+      this.assetMergingStrategy = readConfig(DandelionConfig.ASSET_MERGING_STRATEGY);
 
       // Asset versioning
       this.assetVersioningMode = readConfig(DandelionConfig.ASSET_VERSIONING_MODE);
@@ -328,11 +342,27 @@ public class Configuration {
       return this.assetLocationsResolutionStrategy;
    }
 
+   public boolean isAssetProcessingEnabled() {
+      return assetProcessingEnabled;
+   }
+
    /**
     * @return the list of all enabled asset processors.
     */
    public List<String> getAssetProcessors() {
       return this.assetProcessors;
+   }
+
+   public List<String> getAssetJsProcessors() {
+      return assetJsProcessors;
+   }
+
+   public List<String> getAssetCssProcessors() {
+      return assetCssProcessors;
+   }
+
+   public List<String> getAssetLessProcessors() {
+      return assetLessProcessors;
    }
 
    /**
@@ -411,6 +441,11 @@ public class Configuration {
 
    public String getAssetStorage() {
       return assetStorage;
+   }
+
+   
+   public String getAssetMergingStrategy() {
+      return assetMergingStrategy;
    }
 
    public String getCacheName() {

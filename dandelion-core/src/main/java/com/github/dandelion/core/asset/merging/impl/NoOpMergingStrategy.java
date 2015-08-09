@@ -27,21 +27,59 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.github.dandelion.core.storage;
+package com.github.dandelion.core.asset.merging.impl;
+
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.github.dandelion.core.asset.Asset;
+import com.github.dandelion.core.asset.locator.impl.ApiLocator;
+import com.github.dandelion.core.asset.merging.AbstractAssetMergingStrategy;
+import com.github.dandelion.core.config.Profile;
+import com.github.dandelion.core.storage.SingleAssetEntry;
+import com.github.dandelion.core.storage.StorageEntry;
+import com.github.dandelion.core.util.AssetUtils;
+
 /**
  * <p>
- * Interface for an entry stored in the configured {@link StorageEntry}.
+ * Default strategy used with the "dev" {@link Profile}.
+ * </p>
+ * <p>
+ * This strategy actually performs no merging. All assets are returned as is.
  * </p>
  * 
  * @author Thibault Duchateau
  * @since 2.0.0
  */
-public interface StorageEntry {
+public class NoOpMergingStrategy extends AbstractAssetMergingStrategy {
 
-   void processContents(HttpServletRequest request);
+   public static final String NAME = "noop";
 
-   String resolveContents(HttpServletRequest request);
+   @Override
+   public String getName() {
+      return NAME;
+   }
+
+   @Override
+   public Set<Asset> prepareStorageAndGet(Set<Asset> rawAssets, HttpServletRequest request) {
+
+      Set<Asset> retval = new LinkedHashSet<Asset>();
+
+      StorageEntry entry = null;
+      for (Asset asset : rawAssets) {
+         if (ApiLocator.LOCATION_KEY.equalsIgnoreCase(asset.getConfigLocationKey())) {
+            String contents = AssetUtils.getAssetLocator(asset, context).getContent(asset, request);
+            entry = new SingleAssetEntry(asset, contents);
+         }
+         else {
+            entry = new SingleAssetEntry(asset, null);
+         }
+         this.context.getAssetStorage().put(asset.getStorageKey(), entry);
+         retval.add(asset);
+      }
+
+      return retval;
+   }
 }

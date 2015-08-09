@@ -27,35 +27,48 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.github.dandelion.core.asset.versioning.impl;
+package com.github.dandelion.core.asset.processor.impl;
 
-import org.junit.Rule;
-import org.junit.Test;
-import org.springframework.mock.web.MockFilterConfig;
+import java.io.Reader;
+import java.io.Writer;
 
-import com.github.dandelion.core.Context;
-import com.github.dandelion.core.GlobalOptionsRule;
-import com.github.dandelion.core.asset.versioning.AssetVersioningStrategy;
-import com.github.dandelion.core.config.DandelionConfig;
+import org.apache.commons.io.IOUtils;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import com.github.dandelion.core.asset.processor.AbstractAssetProcessor;
+import com.github.dandelion.core.asset.processor.ProcessingContext;
 
-public class CustomAssetVersioningStrategyTest {
+/**
+ * <p>
+ * Processor in charge of appending a ';' at the end of each JavaScript asset in
+ * order to avoid any errors after they get merged.
+ * </p>
+ * 
+ * @author Thibault Duchateau
+ * @since 2.0.0
+ */
+public class JsSemiColonProcessor extends AbstractAssetProcessor {
 
-   @Rule
-   public GlobalOptionsRule options = new GlobalOptionsRule();
-   
-   @Test
-   public void should_return_a_version_based_on_a_custom_strategy() {
+   public static final String NAME = "jssemicolon";
 
-      MockFilterConfig filterConfig = new MockFilterConfig();
-      filterConfig.addInitParameter(DandelionConfig.ASSET_VERSIONING_MODE.getName(), "auto");
-      filterConfig.addInitParameter(DandelionConfig.ASSET_VERSIONING_STRATEGY.getName(), "my-strategy");
-      Context dandelionContext = new Context(filterConfig);
+   private static final String REGEX_SEMICOLON = ".*;\\s*$";
 
-      AssetVersioningStrategy strategy = new MyVersioningStrategy();
-      strategy.init(dandelionContext);
+   @Override
+   public String getName() {
+      return NAME;
+   }
 
-      assertThat(strategy.getAssetVersion(null, null)).isEqualTo(strategy.getAssetVersion(null, null));
+   @Override
+   protected void doProcess(Reader reader, Writer writer, ProcessingContext processingContext) throws Exception {
+      try {
+         String source = IOUtils.toString(reader);
+         writer.write(source);
+         if (!source.matches(REGEX_SEMICOLON)) {
+            writer.write(';');
+         }
+      }
+      finally {
+         reader.close();
+         writer.close();
+      }
    }
 }

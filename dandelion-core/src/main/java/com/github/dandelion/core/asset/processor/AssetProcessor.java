@@ -47,11 +47,10 @@ import com.github.dandelion.core.config.Configuration;
 public interface AssetProcessor {
 
    /**
-    * @return the processor key associated with the processor. The key is used
-    *         in the in the {@link Configuration} to activate the corresponding
-    *         processor.
+    * @return the name of the processor. This name is used in the in the
+    *         {@link Configuration} to activate the corresponding processor.
     */
-   String getProcessorKey();
+   String getName();
 
    /**
     * <p>

@@ -27,35 +27,43 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.github.dandelion.core.asset.versioning.impl;
+package com.github.dandelion.core.asset.processor.impl;
+
+import java.io.IOException;
+import java.io.StringReader;
+import java.io.StringWriter;
+import java.io.Writer;
 
 import org.junit.Rule;
 import org.junit.Test;
-import org.springframework.mock.web.MockFilterConfig;
 
-import com.github.dandelion.core.Context;
 import com.github.dandelion.core.GlobalOptionsRule;
-import com.github.dandelion.core.asset.versioning.AssetVersioningStrategy;
-import com.github.dandelion.core.config.DandelionConfig;
+import com.github.dandelion.core.asset.processor.AssetProcessor;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class CustomAssetVersioningStrategyTest {
+public class JsSemiColonProcessorTest extends AbstractProcessorTest {
+
+   private AssetProcessor assetProcessor = new JsSemiColonProcessor();
 
    @Rule
    public GlobalOptionsRule options = new GlobalOptionsRule();
-   
+
    @Test
-   public void should_return_a_version_based_on_a_custom_strategy() {
+   public void should_append_a_semicolon() throws IOException {
+      Writer writer = new StringWriter();
+      assetProcessor.process(new StringReader("var b = {}"), writer, processingContext);
+      assertThat(writer.toString()).isEqualTo("var b = {};");
 
-      MockFilterConfig filterConfig = new MockFilterConfig();
-      filterConfig.addInitParameter(DandelionConfig.ASSET_VERSIONING_MODE.getName(), "auto");
-      filterConfig.addInitParameter(DandelionConfig.ASSET_VERSIONING_STRATEGY.getName(), "my-strategy");
-      Context dandelionContext = new Context(filterConfig);
+      writer = new StringWriter();
+      assetProcessor.process(new StringReader(""), writer, processingContext);
+      assertThat(writer.toString()).isEqualTo(";");
+   }
 
-      AssetVersioningStrategy strategy = new MyVersioningStrategy();
-      strategy.init(dandelionContext);
-
-      assertThat(strategy.getAssetVersion(null, null)).isEqualTo(strategy.getAssetVersion(null, null));
+   @Test
+   public void should_not_append_a_semicolon() throws IOException {
+      Writer writer = new StringWriter();
+      assetProcessor.process(new StringReader("var b = {};"), writer, processingContext);
+      assertThat(writer.toString()).isEqualTo("var b = {};");
    }
 }

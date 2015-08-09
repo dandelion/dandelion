@@ -27,35 +27,31 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package com.github.dandelion.core.asset.versioning.impl;
+package com.github.dandelion.core;
 
-import org.junit.Rule;
-import org.junit.Test;
-import org.springframework.mock.web.MockFilterConfig;
+import java.util.Map;
 
-import com.github.dandelion.core.Context;
-import com.github.dandelion.core.GlobalOptionsRule;
-import com.github.dandelion.core.asset.versioning.AssetVersioningStrategy;
-import com.github.dandelion.core.config.DandelionConfig;
+import javax.servlet.http.HttpServletRequest;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import com.github.dandelion.core.asset.Asset;
+import com.github.dandelion.core.asset.locator.AbstractAssetLocator;
+import com.github.dandelion.core.storage.AssetStorageUnit;
 
-public class CustomAssetVersioningStrategyTest {
+public class FakeApiLocator extends AbstractAssetLocator {
 
-   @Rule
-   public GlobalOptionsRule options = new GlobalOptionsRule();
-   
-   @Test
-   public void should_return_a_version_based_on_a_custom_strategy() {
-
-      MockFilterConfig filterConfig = new MockFilterConfig();
-      filterConfig.addInitParameter(DandelionConfig.ASSET_VERSIONING_MODE.getName(), "auto");
-      filterConfig.addInitParameter(DandelionConfig.ASSET_VERSIONING_STRATEGY.getName(), "my-strategy");
-      Context dandelionContext = new Context(filterConfig);
-
-      AssetVersioningStrategy strategy = new MyVersioningStrategy();
-      strategy.init(dandelionContext);
-
-      assertThat(strategy.getAssetVersion(null, null)).isEqualTo(strategy.getAssetVersion(null, null));
+   @Override
+   public String getLocationKey() {
+      return "api";
    }
+
+   @Override
+   public String doGetLocation(AssetStorageUnit asu, HttpServletRequest request) {
+      return null;
+   }
+
+   @Override
+   protected String doGetContent(Asset asset, Map<String, Object> parameters, HttpServletRequest request) {
+      return "content";
+   }
+
 }

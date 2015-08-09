@@ -61,7 +61,7 @@ public abstract class AbstractAssetProcessor implements AssetProcessor {
       }
       catch (Exception e) {
          StringBuilder sb = new StringBuilder("An exception occurred while applying the processor ");
-         sb.append(getProcessorKey());
+         sb.append(getName());
          sb.append(" on the asset ");
          sb.append(processingContext.getAsset().toLog());
          throw new DandelionException(sb.toString(), e);

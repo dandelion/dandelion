@@ -124,7 +124,11 @@ public class Asset implements Serializable {
    private boolean vendor;
 
    private String generatorUid;
-   
+
+   private boolean processing;
+
+   private String[] processors;
+
    public Asset() {
    }
 
@@ -323,6 +327,10 @@ public class Asset implements Serializable {
       return !isVendor();
    }
 
+   public void setVendor(boolean vendor) {
+      this.vendor = vendor;
+   }
+
    public String getBundle() {
       return bundle;
    }
@@ -337,6 +345,22 @@ public class Asset implements Serializable {
 
    public void setGeneratorUid(String generatorUid) {
       this.generatorUid = generatorUid;
+   }
+
+   public boolean isProcessing() {
+      return processing;
+   }
+
+   public void setProcessing(boolean processing) {
+      this.processing = processing;
+   }
+
+   public String[] getProcessors() {
+      return processors;
+   }
+
+   public void setProcessors(String[] processors) {
+      this.processors = processors;
    }
 
    @Override

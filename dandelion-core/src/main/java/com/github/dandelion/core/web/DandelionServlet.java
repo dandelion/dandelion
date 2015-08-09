@@ -42,13 +42,18 @@ import org.slf4j.LoggerFactory;
 
 import com.github.dandelion.core.Context;
 import com.github.dandelion.core.asset.AssetType;
-import com.github.dandelion.core.cache.RequestCache;
+import com.github.dandelion.core.storage.AssetStorage;
+import com.github.dandelion.core.storage.StorageEntry;
 import com.github.dandelion.core.util.AssetUtils;
 
 /**
  * <p>
  * Dandelion servlet in charge of serving the assets stored in the configured
- * {@link RequestCache}.
+ * {@link AssetStorage}.
+ * </p>
+ * <p>
+ * Depending on the configuration, processing of the assets is performed here
+ * before serving them.
  * </p>
  * 
  * @author Thibault Duchateau
@@ -65,27 +70,33 @@ public class DandelionServlet extends HttpServlet {
 
    @Override
    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-      getLogger().debug("Dandelion Asset servlet captured GET request {}", request.getRequestURI());
+      LOG.debug("Dandelion Asset servlet captured GET request {}", request.getRequestURI());
 
       Context context = (Context) request.getAttribute(WebConstants.DANDELION_CONTEXT_ATTRIBUTE);
 
       // Get the asset content thanks to the cache key
-      String cacheKey = AssetUtils.extractCacheKeyFromRequest(request);
-      AssetType assetType = AssetType.extractFromRequest(request);
-      LOG.debug("Retrieved asset type: {}, cache key: {}", assetType, cacheKey);
+      String masterStorageKey = AssetUtils.extractCacheKeyFromRequest(request);
+
+      AssetType assetType = AssetUtils.extractAssetTypeFromRequest(request);
+      LOG.debug("Retrieved asset type: {}, cache key: {}", assetType, masterStorageKey);
 
       response.setContentType(assetType.getContentType() == null ? "text/plain" : assetType.getContentType());
 
-      // Write the asset content
+      StorageEntry storageEntry = context.getAssetStorage().get(masterStorageKey);
+
+      // Processing
+      if (context.getConfiguration().isAssetProcessingEnabled()) {
+         storageEntry.processContents(request);
+      }
+
+      // Fetching
+      String contents = storageEntry.resolveContents(request);
+
       PrintWriter writer = response.getWriter();
-      writer.write(context.getAssetStorage().get(cacheKey).getContents());
+      writer.write(contents);
 
       // The response is explicitely closed here instead of setting a
       // Content-Length header
       writer.close();
-   }
-
-   protected Logger getLogger() {
-      return LOG;
    }
 }

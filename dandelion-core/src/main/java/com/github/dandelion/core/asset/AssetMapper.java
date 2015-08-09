@@ -43,14 +43,15 @@ import com.github.dandelion.core.asset.locator.AssetLocator;
 import com.github.dandelion.core.asset.versioning.AssetVersioningStrategy;
 import com.github.dandelion.core.cache.RequestCache;
 import com.github.dandelion.core.storage.AssetStorageUnit;
-import com.github.dandelion.core.storage.StorageEntry;
 import com.github.dandelion.core.util.AssetUtils;
-import com.github.dandelion.core.util.PathUtils;
 import com.github.dandelion.core.util.StringUtils;
+import com.github.dandelion.core.web.DandelionServlet;
 
 /**
  * <p>
- * Mapper that converts {@link AssetStorageUnit}s to {@link Asset}s.
+ * Mapper that converts {@link AssetStorageUnit}s to {@link Asset}s. All
+ * metadata are computed, such as the version or the final location (the one
+ * used in HTML), so that the {@link DandelionServlet} just has to serve it.
  * </p>
  * 
  * @author Thibault Duchateau
@@ -59,6 +60,11 @@ import com.github.dandelion.core.util.StringUtils;
 public class AssetMapper {
 
    private static final Logger LOG = LoggerFactory.getLogger(AssetMapper.class);
+
+   /**
+    * The String to use as a version if it can't be computed.
+    */
+   private static final String UNDEFINED_VERSION = "UNDEFINED_VERSION";
 
    /**
     * The Dandelion context.
@@ -115,6 +121,9 @@ public class AssetMapper {
    public Asset mapToAsset(AssetStorageUnit asu) {
 
       Asset asset = new Asset(asu);
+      asset.setName(asu.getName());
+      asset.setType(asu.getType());
+      asset.setProcessing(asu.isProcessing());
 
       LOG.trace("Resolving location for the asset {}", asset.toLog());
 
@@ -126,28 +135,12 @@ public class AssetMapper {
 
       String location = assetLocator.getLocation(asu, request);
       LOG.trace("Locator '{}' will be applied on the asset {}.", assetLocator.getClass().getSimpleName(), asu.toLog());
+
       asset.setProcessedConfigLocation(location);
       asset.setConfigLocation(asu.getLocations().get(locationKey));
       asset.setGeneratorUid(asu.getGeneratorUid());
       asset.setStorageKey(AssetUtils.generateStorageKey(asset, request));
-
-      // Vendor assets are served as-is, no need to store them
-      if (asset.isNotVendor()) {
-
-         // Update the asset storage with minified contents
-         if (context.getConfiguration().isAssetMinificationEnabled()) {
-            asset = this.context.getProcessorManager().process(asset, request);
-         }
-         // Update the asset storage with normal contents
-         else if (context.getConfiguration().isAssetAutoVersioningEnabled() || assetLocator.isCachingForced()) {
-            String contents = assetLocator.getContent(asset, request);
-            this.context.getAssetStorage().put(asset.getStorageKey(), new StorageEntry(asset, contents));
-         }
-      }
-
-      asset.setName(getName(asu, location));
-      asset.setType(getType(asu, location));
-      asset.setVersion(getVersion(asset));
+      asset.setVersion(getVersion(asset, request));
       asset.setFinalLocation(getFinalLocation(asset, assetLocator));
 
       return asset;
@@ -200,9 +193,8 @@ public class AssetMapper {
     */
    private String getFinalLocation(Asset asset, AssetLocator locator) {
 
-      if (asset.isNotVendor()
-            && (this.context.getConfiguration().isAssetAutoVersioningEnabled() || locator.isCachingForced() || this.context
-                  .getConfiguration().isAssetMinificationEnabled())) {
+      if (asset.isNotVendor() && (this.context.getConfiguration().isAssetAutoVersioningEnabled()
+            || locator.isCachingForced() || this.context.getConfiguration().isAssetMinificationEnabled())) {
          return AssetUtils.getAssetFinalLocation(request, asset, null);
       }
       else {
@@ -226,7 +218,7 @@ public class AssetMapper {
     *           The asset to extract the version from.
     * @return the version of the asset.
     */
-   private String getVersion(Asset asset) {
+   private String getVersion(Asset asset, HttpServletRequest request) {
 
       // First: manual versioning if specified, coming from the
       // AssetStorageUnit
@@ -237,62 +229,10 @@ public class AssetMapper {
       // If enabled, auto versioning takes precedence over manual one
       if (this.context.getConfiguration().isAssetAutoVersioningEnabled()) {
          AssetVersioningStrategy avs = this.context.getActiveVersioningStrategy();
-         return avs.getAssetVersion(asset);
+         return avs.getAssetVersion(asset, request);
       }
 
       // Finally, a clear version indicating some configuration is missing
-      return "UNDEFINED_VERSION";
-   }
-
-   /**
-    * <p>
-    * Computes the final asset name:
-    * <ol>
-    * <li>First by reading the asset storage unit if the name if specified</li>
-    * <li>Otherwise by extracting the asset name from its first location</li>
-    * </ol>
-    * </p>
-    * 
-    * @param asu
-    *           The asset storage unit definition coming from the bundle
-    *           definition.
-    * @param location
-    *           The selected location.
-    * 
-    * @return the name of the asset.
-    */
-   private String getName(AssetStorageUnit asu, String location) {
-      if (StringUtils.isNotBlank(asu.getName())) {
-         return asu.getName();
-      }
-      else {
-         return PathUtils.extractLowerCasedName(location);
-      }
-   }
-
-   /**
-    * <p>
-    * Computes the asset type:
-    * <ol>
-    * <li>First by reading the asset storage unit definition, if the type is
-    * manually specified</li>
-    * <li>Otherwise by extracting the asset type from its first location</li>
-    * </ol>
-    * </p>
-    * 
-    * @param asu
-    *           The asset storage unit definition coming from the bundle
-    *           definition.
-    * @param location
-    *           The selected location.
-    * @return the type of the asset.
-    */
-   private AssetType getType(AssetStorageUnit asu, String location) {
-      if (asu.getType() != null) {
-         return asu.getType();
-      }
-      else {
-         return AssetType.extractFromAssetLocation(location);
-      }
+      return UNDEFINED_VERSION;
    }
 }

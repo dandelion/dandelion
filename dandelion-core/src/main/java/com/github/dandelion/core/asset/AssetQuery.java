@@ -138,7 +138,7 @@ public class AssetQuery {
 
          // If caching is enabled, the assocation request<=>assets is cached
          // for
-         // quicker future access
+         // quicker future access   
          if (this.context.getConfiguration().isCachingEnabled()) {
             requestedAssets = context.getCacheManager()
                   .storeAssets(requestCacheKey, new CacheEntry(currentUri, requestedAssets)).getAssets();
@@ -147,7 +147,10 @@ public class AssetQuery {
 
       Set<Asset> filteredAssets = getFilteredAssets(requestedAssets);
       LOG.debug("-> Query returned {} assets: {}", filteredAssets.size(), filteredAssets);
-      return filteredAssets;
+      
+      Set<Asset> finalAssets = this.context.getActiveMergingStrategy().prepareStorageAndGet(filteredAssets, request);
+      
+      return finalAssets;
    }
 
    public Set<Alert> alerts() {

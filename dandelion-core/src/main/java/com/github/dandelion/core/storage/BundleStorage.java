@@ -138,6 +138,8 @@ public class BundleStorage {
                      existingAsu.setAttributesOnlyName(asu.getAttributesOnlyName());
                      existingAsu.setCondition(asu.getCondition());
                      existingAsu.setGeneratorUid(asu.getGeneratorUid());
+                     existingAsu.setProcessing(asu.isProcessing());
+                     existingAsu.setProcessors(asu.getProcessors());
                      assetAlreadyExists = true;
                      break;
                   }

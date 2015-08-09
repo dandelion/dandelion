@@ -29,6 +29,8 @@
  */
 package com.github.dandelion.core.asset.versioning.impl;
 
+import javax.servlet.http.HttpServletRequest;
+
 import com.github.dandelion.core.asset.Asset;
 import com.github.dandelion.core.asset.versioning.AbstractAssetVersioningStrategy;
 
@@ -40,7 +42,7 @@ public class MyVersioningStrategy extends AbstractAssetVersioningStrategy {
    }
 
    @Override
-   public String getAssetVersion(Asset asset) {
+   public String getAssetVersion(Asset asset, HttpServletRequest request) {
       return "my-version";
    }
 

@@ -20,16 +20,16 @@
     style='margin-top: 15px;'>
     <thead>
       <tr>
-        <th style="width: 15%">Name</th>
         <th style="width: 5%">Type</th>
+        <th style="width: 10%">Name</th>
         <th>Information</th>
       </tr>
     </thead>
     <tbody>
       {{#assets}}
       <tr id="tr{{storageKey}}">
-        <td>{{name}}</td>
         <td class="text-center">{{type}}</td>
+        <td>{{name}}</td>
         <td>
           <table style="width: 100%; margin-bottom: 10px;" class="table-striped">
             <tbody>
@@ -37,6 +37,7 @@
                 <td style="width: 20%">Version:</td>
                 <td>{{version}}</td>
               </tr>
+              {{#isSingleEntry}}
               <tr>
                 <td>Bundle:</td>
                 <td>{{bundle}}</td>
@@ -49,21 +50,35 @@
                 <td>Raw location:</td>
                 <td><code>{{rawLocation}}</code></td>
               </tr>
+              {{/isSingleEntry}}
               <tr>
                 <td>Final location:</td>
                 <td><code>{{finalLocation}}</code></td>
               </tr>
+              {{#isSingleEntry}}
+              <tr>
+                <td>Processing enabled:</td>
+                <td>{{{processing}}}</td>
+              </tr>
+              <tr>
+                <td>Processors:</td>
+                <td>{{{processors}}}</td>
+              </tr>
+              {{/isSingleEntry}}
               <tr>
                 <td>Storage key:</td>
                 <td>{{storageKey}}</td>
               </tr>
               <tr>
                 <td>Contents:</td>
-                <td>{{#presentInStorage}} <a class="btn btn-sm btn-default"
-                  onclick="toggle('{{storageKey}}', this)">Show contents</a>
+                <td>
+                  {{#contentsFetched}}
+                  <a class="btn btn-sm btn-default" onclick="toggle('{{storageKey}}', this)">Show contents</a>
                   <div id="{{storageKey}}" style="display: none;">
                     <pre style="margin-top: 5px;">{{contents}}</pre>
-                  </div> {{/presentInStorage}} {{^presentInStorage}} Not fetched {{/presentInStorage}}
+                  </div>
+                  {{/contentsFetched}}
+                  {{^contentsFetched}} Not fetched {{/contentsFetched}}
                 </td>
               </tr>
             </tbody>

@@ -25,9 +25,7 @@
  */
 /**
  * <p>
- * All API, SPI and utilities related to asset versioning.
+ * All API, SPI and utilities related to asset merging.
  * </p>
- * 
- * @author Thibault Duchateau
  */
-package com.github.dandelion.core.asset.versioning;
+package com.github.dandelion.core.asset.merging;

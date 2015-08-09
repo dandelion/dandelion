@@ -31,6 +31,7 @@ package com.github.dandelion.core.util;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -59,6 +60,10 @@ import com.github.dandelion.core.web.WebConstants;
  * @since 0.10.0
  */
 public final class AssetUtils {
+
+   private static final String REGEX_ASSET_TYPE = "/[a-f0-9]{32}/(.*)/";
+   private static final Pattern PATTERN_ASSET_TYPE = Pattern.compile(REGEX_ASSET_TYPE);
+   private static final String DISCR = "collection";
 
    /**
     * <p>
@@ -222,6 +227,23 @@ public final class AssetUtils {
       return finalLocation.toString();
    }
 
+   public static AssetType extractAssetTypeFromRequest(HttpServletRequest request) {
+
+      Matcher m = PATTERN_ASSET_TYPE.matcher(request.getRequestURL());
+
+      String assetType = null;
+      if (m.find()) {
+         assetType = m.group(1);
+      }
+
+      for (AssetType type : AssetType.values()) {
+         if (assetType.toLowerCase().endsWith(type.name())) {
+            return type;
+         }
+      }
+      return null;
+   }
+
    /**
     * <p>
     * Extracts the asset cache key from the provided request using the
@@ -246,8 +268,9 @@ public final class AssetUtils {
    public static String extractCacheKeyFromRequest(HttpServletRequest request) {
 
       Context context = (Context) request.getAttribute(WebConstants.DANDELION_CONTEXT_ATTRIBUTE);
-      String processedUrlPattern = context.getConfiguration().getAssetUrlPattern().startsWith("/") ? context
-            .getConfiguration().getAssetUrlPattern().substring(1) : context.getConfiguration().getAssetUrlPattern();
+      String processedUrlPattern = context.getConfiguration().getAssetUrlPattern().startsWith("/")
+            ? context.getConfiguration().getAssetUrlPattern().substring(1)
+            : context.getConfiguration().getAssetUrlPattern();
 
       Pattern patternWithRequestKey = Pattern.compile(".*" + processedUrlPattern + "[a-f0-9]{32}/[a-f0-9]{32}/.*");
       Pattern patternWithoutRequestKey = Pattern.compile(".*" + processedUrlPattern + "[a-f0-9]{32}/.*");
@@ -277,8 +300,9 @@ public final class AssetUtils {
    public static String extractRequestKeyFromRequest(HttpServletRequest request) {
 
       Context context = (Context) request.getAttribute(WebConstants.DANDELION_CONTEXT_ATTRIBUTE);
-      String processedUrlPattern = context.getConfiguration().getAssetUrlPattern().startsWith("/") ? context
-            .getConfiguration().getAssetUrlPattern().substring(1) : context.getConfiguration().getAssetUrlPattern();
+      String processedUrlPattern = context.getConfiguration().getAssetUrlPattern().startsWith("/")
+            ? context.getConfiguration().getAssetUrlPattern().substring(1)
+            : context.getConfiguration().getAssetUrlPattern();
       Pattern p = Pattern.compile(processedUrlPattern + "([a-f0-9]{32})/[a-f0-9]{32}/");
       Matcher m = p.matcher(request.getRequestURI());
 
@@ -306,6 +330,8 @@ public final class AssetUtils {
     * 
     * @param asset
     *           The asset holding information used to generate the hash.
+    * @param request
+    *           The current request.
     * @return a MD5 hash.
     */
    public static String generateStorageKey(Asset asset, HttpServletRequest request) {
@@ -319,6 +345,48 @@ public final class AssetUtils {
 
       if (asset.getConfigLocationKey().equalsIgnoreCase(ApiLocator.LOCATION_KEY)) {
          keyContext.append(UrlUtils.getCurrentUri(request));
+      }
+
+      return DigestUtils.md5Digest(keyContext.toString());
+   }
+
+   /**
+    * <p>
+    * Generates a MD5 hash using information of the provided {@link Asset}s.
+    * </p>
+    * <p>
+    * The set of information used to generate the hash depends on the location
+    * key.
+    * </p>
+    * <ul>
+    * <li>{@code webapp}, {@code jar}, {@code webjar}, {@code classpath} and
+    * {@code remote}: bundle name + asset name + asset type</li>
+    * <li>{@code api}: bundle name + asset name + asset type + current URI</li>
+    * </ul>
+    * <p>
+    * A discriminating element is added to generate the hash in order to
+    * differentiate a set containing a single asset and a single asset.
+    * </p>
+    * 
+    * @param asset
+    *           The asset holding information used to generate the hash.
+    * @param request
+    *           The current request.
+    * @return a MD5 hash.
+    */
+   public static String generateStorageKey(Collection<Asset> assets, HttpServletRequest request) {
+
+      StringBuilder keyContext = new StringBuilder();
+      keyContext.append(DISCR);
+
+      for (Asset asset : assets) {
+         keyContext.append(asset.getBundle());
+         keyContext.append(asset.getName());
+         keyContext.append(asset.getType().name());
+
+         if (asset.getConfigLocationKey().equalsIgnoreCase(ApiLocator.LOCATION_KEY)) {
+            keyContext.append(UrlUtils.getCurrentUri(request));
+         }
       }
 
       return DigestUtils.md5Digest(keyContext.toString());
