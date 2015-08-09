@@ -73,7 +73,6 @@ public final class HttpHeaderUtils {
       StringBuilder etagValue = new StringBuilder();
 
       if (response == null || response.length == 0) {
-         LOG.warn("For some unknown reason, the response seems empty. The ETag won't be computed for this response.");
          return etagValue.toString();
       }
 
