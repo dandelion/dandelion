@@ -32,7 +32,9 @@ package com.github.dandelion.core.html;
 import com.github.dandelion.core.util.StringUtils;
 
 /**
+ * <p>
  * Plain old HTML <code>link</code> tag.
+ * </p>
  * 
  * @author Thibault Duchateau
  */
@@ -68,13 +70,13 @@ public class HtmlLink extends AbstractHtmlTag {
    @Override
    protected StringBuilder getHtmlAttributes() {
       StringBuilder html = super.getHtmlAttributes();
-      html.append(writeAttribute("rel", REL));
-      html.append(writeAttribute("href", this.href));
+      html.append(writeAttribute(ATTR_REL, REL));
+      html.append(writeAttribute(ATTR_HREF, this.href));
       return html;
    }
 
    public String getHref() {
-      return href;
+      return this.href;
    }
 
    public void setHref(String href) {
@@ -85,13 +87,13 @@ public class HtmlLink extends AbstractHtmlTag {
    public StringBuilder toHtml() {
       StringBuilder html = new StringBuilder();
       if (StringUtils.isNotBlank(this.condition)) {
-         html.append("<!--[if ");
+         html.append(IF_OPENING_CONDITION);
          html.append(this.condition);
-         html.append("]>\n");
+         html.append(IF_CLOSING_CONDITION);
       }
       html.append(super.toHtml());
       if (StringUtils.isNotBlank(this.condition)) {
-         html.append("\n<![endif]-->");
+         html.append(ENDIF_CONDITION);
       }
       return html;
    }

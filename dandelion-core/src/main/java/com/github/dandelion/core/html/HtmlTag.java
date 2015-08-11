@@ -27,50 +27,39 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
-package com.github.dandelion.core.asset.locator.impl;
-
-import java.io.File;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
-import com.github.dandelion.core.asset.Asset;
-import com.github.dandelion.core.asset.locator.AbstractAssetLocator;
-import com.github.dandelion.core.storage.AssetStorageUnit;
-import com.github.dandelion.core.util.ResourceUtils;
+package com.github.dandelion.core.html;
 
 /**
  * <p>
- * Locator for assets that use {@code file} as a location key, i.e. assets read
- * from the local filesystem.
+ * Super interface for all HTML tags.
  * </p>
  * 
  * @author Thibault Duchateau
- * @since 1.1.0
+ * @since 1.1.1
  */
-public class FileLocator extends AbstractAssetLocator {
+public interface HtmlTag {
 
-   public static final String LOCATION_KEY = "file";
+   public static final char CLASS_SEPARATOR = ' ';
+   public static final char STYLE_SEPARATOR = ';';
 
-   @Override
-   public String getLocationKey() {
-      return LOCATION_KEY;
-   }
+   public static final String IF_OPENING_CONDITION = "<!--[if ";
+   public static final String IF_CLOSING_CONDITION = "]>\n";
+   public static final String ENDIF_CONDITION = "\n<![endif]-->";
 
-   @Override
-   public boolean isCachingForced() {
-      return false;
-   }
+   public static final String ATTR_ID = "id";
+   public static final String ATTR_STYLE = "style";
+   public static final String ATTR_CLASS = "class";
+   public static final String ATTR_REL = "rel";
+   public static final String ATTR_SRC = "src";
+   public static final String ATTR_HREF = "href";
 
-   @Override
-   public String doGetLocation(AssetStorageUnit asu, HttpServletRequest request) {
-      File asset = new File(asu.getLocations().get(getLocationKey()));
-      return asset.toURI().toString();
-   }
-
-   @Override
-   protected String doGetContent(Asset asset, Map<String, Object> parameters, HttpServletRequest request) {
-      return ResourceUtils.getContentFromUrl(request, asset.getProcessedConfigLocation(), true);
-   }
+   /**
+    * <p>
+    * Returns a {@link StringBuilder} containing the HTML code used to render
+    * the tag in a browser.
+    * </p>
+    * 
+    * @return the HTML code corresponding to this tag.
+    */
+   public StringBuilder toHtml();
 }

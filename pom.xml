@@ -9,7 +9,7 @@
 
    <groupId>com.github.dandelion</groupId>
    <artifactId>dandelion</artifactId>
-   <version>1.1.1-SNAPSHOT</version>
+   <version>1.1.2-SNAPSHOT</version>
    <packaging>pom</packaging>
    <name>Dandelion</name>
    <description>
@@ -27,7 +27,6 @@
       <module>dandelion-thymeleaf</module>
       <module>dandelion-jsp</module>
       <module>dandelion-extras</module>
-      <module>dandelion-docs</module>
    </modules>
 
    <licenses>

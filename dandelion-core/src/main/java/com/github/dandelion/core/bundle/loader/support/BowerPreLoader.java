@@ -43,14 +43,16 @@ import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.dandelion.core.Context;
+import com.github.dandelion.core.asset.AssetType;
 import com.github.dandelion.core.asset.locator.impl.ClasspathLocator;
+import com.github.dandelion.core.asset.locator.impl.FileLocator;
 import com.github.dandelion.core.asset.locator.impl.WebappLocator;
 import com.github.dandelion.core.bundle.loader.AbstractBundlePreLoader;
 import com.github.dandelion.core.config.DandelionConfig;
 import com.github.dandelion.core.storage.AssetStorageUnit;
 import com.github.dandelion.core.storage.BundleStorageUnit;
 import com.github.dandelion.core.storage.support.BundleUtils;
+import com.github.dandelion.core.util.AssetUtils;
 import com.github.dandelion.core.util.ClassUtils;
 import com.github.dandelion.core.util.PathUtils;
 import com.github.dandelion.core.util.StringUtils;
@@ -63,31 +65,36 @@ import com.github.dandelion.core.util.scanner.WebResourceScanner;
  * Extra loader intended to scan for Bower components and convert the Bower
  * manifests into {@link BundleStorageUnit}.
  * </p>
+ * <p>
+ * Note that bower.json files that do not contain a {@code main} parameter won't
+ * be loaded.
+ * </p>
  * 
  * @author Thibault Duchateau
  * @since 1.1.0
+ * @see DandelionConfig#BOWER_COMPONENTS_LOCATION
  */
 public class BowerPreLoader extends AbstractBundlePreLoader {
 
    private static final Logger LOG = LoggerFactory.getLogger(BowerPreLoader.class);
-
    private static final String BOWER_COMPONENTS_FOLDER = "bower_components";
    private static final String BOWER_MANIFEST_FILENAME = "bower.json";
+
+   public static final String PRELOADER_NAME = "bower";
 
    /**
     * The mapper used to read Bower manifests (bower.json).
     */
-   private ObjectMapper mapper;
+   private final ObjectMapper mapper;
 
-   public void init(Context context) {
-      super.init(context);
+   public BowerPreLoader() {
       this.mapper = new ObjectMapper();
       this.mapper.configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true);
    }
 
    @Override
    public String getName() {
-      return "bower";
+      return PRELOADER_NAME;
    }
 
    @Override
@@ -141,19 +148,25 @@ public class BowerPreLoader extends AbstractBundlePreLoader {
 
       List<BundleStorageUnit> bundles = new ArrayList<BundleStorageUnit>();
       Set<String> resourcePaths = null;
-      resourcePaths = FileSystemResourceScanner.findResourcePaths(rootLocation.replace("file:", ""),
-            BOWER_MANIFEST_FILENAME);
+      resourcePaths = FileSystemResourceScanner
+            .findResourcePaths(rootLocation.replace(FileSystemResourceScanner.PREFIX, ""), BOWER_MANIFEST_FILENAME);
 
-      for (String resourcePath : resourcePaths) {
+      for (String bowerManifest : resourcePaths) {
          try {
-            URL bowerManifestUrl = new URL("file:" + resourcePath);
+            URL bowerManifestUrl = new URL(FileSystemResourceScanner.PREFIX + bowerManifest);
             BowerManifest bowerConf = mapper.readValue(bowerManifestUrl, BowerManifest.class);
-            LOG.debug("Bower component found: \"{}\"", bowerConf.getName());
 
-            BundleStorageUnit bsu = mapToBundle(bowerConf, rootLocation);
-            BundleUtils.finalize(bsu, this.context);
-            LOG.trace("Parsed bundle \"{}\" ({})", bsu.getName(), bsu);
-            bundles.add(bsu);
+            if (bowerConf.getMain() != null) {
+               LOG.debug("Bower component found: \"{}\"", bowerConf.getName());
+               BundleStorageUnit bsu = mapToBundle(bowerConf, rootLocation);
+               BundleUtils.finalize(bsu, this.context);
+               bsu.setRelativePath(bowerManifestUrl.toString());
+               LOG.trace("Parsed bundle \"{}\" ({})", bsu.getName(), bsu);
+               bundles.add(bsu);
+            }
+            else {
+               LOG.debug("No \"main\" parameter was found in the \"{}\" file", bowerManifest);
+            }
          }
          catch (IOException e) {
             LOG.warn("Unable to convert the \"{}\" Bower component to a bundle", e);
@@ -171,8 +184,8 @@ public class BowerPreLoader extends AbstractBundlePreLoader {
          return bundles;
       }
 
-      resourcePaths = ClasspathResourceScanner.findResourcePaths(rootLocation.replace("classpath:", ""), null,
-            BOWER_MANIFEST_FILENAME);
+      resourcePaths = ClasspathResourceScanner.findResourcePaths(
+            rootLocation.replace(ClasspathResourceScanner.PREFIX, ""), null, BOWER_MANIFEST_FILENAME);
 
       ClassLoader classLoader = ClassUtils.getDefaultClassLoader();
 
@@ -180,12 +193,18 @@ public class BowerPreLoader extends AbstractBundlePreLoader {
          try {
             URL bowerManifestUrl = classLoader.getResource(bowerManifest);
             BowerManifest bowerConf = mapper.readValue(bowerManifestUrl, BowerManifest.class);
-            LOG.debug("Bower component found: \"{}\"", bowerConf.getName());
 
-            BundleStorageUnit bsu = mapToBundle(bowerConf, rootLocation);
-            BundleUtils.finalize(bsu, this.context);
-            LOG.trace("Parsed bundle \"{}\" ({})", bsu.getName(), bsu);
-            bundles.add(bsu);
+            if (bowerConf.getMain() != null) {
+               LOG.debug("Bower component found: \"{}\"", bowerConf.getName());
+               BundleStorageUnit bsu = mapToBundle(bowerConf, rootLocation);
+               BundleUtils.finalize(bsu, this.context);
+               bsu.setRelativePath(bowerManifestUrl.toString());
+               LOG.trace("Parsed bundle \"{}\" ({})", bsu.getName(), bsu);
+               bundles.add(bsu);
+            }
+            else {
+               LOG.debug("No \"main\" parameter was found in the \"{}\" file", bowerManifest);
+            }
          }
          catch (IOException e) {
             LOG.warn("Unable to convert the \"{}\" Bower component to a bundle", e);
@@ -201,16 +220,22 @@ public class BowerPreLoader extends AbstractBundlePreLoader {
       Set<String> resourcePaths = null;
       resourcePaths = WebResourceScanner.findResourcePaths(this.context.getFilterConfig().getServletContext(),
             rootLocation, BOWER_MANIFEST_FILENAME);
-      for (String resourcePath : resourcePaths) {
+      for (String bowerManifest : resourcePaths) {
          try {
-            URL bowerManifestUrl = this.context.getFilterConfig().getServletContext().getResource(resourcePath);
+            URL bowerManifestUrl = this.context.getFilterConfig().getServletContext().getResource(bowerManifest);
             BowerManifest bowerConf = mapper.readValue(bowerManifestUrl, BowerManifest.class);
-            LOG.debug("Bower component found: \"{}\"", bowerConf.getName());
 
-            BundleStorageUnit bsu = mapToBundle(bowerConf, rootLocation);
-            BundleUtils.finalize(bsu, this.context);
-            LOG.trace("Parsed bundle \"{}\" ({})", bsu.getName(), bsu);
-            bundles.add(bsu);
+            if (bowerConf.getMain() != null) {
+               LOG.debug("Bower component found: \"{}\"", bowerConf.getName());
+               BundleStorageUnit bsu = mapToBundle(bowerConf, rootLocation);
+               bsu.setRelativePath(bowerManifestUrl.toString());
+               BundleUtils.finalize(bsu, this.context);
+               LOG.trace("Parsed bundle \"{}\" ({})", bsu.getName(), bsu);
+               bundles.add(bsu);
+            }
+            else {
+               LOG.debug("No \"main\" parameter was found in the \"{}\" file", bowerManifest);
+            }
          }
          catch (IOException e) {
             LOG.warn("Unable to convert the \"{}\" Bower component to a bundle", e);
@@ -225,28 +250,36 @@ public class BowerPreLoader extends AbstractBundlePreLoader {
       Set<AssetStorageUnit> asus = new HashSet<AssetStorageUnit>();
       LocationType locationType = resolveLocationType(bowerComponentsLocation);
       BundleStorageUnit bsu = new BundleStorageUnit();
-
+      bsu.setBundleLoaderOrigin(getName());
+      bsu.setVendor(true);
       bsu.setName(bowerConf.getName());
+      
       if (bowerConf.getDependencies() != null) {
          bsu.setDependencies(new ArrayList<String>(bowerConf.getDependencies().keySet()));
       }
       for (String mainAsset : bowerConf.getMain()) {
 
-         if (mainAsset.endsWith("css") || mainAsset.endsWith("js")) {
+         String extension = AssetUtils.getExtension(mainAsset.toLowerCase());
+
+         if (AssetType.getCompatibleExtensions().contains(extension)) {
+
             AssetStorageUnit asu = new AssetStorageUnit();
             asu.setName(PathUtils.extractLowerCasedName(mainAsset));
             asu.setVersion(bowerConf.getVersion());
+            asu.setBundle(bsu.getName());
             asu.setVendor(true);
 
             Map<String, String> locations = new HashMap<String, String>();
             switch (locationType) {
             case classpath:
                locations.put(ClasspathLocator.LOCATION_KEY,
-                     bowerComponentsLocation.replace("classpath:", "") + bowerConf.getName() + "/" + mainAsset);
+                     bowerComponentsLocation.replace(ClasspathResourceScanner.PREFIX, "") + bowerConf.getName() + "/"
+                           + mainAsset);
                break;
             case file:
-               locations.put("file",
-                     bowerComponentsLocation.replace("file:", "") + bowerConf.getName() + "/" + mainAsset);
+               locations.put(FileLocator.LOCATION_KEY,
+                     bowerComponentsLocation.replace(FileSystemResourceScanner.PREFIX, "") + bowerConf.getName() + "/"
+                           + mainAsset);
                break;
             case webapp:
                String processedLocation = !bowerComponentsLocation.startsWith("/") ? "/" + bowerComponentsLocation
@@ -259,6 +292,9 @@ public class BowerPreLoader extends AbstractBundlePreLoader {
             }
             asu.setLocations(locations);
             asus.add(asu);
+         }
+         else {
+            LOG.debug("The asset type is not supported yet (\"{}\"", extension);
          }
       }
 
@@ -281,10 +317,10 @@ public class BowerPreLoader extends AbstractBundlePreLoader {
     * @return the location type.
     */
    public LocationType resolveLocationType(String bowerComponentsLocation) {
-      if (bowerComponentsLocation.startsWith("classpath:")) {
+      if (bowerComponentsLocation.startsWith(ClasspathResourceScanner.PREFIX)) {
          return LocationType.classpath;
       }
-      else if (bowerComponentsLocation.startsWith("file:")) {
+      else if (bowerComponentsLocation.startsWith(FileSystemResourceScanner.PREFIX)) {
          return LocationType.file;
       }
       else {

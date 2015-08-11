@@ -32,7 +32,9 @@ package com.github.dandelion.core.html;
 import com.github.dandelion.core.util.StringUtils;
 
 /**
+ * <p>
  * Plain old HTML <code>script</code> tag.
+ * </p>
  * 
  * @author Thibault Duchateau
  */
@@ -67,7 +69,7 @@ public class HtmlScript extends AbstractHtmlTag {
    @Override
    protected StringBuilder getHtmlAttributes() {
       StringBuilder html = super.getHtmlAttributes();
-      html.append(writeAttribute("src", this.src));
+      html.append(writeAttribute(ATTR_SRC, this.src));
       return html;
    }
 
@@ -80,7 +82,7 @@ public class HtmlScript extends AbstractHtmlTag {
    }
 
    public String getCondition() {
-      return condition;
+      return this.condition;
    }
 
    public void setCondition(String condition) {
@@ -91,13 +93,13 @@ public class HtmlScript extends AbstractHtmlTag {
    public StringBuilder toHtml() {
       StringBuilder html = new StringBuilder();
       if (StringUtils.isNotBlank(this.condition)) {
-         html.append("<!--[if ");
+         html.append(IF_OPENING_CONDITION);
          html.append(this.condition);
-         html.append("]>\n");
+         html.append(IF_CLOSING_CONDITION);
       }
       html.append(super.toHtml());
       if (StringUtils.isNotBlank(this.condition)) {
-         html.append("\n<![endif]-->");
+         html.append(ENDIF_CONDITION);
       }
       return html;
    }

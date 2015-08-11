@@ -31,6 +31,7 @@ package com.github.dandelion.core.bundle.loader.support;
 
 import java.util.List;
 
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.springframework.mock.web.MockFilterConfig;
@@ -38,6 +39,7 @@ import org.springframework.mock.web.MockFilterConfig;
 import com.github.dandelion.core.Context;
 import com.github.dandelion.core.GlobalOptionsRule;
 import com.github.dandelion.core.asset.AssetType;
+import com.github.dandelion.core.config.DandelionConfig;
 import com.github.dandelion.core.storage.AssetStorageUnit;
 import com.github.dandelion.core.storage.BundleStorageUnit;
 
@@ -45,15 +47,24 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class BowerPreLoaderTest {
 
+   private Context context;
+
    @Rule
    public GlobalOptionsRule options = new GlobalOptionsRule();
+
+   @Before
+   public void before() {
+      MockFilterConfig filterConfig = new MockFilterConfig();
+      filterConfig.addInitParameter(DandelionConfig.BOWER_COMPONENTS_LOCATION.getName(), "classpath:pre-loader");
+      context = new Context(filterConfig);
+   }
 
    @Test
    public void should_map_the_bower_component_to_a_bundleStorageUnit() {
 
       BowerPreLoader bower = new BowerPreLoader();
-      bower.init(new Context(new MockFilterConfig()));
-      List<BundleStorageUnit> bsus = bower.getBundlesFromClasspath("extra-loader");
+      bower.init(context);
+      List<BundleStorageUnit> bsus = bower.getBundlesFromClasspath("pre-loader");
       assertThat(bsus).hasSize(1);
 
       BundleStorageUnit bsu = bsus.iterator().next();
@@ -65,6 +76,6 @@ public class BowerPreLoaderTest {
       assertThat(asu.getType()).isEqualTo(AssetType.js);
       assertThat(asu.getLocations()).hasSize(1);
       assertThat(asu.getLocations()).containsKey("webapp");
-      assertThat(asu.getLocations()).containsValue("/extra-loaderjquery/dist/jquery.js");
+      assertThat(asu.getLocations()).containsValue("/pre-loaderjquery/dist/jquery.js");
    }
 }

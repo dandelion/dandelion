@@ -59,6 +59,8 @@ public final class ClasspathResourceScanner {
 
    private static final Logger LOG = LoggerFactory.getLogger(ClasspathResourceScanner.class);
 
+   public final static String PREFIX = "classpath:";
+
    /**
     * <p>
     * Finds the logical path of the first resource that matches the given
