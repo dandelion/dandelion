@@ -485,6 +485,7 @@ public class Context {
 
             LOG.debug("Found {} bundle{}: {}", loadedBundles.size(), loadedBundles.size() <= 1 ? "" : "s",
                   loadedBundles);
+            bundleStorage.storeBundles(loadedBundles);
          }
       }
       else {
