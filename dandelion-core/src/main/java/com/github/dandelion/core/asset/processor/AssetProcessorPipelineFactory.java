@@ -175,7 +175,14 @@ public class AssetProcessorPipelineFactory {
       }
 
       for (String processorString : defaultProcessors) {
-         retval.add(context.getProcessorsMap().get(processorString.toLowerCase().trim()));
+         String normalizedName = processorString.toLowerCase().trim();
+         if (context.getProcessorsMap().containsKey(normalizedName)) {
+            retval.add(context.getProcessorsMap().get(processorString.toLowerCase().trim()));
+         }
+         else {
+            throw new DandelionException("The processor \"" + normalizedName
+                  + "\" is not available in the Dandelion context. Did you forget to add a dependency?");
+         }
       }
 
       return retval;
