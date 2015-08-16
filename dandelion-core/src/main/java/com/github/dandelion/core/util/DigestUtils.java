@@ -52,6 +52,8 @@ public final class DigestUtils {
    private static final String MD5_ALGORITHM_NAME = "MD5";
    private static final String SHA1_ALGORITHM_NAME = "SHA1";
 
+   private static final String DEFAULT_CHARSET = "UTF-8";
+
    private static final char[] HEX_CHARS = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e',
          'f' };
 
@@ -60,7 +62,7 @@ public final class DigestUtils {
       Validate.notBlank(string, "The string to get the hash from cannot be blank");
       char[] encodedDigest;
       try {
-         byte[] digest = digest(MD5_ALGORITHM_NAME, string.getBytes("UTF-8"));
+         byte[] digest = digest(MD5_ALGORITHM_NAME, string.getBytes(DEFAULT_CHARSET));
          encodedDigest = encodeHex(digest);
       }
       catch (UnsupportedEncodingException e) {
