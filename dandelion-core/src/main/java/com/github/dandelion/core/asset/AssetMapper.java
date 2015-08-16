@@ -199,8 +199,8 @@ public class AssetMapper {
     */
    private String getFinalLocation(Asset asset, AssetLocator locator) {
 
-      if (asset.isNotVendor() && (this.context.getConfiguration().isAssetAutoVersioningEnabled()
-            || locator.isCachingForced() || this.context.getConfiguration().isAssetMinificationEnabled())) {
+      if (this.context.getConfiguration().isAssetAutoVersioningEnabled() || locator.isCachingForced()
+            || this.context.getConfiguration().isAssetMinificationEnabled()) {
          return AssetUtils.getAssetFinalLocation(request, asset, null);
       }
       else {

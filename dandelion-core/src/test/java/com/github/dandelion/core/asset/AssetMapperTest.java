@@ -56,10 +56,10 @@ public class AssetMapperTest {
    private AssetMapper assetMapper;
    private MockHttpServletRequest request;
    private Context context;
-   
+
    @Rule
    public GlobalOptionsRule options = new GlobalOptionsRule();
-   
+
    @Rule
    public ExpectedException exception = ExpectedException.none();
 
@@ -89,7 +89,8 @@ public class AssetMapperTest {
       assertThat(asset.getConfigLocationKey()).isEqualTo("classpath");
       assertThat(asset.getConfigLocation()).isEqualTo("locator/asset-name.js");
       assertThat(asset.getProcessedConfigLocation()).isEqualTo("locator/asset-name.js");
-      assertThat(asset.getFinalLocation()).isEqualTo(asset.getProcessedConfigLocation());
+      assertThat(asset.getFinalLocation())
+            .matches("/context/dandelion-assets/[a-f0-9]{32}/js/asset-name-any-version.js");
    }
 
    @Test
@@ -119,8 +120,8 @@ public class AssetMapperTest {
       assertThat(asset.getConfigLocationKey()).isEqualTo("classpath");
       assertThat(asset.getConfigLocation()).isEqualTo("locator/asset.js");
       assertThat(asset.getProcessedConfigLocation()).isEqualTo("locator/asset.js");
-      assertThat(asset.getFinalLocation()).matches(
-            "/context/dandelion-assets/[a-f0-9]{32}/[a-f0-9]{32}/js/asset-name-any-version.js");
+      assertThat(asset.getFinalLocation())
+            .matches("/context/dandelion-assets/[a-f0-9]{32}/[a-f0-9]{32}/js/asset-name-any-version.js");
    }
 
    @Test
@@ -149,8 +150,8 @@ public class AssetMapperTest {
       assertThat(asset.getConfigLocationKey()).isEqualTo("classpath");
       assertThat(asset.getConfigLocation()).isEqualTo("locator/asset.js");
       assertThat(asset.getProcessedConfigLocation()).isEqualTo("locator/asset.js");
-      assertThat(asset.getFinalLocation()).matches(
-            "/context/dandelion-assets/[a-f0-9]{32}/[a-f0-9]{32}/js/asset-name-any-version.js");
+      assertThat(asset.getFinalLocation())
+            .matches("/context/dandelion-assets/[a-f0-9]{32}/[a-f0-9]{32}/js/asset-name-any-version.js");
    }
 
    @Test
@@ -164,8 +165,8 @@ public class AssetMapperTest {
       assetMapper = new AssetMapper(context, request);
 
       exception.expect(DandelionException.class);
-      exception
-            .expectMessage("No location is configured for the asset 'asset-name' (js, v1.0.0). Please add at least one location in the corresponding JSON file.");
+      exception.expectMessage(
+            "No location is configured for the asset 'asset-name' (js, v1.0.0). Please add at least one location in the corresponding JSON file.");
 
       AssetStorageUnit asu = new AssetStorageUnit();
       asu.setName("asset-name");
@@ -185,8 +186,8 @@ public class AssetMapperTest {
       assetMapper = new AssetMapper(context, request);
 
       exception.expect(DandelionException.class);
-      exception
-            .expectMessage("No location is configured for the asset 'asset-name' (js, v1.0.0). Please add at least one location in the corresponding JSON file.");
+      exception.expectMessage(
+            "No location is configured for the asset 'asset-name' (js, v1.0.0). Please add at least one location in the corresponding JSON file.");
 
       AssetStorageUnit asu = new AssetStorageUnit();
       asu.setName("asset-name");
@@ -247,7 +248,7 @@ public class AssetMapperTest {
       assertThat(asset.getConfigLocation()).isEqualTo("locator/asset.js");
       assertThat(asset.getConfigLocationKey()).isEqualTo("classpath");
       assertThat(asset.getProcessedConfigLocation()).isEqualTo("locator/asset.js");
-      assertThat(asset.getFinalLocation()).matches(
-            "/context/dandelion-assets/[a-f0-9]{32}/[a-f0-9]{32}/js/asset-name-[a-f0-9]{32}.js");
+      assertThat(asset.getFinalLocation())
+            .matches("/context/dandelion-assets/[a-f0-9]{32}/[a-f0-9]{32}/js/asset-name-[a-f0-9]{32}.js");
    }
 }
