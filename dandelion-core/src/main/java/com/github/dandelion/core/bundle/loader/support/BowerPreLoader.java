@@ -245,6 +245,18 @@ public class BowerPreLoader extends AbstractBundlePreLoader {
       return bundles;
    }
 
+   /**
+    * <p>
+    * Maps a Bower manifest to a {@link BundleStorageUnit}.
+    * </p>
+    * <b>Visible for testing</b>
+    * 
+    * @param bowerConf
+    *           The Bower manifest.
+    * @param bowerComponentsLocation
+    *           The location of the {@code bower_components} folder.
+    * @return the bundle storage unit.
+    */
    public BundleStorageUnit mapToBundle(BowerManifest bowerConf, String bowerComponentsLocation) {
 
       Set<AssetStorageUnit> asus = new HashSet<AssetStorageUnit>();
@@ -253,7 +265,7 @@ public class BowerPreLoader extends AbstractBundlePreLoader {
       bsu.setBundleLoaderOrigin(getName());
       bsu.setVendor(true);
       bsu.setName(bowerConf.getName());
-      
+
       if (bowerConf.getDependencies() != null) {
          bsu.setDependencies(new ArrayList<String>(bowerConf.getDependencies().keySet()));
       }
@@ -266,35 +278,56 @@ public class BowerPreLoader extends AbstractBundlePreLoader {
             AssetStorageUnit asu = new AssetStorageUnit();
             asu.setName(PathUtils.extractLowerCasedName(mainAsset));
             asu.setVersion(bowerConf.getVersion());
+            asu.setType(AssetType.extractFromAssetLocation(mainAsset));
             asu.setBundle(bsu.getName());
             asu.setVendor(true);
 
             Map<String, String> locations = new HashMap<String, String>();
             switch (locationType) {
             case classpath:
-               locations.put(ClasspathLocator.LOCATION_KEY,
-                     bowerComponentsLocation.replace(ClasspathResourceScanner.PREFIX, "") + bowerConf.getName() + "/"
-                           + mainAsset);
+               StringBuilder location = new StringBuilder();
+               location.append(bowerComponentsLocation.replace(ClasspathResourceScanner.PREFIX, ""));
+               if (!bowerComponentsLocation.endsWith("/")) {
+                  location.append('/');
+               }
+               location.append(bowerConf.getName());
+               location.append('/');
+               location.append(mainAsset);
+               locations.put(ClasspathLocator.LOCATION_KEY, location.toString());
                break;
             case file:
-               locations.put(FileLocator.LOCATION_KEY,
-                     bowerComponentsLocation.replace(FileSystemResourceScanner.PREFIX, "") + bowerConf.getName() + "/"
-                           + mainAsset);
+               location = new StringBuilder();
+               location.append(bowerComponentsLocation.replace(FileSystemResourceScanner.PREFIX, ""));
+               if (!bowerComponentsLocation.endsWith("/")) {
+                  location.append('/');
+               }
+               location.append(bowerConf.getName());
+               location.append('/');
+               location.append(mainAsset);
+               locations.put(FileLocator.LOCATION_KEY, location.toString());
                break;
             case webapp:
-               String processedLocation = !bowerComponentsLocation.startsWith("/") ? "/" + bowerComponentsLocation
-                     : bowerComponentsLocation;
-               locations.put(WebappLocator.LOCATION_KEY, processedLocation + bowerConf.getName() + "/" + mainAsset);
+               location = new StringBuilder();
+               if (!bowerComponentsLocation.startsWith("/")) {
+                  location.append('/');
+               }
+               location.append(bowerComponentsLocation);
+               if (!bowerComponentsLocation.endsWith("/")) {
+                  location.append('/');
+               }
+               location.append(bowerConf.getName());
+               location.append('/');
+               location.append(mainAsset);
+               locations.put(WebappLocator.LOCATION_KEY, location.toString());
                break;
             default:
                break;
-
             }
             asu.setLocations(locations);
             asus.add(asu);
          }
          else {
-            LOG.debug("The asset type is not supported yet (\"{}\"", extension);
+            LOG.debug("The asset type is not supported yet (\"{}\")", extension);
          }
       }
 

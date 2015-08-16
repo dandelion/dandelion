@@ -76,6 +76,6 @@ public class BowerPreLoaderTest {
       assertThat(asu.getType()).isEqualTo(AssetType.js);
       assertThat(asu.getLocations()).hasSize(1);
       assertThat(asu.getLocations()).containsKey("webapp");
-      assertThat(asu.getLocations()).containsValue("/pre-loaderjquery/dist/jquery.js");
+      assertThat(asu.getLocations()).containsValue("/pre-loader/jquery/dist/jquery.js");
    }
 }
