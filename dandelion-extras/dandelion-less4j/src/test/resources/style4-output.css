@@ -1,0 +1,15 @@
+@media screen {
+  .screen-color {
+    color: green;
+  }
+}
+@media screen and (min-width: 768px) {
+  .screen-color {
+    color: red;
+  }
+}
+@media tv {
+  .screen-color {
+    color: black;
+  }
+}

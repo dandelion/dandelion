@@ -27,52 +27,56 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+package com.github.dandelion.extras.processor;
 
-package com.github.dandelion.core.util;
+import java.io.IOException;
+import java.io.Reader;
+import java.io.Writer;
 
-import com.github.dandelion.core.asset.Asset;
-import com.github.dandelion.core.html.AbstractHtmlTag;
-import com.github.dandelion.core.html.HtmlLink;
-import com.github.dandelion.core.html.HtmlScript;
+import com.github.dandelion.core.asset.AssetType;
+import com.github.dandelion.core.asset.processor.AbstractAssetProcessor;
+import com.github.dandelion.core.asset.processor.CompatibleAssetType;
+import com.github.dandelion.core.asset.processor.ProcessingContext;
+import com.github.dandelion.core.util.IOUtils;
+import com.github.sommeri.less4j.Less4jException;
+import com.github.sommeri.less4j.LessCompiler.CompilationResult;
+import com.github.sommeri.less4j.LessSource;
+import com.github.sommeri.less4j.core.ThreadUnsafeLessCompiler;
 
 /**
  * <p>
- * Collection of utilities to ease working with HTML tags.
+ * CSS processor that uses Less4j to compile Less into CSS.
  * </p>
  * 
  * @author Thibault Duchateau
- * @since 0.2.0
+ * @since 2.0.0
  */
-public final class HtmlUtils {
+@CompatibleAssetType(types = AssetType.less)
+public class CssLessProcessor extends AbstractAssetProcessor {
 
-   public static AbstractHtmlTag transformAsset(Asset asset) {
-      AbstractHtmlTag tag;
-      switch (asset.getType()) {
-      case css:
-         tag = new HtmlLink(asset.getFinalLocation(), asset.getCondition());
-         break;
-      case js:
-         tag = new HtmlScript(asset.getFinalLocation(), asset.getCondition());
-         break;
-      case less:
-         tag = new HtmlLink(asset.getFinalLocation(), asset.getCondition());
-         break;
-      default:
-         tag = null;
-      }
-      if (tag != null) {
-         tag.addAttributesOnlyName(asset.getAttributesOnlyName());
-         tag.addAttributes(asset.getAttributes());
-      }
-      return tag;
+   public static final String NAME = "cssless";
+
+   @Override
+   public String getName() {
+      return NAME;
    }
 
-   /**
-    * <p>
-    * Suppress default constructor for noninstantiability.
-    * </p>
-    */
-   private HtmlUtils() {
-      throw new AssertionError();
+   @Override
+   protected void doProcess(Reader reader, Writer writer, ProcessingContext processingContext) {
+
+      LessSource lessource;
+      try {
+         lessource = new DandelionLessSource(processingContext, IOUtils.toString(reader));
+         CompilationResult compilationResult = new ThreadUnsafeLessCompiler().compile(lessource);
+         writer.write(compilationResult.getCss());
+      }
+      catch (IOException e) {
+         // TODO Auto-generated catch block
+         e.printStackTrace();
+      }
+      catch (Less4jException e) {
+         // TODO Auto-generated catch block
+         e.printStackTrace();
+      }
    }
 }

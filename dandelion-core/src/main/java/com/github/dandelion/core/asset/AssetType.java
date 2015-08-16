@@ -32,41 +32,67 @@ package com.github.dandelion.core.asset;
 import static com.github.dandelion.core.asset.AssetDomPosition.body;
 import static com.github.dandelion.core.asset.AssetDomPosition.head;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 /**
  * <p>
- * Types of an asset. Currently, only stylesheets and scripts are supported.
+ * All asset types supported by Dandelion.
  * </p>
  * 
  * @author Romain Lespinasse
+ * @author Thibault Duchateau
  * @since 0.2.0
  */
 public enum AssetType {
 
    // Raw CSS
-   css("text/css", head, "css"), 
-   
-   // Less
-   less("text/css", head, "css"),
-   
+   css("css", "text/css", "css", head),
+
+   // Less CSS
+   less("less", "text/css", "css", head),
+
    // Raw JavaScript
-   js("application/javascript", body, "js");
+   js("js", "application/javascript", "js", body);
 
+   private String sourceExtension;
    private String contentType;
+   private String targetExtension;
    private AssetDomPosition defaultDom;
-   private String[] extensions;
 
-   private AssetType(String contentType, AssetDomPosition defaultDom, String... extensions) {
+   private AssetType(String sourceExtension, String contentType, String targetExtension, AssetDomPosition defaultDom) {
+      this.sourceExtension = sourceExtension;
       this.contentType = contentType;
+      this.targetExtension = targetExtension;
       this.defaultDom = defaultDom;
-      this.extensions = extensions;
+   }
+
+   public String getSourceExtension() {
+      return this.sourceExtension;
    }
 
    public String getContentType() {
-      return contentType;
+      return this.contentType;
+   }
+
+   public String getTargetExtension() {
+      return this.targetExtension;
    }
 
    public AssetDomPosition getDefaultDom() {
-      return defaultDom;
+      return this.defaultDom;
+   }
+
+   /**
+    * @return all asset extensions supported by Dandelion.
+    */
+   public static List<String> getCompatibleExtensions() {
+      List<String> retval = new ArrayList<String>();
+      for (AssetType assetType : values()) {
+         Collections.addAll(retval, assetType.getSourceExtension());
+      }
+      return retval;
    }
 
    public static AssetType extractFromAssetLocation(String assetLocation) {

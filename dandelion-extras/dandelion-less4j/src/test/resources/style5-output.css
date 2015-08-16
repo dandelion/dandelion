@@ -1,0 +1,9 @@
+.some-class {
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  border-radius: 5px;
+  color: red;
+}
+#header {
+  color: #6c94be;
+}

@@ -222,7 +222,7 @@ public final class AssetUtils {
          finalLocation.append(suffix);
       }
       finalLocation.append(".");
-      finalLocation.append(asset.getType().name());
+      finalLocation.append(asset.getType().getTargetExtension());
 
       return finalLocation.toString();
    }

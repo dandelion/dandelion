@@ -90,8 +90,7 @@ public class DandelionServlet extends HttpServlet {
       }
 
       // Fetching
-      String contents = storageEntry.resolveContents(request);
-
+      String contents = context.getAssetStorage().get(masterStorageKey).resolveContents(request);
       PrintWriter writer = response.getWriter();
       writer.write(contents);
 

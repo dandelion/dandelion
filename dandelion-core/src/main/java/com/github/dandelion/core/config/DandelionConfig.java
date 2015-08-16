@@ -55,6 +55,7 @@ public enum DandelionConfig {
    ASSET_PROCESSORS("asset.processors", "cssurlrewriting,jsmin,cssmin", "cssurlrewriting,jsmin,cssmin"),
    ASSET_JS_PROCESSORS("asset.js.processors", "jsmin,jssemicolon", ""),
    ASSET_CSS_PROCESSORS("asset.css.processors", "cssurlrewriting,cssmin", ""),
+   ASSET_LESS_PROCESSORS("asset.less.processors", "cssless,cssurlrewriting,cssmin", ""),
    ASSET_JS_PROCESSING("asset.js.processing", "true", "true"),
    ASSET_JS_EXCLUDES("asset.js.excludes", "", ""), 
    ASSET_CSS_EXCLUDES("asset.css.excludes", "", ""), 

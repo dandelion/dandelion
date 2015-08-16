@@ -27,52 +27,48 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
-package com.github.dandelion.core.util;
+package com.github.dandelion.extras.processor;
 
 import com.github.dandelion.core.asset.Asset;
-import com.github.dandelion.core.html.AbstractHtmlTag;
-import com.github.dandelion.core.html.HtmlLink;
-import com.github.dandelion.core.html.HtmlScript;
+import com.github.dandelion.core.asset.locator.AssetLocator;
+import com.github.dandelion.core.asset.locator.impl.FileLocator;
+import com.github.dandelion.core.asset.processor.ProcessingContext;
+import com.github.dandelion.core.util.PathUtils;
+import com.github.sommeri.less4j.LessSource;
 
 /**
  * <p>
- * Collection of utilities to ease working with HTML tags.
+ * Custom implementation of {@link LessSource} intended to process @import
+ * directives.
  * </p>
  * 
  * @author Thibault Duchateau
- * @since 0.2.0
+ * @since 2.0.0
  */
-public final class HtmlUtils {
-
-   public static AbstractHtmlTag transformAsset(Asset asset) {
-      AbstractHtmlTag tag;
-      switch (asset.getType()) {
-      case css:
-         tag = new HtmlLink(asset.getFinalLocation(), asset.getCondition());
-         break;
-      case js:
-         tag = new HtmlScript(asset.getFinalLocation(), asset.getCondition());
-         break;
-      case less:
-         tag = new HtmlLink(asset.getFinalLocation(), asset.getCondition());
-         break;
-      default:
-         tag = null;
-      }
-      if (tag != null) {
-         tag.addAttributesOnlyName(asset.getAttributesOnlyName());
-         tag.addAttributes(asset.getAttributes());
-      }
-      return tag;
-   }
+public class DandelionLessSource extends LessSource.StringSource {
 
    /**
-    * <p>
-    * Suppress default constructor for noninstantiability.
-    * </p>
+    * The processing context.
     */
-   private HtmlUtils() {
-      throw new AssertionError();
+   private final ProcessingContext context;
+
+   public DandelionLessSource(ProcessingContext context, String content) {
+      super(content);
+      this.context = context;
+   }
+
+   @Override
+   public LessSource relativeSource(String relativePath) throws StringSourceException {
+
+      String originalLocation = context.getAsset().getUrl().toString();
+      String parentPath = PathUtils.getParentPath(originalLocation);
+      String importPath = parentPath + relativePath;
+
+      Asset importAsset = new Asset();
+      importAsset.setProcessedConfigLocation(importPath);
+      AssetLocator fileLocator = context.getContext().getAssetLocatorsMap().get(FileLocator.LOCATION_KEY);
+      String contents = fileLocator.getContent(importAsset, context.getRequest());
+
+      return new DandelionLessSource(context, contents);
    }
 }

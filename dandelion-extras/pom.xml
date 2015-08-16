@@ -16,5 +16,6 @@
    <modules>
       <module>dandelion-webjars</module>
       <module>dandelion-ehcache</module>
+      <module>dandelion-less4j</module>
    </modules>
 </project>

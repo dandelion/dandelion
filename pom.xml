@@ -51,6 +51,7 @@
       <slf4j-api.version>1.7.5</slf4j-api.version>
       <thymeleaf.version>2.1.4.RELEASE</thymeleaf.version>
       <webjars-locator.version>0.23</webjars-locator.version>
+      <less4j.version>1.14.0</less4j.version>
       <yui-compressor.version>2.4.7</yui-compressor.version>
       <commons-io.version>2.4</commons-io.version>
 
@@ -155,6 +156,13 @@
             <groupId>org.webjars</groupId>
             <artifactId>webjars-locator</artifactId>
             <version>${webjars-locator.version}</version>
+         </dependency>
+
+         <!-- Less4j -->
+         <dependency>
+            <groupId>com.github.sommeri</groupId>
+            <artifactId>less4j</artifactId>
+            <version>${less4j.version}</version>
          </dependency>
 
          <!-- SLF4J -->
