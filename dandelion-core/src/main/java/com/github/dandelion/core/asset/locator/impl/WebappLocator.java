@@ -32,6 +32,8 @@ package com.github.dandelion.core.asset.locator.impl;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Map;
 
 import javax.servlet.ServletContext;
@@ -64,7 +66,7 @@ public class WebappLocator extends AbstractAssetLocator {
 
    private static final Logger LOG = LoggerFactory.getLogger(WebappLocator.class);
    public static final String LOCATION_KEY = "webapp";
-   
+
    public WebappLocator() {
       active = true;
    }
@@ -81,6 +83,11 @@ public class WebappLocator extends AbstractAssetLocator {
    }
 
    @Override
+   public URL getURL(AssetStorageUnit asu, HttpServletRequest request) throws MalformedURLException {
+      return request.getServletContext().getResource(asu.getLocations().get(getLocationKey()));
+   }
+
+   @Override
    protected String doGetContent(Asset asset, Map<String, Object> parameters, HttpServletRequest request) {
 
       ServletContext sc = request.getServletContext();
@@ -89,8 +96,8 @@ public class WebappLocator extends AbstractAssetLocator {
       try {
          LOG.trace("Reading the asset located at \"" + asset.getConfigLocation() + "\"");
          in = sc.getResourceAsStream(asset.getConfigLocation());
-         
-         if(in == null) {
+
+         if (in == null) {
             throw new IOException();
          }
          contents = ResourceUtils.getContentFromInputStream(in);

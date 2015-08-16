@@ -29,6 +29,7 @@
  */
 package com.github.dandelion.core;
 
+import java.net.URL;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -52,6 +53,11 @@ public class FakeApiLocator extends AbstractAssetLocator {
    @Override
    protected String doGetContent(Asset asset, Map<String, Object> parameters, HttpServletRequest request) {
       return "content";
+   }
+
+   @Override
+   public URL getURL(AssetStorageUnit asu, HttpServletRequest request) {
+      return null;
    }
 
 }

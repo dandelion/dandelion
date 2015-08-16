@@ -30,6 +30,8 @@
 
 package com.github.dandelion.core.asset.locator.impl;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -38,6 +40,7 @@ import com.github.dandelion.core.asset.Asset;
 import com.github.dandelion.core.asset.locator.AbstractAssetLocator;
 import com.github.dandelion.core.storage.AssetStorageUnit;
 import com.github.dandelion.core.util.ResourceUtils;
+import com.github.dandelion.core.util.UrlUtils;
 
 /**
  * <p>
@@ -50,7 +53,7 @@ import com.github.dandelion.core.util.ResourceUtils;
 public class RemoteLocator extends AbstractAssetLocator {
 
    public static final String LOCATION_KEY = "remote";
-   
+
    public RemoteLocator() {
       this.active = true;
    }
@@ -63,6 +66,19 @@ public class RemoteLocator extends AbstractAssetLocator {
    @Override
    public String doGetLocation(AssetStorageUnit asu, HttpServletRequest request) {
       return asu.getLocations().get(getLocationKey());
+   }
+
+   @Override
+   public URL getURL(AssetStorageUnit asu, HttpServletRequest request) throws MalformedURLException {
+      String location = asu.getLocations().get(getLocationKey());
+      if (UrlUtils.isProtocolRelative(location)) {
+         location = request.isSecure() ? "https:" : "http:" + location;
+      }
+      if (UrlUtils.isContextRelative(location, request)) {
+         location = UrlUtils.getBaseUrl(request, false) + location;
+      }
+
+      return new URL(location);
    }
 
    @Override

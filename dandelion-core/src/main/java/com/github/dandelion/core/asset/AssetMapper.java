@@ -29,6 +29,7 @@
  */
 package com.github.dandelion.core.asset;
 
+import java.net.MalformedURLException;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -142,7 +143,12 @@ public class AssetMapper {
       asset.setStorageKey(AssetUtils.generateStorageKey(asset, request));
       asset.setVersion(getVersion(asset, request));
       asset.setFinalLocation(getFinalLocation(asset, assetLocator));
-
+      try {
+         asset.setUrl(assetLocator.getURL(asu, request));
+      }
+      catch (MalformedURLException e) {
+         asset.setUrl(null);
+      }
       return asset;
    }
 

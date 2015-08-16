@@ -30,6 +30,7 @@
 
 package com.github.dandelion.core.asset.locator.impl;
 
+import java.net.URL;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -37,6 +38,7 @@ import javax.servlet.http.HttpServletRequest;
 import com.github.dandelion.core.asset.Asset;
 import com.github.dandelion.core.asset.locator.AbstractAssetLocator;
 import com.github.dandelion.core.storage.AssetStorageUnit;
+import com.github.dandelion.core.util.ClassUtils;
 import com.github.dandelion.core.util.ResourceUtils;
 
 /**
@@ -51,7 +53,7 @@ import com.github.dandelion.core.util.ResourceUtils;
 public class JarLocator extends AbstractAssetLocator {
 
    public static final String LOCATION_KEY = "jar";
-   
+
    @Override
    public String getLocationKey() {
       return LOCATION_KEY;
@@ -66,6 +68,15 @@ public class JarLocator extends AbstractAssetLocator {
    public String doGetLocation(AssetStorageUnit asu, HttpServletRequest request) {
       String location = asu.getLocations().get(getLocationKey());
       return request.getContextPath() + "/" + (location.startsWith("/") ? location.substring(1) : location);
+   }
+
+   @Override
+   public URL getURL(AssetStorageUnit asu, HttpServletRequest request) {
+      ClassLoader classLoader = ClassUtils.getDefaultClassLoader();
+      if (classLoader != null) {
+         return classLoader.getResource(asu.getLocations().get(getLocationKey()));
+      }
+      return null;
    }
 
    @Override

@@ -29,6 +29,9 @@
  */
 package com.github.dandelion.core.asset.locator;
 
+import java.net.MalformedURLException;
+import java.net.URL;
+
 import javax.servlet.http.HttpServletRequest;
 
 import com.github.dandelion.core.Context;
@@ -76,6 +79,19 @@ public interface AssetLocator {
     * @return the customized location
     */
    String getLocation(AssetStorageUnit asu, HttpServletRequest request);
+
+   /**
+    * <p>
+    * Return a URL handle for the asset storage unit.
+    * </p>
+    * 
+    * @param asu
+    *           The asset storage unit from which the URL should be extracted.
+    * @param request
+    *           The current request.
+    * @return a URL handle for the asset storage unit.
+    */
+   URL getURL(AssetStorageUnit asu, HttpServletRequest request) throws MalformedURLException;
 
    /**
     * <p>

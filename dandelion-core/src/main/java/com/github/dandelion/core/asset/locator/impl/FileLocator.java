@@ -31,6 +31,8 @@
 package com.github.dandelion.core.asset.locator.impl;
 
 import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -69,6 +71,11 @@ public class FileLocator extends AbstractAssetLocator {
       return asset.toURI().toString();
    }
 
+   @Override
+   public URL getURL(AssetStorageUnit asu, HttpServletRequest request) throws MalformedURLException {
+      return new File(asu.getLocations().get(getLocationKey())).toURI().toURL();
+   }
+   
    @Override
    protected String doGetContent(Asset asset, Map<String, Object> parameters, HttpServletRequest request) {
       return ResourceUtils.getContentFromUrl(request, asset.getProcessedConfigLocation(), true);

@@ -30,6 +30,7 @@
 
 package com.github.dandelion.core.asset.locator.impl;
 
+import java.net.URL;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -76,6 +77,11 @@ public class ApiLocator extends AbstractAssetLocator {
       return asu.getLocations().get(getLocationKey());
    }
 
+   @Override
+   public URL getURL(AssetStorageUnit asu, HttpServletRequest request) {
+      return null;
+   }
+   
    @Override
    protected String doGetContent(Asset asset, Map<String, Object> parameters, HttpServletRequest request) {
       AssetContentGenerator generator = AssetRequestContext.get(request).getGenerator(asset.getGeneratorUid());

@@ -30,6 +30,7 @@
 package com.github.dandelion.core.asset;
 
 import java.io.Serializable;
+import java.net.URL;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -84,6 +85,10 @@ public class Asset implements Serializable {
     */
    private String configLocation;
 
+   /**
+    * Processed location of the asset, after any of the {@link AssetLocator} has
+    * been used.
+    */
    private String processedConfigLocation;
 
    /**
@@ -106,8 +111,6 @@ public class Asset implements Serializable {
     */
    private String condition;
 
-   // Internal attribute
-
    /**
     * The computed storage key of the asset.
     */
@@ -119,15 +122,26 @@ public class Asset implements Serializable {
    private String bundle;
 
    /**
-    * Whether the asset has been loaded by the {@link VendorBundleLoader}.
+    * Whether the asset is considered as vendor
     */
    private boolean vendor;
 
    private String generatorUid;
 
+   /**
+    * Whether processing is enabled for this asset.
+    */
    private boolean processing;
 
+   /**
+    * Array of processor names to be applied on the asset.
+    */
    private String[] processors;
+
+   /**
+    * URL handle for this asset.
+    */
+   private URL url;
 
    public Asset() {
    }
@@ -361,6 +375,14 @@ public class Asset implements Serializable {
 
    public void setProcessors(String[] processors) {
       this.processors = processors;
+   }
+
+   public URL getUrl() {
+      return url;
+   }
+
+   public void setUrl(URL url) {
+      this.url = url;
    }
 
    @Override
