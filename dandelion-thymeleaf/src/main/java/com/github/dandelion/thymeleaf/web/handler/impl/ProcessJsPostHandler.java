@@ -43,6 +43,7 @@ import org.thymeleaf.context.WebContext;
 import com.github.dandelion.core.DandelionException;
 import com.github.dandelion.core.asset.Asset;
 import com.github.dandelion.core.cache.Cache;
+import com.github.dandelion.core.storage.SingleAssetEntry;
 import com.github.dandelion.core.util.AssetUtils;
 import com.github.dandelion.core.util.StringUtils;
 import com.github.dandelion.core.web.RequestFlashData;
@@ -136,7 +137,7 @@ public class ProcessJsPostHandler extends AbstractHandlerChain {
 
       // Get the asset content thanks to the cache key
       String cacheKey = AssetUtils.extractCacheKeyFromRequest(handlerContext.getRequest());
-      Asset asset = handlerContext.getContext().getAssetStorage().get(cacheKey).getAsset();
+      Asset asset = ((SingleAssetEntry) handlerContext.getContext().getAssetStorage().get(cacheKey)).getAsset();
 
       // Update the current context with additional attributes
       WebContext ctx = new WebContext(handlerContext.getRequest(), handlerContext.getResponse(), handlerContext

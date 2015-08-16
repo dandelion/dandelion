@@ -44,6 +44,7 @@ import org.thymeleaf.resourceresolver.IResourceResolver;
 import com.github.dandelion.core.Context;
 import com.github.dandelion.core.DandelionException;
 import com.github.dandelion.core.storage.AssetStorage;
+import com.github.dandelion.core.storage.SingleAssetEntry;
 import com.github.dandelion.core.util.AssetUtils;
 import com.github.dandelion.core.web.WebConstants;
 
@@ -96,7 +97,7 @@ public class JsResourceResolver implements IResourceResolver {
 
       // Get the asset content thanks to the cache key
       String cacheKey = AssetUtils.extractCacheKeyFromRequest(request);
-      String contents = dandelionContext.getAssetStorage().get(cacheKey).getContents();
+      String contents = ((SingleAssetEntry) dandelionContext.getAssetStorage().get(cacheKey)).getContents();
 
       // Wrap the contents with prototype-only comment blocks
       StringBuilder adaptedContents = new StringBuilder(BLOCK_WRAP_START);
