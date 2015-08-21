@@ -6,4 +6,4 @@ services:
   - docker
 
 script:
-  - docker run -it -v $(pwd):/root/sources -w /root/sources maven:3.3.3-jdk-7 mvn package
+  - docker run -it -v $(pwd):/root/sources -w /root/sources maven:3.2.5-jdk-6 mvn package
