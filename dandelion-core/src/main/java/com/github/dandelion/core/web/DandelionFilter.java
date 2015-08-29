@@ -124,34 +124,30 @@ public class DandelionFilter implements Filter {
       }
 
       // Wraps the response before applying the filter chain
-      ByteArrayResponseWrapper wrappedResponse = new ByteArrayResponseWrapper(response);
+      BufferedResponseWrapper wrappedResponse = new BufferedResponseWrapper(response);
       filterChain.doFilter(request, wrappedResponse);
 
-      // In case of a redirect, no need to process the response. Moreover,
-      // getWritter may have allready been called.
+      // In case of a redirect, no need to process the response
       if (wrappedResponse.isRedirect()) {
          return;
       }
-      
+
       // Extracts the response as a byte array so that it can be passed to the
       // post-handlers chain
-      byte[] finalResponse = wrappedResponse.toByteArray();
+      byte[] finalResponse = wrappedResponse.getContentAsBytes();
 
-      // Post-filtering handlers processing
-      HandlerChain postHandlerChain = context.getPostHandlerChain();
-      HandlerContext postHandlerContext = null;
-      if (postHandlerChain != null) {
-         postHandlerContext = new HandlerContext(context, request, response, finalResponse);
-         postHandlerChain.doHandle(postHandlerContext);
+      if (finalResponse.length > 0) {
+
+         // Post-filtering handlers processing
+         HandlerChain postHandlerChain = context.getPostHandlerChain();
+         HandlerContext postHandlerContext = null;
+         if (postHandlerChain != null) {
+            postHandlerContext = new HandlerContext(context, request, response, finalResponse);
+            postHandlerChain.doHandle(postHandlerContext);
+         }
+
+         response.getOutputStream().write(postHandlerContext.getResponseAsBytes());
       }
-
-      // The response may have been set to null by one of the handlers
-      if (postHandlerContext != null && postHandlerContext.getResponseAsBytes() == null) {
-         return;
-      }
-
-      response.setContentLength(postHandlerContext.getResponseAsBytes().length);
-      response.getOutputStream().write(postHandlerContext.getResponseAsBytes());
    }
 
    @Override
