@@ -52,6 +52,10 @@ And an _asset_ is defined as follows:
 |[[spec-asset-dom]]`dom`
 |Desired position in the DOM, among `body` or `head`
 |No. By default `body` for JS and `head` for CSS
+
+|[[spec-asset-condition]]`condition`
+|If the asset should be included in Internet Explorer's https://msdn.microsoft.com/en-us/library/ms537512(v=vs.85).aspx[conditional comments]. This is the _expression_ to match which browsers should include this attribute, e.g. `IE lt 9`.
+|No
 |===
 
 ===== Example
