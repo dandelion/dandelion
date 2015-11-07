@@ -84,6 +84,7 @@ public class ProcessJsPostHandler extends AbstractHandlerChain {
       JsTemplateResolver templateResolver = new JsTemplateResolver();
       templateResolver.setTemplateMode(DandelionTemplateModeHandlers.TEMPLATEMODE_DANDELION_JS);
       templateResolver.setCacheable(false);
+      templateResolver.setCharacterEncoding("UTF-8");
 
       templateEngine = new TemplateEngine();
       templateEngine.addTemplateModeHandler(DandelionTemplateModeHandlers.DANDELION_JS);
