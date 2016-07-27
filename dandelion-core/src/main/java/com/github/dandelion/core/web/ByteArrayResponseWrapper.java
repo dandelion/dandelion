@@ -31,8 +31,11 @@ package com.github.dandelion.core.web;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
 
@@ -55,12 +58,14 @@ public class ByteArrayResponseWrapper extends HttpServletResponseWrapper {
    /**
     * The underlying byte-output stream.
     */
-   private ByteArrayOutputStream baos = new ByteArrayOutputStream();
+   private ByteArrayOutputStream baos;
 
    /**
     * PrintWriter that sits on top of the byte-output stream.
     */
-   private PrintWriter pw = new PrintWriter(baos);
+   private PrintWriter pw;
+   
+   private ServletOutputStream so;
 
    /**
     * Flag which indicates if the current response is part of a redirect
@@ -74,7 +79,62 @@ public class ByteArrayResponseWrapper extends HttpServletResponseWrapper {
 
    @Override
    public PrintWriter getWriter() throws IOException {
+      if (so!=null)
+         throw new IllegalStateException("getOutputStream called");
+      if (pw==null) {
+         baos = new ByteArrayOutputStream();
+         pw = new PrintWriter(new OutputStreamWriter(baos,getCharacterEncoding()));
+      }
       return pw;
+   }
+
+   @Override
+   public ServletOutputStream getOutputStream() throws IOException
+   {
+      if (pw!=null)
+         throw new IllegalStateException("getWriter called");
+      if (so==null) {
+    	 baos = new ByteArrayOutputStream();
+    	 so = new ServletOutputStream() {
+    	   @Override
+    	   public void write(byte[] b) throws IOException
+    	   {
+    		  baos.write(b);
+    	   }
+    	   @Override
+    	   public void write(int b)
+    	   {
+    		  baos.write(b);
+    	   }
+    	   @Override
+    	   public void write(byte[] b, int off, int len)
+    	   {
+    		  baos.write(b,off,len);
+    	   }
+    	   @Override
+    	   public void close() throws IOException
+    	   {
+    		  baos.close();
+    	   }
+    	 };
+      }
+      return so;
+   }
+      
+   @Override
+   public void flushBuffer() throws IOException {
+      // suppress the flushBuffer
+   }
+
+   @Override
+   public void resetBuffer() {
+      pw=null;
+      baos=null;
+   }
+
+   @Override
+   public void setContentLength(int len) {
+      // suppress the content-length, so content may be altered
    }
 
    @Override
@@ -91,9 +151,11 @@ public class ByteArrayResponseWrapper extends HttpServletResponseWrapper {
     * @return the byte array containing the response.
     */
    public byte[] toByteArray() {
-
-      pw.flush();
-      return baos.toByteArray();
+      if (pw!=null)
+          pw.flush();
+      if (baos!=null)
+          return baos.toByteArray();
+      return new byte[0];
    }
 
    public boolean isRedirect() {
