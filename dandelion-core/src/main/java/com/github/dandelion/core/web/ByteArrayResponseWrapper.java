@@ -64,6 +64,8 @@ public class ByteArrayResponseWrapper extends HttpServletResponseWrapper {
     * PrintWriter that sits on top of the byte-output stream.
     */
    private PrintWriter pw;
+   
+   private ServletOutputStream so;
 
    /**
     * Flag which indicates if the current response is part of a redirect
@@ -77,10 +79,12 @@ public class ByteArrayResponseWrapper extends HttpServletResponseWrapper {
 
    @Override
    public PrintWriter getWriter() throws IOException {
-      if (pw==null && baos!=null)
+      if (so!=null)
          throw new IllegalStateException("getOutputStream called");
-      baos = new ByteArrayOutputStream();
-      pw = new PrintWriter(new OutputStreamWriter(baos,getCharacterEncoding()));
+      if (pw==null) {
+         baos = new ByteArrayOutputStream();
+         pw = new PrintWriter(new OutputStreamWriter(baos,getCharacterEncoding()));
+      }
       return pw;
    }
 
@@ -89,29 +93,32 @@ public class ByteArrayResponseWrapper extends HttpServletResponseWrapper {
    {
       if (pw!=null)
          throw new IllegalStateException("getWriter called");
-      baos = new ByteArrayOutputStream();
-      return new ServletOutputStream() {
-         @Override
-         public void write(byte[] b) throws IOException
-         {
-            baos.write(b);
-         }
-         @Override
-         public void write(int b)
-         {
-            baos.write(b);
-         }
-         @Override
-         public void write(byte[] b, int off, int len)
-         {
-            baos.write(b,off,len);
-         }
-         @Override
-         public void close() throws IOException
-         {
-             baos.close();
-         }
-      };
+      if (so==null) {
+    	 baos = new ByteArrayOutputStream();
+    	 so = new ServletOutputStream() {
+    	   @Override
+    	   public void write(byte[] b) throws IOException
+    	   {
+    		  baos.write(b);
+    	   }
+    	   @Override
+    	   public void write(int b)
+    	   {
+    		  baos.write(b);
+    	   }
+    	   @Override
+    	   public void write(byte[] b, int off, int len)
+    	   {
+    		  baos.write(b,off,len);
+    	   }
+    	   @Override
+    	   public void close() throws IOException
+    	   {
+    		  baos.close();
+    	   }
+    	 };
+      }
+      return so;
    }
       
    @Override
