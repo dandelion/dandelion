@@ -272,8 +272,9 @@ public class BowerPreLoader extends AbstractBundlePreLoader {
             Map<String, String> locations = new HashMap<String, String>();
             switch (locationType) {
             case classpath:
+               String classpathLocation = !bowerComponentsLocation.endsWith("/") ? bowerComponentsLocation + "/" : bowerComponentsLocation;
                locations.put(ClasspathLocator.LOCATION_KEY,
-                     bowerComponentsLocation.replace(ClasspathResourceScanner.PREFIX, "") + bowerConf.getName() + "/"
+                       classpathLocation.replace(ClasspathResourceScanner.PREFIX, "") + bowerConf.getName() + "/"
                            + mainAsset);
                break;
             case file:
