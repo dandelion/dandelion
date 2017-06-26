@@ -60,10 +60,6 @@ public class StandardCache<K, V> implements Cache<K, V> {
 
       V resultEntry = this.dataContainer.get(key);
 
-      if (resultEntry == null) {
-         return null;
-      }
-
       return resultEntry;
    }
 

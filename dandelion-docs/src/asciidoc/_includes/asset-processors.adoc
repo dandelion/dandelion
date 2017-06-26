@@ -119,7 +119,7 @@ After, the line will be replaced by:
 
 ==== 7.2.4. JsMin
 
-This processor is based on a translation frop C to Java of jsmin.c published by http://www.crockford.com/javascript/jsmin.html[Douglas Crockford].
+This processor is based on a translation from C to Java of jsmin.c published by http://www.crockford.com/javascript/jsmin.html[Douglas Crockford].
 
 [discrete]
 ===== Example
