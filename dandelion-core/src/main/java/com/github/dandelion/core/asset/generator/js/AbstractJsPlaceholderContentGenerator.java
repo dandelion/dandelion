@@ -39,6 +39,8 @@ import org.slf4j.LoggerFactory;
 import com.github.dandelion.core.asset.generator.AbstractAssetPlaceholderContent;
 import com.github.dandelion.core.asset.generator.AbstractAssetPlaceholderContentGenerator;
 import com.github.dandelion.core.asset.generator.AssetPlaceholder;
+import com.github.dandelion.core.Context;
+import com.github.dandelion.core.web.WebConstants;
 import com.github.dandelion.core.scripting.ScriptingUtils;
 
 /**
@@ -58,11 +60,16 @@ public abstract class AbstractJsPlaceholderContentGenerator<P extends AssetPlace
    @Override
    public String getPlaceholderContent(HttpServletRequest request, Map<P, StringBuilder> contents) {
 
+      Context context = (Context) request.getAttribute(WebConstants.DANDELION_CONTEXT_ATTRIBUTE);
+
       logger.debug("Generating asset...");
       String generatedContent = getPlaceholderJavascriptContent(request, contents);
       logger.debug("Asset generated successfully");
 
-      return ScriptingUtils.prettyPrintJs(generatedContent);
+      if (context.getConfiguration().isToolAssetPrettyPrintingEnabled()) {
+         return ScriptingUtils.prettyPrintJs(generatedContent);
+      }
+      return generatedContent;
    }
 
    protected abstract String getPlaceholderJavascriptContent(HttpServletRequest request, Map<P, StringBuilder> contents);
