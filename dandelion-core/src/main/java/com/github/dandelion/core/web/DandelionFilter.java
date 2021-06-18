@@ -124,7 +124,7 @@ public class DandelionFilter implements Filter {
       }
 
       // Wraps the response before applying the filter chain
-      ByteArrayResponseWrapper wrappedResponse = new ByteArrayResponseWrapper(response);
+      ByteArrayResponseWrapper wrappedResponse = new ByteArrayResponseWrapper(response, context.getConfiguration().getEncoding());
       filterChain.doFilter(request, wrappedResponse);
 
       // In case of a redirect, no need to process the response. Moreover,
