@@ -29,9 +29,7 @@
  */
 package com.github.dandelion.core.web;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.*;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
@@ -60,7 +58,7 @@ public class ByteArrayResponseWrapper extends HttpServletResponseWrapper {
    /**
     * PrintWriter that sits on top of the byte-output stream.
     */
-   private PrintWriter pw = new PrintWriter(baos);
+   private PrintWriter pw;
 
    /**
     * Flag which indicates if the current response is part of a redirect
@@ -68,8 +66,9 @@ public class ByteArrayResponseWrapper extends HttpServletResponseWrapper {
     */
    private boolean isRedirect;
 
-   public ByteArrayResponseWrapper(HttpServletResponse response) {
+   public ByteArrayResponseWrapper(HttpServletResponse response, String encoding) throws UnsupportedEncodingException {
       super(response);
+      this.pw = new PrintWriter(new OutputStreamWriter(baos, encoding));
    }
 
    @Override
